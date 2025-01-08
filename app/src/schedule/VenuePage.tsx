@@ -16,9 +16,7 @@ const VenuePage: FC = () => {
   }
 
   return (
-    <div>
-      <WeekViewCalendar />
-    </div>
+    <WeekViewCalendar venue={venue} />
   )
 }
 
