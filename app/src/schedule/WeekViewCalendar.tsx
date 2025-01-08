@@ -52,64 +52,7 @@ export function WeekViewCalendar() {
               <ChevronRightIcon className="size-5" aria-hidden="true" />
             </button>
           </div>
-          {/* <div className="hidden md:ml-4 md:flex md:items-center">
-            <Menu as="div" className="relative">
-              <MenuButton
-                type="button"
-                className="flex items-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              >
-                Week view
-                <ChevronDownIcon className="-mr-1 size-5 text-gray-400" aria-hidden="true" />
-              </MenuButton>
 
-              <MenuItems
-                transition
-                className="absolute right-0 z-10 mt-3 w-36 origin-top-right overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none data-[closed]:scale-95 data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-              >
-                <div className="py-1">
-                  <MenuItem>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
-                    >
-                      Day view
-                    </a>
-                  </MenuItem>
-                  <MenuItem>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
-                    >
-                      Week view
-                    </a>
-                  </MenuItem>
-                  <MenuItem>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
-                    >
-                      Month view
-                    </a>
-                  </MenuItem>
-                  <MenuItem>
-                    <a
-                      href="#"
-                      className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900 data-[focus]:outline-none"
-                    >
-                      Year view
-                    </a>
-                  </MenuItem>
-                </div>
-              </MenuItems>
-            </Menu>
-            <div className="ml-6 h-6 w-px bg-gray-300" />
-            <button
-              type="button"
-              className="ml-6 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Add event
-            </button>
-          </div> */}
           <Menu as="div" className="relative ml-6 md:hidden">
             <MenuButton className="-mx-2 flex items-center rounded-full border border-transparent p-2 text-gray-400 hover:text-gray-500">
               <span className="sr-only">Open menu</span>
@@ -179,36 +122,10 @@ export function WeekViewCalendar() {
         </div>
       </header>
       <div ref={container} className="isolate flex flex-auto flex-col overflow-auto bg-white">
-        <div style={{ width: '165%' }} className="flex max-w-full flex-none flex-col sm:max-w-none md:max-w-full">
+        <div style={{ width: '165%' }} className="flex max-w-full flex-none flex-col">
           <div ref={containerNav} className="sticky top-0 z-30 flex-none bg-white shadow ring-1 ring-black/5 sm:pr-8">
-            <div className="grid grid-cols-7 text-sm/6 text-gray-500 sm:hidden">
-              <button type="button" className="flex flex-col items-center pb-3 pt-2">
-                M <span className="mt-1 flex size-8 items-center justify-center font-semibold text-gray-900">10</span>
-              </button>
-              <button type="button" className="flex flex-col items-center pb-3 pt-2">
-                T <span className="mt-1 flex size-8 items-center justify-center font-semibold text-gray-900">11</span>
-              </button>
-              <button type="button" className="flex flex-col items-center pb-3 pt-2">
-                W{' '}
-                <span className="mt-1 flex size-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white">
-                  12
-                </span>
-              </button>
-              <button type="button" className="flex flex-col items-center pb-3 pt-2">
-                T <span className="mt-1 flex size-8 items-center justify-center font-semibold text-gray-900">13</span>
-              </button>
-              <button type="button" className="flex flex-col items-center pb-3 pt-2">
-                F <span className="mt-1 flex size-8 items-center justify-center font-semibold text-gray-900">14</span>
-              </button>
-              <button type="button" className="flex flex-col items-center pb-3 pt-2">
-                S <span className="mt-1 flex size-8 items-center justify-center font-semibold text-gray-900">15</span>
-              </button>
-              <button type="button" className="flex flex-col items-center pb-3 pt-2">
-                S <span className="mt-1 flex size-8 items-center justify-center font-semibold text-gray-900">16</span>
-              </button>
-            </div>
 
-            <div className="-mr-px hidden grid-cols-7 divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500 sm:grid">
+            <div className="-mr-px grid grid-cols-7 divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500">
               <div className="col-end-1 w-14" />
               <div className="flex items-center justify-center py-3">
                 <span>
@@ -258,7 +175,7 @@ export function WeekViewCalendar() {
               {/* Horizontal lines */}
               <div
                 className="col-start-1 col-end-2 row-start-1 grid divide-y divide-gray-100"
-                style={{ gridTemplateRows: 'repeat(48, minmax(3.5rem, 1fr))' }}
+                style={{ gridTemplateRows: `repeat(48, minmax(3.5rem, 1fr))` }}
               >
                 <div ref={containerOffset} className="row-end-1 h-7" />
                 {timeLabels.map((label, index) => (
@@ -268,6 +185,7 @@ export function WeekViewCalendar() {
                         {label}
                       </div>
                     </div>
+                    {/* 30min line */}
                     <div />
                   </React.Fragment>
                 ))}
@@ -275,7 +193,7 @@ export function WeekViewCalendar() {
 
               {/* Vertical lines */}
               <div className="col-start-1 col-end-2 row-start-1 hidden grid-cols-7 grid-rows-1 divide-x divide-gray-100 sm:grid sm:grid-cols-7">
-                {[...Array(8)].map((_, index) => (
+                {Array.from({ length: 8 }).map((_, index) => (
                   <div key={index} className={`col-start-${index + 1} row-span-full ${index === 7 ? 'w-8' : ''}`} />
                 ))}
               </div>
