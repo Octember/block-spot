@@ -117,23 +117,14 @@ model Reservation {
   id          String            @id @default(uuid())
   userId      String
   user        User              @relation(fields: [userId], references: [id])
-  resourceId  String // e.g., Room ID, Table ID, etc.
-  resource    Resource          @relation(fields: [resourceId], references: [id])
   startTime   DateTime
   endTime     DateTime
-  granularity Int // Store the granularity (e.g., 15 for 15 minutes)
   status      ReservationStatus
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
   spaceId     String
   space       Space             @relation(fields: [spaceId], references: [id])
-}
-
-model Resource {
-  id           String        @id @default(uuid())
-  name         String
-  type         String // Optional: room, table, etc.
-  reservations Reservation[]
+  description String?
 }
 
 enum ReservationStatus {

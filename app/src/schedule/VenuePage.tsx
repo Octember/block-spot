@@ -7,7 +7,6 @@ const VenuePage: FC = () => {
 
   const { venueId } = useParams();
   const { data, isLoading } = useQuery(getVenueInfo);
-  console.log(data);
 
   const venue = data?.find((venue) => venue.id === venueId);
 

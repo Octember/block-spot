@@ -3,9 +3,9 @@
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { FC } from 'react'
 import { Space, Venue } from 'wasp/entities'
-import { Link , routes } from 'wasp/client/router'
+import { Link, routes } from 'wasp/client/router'
 
-    
+
 export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({ venues }) => {
     return (
         <ul role="list" className="divide-y divide-gray-100">
