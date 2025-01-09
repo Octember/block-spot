@@ -1,22 +1,23 @@
+import { format } from "date-fns";
 import { useState } from "react";
 
 function getStartEndTime(selection: { start: { row: number, col: number }, current: { row: number, col: number } }): { start: Date, end: Date } {
 
   if (selection.start.row > selection.current.row) {
-    const startTime = calculateTimeFromRow(selection.current.row)
-    const endTime = calculateTimeFromRow(selection.start.row + 1)
+    const startTime = calculateTimeFromRow(selection.current.row - 1)
+    const endTime = calculateTimeFromRow(selection.start.row)
     return { start: startTime, end: endTime }
   }
 
-  const startTime = calculateTimeFromRow(selection.start.row)
-  const endTime = calculateTimeFromRow(selection.current.row + 1)
+  const startTime = calculateTimeFromRow(selection.start.row - 1)
+  const endTime = calculateTimeFromRow(selection.current.row)
   return { start: startTime, end: endTime }
 }
 
 const calculateTimeFromRow = (row: number): Date => {
   const date = new Date();
-  date.setHours(8 + Math.floor(row / 12));
-  date.setMinutes((row % 12) * 5);
+  date.setHours(8 + Math.floor(row / 2));
+  date.setMinutes((row % 2) * 30);
   return date;
 };
 
@@ -51,6 +52,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({ spaceCount, timeLa
     setIsSelecting(false);
     if (selection.start && selection.current) {
       const { start, end } = getStartEndTime(selection)
+      console.log(format(start, 'HH:mm'), format(end, 'HH:mm'))
 
       if (onSelectionComplete) {
         onSelectionComplete(start, end, selection.start.col);
@@ -77,7 +79,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({ spaceCount, timeLa
     <div
       className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
       style={{
-        gridTemplateRows: `1.75rem repeat(${timeLabels.length * 12}, 0.5rem)`,
+        gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
         gridTemplateColumns: `repeat(${spaceCount}, minmax(0, 1fr))`
       }}
       onMouseUp={handleMouseUp}
@@ -86,7 +88,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({ spaceCount, timeLa
         Array.from({ length: spaceCount }).map((_, col) => (
           <div
             key={`${row}-${col}`}
-            className={`${getGridCell(row, col)} cursor-pointer`}
+            className={`${getGridCell(row, col)} inset-1 roundedcursor-pointer`}
             onMouseDown={() => handleMouseDown(row, col)}
             onMouseMove={() => handleMouseMove(row, col)}
           />

@@ -139,7 +139,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
               <ol
                 className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
                 style={{
-                  gridTemplateRows: `1.75rem repeat(${timeLabels.length * 2}, 2rem)`,
+                  gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
                   gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`
                 }}
               >
