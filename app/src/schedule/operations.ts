@@ -26,7 +26,7 @@ export const getVenueInfo: GetVenueInfo<void, (Venue & { spaces: (Space & { rese
   });
 };
 
-type CreateReservationPayload = Pick<Reservation, "spaceId" | "startTime" | "endTime">;
+type CreateReservationPayload = Pick<Reservation, "spaceId" | "startTime" | "endTime" | "description">;
 
 export const createReservation: CreateReservation<CreateReservationPayload, Reservation> = async (args, context) => {
 
@@ -42,6 +42,7 @@ export const createReservation: CreateReservation<CreateReservationPayload, Rese
       endTime: args.endTime,
       userId: context.user.id,
       status: "CONFIRMED",
+      description: args.description,
     },
   });
 };

@@ -153,6 +153,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
                         spaceId: draftReservation.spaceId,
                         startTime: draftReservation.startTime,
                         endTime: draftReservation.endTime,
+                        description: draftReservation.description,
                       });
                       setDraftReservation(null);
 
