@@ -20,7 +20,8 @@ import {
   createTask,
   useQuery,
   createReservation,
-} from 'wasp/client/operations'
+} from "wasp/client/operations";
+import { useEffect, useRef } from "react";
 
 export const ReservationSlot = ({
   reservation,
@@ -34,21 +35,29 @@ export const ReservationSlot = ({
   isDraft?: boolean;
   onDelete?: () => void;
   onCreate?: () => void;
-}) => {
+})  => {
+  const descriptionInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isDraft && descriptionInputRef.current) {
+      descriptionInputRef.current.focus();
+    }
+  }, [isDraft]);
+
   // TODO: start and end row are not correct, current hardcoded to 8AM
   const startRow =
     1 +
     Math.ceil(
       reservation.startTime.getHours() * 2 +
-      reservation.startTime.getMinutes() / 30 -
-      (7 * 2 + 1)
+        reservation.startTime.getMinutes() / 30 -
+        (7 * 2 + 1)
     );
   const endRow =
     1 +
     Math.ceil(
       reservation.endTime.getHours() * 2 +
-      reservation.endTime.getMinutes() / 30 -
-      (7 * 2 + 1)
+        reservation.endTime.getMinutes() / 30 -
+        (7 * 2 + 1)
     );
   const rowSpan = Math.round(endRow - startRow);
 
@@ -70,9 +79,21 @@ export const ReservationSlot = ({
       >
         <div>
           <div className="flex flex-row justify-between">
-            <p className="font-semibold text-blue-700">
-              {reservation.description}
-            </p>
+            {isDraft ? (
+              <input
+                ref={descriptionInputRef}
+                id="title"
+                name="title"
+                type="text"
+                className="block text-sm font-medium py-0.5 max-w-40 rounded placeholder:text-gray-400 focus:outline focus:outline-0"
+                // value={reservation?.description || undefined}
+                placeholder="Description"
+              />
+            ) : (
+              <p className="font-semibold text-blue-700">
+                {reservation.description}
+              </p>
+            )}
 
             <Popover className="relative">
               <PopoverButton>
@@ -121,12 +142,16 @@ export const ReservationSlot = ({
 
         {isDraft && (
           <div className="flex flex-row justify-end gap-2">
-            <button 
+            <button
               onClick={onCreate}
-            className="bg-green-500 justify-self-end hover:bg-green-600 text-white px-2 py-1 rounded-md">
+              className="bg-green-500 justify-self-end hover:bg-green-600 text-white px-2 py-1 rounded-md"
+            >
               confirm
             </button>
-            <button onClick={onDelete} className="bg-red-500 justify-self-end hover:bg-red-600 text-white px-2 py-1 rounded-md">
+            <button
+              onClick={onDelete}
+              className="bg-red-500 justify-self-end hover:bg-red-600 text-white px-2 py-1 rounded-md"
+            >
               discard
             </button>
           </div>
