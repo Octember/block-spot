@@ -144,7 +144,9 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
                   <ReservationSlot key={reservation.id} reservation={reservation} gridIndex={spaceIds.findIndex(spaceId => spaceId === reservation.spaceId)} />
                 ))}
                 {draftReservation && (
-                  <ReservationSlot reservation={draftReservation} gridIndex={spaceIds.findIndex(spaceId => spaceId === draftReservation.spaceId)} isDraft />
+                  <ReservationSlot reservation={draftReservation} gridIndex={spaceIds.findIndex(spaceId => spaceId === draftReservation.spaceId)} isDraft
+                    onDelete={() => setDraftReservation(null)}
+                  />
                 )}
               </ol>
 
