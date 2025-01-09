@@ -52,7 +52,6 @@ export const GridSelection: React.FC<GridSelectionProps> = ({ spaceCount, timeLa
     setIsSelecting(false);
     if (selection.start && selection.current) {
       const { start, end } = getStartEndTime(selection)
-      console.log(format(start, 'HH:mm'), format(end, 'HH:mm'))
 
       if (onSelectionComplete) {
         onSelectionComplete(start, end, selection.start.col);

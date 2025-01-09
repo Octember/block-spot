@@ -1,16 +1,13 @@
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid'
-import React, { useEffect, useRef, FC, useState, useCallback } from 'react'
+import { format } from 'date-fns';
+import React, { FC, useCallback, useRef, useState } from 'react';
 import { Reservation, Space, Venue } from 'wasp/entities';
-import { format } from 'date-fns'
 import { GridSelection } from './selection';
+import { ReservationSlot } from './reservation-slot';
 
 const timeLabels = [
-  // '12AM', '1AM', '2AM', '3AM', '4AM', '5AM', '6AM', '7AM', 
   '8AM', '9AM',
   '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM', '7PM',
   '8PM',
-  // '9PM', '10PM', '11PM'
 ];
 
 const firstSpaceId = "1456beda-3377-482e-abb7-4c22222eec7c"
@@ -164,29 +161,6 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
   )
 }
 
-export const ReservationSlot = ({ reservation, gridIndex, isDraft }: { reservation: Reservation; gridIndex: number; isDraft?: boolean }) => {
-  // TODO: start and end row are not correct, current hardcoded to 8AM
-  const startRow = 1 + Math.ceil((reservation.startTime.getHours() * 2 + reservation.startTime.getMinutes() / 30) - (7 * 2 + 1))
-  const endRow = 1 + Math.ceil((reservation.endTime.getHours() * 2 + reservation.endTime.getMinutes() / 30) - (7 * 2 + 1))
-  const rowSpan = Math.round(endRow - startRow)
-  console.log(reservation.description, { startRow, endRow, rowSpan, })
 
-  const colorStyles = isDraft ? 'bg-pink-100 hover:bg-pink-200' : 'bg-blue-50 hover:bg-blue-100'
-
-  return <li className="relative mt-px flex" style={{
-    gridRow: `${startRow} / span ${rowSpan}`,
-    gridColumnStart: gridIndex + 1
-  }}>
-    <a
-      href="#"
-      className={`group absolute inset-1 flex flex-col overflow-y-auto rounded-lg p-2 text-xs/5 ${colorStyles}`}
-    >
-      <p className="order-1 font-semibold text-blue-700">{reservation.description}</p>
-      <p className="text-blue-500 group-hover:text-blue-700">
-        <time dateTime="2022-01-12T06:00">{format(reservation.startTime, 'h:mm a')} - {format(reservation.endTime, 'h:mm a')}</time>
-      </p>
-    </a>
-  </li>
-}
 
 
