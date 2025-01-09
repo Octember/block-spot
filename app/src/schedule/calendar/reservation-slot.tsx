@@ -16,17 +16,24 @@ import {
   PopoverPanel,
 } from "@headlessui/react";
 import { Popover } from "@headlessui/react";
+import {
+  createTask,
+  useQuery,
+  createReservation,
+} from 'wasp/client/operations'
 
 export const ReservationSlot = ({
   reservation,
   gridIndex,
   isDraft,
   onDelete,
+  onCreate,
 }: {
   reservation: Reservation;
   gridIndex: number;
   isDraft?: boolean;
   onDelete?: () => void;
+  onCreate?: () => void;
 }) => {
   // TODO: start and end row are not correct, current hardcoded to 8AM
   const startRow =
@@ -114,8 +121,10 @@ export const ReservationSlot = ({
 
         {isDraft && (
           <div className="flex flex-row justify-end gap-2">
-            <button className="bg-green-500 justify-self-end hover:bg-green-600 text-white px-2 py-1 rounded-md">
-              create
+            <button 
+              onClick={onCreate}
+            className="bg-green-500 justify-self-end hover:bg-green-600 text-white px-2 py-1 rounded-md">
+              confirm
             </button>
             <button onClick={onDelete} className="bg-red-500 justify-self-end hover:bg-red-600 text-white px-2 py-1 rounded-md">
               discard

@@ -6,7 +6,7 @@ import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
 const VenuePage: FC = () => {
 
   const { venueId } = useParams();
-  const { data, isLoading } = useQuery(getVenueInfo);
+  const { data, isLoading, refetch } = useQuery(getVenueInfo);
 
   const venue = data?.find((venue) => venue.id === venueId);
 
@@ -15,7 +15,7 @@ const VenuePage: FC = () => {
   }
 
   return (
-    <WeekViewCalendar venue={venue} />
+    <WeekViewCalendar venue={venue}  />
   )
 }
 

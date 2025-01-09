@@ -3,6 +3,7 @@ import React, { FC, useCallback, useRef, useState } from 'react';
 import { Reservation, Space, Venue } from 'wasp/entities';
 import { GridSelection } from './selection';
 import { ReservationSlot } from './reservation-slot';
+import {useQuery, getVenueInfo, createReservation} from 'wasp/client/operations';
 
 const timeLabels = [
   '8AM', '9AM',
@@ -50,7 +51,7 @@ const MockReservations: Reservation[] = [
 ]
 
 interface WeekViewCalendarProps {
-  venue: Venue & { spaces: Space[] }
+  venue: Venue & { spaces: (Space & {reservations: Reservation[]})[] }
 }
 
 export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
@@ -59,11 +60,12 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
   const containerOffset = useRef(null)
   const spaceIds = venue.spaces.map(space => space.id)
 
+  const reservations = venue.spaces.flatMap(space => space.reservations)
+  const { refetch } = useQuery(getVenueInfo)
+
   const [draftReservation, setDraftReservation] = useState<Reservation | null>(null)
 
   const handleSelectionComplete = useCallback((start: Date, end: Date, spaceIndex: number) => {
-    console.log('Selection completed:', { start: format(start, 'h:mmaa'), end: format(end, 'h:mmaa'), spaceIndex });
-    // Handle the new reservation creation here
     setDraftReservation({
       id: 'draft',
       spaceId: spaceIds[spaceIndex],
@@ -140,12 +142,22 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
                   gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`
                 }}
               >
-                {MockReservations.map((reservation) => (
+                {reservations.map((reservation) => (
                   <ReservationSlot key={reservation.id} reservation={reservation} gridIndex={spaceIds.findIndex(spaceId => spaceId === reservation.spaceId)} />
                 ))}
                 {draftReservation && (
                   <ReservationSlot reservation={draftReservation} gridIndex={spaceIds.findIndex(spaceId => spaceId === draftReservation.spaceId)} isDraft
                     onDelete={() => setDraftReservation(null)}
+                    onCreate={async () => {
+                      await createReservation({
+                        spaceId: draftReservation.spaceId,
+                        startTime: draftReservation.startTime,
+                        endTime: draftReservation.endTime,
+                      });
+                      setDraftReservation(null);
+
+                      refetch();
+                    }}
                   />
                 )}
               </ol>

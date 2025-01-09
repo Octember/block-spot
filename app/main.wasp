@@ -149,6 +149,12 @@ action updateUserById {
   fn: import { updateUserById } from "@src/user/operations",
   entities: [User]
 }
+
+action createReservation {
+  fn: import { createReservation } from "@src/schedule/operations",
+  entities: [Reservation]
+}
+
 //#endregion
 
 route VenuePageRoute { path: "/schedule/:venueId", to: VenuePage }
