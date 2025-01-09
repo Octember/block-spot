@@ -1,17 +1,19 @@
 import { format } from "date-fns";
 import { useState } from "react";
 
-function getStartEndTime(selection: { start: { row: number, col: number }, current: { row: number, col: number } }): { start: Date, end: Date } {
-
+function getStartEndTime(selection: {
+  start: { row: number; col: number };
+  current: { row: number; col: number };
+}): { start: Date; end: Date } {
   if (selection.start.row > selection.current.row) {
-    const startTime = calculateTimeFromRow(selection.current.row - 1)
-    const endTime = calculateTimeFromRow(selection.start.row)
-    return { start: startTime, end: endTime }
+    const startTime = calculateTimeFromRow(selection.current.row - 1);
+    const endTime = calculateTimeFromRow(selection.start.row);
+    return { start: startTime, end: endTime };
   }
 
-  const startTime = calculateTimeFromRow(selection.start.row - 1)
-  const endTime = calculateTimeFromRow(selection.current.row)
-  return { start: startTime, end: endTime }
+  const startTime = calculateTimeFromRow(selection.start.row - 1);
+  const endTime = calculateTimeFromRow(selection.current.row);
+  return { start: startTime, end: endTime };
 }
 
 const calculateTimeFromRow = (row: number): Date => {
@@ -21,15 +23,17 @@ const calculateTimeFromRow = (row: number): Date => {
   return date;
 };
 
-
-
 interface GridSelectionProps {
   spaceCount: number;
   timeLabels: string[];
   onSelectionComplete?: (start: Date, end: Date, spaceIndex: number) => void;
 }
 
-export const GridSelection: React.FC<GridSelectionProps> = ({ spaceCount, timeLabels, onSelectionComplete }) => {
+export const GridSelection: React.FC<GridSelectionProps> = ({
+  spaceCount,
+  timeLabels,
+  onSelectionComplete,
+}) => {
   const [selection, setSelection] = useState<{
     start: { row: number; col: number } | null;
     current: { row: number; col: number } | null;
@@ -43,15 +47,14 @@ export const GridSelection: React.FC<GridSelectionProps> = ({ spaceCount, timeLa
 
   const handleMouseMove = (row: number, col: number) => {
     if (isSelecting) {
-      setSelection(prev => ({ ...prev, current: { row, col } }));
+      setSelection((prev) => ({ ...prev, current: { row, col } }));
     }
   };
-
 
   const handleMouseUp = () => {
     setIsSelecting(false);
     if (selection.start && selection.current) {
-      const { start, end } = getStartEndTime(selection)
+      const { start, end } = getStartEndTime(selection);
 
       if (onSelectionComplete) {
         onSelectionComplete(start, end, selection.start.col);
@@ -61,7 +64,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({ spaceCount, timeLa
   };
 
   const getGridCell = (row: number, col: number) => {
-    if (!selection.start || !selection.current || !isSelecting) return '';
+    if (!selection.start || !selection.current || !isSelecting) return "";
 
     const minRow = Math.min(selection.start.row, selection.current.row);
     const maxRow = Math.max(selection.start.row, selection.current.row);
@@ -69,9 +72,9 @@ export const GridSelection: React.FC<GridSelectionProps> = ({ spaceCount, timeLa
     const maxCol = Math.max(selection.start.col, selection.current.col);
 
     if (row >= minRow && row <= maxRow && col >= minCol && col <= maxCol) {
-      return 'bg-pink-100 opacity-50';
+      return "bg-pink-100 opacity-50";
     }
-    return '';
+    return "";
   };
 
   return (
@@ -79,7 +82,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({ spaceCount, timeLa
       className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
       style={{
         gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
-        gridTemplateColumns: `repeat(${spaceCount}, minmax(0, 1fr))`
+        gridTemplateColumns: `repeat(${spaceCount}, minmax(0, 1fr))`,
       }}
       onMouseUp={handleMouseUp}
     >
