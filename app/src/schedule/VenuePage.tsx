@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, getVenueInfo } from "wasp/client/operations";
-import { WeekViewCalendar } from "./WeekViewCalendar";
+import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
 
 const VenuePage: FC = () => {
 
