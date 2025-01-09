@@ -19,8 +19,8 @@ const MockReservations: Reservation[] = [
   {
     id: '1',
     spaceId: firstSpaceId,
-    startTime: new Date('2025-01-01T08:00:00'),
-    endTime: new Date('2025-01-01T09:00:00'),
+    startTime: new Date('2025-01-01T09:00:00'),
+    endTime: new Date('2025-01-01T10:00:00'),
     status: 'CONFIRMED',
     userId: '1',
     createdAt: new Date(),
@@ -137,7 +137,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
                 className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
 
                 style={{
-                  gridTemplateRows: `1.75rem repeat(${timeLabels.length * 12}, minmax(0, 1fr)) auto`,
+                  gridTemplateRows: `1.75rem repeat(${timeLabels.length * 12}, minmax(0.5rem, 1fr)) auto`,
                   gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`
                 }}
               >
