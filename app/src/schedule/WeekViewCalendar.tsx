@@ -30,8 +30,8 @@ const MockReservations: Reservation[] = [
   {
     id: '2',
     spaceId: secondSpaceId,
-    startTime: new Date('2025-01-01T17:00:00'),
-    endTime: new Date('2025-01-01T18:00:00'),
+    startTime: new Date('2025-01-01T10:00:00'),
+    endTime: new Date('2025-01-01T11:25:00'),
     status: 'CONFIRMED',
     userId: '1',
     createdAt: new Date(),
@@ -85,14 +85,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
               {venue.spaces.map((space, index) => (
                 <div key={space.id} className="flex items-center justify-center py-3">
                   <span className="flex items-baseline">
-                    {space.name}{' '}
-                    {index === 1 &&
-                      <span
-                        className="m-1.5 flex size-8 items-center justify-center rounded-full bg-indigo-600 font-semibold text-white"
-                      >
-                        hi
-                      </span>
-                    }
+                    {space.name}
                   </span>
                 </div>
               ))}
@@ -105,9 +98,9 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
               {/* Horizontal lines */}
               <div
                 className="col-start-1 col-end-2 row-start-1 grid divide-y divide-gray-100"
-                style={{ gridTemplateRows: `repeat(${timeLabels.length * 2}, minmax(3.5rem, 1fr))` }}
+                style={{ gridTemplateRows: `repeat(${timeLabels.length * 2}, minmax(3rem, 1fr))` }}
               >
-                <div ref={containerOffset} className="row-end-1 h-7" />
+                <div ref={containerOffset} className="row-end-1 h-2" />
                 {timeLabels.map((label, index) => (
                   <React.Fragment key={index}>
                     <div>
@@ -135,9 +128,8 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
               {/* Events */}
               <ol
                 className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
-
                 style={{
-                  gridTemplateRows: `1.75rem repeat(${timeLabels.length * 12}, minmax(0.5rem, 1fr)) auto`,
+                  gridTemplateRows: `1.75rem repeat(${timeLabels.length * 12}, minmax(8px, 1fr)) auto`,
                   gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`
                 }}
               >
@@ -147,6 +139,8 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
               </ol>
             </div>
           </div>
+
+
 
         </div>
       </div>
@@ -158,7 +152,7 @@ export const ReservationSlot = ({ reservation, gridIndex }: { reservation: Reser
   // TODO: start and end row are not correct, current hardcoded to 8AM
   const startRow = (reservation.startTime.getHours() * 12 + reservation.startTime.getMinutes() / 60) - (8 * 12) || 1
   const endRow = (reservation.endTime.getHours() * 12 + reservation.endTime.getMinutes() / 60) - (8 * 12)
-  const rowSpan = endRow - startRow
+  const rowSpan = Math.round(endRow - startRow)
   console.log(reservation.description, { rowSpan, startRow, endRow })
 
   return <li className="relative mt-px flex col-start-1" style={{
@@ -171,7 +165,7 @@ export const ReservationSlot = ({ reservation, gridIndex }: { reservation: Reser
     >
       <p className="order-1 font-semibold text-blue-700">{reservation.description}</p>
       <p className="text-blue-500 group-hover:text-blue-700">
-        <time dateTime="2022-01-12T06:00">{format(reservation.startTime, 'h:mm a')}</time>
+        <time dateTime="2022-01-12T06:00">{format(reservation.startTime, 'h:mm a')} - {format(reservation.endTime, 'h:mm a')}</time>
       </p>
     </a>
   </li>
