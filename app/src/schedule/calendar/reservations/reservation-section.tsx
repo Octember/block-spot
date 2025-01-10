@@ -2,7 +2,7 @@ import { addMinutes } from 'date-fns';
 import { useCallback, useState } from 'react';
 import { Reservation } from 'wasp/entities';
 import { GridSelection } from '../selection';
-import { ReservationSlot } from '../reservation-slot';
+import { ReservationSlot } from './reservation-slot';
 import { useQuery, getVenueInfo, deleteReservation } from 'wasp/client/operations';
 import { DndContext, MouseSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
 import { useToast } from '../../../client/toast';

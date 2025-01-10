@@ -26,6 +26,7 @@ import {
 } from "wasp/client/operations";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
+import { getRowSpan } from './utilities';
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -54,24 +55,14 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     }
   }, [isDraft]);
 
-  let ref = useRef();
+  // TODO: start and end row are not correct, current hardcoded to 8AM
+  const startRow = Math.ceil(
+    reservation.startTime.getHours() * 2 +
+    reservation.startTime.getMinutes() / 30 -
+    7 * 2
+  );
 
-  const { startRow, rowSpan } = useMemo(() => {
-    // TODO: start and end row are not correct, current hardcoded to 8AM
-    const startRow = Math.ceil(
-      reservation.startTime.getHours() * 2 +
-      reservation.startTime.getMinutes() / 30 -
-      7 * 2
-    );
-    const endRow = Math.ceil(
-      reservation.endTime.getHours() * 2 +
-      reservation.endTime.getMinutes() / 30 -
-      7 * 2
-    );
-    const rowSpan = Math.round(endRow - startRow);
-
-    return { startRow, rowSpan };
-  }, [reservation.startTime, reservation.endTime, isDragging]);
+  const rowSpan = getRowSpan(reservation);
 
   const colorStyles = isDraft
     ? "bg-pink-50 hover:bg-pink-100 border-pink-400"
