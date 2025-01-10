@@ -12,9 +12,7 @@ const GridSize = 32;
 
 
 export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spaceIds: string[] }) => {
-  const { isOver, setNodeRef } = useDroppable({
-    id: `droppable-${venue.id}`,
-  });
+
   const setToast = useToast();
 
 
@@ -94,7 +92,6 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
       </ol>
 
       <ol
-        ref={setNodeRef}
         className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
         style={{
           gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
