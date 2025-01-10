@@ -9,6 +9,13 @@ import {
   createReservation,
   deleteReservation,
 } from "wasp/client/operations";
+import { closestCorners, DndContext, MouseSensor, rectIntersection, TouchSensor, useDroppable, useSensor, useSensors } from "@dnd-kit/core";
+
+import {
+  restrictToVerticalAxis,
+  restrictToWindowEdges,
+  createSnapModifier
+} from '@dnd-kit/modifiers';
 
 const timeLabels = [
   "8AM",
@@ -26,48 +33,10 @@ const timeLabels = [
   "8PM",
 ];
 
-const firstSpaceId = "1456beda-3377-482e-abb7-4c22222eec7c";
-const secondSpaceId = "5340171c-a5c0-415e-be9c-5b1b96401d3f";
-
-const MockReservations: Reservation[] = [
-  {
-    id: "1",
-    spaceId: firstSpaceId,
-    startTime: new Date("2025-01-01T09:00:00"),
-    endTime: new Date("2025-01-01T10:00:00"),
-    status: "CONFIRMED",
-    userId: "1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description: "This is another description",
-  },
-  {
-    id: "2",
-    spaceId: secondSpaceId,
-    startTime: new Date("2025-01-01T10:00:00"),
-    endTime: new Date("2025-01-01T11:25:00"),
-    status: "CONFIRMED",
-    userId: "1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description: "This is a test description",
-  },
-  {
-    id: "3",
-    spaceId: firstSpaceId,
-    startTime: new Date("2025-01-01T12:00:00"),
-    endTime: new Date("2025-01-01T14:00:00"),
-    status: "CONFIRMED",
-    userId: "1",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description: "Meeting with design team at Disney",
-  },
-];
-
 interface WeekViewCalendarProps {
   venue: Venue & { spaces: (Space & { reservations: Reservation[] })[] };
 }
+
 
 export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
   const container = useRef(null);
@@ -75,29 +44,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
   const containerOffset = useRef(null);
   const spaceIds = venue.spaces.map((space) => space.id);
 
-  const reservations = venue.spaces.flatMap((space) => space.reservations);
-  const { refetch } = useQuery(getVenueInfo);
 
-  const [draftReservation, setDraftReservation] = useState<Reservation | null>(
-    null
-  );
-
-  const handleSelectionComplete = useCallback(
-    (start: Date, end: Date, spaceIndex: number) => {
-      setDraftReservation({
-        id: "draft",
-        spaceId: spaceIds[spaceIndex],
-        startTime: start,
-        endTime: end,
-        status: "PENDING",
-        userId: "1",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        description: "Draft reservation",
-      });
-    },
-    [setDraftReservation]
-  );
 
   return (
     <div className="flex h-full flex-col">
@@ -174,50 +121,8 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
               </div>
 
               {/* Events */}
-              <ol
-                className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
-                style={{
-                  gridTemplateRows: `2rem repeat(${
-                    timeLabels.length * 2
-                  }, 2rem)`,
-                  gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
-                }}
-              >
-                {reservations.map((reservation) => (
-                  <ReservationSlot
-                    key={reservation.id}
-                    reservation={reservation}
-                    isDraft={false}
-                    gridIndex={spaceIds.findIndex(
-                      (spaceId) => spaceId === reservation.spaceId
-                    )}
-                    onDelete={async () => {
-                      await deleteReservation({ id: reservation.id });
-                      refetch();
-                    }}
-                  />
-                ))}
-                {draftReservation && (
-                  <ReservationSlot
-                    reservation={draftReservation}
-                    gridIndex={spaceIds.findIndex(
-                      (spaceId) => spaceId === draftReservation.spaceId
-                    )}
-                    isDraft
-                    onCreate={async () => {
-                      setDraftReservation(null);
-                      refetch();
-                    }}
-                    onDiscardDraft={() => setDraftReservation(null)}
-                  />
-                )}
-              </ol>
 
-              <GridSelection
-                spaceCount={venue.spaces.length}
-                timeLabels={timeLabels}
-                onSelectionComplete={handleSelectionComplete}
-              />
+              <ReservationsSection venue={venue} spaceIds={spaceIds} />
             </div>
           </div>
         </div>
@@ -225,3 +130,102 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
     </div>
   );
 };
+
+
+
+const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spaceIds: string[] }) => {
+  const { isOver, setNodeRef } = useDroppable({
+    id: `droppable-${venue.id}`,
+  });
+  const style = {
+    backgroundColor: isOver ? 'green' : undefined,
+  };
+
+  const reservations = venue.spaces.flatMap((space) => space.reservations);
+  const { refetch } = useQuery(getVenueInfo);
+
+  const [draftReservation, setDraftReservation] = useState<Reservation | null>(
+    null
+  );
+
+
+  const handleSelectionComplete = useCallback(
+    (start: Date, end: Date, spaceIndex: number) => {
+      setDraftReservation({
+        id: "draft",
+        spaceId: spaceIds[spaceIndex],
+        startTime: start,
+        endTime: end,
+        status: "PENDING",
+        userId: "1",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        description: "Draft reservation",
+      });
+    },
+    [setDraftReservation]
+  );
+
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: {
+      distance: 5, // needed to allow clicking on the reservation slot
+    },
+  })
+  const sensors = useSensors(mouseSensor)
+
+  return <>
+    <DndContext sensors={sensors}
+      modifiers={[restrictToVerticalAxis, createSnapModifier(16)]}
+      onDragMove={(e) => {
+        console.log("Drag move event:", e);
+      }}
+      onDragEnd={(e) => {
+
+      }}
+    >
+      <ol
+        ref={setNodeRef}
+        className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
+        style={{
+          gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
+          gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
+          ...style
+        }}
+      >
+        {reservations.map((reservation) => (
+          <ReservationSlot
+            key={reservation.id}
+            reservation={reservation}
+            isDraft={false}
+            gridIndex={spaceIds.findIndex(
+              (spaceId) => spaceId === reservation.spaceId
+            )}
+            onDelete={async () => {
+              await deleteReservation({ id: reservation.id });
+              refetch();
+            }}
+          />
+        ))}
+        {draftReservation && (
+          <ReservationSlot
+            reservation={draftReservation}
+            gridIndex={spaceIds.findIndex(
+              (spaceId) => spaceId === draftReservation.spaceId
+            )}
+            isDraft
+            onCreate={async () => {
+              setDraftReservation(null);
+              refetch();
+            }}
+            onDiscardDraft={() => setDraftReservation(null)}
+          />
+        )}
+      </ol>
+    </DndContext>
+    <GridSelection
+      spaceCount={venue.spaces.length}
+      timeLabels={timeLabels}
+      onSelectionComplete={handleSelectionComplete}
+    />
+  </>
+}

@@ -25,6 +25,7 @@ import {
   updateReservation,
 } from "wasp/client/operations";
 import { useEffect, useRef, useState } from "react";
+import { useDraggable } from "@dnd-kit/core";
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -38,6 +39,9 @@ type ReservationSlotProps = {
 export const ReservationSlot = (props: ReservationSlotProps) => {
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
+  const { attributes, listeners, setNodeRef, transform, over } = useDraggable({
+    id: `reservation-${reservation.id}`,
+  });
 
   useEffect(() => {
     if (isDraft && descriptionInputRef.current) {
@@ -48,13 +52,13 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   // TODO: start and end row are not correct, current hardcoded to 8AM
   const startRow = Math.ceil(
     reservation.startTime.getHours() * 2 +
-      reservation.startTime.getMinutes() / 30 -
-      7 * 2
+    reservation.startTime.getMinutes() / 30 -
+    7 * 2
   );
   const endRow = Math.ceil(
     reservation.endTime.getHours() * 2 +
-      reservation.endTime.getMinutes() / 30 -
-      7 * 2
+    reservation.endTime.getMinutes() / 30 -
+    7 * 2
   );
   const rowSpan = Math.round(endRow - startRow);
 
@@ -68,15 +72,21 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   return (
     <li
       className="relative flex"
-      onClick={() => setIsEditing(true)}
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,
+        // pointerEvents: "none",
+        transform: transform ? `translate3d(0px, ${transform.y}px, 0)` : undefined,
       }}
+
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
     >
       <a
+
         href="#"
-        className={`group absolute inset-x-2 inset-y-0.5 flex flex-col justify-between overflow-y-auto rounded-lg p-2 text-xs/5   border-l-8 ${colorStyles}`}
+        className={`group w-full m-1 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 ${colorStyles}`}
       >
         <div className="flex flex-col">
           <div className="flex flex-row justify-between">
@@ -130,7 +140,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
               <PopoverButton>
                 <EllipsisHorizontalIcon
                   aria-hidden="true"
-                  className="mr-1 size-5 text-gray-400 group-hover:text-blue-700"
+                  className="size-5 text-gray-400 group-hover:text-gray-700"
                 />
               </PopoverButton>
 
