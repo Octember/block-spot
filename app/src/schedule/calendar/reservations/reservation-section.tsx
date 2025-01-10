@@ -21,7 +21,6 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
     setReservations(venue.spaces.flatMap((space) => space.reservations));
   }, [venue]);
 
-
   const { refetch } = useQuery(getVenueInfo);
 
   const [draftReservation, setDraftReservation] = useState<Reservation | null>(
