@@ -1,6 +1,6 @@
 import { DndContext, MouseSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
 import { addMinutes } from 'date-fns';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { deleteReservation, getVenueInfo, updateReservation, useQuery } from 'wasp/client/operations';
 import { Reservation } from 'wasp/entities';
 import { useToast } from '../../../client/toast';
@@ -17,6 +17,11 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
   const setToast = useToast();
 
   const [reservations, setReservations] = useState(venue.spaces.flatMap((space) => space.reservations));
+  useEffect(() => {
+    setReservations(venue.spaces.flatMap((space) => space.reservations));
+  }, [venue]);
+
+
   const { refetch } = useQuery(getVenueInfo);
 
   const [draftReservation, setDraftReservation] = useState<Reservation | null>(
@@ -135,7 +140,6 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
             onDelete={async () => {
               await deleteReservation({ id: reservation.id });
               setToast({ title: "Reservation deleted" });
-              refetch();
             }}
           />
         ))}
