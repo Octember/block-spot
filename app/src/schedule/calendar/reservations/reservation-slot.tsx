@@ -27,6 +27,7 @@ import {
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { getRowSpan } from './utilities';
+import { UpdateButton } from './update-button';
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -196,42 +197,9 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                 {format(reservation.endTime, "h:mm a")}
               </time>
             </p>
-            {isDraft && (
-              <div className="flex flex-col flex-1 justify-end">
-
-              </div>
-            )}
           </div>
         </div>
-
-
       </a>
     </li>
-  );
-};
-
-const UpdateButton = ({
-  onClick,
-  color,
-  text,
-  type,
-}: {
-  onClick?: () => void;
-  color: "red" | "green";
-  text: string;
-  type?: "submit" | undefined;
-}) => {
-  const colorStyle = color === "red" ? "bg-red-500" : "bg-green-500";
-  const hoverStyle =
-    color === "red" ? "hover:bg-red-600" : "hover:bg-green-600";
-
-  return (
-    <button
-      type={type}
-      onClick={onClick}
-      className={`${colorStyle} justify-self-end ${hoverStyle} text-white px-2 py rounded`}
-    >
-      {text}
-    </button>
   );
 };
