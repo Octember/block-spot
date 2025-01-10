@@ -97,7 +97,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
         href="#"
         className={`group w-full my-1 mx-4 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles}`}
       >
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-1">
           <div className="flex flex-row justify-between">
             {isDraft || isEditing ? (
               <form
@@ -111,6 +111,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                       endTime: reservation.endTime,
                       description: description,
                     });
+                    props.onCreate?.();
+
                   } else {
                     await updateReservation({
                       id: reservation.id,
@@ -138,6 +140,20 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                     <CheckIcon className="size-5 bg-green-500 hover:bg-green-600 rounded p-0.5 text-white" />
                   </button>
                 )}
+                {isDraft &&
+                  <div className="flex flex-row justify-end gap-2">
+                    <UpdateButton
+                      type="submit"
+                      color="green"
+                      text="Create"
+                    />
+                    <UpdateButton
+                      color="red"
+                      onClick={() => props.onDiscardDraft?.()}
+                      text="Cancel"
+                    />
+                  </div>
+                }
               </form>
             ) : (
               <p className="font-semibold text-gray-700">
@@ -182,36 +198,22 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             </Popover>
           </div>
 
-          <p className="text-gray-500 group-hover:text-gray-700">
-            <time dateTime="2022-01-12T06:00">
-              {format(reservation.startTime, "h:mm a")} -{" "}
-              {format(reservation.endTime, "h:mm a")}
-            </time>
-          </p>
+          <div className="flex flex-row justify-between h-full">
+            <p className="text-gray-500 group-hover:text-gray-700">
+              <time dateTime="2022-01-12T06:00">
+                {format(reservation.startTime, "h:mm a")} -{" "}
+                {format(reservation.endTime, "h:mm a")}
+              </time>
+            </p>
+            {isDraft && (
+              <div className="flex flex-col flex-1 justify-end">
+
+              </div>
+            )}
+          </div>
         </div>
 
-        {isDraft && (
-          <div className="flex flex-row justify-end gap-2">
-            <UpdateButton
-              color="green"
-              onClick={async () => {
-                await createReservation({
-                  spaceId: reservation.spaceId,
-                  startTime: reservation.startTime,
-                  endTime: reservation.endTime,
-                  description: description,
-                });
-                props.onCreate?.();
-              }}
-              text="Create"
-            />
-            <UpdateButton
-              color="red"
-              onClick={() => props.onDiscardDraft?.()}
-              text="Cancel"
-            />
-          </div>
-        )}
+
       </a>
     </li>
   );
@@ -221,10 +223,12 @@ const UpdateButton = ({
   onClick,
   color,
   text,
+  type,
 }: {
-  onClick: () => void;
+  onClick?: () => void;
   color: "red" | "green";
   text: string;
+  type?: "submit" | undefined;
 }) => {
   const colorStyle = color === "red" ? "bg-red-500" : "bg-green-500";
   const hoverStyle =
@@ -232,8 +236,9 @@ const UpdateButton = ({
 
   return (
     <button
+      type={type}
       onClick={onClick}
-      className={`${colorStyle} justify-self-end hover:${hoverStyle} text-white px-2 py-1 rounded-md`}
+      className={`${colorStyle} justify-self-end ${hoverStyle} text-white px-2 py rounded`}
     >
       {text}
     </button>
