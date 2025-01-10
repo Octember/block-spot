@@ -5,14 +5,20 @@ function getStartEndTime(selection: {
   start: { row: number; col: number };
   current: { row: number; col: number };
 }): { start: Date; end: Date } {
+  const isEqual = selection.start.row === selection.current.row;
+
   if (selection.start.row > selection.current.row) {
     const startTime = calculateTimeFromRow(selection.current.row - 1);
-    const endTime = calculateTimeFromRow(selection.start.row);
+    const endTime = calculateTimeFromRow(
+      selection.start.row + (isEqual ? 1 : 0)
+    );
     return { start: startTime, end: endTime };
   }
 
   const startTime = calculateTimeFromRow(selection.start.row - 1);
-  const endTime = calculateTimeFromRow(selection.current.row);
+  const endTime = calculateTimeFromRow(
+    selection.current.row + (isEqual ? 1 : 0)
+  );
   return { start: startTime, end: endTime };
 }
 

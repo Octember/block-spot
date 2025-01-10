@@ -78,6 +78,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   return (
     <li
       className="relative flex"
+      onClick={() => setIsEditing(true)}
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,
@@ -90,7 +91,26 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
         <div>
           <div className="flex flex-row justify-between">
             {isDraft || isEditing ? (
-              <div className="flex flex-row gap-2 items-center">
+              <form
+                className="flex flex-row gap-2 items-center"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (isDraft) {
+                    await createReservation({
+                      spaceId: reservation.spaceId,
+                      startTime: reservation.startTime,
+                      endTime: reservation.endTime,
+                      description: description,
+                    });
+                  } else {
+                    await updateReservation({
+                      id: reservation.id,
+                      description: description,
+                    });
+                  }
+                  setIsEditing(false);
+                }}
+              >
                 <input
                   autoFocus
                   ref={descriptionInputRef}
@@ -105,18 +125,11 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                   }}
                 />
                 {!isDraft && (
-                  <CheckIcon
-                    onClick={async () => {
-                      await updateReservation({
-                        id: reservation.id,
-                        description: description,
-                      });
-                      setIsEditing(false);
-                    }}
-                    className="size-5 bg-green-500 hover:bg-green-600 rounded p-0.5 text-white"
-                  />
+                  <button type="submit">
+                    <CheckIcon className="size-5 bg-green-500 hover:bg-green-600 rounded p-0.5 text-white" />
+                  </button>
                 )}
-              </div>
+              </form>
             ) : (
               <p className="font-semibold text-blue-700">
                 {reservation.description}
@@ -186,7 +199,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             <UpdateButton
               color="red"
               onClick={props.onDiscardDraft}
-              text="Delete"
+              text="Cancel"
             />
           </div>
         )}
