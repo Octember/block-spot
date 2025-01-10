@@ -59,7 +59,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const rowSpan = Math.round(endRow - startRow);
 
   const colorStyles = isDraft
-    ? "bg-pink-100 hover:bg-pink-200 border-pink-500"
+    ? "bg-pink-50 hover:bg-pink-100 border-pink-400"
     : "bg-blue-50 hover:bg-blue-100 border-blue-500";
 
   const [isEditing, setIsEditing] = useState(false);
@@ -78,7 +78,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
         href="#"
         className={`group absolute inset-x-2 inset-y-0.5 flex flex-col justify-between overflow-y-auto rounded-lg p-2 text-xs/5   border-l-8 ${colorStyles}`}
       >
-        <div>
+        <div className="flex flex-col">
           <div className="flex flex-row justify-between">
             {isDraft || isEditing ? (
               <form
@@ -121,7 +121,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                 )}
               </form>
             ) : (
-              <p className="font-semibold text-blue-700">
+              <p className="font-semibold text-gray-700">
                 {reservation.description}
               </p>
             )}
@@ -163,7 +163,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             </Popover>
           </div>
 
-          <p className="text-blue-500 group-hover:text-blue-700">
+          <p className="text-gray-500 group-hover:text-gray-700">
             <time dateTime="2022-01-12T06:00">
               {format(reservation.startTime, "h:mm a")} -{" "}
               {format(reservation.endTime, "h:mm a")}
