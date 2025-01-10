@@ -1,33 +1,24 @@
+import { useDraggable } from "@dnd-kit/core";
 import {
-  Bars3Icon,
+  Popover,
+  PopoverButton,
+  PopoverPanel
+} from "@headlessui/react";
+import {
   CheckIcon,
-  ChevronDownIcon,
   EllipsisHorizontalIcon,
   PencilSquareIcon,
-  TrashIcon,
+  TrashIcon
 } from "@heroicons/react/20/solid";
 import { format } from "date-fns";
-import { Reservation } from "wasp/entities";
+import { useEffect, useRef, useState } from "react";
 import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  PopoverButton,
-  PopoverPanel,
-} from "@headlessui/react";
-import { Popover } from "@headlessui/react";
-import {
-  createTask,
-  useQuery,
   createReservation,
-  deleteReservation,
-  updateReservation,
+  updateReservation
 } from "wasp/client/operations";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useDraggable } from "@dnd-kit/core";
-import { getRowSpan } from './utilities';
+import { Reservation } from "wasp/entities";
 import { UpdateButton } from './update-button';
+import { getRowSpan } from './utilities';
 
 type ReservationSlotProps = {
   reservation: Reservation;
