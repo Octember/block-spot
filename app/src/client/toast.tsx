@@ -16,7 +16,6 @@ export const ToastProvider: FC<PropsWithChildren> = ({ children }) => {
   return <ToastContext.Provider value={{ toast, setToast }}>
     {children}
 
-
     return <div
       aria-live="assertive"
       className="pointer-events-none z-99999 fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6"
@@ -54,7 +53,6 @@ export const ToastProvider: FC<PropsWithChildren> = ({ children }) => {
     </div>
   </ToastContext.Provider>
 }
-
 
 export const useToast = () => {
   const context = useContext(ToastContext);

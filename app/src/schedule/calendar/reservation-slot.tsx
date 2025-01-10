@@ -74,8 +74,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   }, [reservation.startTime, reservation.endTime, isDragging]);
 
   const colorStyles = isDraft
-    ? "bg-pink-50 hover:bg-pink-50 border-pink-400"
-    : "bg-blue-50 hover:bg-blue-50 border-blue-500";
+    ? "bg-pink-50 hover:bg-pink-100 border-pink-400"
+    : "bg-blue-50 hover:bg-blue-100 border-blue-500";
 
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(reservation.description);

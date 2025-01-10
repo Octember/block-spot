@@ -1,23 +1,15 @@
-import { type Task } from 'wasp/entities';
 
 import {
-  generateGptResponse,
-  deleteTask,
-  updateTask,
-  createTask,
-  useQuery,
-  getAllTasksByUser,
-  getVenueInfo
+  getVenueInfo,
+  useQuery
 } from 'wasp/client/operations';
 
-import { useState, useMemo } from 'react';
-import { CgSpinner } from 'react-icons/cg';
-import { TiDelete } from 'react-icons/ti';
-import type { GeneratedSchedule, MainTask, SubTask } from '../demo-ai-app/schedule';
-import { cn } from '../client/cn';
 import { VenueList } from './venues';
 
 export default function DemoAppPage() {
+
+  const { data: venues, isLoading: isVenueLoading } = useQuery(getVenueInfo);
+
   return (
     <div className='py-10 lg:mt-10'>
       <div className='mx-auto max-w-full px-6 lg:px-8'>
@@ -32,26 +24,13 @@ export default function DemoAppPage() {
         </p> */}
         <div className='my-8 border rounded-3xl border-gray-900/10 dark:border-gray-100/10'>
           <div className='sm:w-[90%] md:w-[70%] lg:w-[50%] py-10 px-6 mx-auto my-8 space-y-10'>
-            <NewTaskForm handleCreateTask={createTask} />
+          <div className='flex flex-col justify-center gap-10'>
+      <VenueList venues={venues || []} />
+    </div>
           </div>
         </div>
       </div>
     </div>
   );
 }
-
-function NewTaskForm({ handleCreateTask }: { handleCreateTask: typeof createTask }) {
-
-  const { data: venues, isLoading: isVenueLoading } = useQuery(getVenueInfo);
-  console.log(venues);
-
-
-
-  return (
-    <div className='flex flex-col justify-center gap-10'>
-      <VenueList venues={venues || []} />
-    </div>
-  );
-}
-
 
