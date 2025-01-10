@@ -86,8 +86,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,
-        // pointerEvents: "none",
-        transform: transform ? `translate3d(0px, ${transform.y}px, 0)` : undefined,
+        transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
       }}
       ref={setNodeRef}
       {...attributes}
@@ -96,7 +95,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       <a
 
         href="#"
-        className={`group w-full m-1 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles}`}
+        className={`group w-full my-1 mx-4 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles}`}
       >
         <div className="flex flex-col">
           <div className="flex flex-row justify-between">

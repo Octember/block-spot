@@ -78,7 +78,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
     const maxCol = Math.max(selection.start.col, selection.current.col);
 
     if (row >= minRow && row <= maxRow && col >= minCol && col <= maxCol) {
-      return "bg-pink-100 opacity-50";
+      return "bg-pink-200 opacity-50";
     }
     return "";
   };
@@ -96,7 +96,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
         Array.from({ length: spaceCount }).map((_, col) => (
           <div
             key={`${row}-${col}`}
-            className={`${getGridCell(row, col)} inset-1 roundedcursor-pointer`}
+            className={`${getGridCell(row, col)} inset-1 rounded cursor-pointer`}
             onMouseDown={() => handleMouseDown(row, col)}
             onMouseMove={() => handleMouseMove(row, col)}
           />
