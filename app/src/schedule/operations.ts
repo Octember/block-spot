@@ -35,11 +35,16 @@ export const createReservation: CreateReservation<CreateReservationPayload, Rese
     throw new HttpError(401)
   }
 
+  const endTime = new Date(args.endTime);
+  endTime.setSeconds(0, 0);
+  const startTime = new Date(args.startTime);
+  startTime.setSeconds(0, 0);
+
   return context.entities.Reservation.create({
     data: {
       spaceId: args.spaceId,
-      startTime: args.startTime,
-      endTime: args.endTime,
+      startTime: startTime,
+      endTime: endTime,
       userId: context.user.id,
       status: "CONFIRMED",
       description: args.description,
