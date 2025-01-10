@@ -73,13 +73,13 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
             spaceId: newSpaceId,
           });
         } else {
-
           const updatedReservation = {
             ...draggingReservation,
             startTime: addMinutes(draggingReservation.startTime, delta * 30),
             endTime: addMinutes(draggingReservation.endTime, delta * 30),
             spaceId: newSpaceId,
           }
+          // update in state to avoid flicker
           setReservations(reservations.map((reservation) => {
             if (reservation.id === draggingReservation.id) {
               return updatedReservation;
