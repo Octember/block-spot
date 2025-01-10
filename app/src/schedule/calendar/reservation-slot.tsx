@@ -29,17 +29,11 @@ import { useEffect, useRef, useState } from "react";
 type ReservationSlotProps = {
   reservation: Reservation;
   gridIndex: number;
-} & (
-  | {
-      isDraft: true;
-      onCreate: () => void;
-      onDiscardDraft: () => void;
-    }
-  | {
-      isDraft: false;
-      onDelete: () => void;
-    }
-);
+  isDraft: boolean;
+  onCreate?: () => void;
+  onDiscardDraft?: () => void;
+  onDelete?: () => void;
+};
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
   const { reservation, gridIndex, isDraft } = props;
@@ -65,8 +59,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const rowSpan = Math.round(endRow - startRow);
 
   const colorStyles = isDraft
-    ? "bg-pink-100 hover:bg-pink-200"
-    : "bg-blue-50 hover:bg-blue-100";
+    ? "bg-pink-100 hover:bg-pink-200 border-pink-500"
+    : "bg-blue-50 hover:bg-blue-100 border-blue-500";
 
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(reservation.description);
@@ -82,7 +76,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     >
       <a
         href="#"
-        className={`group absolute inset-0.5 flex flex-col justify-between overflow-y-auto rounded-lg p-2 text-xs/5 ${colorStyles}`}
+        className={`group absolute inset-x-2 inset-y-0.5 flex flex-col justify-between overflow-y-auto rounded-lg p-2 text-xs/5   border-l-8 ${colorStyles}`}
       >
         <div>
           <div className="flex flex-row justify-between">
@@ -188,13 +182,13 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                   endTime: reservation.endTime,
                   description: reservation.description,
                 });
-                props.onCreate();
+                props.onCreate?.();
               }}
               text="Create"
             />
             <UpdateButton
               color="red"
-              onClick={props.onDiscardDraft}
+              onClick={() => props.onDiscardDraft?.()}
               text="Cancel"
             />
           </div>
