@@ -3,12 +3,16 @@ import NavBar from './components/NavBar/NavBar';
 import CookieConsentBanner from './components/cookie-consent/Banner';
 import { appNavigationItems } from './components/NavBar/contentSections';
 import { landingPageNavigationItems } from '../landing-page/contentSections';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, PropsWithChildren, FC, useState, createContext, useContext } from 'react';
 import { routes } from 'wasp/client/router';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from 'wasp/client/auth';
 import { useIsLandingPage } from './hooks/useIsLandingPage';
 import { updateCurrentUser } from 'wasp/client/operations';
+import { Transition } from '@headlessui/react';
+import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import {ToastProvider} from './toast';
+
 
 /**
  * use this component to wrap all child components
@@ -51,18 +55,22 @@ export default function App() {
   return (
     <>
       <div className='min-h-screen dark:text-white dark:bg-boxdark-2'>
-        {isAdminDashboard ? (
-          <Outlet />
-        ) : (
-          <>
-            {shouldDisplayAppNavBar && <NavBar navigationItems={navigationItems} />}
-            <div className='mx-auto max-w-full sm:px-6 lg:px-8'>
-              <Outlet />
-            </div>
-          </>
-        )}
+        <ToastProvider>
+          {isAdminDashboard ? (
+            <Outlet />
+          ) : (
+            <>
+              {shouldDisplayAppNavBar && <NavBar navigationItems={navigationItems} />}
+              <div className='mx-auto max-w-full sm:px-6 lg:px-8'>
+                <Outlet />
+              </div>
+            </>
+          )}
+
+        </ToastProvider>
       </div>
       <CookieConsentBanner />
     </>
   );
 }
+

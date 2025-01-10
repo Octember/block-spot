@@ -16,6 +16,7 @@ import {
   restrictToWindowEdges,
   createSnapModifier
 } from '@dnd-kit/modifiers';
+import {useToast} from '../../client/toast';
 
 const timeLabels = [
   "8AM",
@@ -137,6 +138,7 @@ const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spac
   const { isOver, setNodeRef } = useDroppable({
     id: `droppable-${venue.id}`,
   });
+  const setToast = useToast();
 
 
   const reservations = venue.spaces.flatMap((space) => space.reservations);
@@ -244,6 +246,7 @@ const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spac
             )}
             onDelete={async () => {
               await deleteReservation({ id: reservation.id });
+              setToast({title:"Reservation deleted"});
               refetch();
             }}
           />

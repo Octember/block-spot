@@ -74,8 +74,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   }, [reservation.startTime, reservation.endTime, isDragging]);
 
   const colorStyles = isDraft
-    ? "bg-pink-50 hover:bg-pink-100 border-pink-400"
-    : "bg-blue-50 hover:bg-blue-100 border-blue-500";
+    ? "bg-pink-50 hover:bg-pink-50 border-pink-400"
+    : "bg-blue-50 hover:bg-blue-50 border-blue-500";
 
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(reservation.description);
@@ -96,7 +96,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       <a
 
         href="#"
-        className={`group w-full m-1 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 ${colorStyles}`}
+        className={`group w-full m-1 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles}`}
       >
         <div className="flex flex-col">
           <div className="flex flex-row justify-between">
