@@ -152,7 +152,17 @@ action updateUserById {
 
 action createReservation {
   fn: import { createReservation } from "@src/schedule/operations",
-  entities: [Reservation]
+  entities: [Reservation, Space, Venue]
+}
+
+action deleteReservation {
+  fn: import { deleteReservation } from "@src/schedule/operations",
+  entities: [Reservation, Space, Venue]
+}
+
+action updateReservation {
+  fn: import { updateReservation } from "@src/schedule/operations",
+  entities: [Reservation, Space, Venue]
 }
 
 //#endregion

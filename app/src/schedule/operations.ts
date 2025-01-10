@@ -1,6 +1,6 @@
 import { Reservation, Space, Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
-import { CreateReservation, GetVenueInfo } from "wasp/server/operations";
+import { CreateReservation, DeleteReservation, GetVenueInfo, UpdateReservation } from "wasp/server/operations";
 
 
 export const getVenueInfo: GetVenueInfo<void, (Venue & { spaces: (Space & { reservations: Reservation[] })[] })[]> = async (_args, context) => {
@@ -44,5 +44,22 @@ export const createReservation: CreateReservation<CreateReservationPayload, Rese
       status: "CONFIRMED",
       description: args.description,
     },
+  });
+};
+
+type DeleteReservationPayload = Pick<Reservation, "id">;
+
+export const deleteReservation: DeleteReservation<DeleteReservationPayload, Reservation> = async (args, context) => {
+  return context.entities.Reservation.delete({
+    where: { id: args.id },
+  });
+};
+
+type UpdateReservationPayload = Pick<Reservation, "id" | "description">;
+
+export const updateReservation: UpdateReservation<UpdateReservationPayload, Reservation> = async (args, context) => {
+  return context.entities.Reservation.update({
+    where: { id: args.id },
+    data: { description: args.description },
   });
 };
