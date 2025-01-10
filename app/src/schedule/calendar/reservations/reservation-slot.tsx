@@ -35,10 +35,10 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `reservation-${reservation.id}`,
     data: {
+      reservationId: reservation.id,
       startTime: reservation.startTime,
       endTime: reservation.endTime,
     },
-    disabled: !isDraft,
   });
 
   useEffect(() => {
@@ -76,7 +76,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       {...listeners}
     >
       <a
-
         href="#"
         className={`group w-full my-1 mx-4 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles}`}
       >

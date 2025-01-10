@@ -1,45 +1,36 @@
-import { addMinutes } from 'date-fns';
-import { useCallback, useState } from 'react';
-import { Reservation } from 'wasp/entities';
-import { GridSelection } from '../selection';
-import { ReservationSlot } from './reservation-slot';
-import { useQuery, getVenueInfo, deleteReservation } from 'wasp/client/operations';
 import { DndContext, MouseSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
+import { addMinutes } from 'date-fns';
+import { useMemo, useState } from 'react';
+import { deleteReservation, getVenueInfo, updateReservation, useQuery } from 'wasp/client/operations';
+import { Reservation } from 'wasp/entities';
 import { useToast } from '../../../client/toast';
 import { WeekViewCalendarProps } from '../WeekViewCalendar';
 import { timeLabels } from '../constants';
-const GridSize = 32;
+import { GridSelection } from '../selection';
+import { ReservationSlot } from './reservation-slot';
+import { getRowSpan } from './utilities';
 
+const GridSize = 32;
 
 export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spaceIds: string[] }) => {
 
   const setToast = useToast();
 
-
-  const reservations = venue.spaces.flatMap((space) => space.reservations);
+  const [reservations, setReservations] = useState(venue.spaces.flatMap((space) => space.reservations));
   const { refetch } = useQuery(getVenueInfo);
 
   const [draftReservation, setDraftReservation] = useState<Reservation | null>(
     null
   );
+  const [draggingReservationId, setDraggingReservationId] = useState<string | null>(null);
 
+  const draggingReservation = useMemo(() => {
+    const match = reservations.find((reservation) => reservation.id === draggingReservationId)
+    if (match) return match;
+    if (draftReservation) return draftReservation;
+    return null;
+  }, [reservations, draggingReservationId, draftReservation])
 
-  const handleSelectionComplete = useCallback(
-    (start: Date, end: Date, spaceIndex: number) => {
-      setDraftReservation({
-        id: "draft",
-        spaceId: spaceIds[spaceIndex],
-        startTime: start,
-        endTime: end,
-        status: "PENDING",
-        userId: "1",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        description: "Draft reservation",
-      });
-    },
-    [setDraftReservation]
-  );
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -50,16 +41,22 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
 
   return <>
     <DndContext sensors={sensors}
+      onDragStart={(event) => {
+        const reservationId = event.active.data.current?.reservationId;
+        setDraggingReservationId(reservationId);
+      }}
       // collisionDetection={pointerWithin}
-      onDragEnd={(e) => {
+      onDragEnd={async (e) => {
         const delta = Math.round(e.delta.y / (GridSize));
         const newSpaceId = e.over?.data.current?.spaceId || draftReservation?.spaceId;
 
-        if (!draftReservation) return;
+        if (!draggingReservation) return;
 
-        const draftStartTime = addMinutes(draftReservation.startTime, delta * 30);
-        const draftEndTime = addMinutes(draftReservation.endTime, delta * 30);
+        const draftStartTime = addMinutes(draggingReservation.startTime, delta * 30);
+        const draftEndTime = addMinutes(draggingReservation.endTime, delta * 30);
         const isCollision = reservations.some((reservation) => {
+
+          if (reservation.id === draggingReservation.id) return false;
           // Check if there's an overlap between the draftReservation and an existing reservation
           if (reservation.spaceId === newSpaceId && reservation.startTime < draftEndTime && reservation.endTime > draftStartTime) {
             return true;
@@ -68,28 +65,57 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
         });
         if (isCollision) return;
 
-        setDraftReservation({
-          ...draftReservation,
-          startTime: addMinutes(draftReservation.startTime, delta * 30),
-          endTime: addMinutes(draftReservation.endTime, delta * 30),
-          spaceId: newSpaceId,
-        });
+        if (draggingReservation.id === 'draft') {
+          setDraftReservation({
+            ...draggingReservation,
+            startTime: addMinutes(draggingReservation.startTime, delta * 30),
+            endTime: addMinutes(draggingReservation.endTime, delta * 30),
+            spaceId: newSpaceId,
+          });
+        } else {
+
+          const updatedReservation = {
+            ...draggingReservation,
+            startTime: addMinutes(draggingReservation.startTime, delta * 30),
+            endTime: addMinutes(draggingReservation.endTime, delta * 30),
+            spaceId: newSpaceId,
+          }
+          setReservations(reservations.map((reservation) => {
+            if (reservation.id === draggingReservation.id) {
+              return updatedReservation;
+            }
+            return reservation;
+          }))
+
+          await updateReservation({
+            ...updatedReservation,
+          });
+          setToast({ title: "Reservation updated" });
+        }
       }}
     >
       {/* Droppable spaces */}
-      <ol
-        className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
-        style={{
-          gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
-          gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
-        }}
-      >
-        {spaceIds.map((spaceId, columnIndex) => (
-          Array.from({ length: timeLabels.length * 2 }).map((_, rowIndex) => (
-            <DroppableSpace key={`${spaceId}-${rowIndex}`} spaceId={spaceId} columnIndex={columnIndex} rowIndex={rowIndex} />
-          ))
-        ))}
-      </ol>
+      {draggingReservation &&
+        <ol
+          className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
+          style={{
+            gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
+            gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
+          }}
+        >
+          {spaceIds.map((spaceId, columnIndex) => (
+            Array.from({ length: timeLabels.length * 2 }).map((_, rowIndex) => (
+              <DroppableSpace
+                key={`${spaceId}-${rowIndex}`}
+                spaceId={spaceId}
+                columnIndex={columnIndex}
+                rowIndex={rowIndex}
+                rowSpan={getRowSpan(draggingReservation)}
+              />
+            ))
+          ))}
+        </ol>
+      }
 
       <ol
         className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
@@ -132,12 +158,24 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
     <GridSelection
       spaceCount={venue.spaces.length}
       timeLabels={timeLabels}
-      onSelectionComplete={handleSelectionComplete}
+      onSelectionComplete={(start: Date, end: Date, spaceIndex: number) => {
+        setDraftReservation({
+          id: "draft",
+          spaceId: spaceIds[spaceIndex],
+          startTime: start,
+          endTime: end,
+          status: "PENDING",
+          userId: "1",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          description: "Draft reservation",
+        });
+      }}
     />
   </>
 }
 
-const DroppableSpace = ({ spaceId, columnIndex, rowIndex }: { spaceId: string; columnIndex: number; rowIndex: number }) => {
+const DroppableSpace = ({ spaceId, columnIndex, rowIndex, rowSpan }: { spaceId: string; columnIndex: number; rowIndex: number; rowSpan: number }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: `droppable-${spaceId}-${rowIndex}`,
     data: {
@@ -149,7 +187,7 @@ const DroppableSpace = ({ spaceId, columnIndex, rowIndex }: { spaceId: string; c
   return <li ref={setNodeRef}
     className={`${isOver ? "bg-gray-300" : ""} border`}
     style={{
-      gridRow: `${rowIndex + 1} / span 2`,
+      gridRow: `${rowIndex + 1} / span ${rowSpan}`,
       gridColumnStart: columnIndex + 1,
     }}
   />

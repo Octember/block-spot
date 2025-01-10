@@ -60,11 +60,11 @@ export const deleteReservation: DeleteReservation<DeleteReservationPayload, Rese
   });
 };
 
-type UpdateReservationPayload = Pick<Reservation, "id" | "description">;
+type UpdateReservationPayload = Pick<Reservation, "id"> & Partial<Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">>;
 
 export const updateReservation: UpdateReservation<UpdateReservationPayload, Reservation> = async (args, context) => {
   return context.entities.Reservation.update({
     where: { id: args.id },
-    data: { description: args.description },
+    data: { description: args.description, startTime: args.startTime, endTime: args.endTime, spaceId: args.spaceId },
   });
 };
