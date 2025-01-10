@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { addMinutes, format } from "date-fns";
 import React, { FC, useCallback, useRef, useState } from "react";
 import { Reservation, Space, Venue } from "wasp/entities";
 import { GridSelection } from "./selection";
@@ -132,14 +132,12 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
 };
 
 
-
+const GridSize = 32;
 const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spaceIds: string[] }) => {
   const { isOver, setNodeRef } = useDroppable({
     id: `droppable-${venue.id}`,
   });
-  const style = {
-    backgroundColor: isOver ? 'green' : undefined,
-  };
+
 
   const reservations = venue.spaces.flatMap((space) => space.reservations);
   const { refetch } = useQuery(getVenueInfo);
@@ -175,12 +173,57 @@ const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spac
 
   return <>
     <DndContext sensors={sensors}
-      modifiers={[restrictToVerticalAxis, createSnapModifier(16)]}
-      onDragMove={(e) => {
-        console.log("Drag move event:", e);
-      }}
-      onDragEnd={(e) => {
+      modifiers={[restrictToVerticalAxis, createSnapModifier(GridSize), ({transform, ...rest}) => {
 
+        const delta = Math.round(transform.y / (GridSize)) || 0;
+        if (!draftReservation) return transform;
+
+
+        function isCollision(reservation1: Reservation, reservation2: Reservation) {
+         return reservation1.spaceId === reservation2.spaceId && reservation1.startTime < reservation2.endTime && reservation1.endTime > reservation2.startTime
+        }
+
+        const collision = reservations.find((reservation) => {
+          if (isCollision(draftReservation, reservation)) {
+            return reservation;
+          }
+          return undefined;
+        });
+
+        if (collision) {
+          // If there's a collision, prevent the transformation
+          return    {
+            ...transform,
+              x: transform.x,
+              // go back one grid size
+              y: transform.y < 0 ? Math.min(0, transform.y + GridSize) : Math.max(0, transform.y - GridSize)
+            }
+        }
+        // If no collisions, allow the transformation
+        return transform
+      }]}
+      onDragEnd={(e) => {
+        const delta = Math.round(e.delta.y / (GridSize));
+        console.log("Delta:", delta);
+        if (!draftReservation) return;
+
+
+        const draftStartTime = addMinutes(draftReservation.startTime, delta * 30);
+        const draftEndTime = addMinutes(draftReservation.endTime, delta * 30);
+        const isCollision = reservations.some((reservation) => {
+          // Check if there's an overlap between the draftReservation and an existing reservation
+          if (reservation.spaceId === draftReservation.spaceId && reservation.startTime < draftEndTime && reservation.endTime > draftStartTime) {
+            return true;
+          }
+          return false;
+        });
+        if (isCollision) return;
+
+        setDraftReservation({
+          ...draftReservation,
+          startTime: addMinutes(draftReservation.startTime, delta * 30),
+          endTime: addMinutes(draftReservation.endTime, delta * 30),
+        });
       }}
     >
       <ol
@@ -189,7 +232,6 @@ const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spac
         style={{
           gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
           gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
-          ...style
         }}
       >
         {reservations.map((reservation) => (

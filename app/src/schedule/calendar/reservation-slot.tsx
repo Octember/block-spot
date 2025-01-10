@@ -24,7 +24,7 @@ import {
   deleteReservation,
   updateReservation,
 } from "wasp/client/operations";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 
 type ReservationSlotProps = {
@@ -39,8 +39,13 @@ type ReservationSlotProps = {
 export const ReservationSlot = (props: ReservationSlotProps) => {
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
-  const { attributes, listeners, setNodeRef, transform, over } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: `reservation-${reservation.id}`,
+    data: {
+      startTime: reservation.startTime,
+      endTime: reservation.endTime,
+    },
+    disabled: !isDraft,
   });
 
   useEffect(() => {
@@ -49,18 +54,24 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     }
   }, [isDraft]);
 
-  // TODO: start and end row are not correct, current hardcoded to 8AM
-  const startRow = Math.ceil(
-    reservation.startTime.getHours() * 2 +
-    reservation.startTime.getMinutes() / 30 -
-    7 * 2
-  );
-  const endRow = Math.ceil(
-    reservation.endTime.getHours() * 2 +
-    reservation.endTime.getMinutes() / 30 -
-    7 * 2
-  );
-  const rowSpan = Math.round(endRow - startRow);
+  let ref = useRef();
+
+  const { startRow, rowSpan } = useMemo(() => {
+    // TODO: start and end row are not correct, current hardcoded to 8AM
+    const startRow = Math.ceil(
+      reservation.startTime.getHours() * 2 +
+      reservation.startTime.getMinutes() / 30 -
+      7 * 2
+    );
+    const endRow = Math.ceil(
+      reservation.endTime.getHours() * 2 +
+      reservation.endTime.getMinutes() / 30 -
+      7 * 2
+    );
+    const rowSpan = Math.round(endRow - startRow);
+
+    return { startRow, rowSpan };
+  }, [reservation.startTime, reservation.endTime, isDragging]);
 
   const colorStyles = isDraft
     ? "bg-pink-50 hover:bg-pink-100 border-pink-400"
@@ -78,7 +89,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
         // pointerEvents: "none",
         transform: transform ? `translate3d(0px, ${transform.y}px, 0)` : undefined,
       }}
-
       ref={setNodeRef}
       {...attributes}
       {...listeners}
@@ -190,7 +200,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                   spaceId: reservation.spaceId,
                   startTime: reservation.startTime,
                   endTime: reservation.endTime,
-                  description: reservation.description,
+                  description: description,
                 });
                 props.onCreate?.();
               }}
