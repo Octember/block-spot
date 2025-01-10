@@ -52,20 +52,16 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   }, [isDraft]);
 
   // TODO: start and end row are not correct, current hardcoded to 8AM
-  const startRow =
-    1 +
-    Math.ceil(
-      reservation.startTime.getHours() * 2 +
-        reservation.startTime.getMinutes() / 30 -
-        (7 * 2 + 1)
-    );
-  const endRow =
-    1 +
-    Math.ceil(
-      reservation.endTime.getHours() * 2 +
-        reservation.endTime.getMinutes() / 30 -
-        (7 * 2 + 1)
-    );
+  const startRow = Math.ceil(
+    reservation.startTime.getHours() * 2 +
+      reservation.startTime.getMinutes() / 30 -
+      7 * 2
+  );
+  const endRow = Math.ceil(
+    reservation.endTime.getHours() * 2 +
+      reservation.endTime.getMinutes() / 30 -
+      7 * 2
+  );
   const rowSpan = Math.round(endRow - startRow);
 
   const colorStyles = isDraft
