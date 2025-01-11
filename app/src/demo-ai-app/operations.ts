@@ -38,6 +38,7 @@ async function extractDate(message: string) {
           content: `You are a helpful assistant that extracts the time from the user's message.
                     They will ask if something is available, you need to extract the START and END time of the reservation.
                     Also parse the description of the reservation from the user's message, and return it as a string.
+                    If the user only specifies a time, use that time as the start time, and the end time will be 30 minutes after the start time.
           
                     Use today's date, ${new Date().toISOString()} to determine the date of the reservation.
                     ALWAYS return the time in the format '{"start": "YYYY-MM-DD HH:MM", "end": "YYYY-MM-DD HH:MM", "description": "<description>"}'`
