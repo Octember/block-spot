@@ -9,11 +9,11 @@ import { timeLabels } from '../constants';
 import { GridSelection } from '../selection';
 import { ReservationSlot } from './reservation-slot';
 import { getRowSpan } from './utilities';
-
-const GridSize = 32;
+import { DroppableSpace } from './dropptable';
+import { getSharedGridStyle, MinutesPerSlot } from './constants';
+import { PixelsPerSlot } from './constants';
 
 export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spaceIds: string[] }) => {
-
   const setToast = useToast();
 
   const [reservations, setReservations] = useState(venue.spaces.flatMap((space) => space.reservations));
@@ -51,13 +51,13 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
       }}
       // collisionDetection={pointerWithin}
       onDragEnd={async (e) => {
-        const delta = Math.round(e.delta.y / (GridSize));
+        const delta = Math.round(e.delta.y / (PixelsPerSlot));
         const newSpaceId = e.over?.data.current?.spaceId || draftReservation?.spaceId;
 
         if (!draggingReservation) return;
 
-        const draftStartTime = addMinutes(draggingReservation.startTime, delta * 30);
-        const draftEndTime = addMinutes(draggingReservation.endTime, delta * 30);
+        const draftStartTime = addMinutes(draggingReservation.startTime, delta * MinutesPerSlot);
+        const draftEndTime = addMinutes(draggingReservation.endTime, delta * MinutesPerSlot);
         const isCollision = reservations.some((reservation) => {
 
           if (reservation.id === draggingReservation.id) return false;
@@ -72,15 +72,15 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
         if (draggingReservation.id === 'draft') {
           setDraftReservation({
             ...draggingReservation,
-            startTime: addMinutes(draggingReservation.startTime, delta * 30),
-            endTime: addMinutes(draggingReservation.endTime, delta * 30),
+            startTime: addMinutes(draggingReservation.startTime, delta * MinutesPerSlot),
+            endTime: addMinutes(draggingReservation.endTime, delta * MinutesPerSlot),
             spaceId: newSpaceId,
           });
         } else {
           const updatedReservation = {
             ...draggingReservation,
-            startTime: addMinutes(draggingReservation.startTime, delta * 30),
-            endTime: addMinutes(draggingReservation.endTime, delta * 30),
+            startTime: addMinutes(draggingReservation.startTime, delta * MinutesPerSlot),
+            endTime: addMinutes(draggingReservation.endTime, delta * MinutesPerSlot),
             spaceId: newSpaceId,
           }
           // update in state to avoid flicker
@@ -101,14 +101,10 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
       {/* Droppable spaces */}
       {draggingReservation &&
         <ol
-          className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
-          style={{
-            gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
-            gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
-          }}
+          {...getSharedGridStyle(spaceIds.length)}
         >
           {spaceIds.map((spaceId, columnIndex) => (
-            Array.from({ length: timeLabels.length * 2 }).map((_, rowIndex) => (
+            Array.from({ length: timeLabels.length * (60 / MinutesPerSlot) }).map((_, rowIndex) => (
               <DroppableSpace
                 key={`${spaceId}-${rowIndex}`}
                 spaceId={spaceId}
@@ -122,11 +118,7 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
       }
 
       <ol
-        className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
-        style={{
-          gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
-          gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
-        }}
+        {...getSharedGridStyle(spaceIds.length)}
       >
         {reservations.map((reservation) => (
           <ReservationSlot
@@ -176,23 +168,4 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
       }}
     />
   </>
-}
-
-const DroppableSpace = ({ spaceId, columnIndex, rowIndex, rowSpan }: { spaceId: string; columnIndex: number; rowIndex: number; rowSpan: number }) => {
-  const { isOver, setNodeRef } = useDroppable({
-    id: `droppable-${spaceId}-${rowIndex}`,
-    data: {
-      spaceId,
-      rowIndex,
-    },
-  });
-
-  return <li ref={setNodeRef}
-    className={`${isOver ? "bg-gray-300" : ""} border`}
-    style={{
-      gridRow: `${rowIndex + 1} / span ${rowSpan}`,
-      gridColumnStart: columnIndex + 1,
-    }}
-  />
-
 }

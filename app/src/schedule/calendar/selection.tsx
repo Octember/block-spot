@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { useState } from "react";
+import { getSharedGridStyle } from './reservations/constants';
 
 function getStartEndTime(selection: {
   start: { row: number; col: number };
@@ -85,11 +86,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
 
   return (
     <div
-      className="col-start-1 col-end-2 row-start-1 grid sm:pr-8"
-      style={{
-        gridTemplateRows: `2rem repeat(${timeLabels.length * 2}, 2rem)`,
-        gridTemplateColumns: `repeat(${spaceCount}, minmax(0, 1fr))`,
-      }}
+      {...getSharedGridStyle(spaceCount)}
       onMouseUp={handleMouseUp}
     >
       {Array.from({ length: timeLabels.length * 12 }).map((_, row) =>

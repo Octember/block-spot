@@ -18,7 +18,7 @@ import {
 } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { UpdateButton } from './update-button';
-import { getRowSpan } from './utilities';
+import { getRowSpan, getRowIndex } from './utilities';
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -47,13 +47,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     }
   }, [isDraft]);
 
-  // TODO: start and end row are not correct, current hardcoded to 8AM
-  const startRow = Math.ceil(
-    reservation.startTime.getHours() * 2 +
-    reservation.startTime.getMinutes() / 30 -
-    7 * 2
-  );
-
+  const startRow = getRowIndex(reservation);
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = isDraft
