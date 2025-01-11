@@ -3,6 +3,7 @@ import { Reservation, Space, Venue } from "wasp/entities";
 
 import { timeLabels } from "./constants";
 import { ReservationsSection } from "./reservations/reservation-section";
+import { MinutesPerSlot } from "./reservations/constants";
 
 
 export interface WeekViewCalendarProps {
@@ -69,7 +70,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
               <div
                 className="col-start-1 col-end-2 row-start-1 grid"
                 style={{
-                  gridTemplateRows: `repeat(${timeLabels.length * 2}, 2rem)`,
+                  gridTemplateRows: `2rem repeat(${timeLabels.length * (60 / MinutesPerSlot)}, 2rem)`,
                 }}
               >
                 <div
@@ -85,7 +86,9 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
                       </div>
                     </div>
                     {/* 30min line */}
-                    <div className="row-span-1 border-b border-gray-200"></div>
+                    {Array.from({ length: (60 / MinutesPerSlot) - 1 }).map((_, index) => (
+                      <div key={index} className="row-span-1 border-b border-gray-200"></div>
+                    ))}
                   </React.Fragment>
                 ))}
               </div>
