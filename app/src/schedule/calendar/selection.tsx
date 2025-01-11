@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { useState } from "react";
-import { getSharedGridStyle } from './reservations/constants';
+import { getSharedGridStyle, MinutesPerSlot } from './reservations/constants';
 
 function getStartEndTime(selection: {
   start: { row: number; col: number };
@@ -25,8 +25,8 @@ function getStartEndTime(selection: {
 
 const calculateTimeFromRow = (row: number): Date => {
   const date = new Date();
-  date.setHours(8 + Math.floor(row / 2));
-  date.setMinutes((row % 2) * 30);
+  date.setHours(8 + Math.floor(row / (60 / MinutesPerSlot)));
+  date.setMinutes((row % (60 / MinutesPerSlot)) * MinutesPerSlot);
   return date;
 };
 

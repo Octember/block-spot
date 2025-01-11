@@ -12,5 +12,5 @@ export function getRowSpan(reservation: Reservation) {
 export function getRowIndex(reservation: Reservation) {
   return Math.ceil(reservation.startTime.getHours() * (60 / MinutesPerSlot) +
     reservation.startTime.getMinutes() / MinutesPerSlot -
-    7 * (60 / MinutesPerSlot));
+    7 * (60 / MinutesPerSlot)) - 2;
 }

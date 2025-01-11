@@ -1,7 +1,7 @@
 import { timeLabels } from '../constants';
 
-export const PixelsPerSlot = 32;
-export const MinutesPerSlot = 30;
+export const PixelsPerSlot = 16;
+export const MinutesPerSlot = 15;
 
 export function getSharedGridStyle(numSpaces: number) {
   return {

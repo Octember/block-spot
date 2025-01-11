@@ -10,7 +10,7 @@ export const DroppableSpace = ({ spaceId, columnIndex, rowIndex, rowSpan }: { sp
   });
 
   return <li ref={setNodeRef}
-    className={`${isOver ? "bg-gray-300" : ""} border`}
+    className={`${isOver ? "bg-gray-300" : ""}`}
     style={{
       gridRow: `${rowIndex + 1} / span ${rowSpan}`,
       gridColumnStart: columnIndex + 1,
