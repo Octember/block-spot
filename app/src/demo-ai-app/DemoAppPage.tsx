@@ -120,12 +120,12 @@ function NewTaskForm({ handleCreateTask }: { handleCreateTask: typeof createTask
   const handleGeneratePlan = async () => {
     try {
       setIsPlanGenerating(true);
-      const response = await generateGptResponse({
-        hours: todaysHours,
-      });
-      if (response) {
-        setResponse(response);
-      }
+      // const response = await generateGptResponse({
+      //   hours: todaysHours,
+      // });
+      // if (response) {
+      //   setResponse(response);
+      // }
     } catch (err: any) {
       window.alert('Error: ' + (err.message || 'Something went wrong'));
     } finally {

@@ -198,7 +198,7 @@ query getVenueInfo {
 
 action generateGptResponse {
   fn: import { generateGptResponse } from "@src/demo-ai-app/operations",
-  entities: [User, Task, GptResponse]
+  entities: [User, Task, GptResponse, Venue]
 }
 
 action createTask {
