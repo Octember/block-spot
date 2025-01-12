@@ -1,5 +1,5 @@
 import { DndContext, MouseSensor, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
-import { addMinutes } from 'date-fns';
+import { addMinutes, isWithinInterval } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { deleteReservation, getVenueInfo, updateReservation, useQuery } from 'wasp/client/operations';
 import { Reservation } from 'wasp/entities';
@@ -8,8 +8,8 @@ import { WeekViewCalendarProps } from '../WeekViewCalendar';
 import { timeLabels } from '../constants';
 import { GridSelection } from '../selection';
 import { ReservationSlot } from './reservation-slot';
-import { getRowSpan } from './utilities';
-import { DroppableSpace } from './dropptable';
+import { getRowSpan, getRowIndex, getTimeFromRowIndex, isWithinReservation } from './utilities';
+import { DroppableSpace } from './droppable';
 import { getSharedGridStyle, MinutesPerSlot } from './constants';
 import { PixelsPerSlot } from './constants';
 
@@ -111,6 +111,11 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
                 columnIndex={columnIndex}
                 rowIndex={rowIndex}
                 rowSpan={getRowSpan(draggingReservation)}
+                occupied={reservations.some((reservation) =>
+                  reservation.id !== draggingReservation.id &&
+                  reservation.spaceId === spaceId &&
+                  isWithinReservation(rowIndex, getRowSpan(draggingReservation), reservation)
+                )}
               />
             ))
           ))}

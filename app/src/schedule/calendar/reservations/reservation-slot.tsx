@@ -1,4 +1,4 @@
-import { useDraggable } from "@dnd-kit/core";
+import { Over, useDraggable } from "@dnd-kit/core";
 import {
   Popover,
   PopoverButton,
@@ -11,7 +11,7 @@ import {
   TrashIcon
 } from "@heroicons/react/20/solid";
 import { format } from "date-fns";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   createReservation,
   updateReservation
@@ -29,10 +29,20 @@ type ReservationSlotProps = {
   onDelete?: () => void;
 };
 
+function getColorStyles(isDraft: boolean, over: Over | null) {
+  if (isDraft) {
+    if (over && over.data.current?.occupied) {
+      return "bg-red-50 hover:bg-red-100 border-red-400";
+    }
+    return "bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500";
+  }
+  return "bg-gradient-to-br from-gray-200 hover:from-gray-50 to-gray-200 hover:to-gray-300 border-gray-400 hover:border-gray-500";
+}
+
 export const ReservationSlot = (props: ReservationSlotProps) => {
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+  const { attributes, listeners, setNodeRef, transform, over } = useDraggable({
     id: `reservation-${reservation.id}`,
     data: {
       reservationId: reservation.id,
@@ -41,18 +51,18 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     },
   });
 
+  if (over && over.data.current) { console.log("over", over.data.current); }
+
   useEffect(() => {
     if (isDraft && descriptionInputRef.current) {
       descriptionInputRef.current.focus();
     }
   }, [isDraft]);
 
-  const startRow = getRowIndex(reservation);
+  const startRow = getRowIndex(reservation.startTime);
   const rowSpan = getRowSpan(reservation);
 
-  const colorStyles = isDraft
-    ? "bg-pink-50 hover:bg-pink-100 border-pink-400"
-    : "bg-blue-50 hover:bg-blue-100 border-blue-500";
+  const colorStyles = useMemo(() => getColorStyles(isDraft, over), [isDraft, over]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(reservation.description);
@@ -184,6 +194,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
           </div>
         </div>
       </a>
-    </li>
+    </li >
   );
 };
