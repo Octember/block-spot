@@ -6,12 +6,7 @@ function getColor(isOver: boolean, occupied: boolean) {
     return "bg-gray-200";
   }
 
-  // if (occupied) {
-  //   return "bg-red-500";
-  // }
-
   return ""
-  return "bg-gray-200";
 }
 
 export const DroppableSpace = ({
