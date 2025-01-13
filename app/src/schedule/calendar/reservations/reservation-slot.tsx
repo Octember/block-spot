@@ -146,41 +146,10 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
               </p>
             )}
 
-            <Popover className="relative">
-              <PopoverButton>
-                <EllipsisHorizontalIcon
-                  aria-hidden="true"
-                  className="size-5 text-gray-400 group-hover:text-gray-700"
-                />
-              </PopoverButton>
-
-              <PopoverPanel className="fixed bg-white z-50 w-30 rounded-md shadow-lg ring-1 ring-black/5">
-                <div className="py-1">
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="group flex gap-2 items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    <PencilSquareIcon
-                      aria-hidden="true"
-                      className="size-3 group-data-[focus]:text-gray-500"
-                    />
-                    Edit
-                  </button>
-                  <button
-                    onClick={
-                      props.isDraft ? props.onDiscardDraft : props.onDelete
-                    }
-                    className="group flex gap-2 items-center px-4 w-full py-2 text-sm text-red-600 hover:bg-red-100"
-                  >
-                    <TrashIcon
-                      aria-hidden="true"
-                      className="size-3 group-data-[focus]:text-gray-500"
-                    />
-                    Delete
-                  </button>
-                </div>
-              </PopoverPanel>
-            </Popover>
+            <ReservationMenu
+              onEdit={() => setIsEditing(true)}
+              onDelete={() => props.isDraft ? props.onDiscardDraft?.() : props.onDelete?.()}
+            />
           </div>
 
           <div className="flex flex-row justify-between h-full">
@@ -194,5 +163,44 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
         </div>
       </a>
     </li >
+  );
+};
+
+
+const ReservationMenu = ({ onEdit, onDelete }: { onEdit: () => void, onDelete: () => void }) => {
+  return (
+    <Popover className="relative">
+      <PopoverButton>
+        <EllipsisHorizontalIcon
+          aria-hidden="true"
+          className="size-5 text-gray-400 group-hover:text-gray-700"
+        />
+      </PopoverButton>
+
+      <PopoverPanel className="fixed bg-white z-50 w-30 rounded-md shadow-lg ring-1 ring-black/5">
+        <div className="py-1">
+          <button
+            onClick={onEdit}
+            className="group flex gap-2 items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          >
+            <PencilSquareIcon
+              aria-hidden="true"
+              className="size-3 group-data-[focus]:text-gray-500"
+            />
+            Edit
+          </button>
+          <button
+            onClick={onDelete}
+            className="group flex gap-2 items-center px-4 w-full py-2 text-sm text-red-600 hover:bg-red-100"
+          >
+            <TrashIcon
+              aria-hidden="true"
+              className="size-3 group-data-[focus]:text-gray-500"
+            />
+            Delete
+          </button>
+        </div>
+      </PopoverPanel>
+    </Popover>
   );
 };
