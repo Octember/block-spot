@@ -52,8 +52,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     },
   });
 
-  if (over && over.data.current) { console.log("over", over.data.current); }
-
   useEffect(() => {
     if (isDraft && descriptionInputRef.current) {
       descriptionInputRef.current.focus();
