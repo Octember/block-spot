@@ -1,14 +1,15 @@
 
 import {
   getVenueInfo,
-  useQuery
+  useQuery,
+  getAllVenues
 } from 'wasp/client/operations';
 
 import { VenueList } from './venues';
 
 export default function DemoAppPage() {
 
-  const { data: venues, isLoading: isVenueLoading } = useQuery(getVenueInfo);
+  const { data: venues, isLoading: isVenueLoading } = useQuery(getAllVenues);
 
   return (
     <div className='py-10 lg:mt-10'>

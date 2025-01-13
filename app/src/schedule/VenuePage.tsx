@@ -1,14 +1,46 @@
-import { FC, useState } from "react";
-import { useParams } from "react-router-dom";
+import { FC, useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery, getVenueInfo, generateGptResponse, useAction, createReservation } from "wasp/client/operations";
 import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
 import { useToast } from "../client/toast";
+import { useCurrentDate } from './calendar/hooks/use-current-date';
+import { isValid } from "date-fns";
+import { parseISO } from "date-fns";
+
+const useVenueQuery = (venueId: string, selectedDate: Date) => {
+  const [result, setResult] = useState<any>(null);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('selected_date')) {
+      const urlSelectedDate = parseISO(searchParams.get('selected_date') ?? '')
+      if (isValid(urlSelectedDate)) {
+        getVenueInfo({ venueId, selectedDate: urlSelectedDate }).then(setResult);
+      }
+    }
+  }, [searchParams, venueId, selectedDate]);
+
+  return { result }
+}
 
 const VenuePage: FC = () => {
   const { venueId } = useParams();
-  const { data, isLoading, refetch } = useQuery(getVenueInfo);
+  // broken because using hook twice instead of once
+  const { selectedDate } = useCurrentDate();
 
-  const venue = data?.find((venue) => venue.id === venueId);
+  if (!venueId) {
+    return <div>Venue not found</div>;
+  }
+
+  const { result: data } = useVenueQuery(venueId, selectedDate);
+
+
+  // useEffect(() => {
+  //   console.log('refetching', selectedDate);
+  //   getVenueInfo({ venueId, selectedDate });
+  // }, [selectedDate]);
+
+  const venue = data;
 
   if (!venue) {
     return <div>Venue not found</div>;

@@ -10,7 +10,7 @@ export function useCurrentDate() {
 
   useEffect(() => {
     const urlSelectedDate = parseISO(searchParams.get('selected_date') ?? '')
-
+    console.log('urlSelectedDate', urlSelectedDate);
     if (urlSelectedDate && !isValid(urlSelectedDate)) {
       setSearchParams((prev) => {
         prev.delete('selected_date')
@@ -21,14 +21,15 @@ export function useCurrentDate() {
     }
   }, [])
 
-
   return {
-    selectedDate, setSelectedDate: (date: Date) => {
+    selectedDate,
+    setSelectedDate: (date: Date) => {
+      console.log('setting selected date', date.getDate());
+      setSelectedDate(date);
       setSearchParams((prev) => {
         prev.set('selected_date', format(date, 'yyyy-MM-dd'))
         return prev
       })
-      setSelectedDate(date);
     }
   };
 }

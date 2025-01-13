@@ -1,22 +1,47 @@
+import { addDays, isValid, startOfDay, startOfToday } from "date-fns";
 import { Reservation, Space, Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
-import { CreateReservation, DeleteReservation, GetVenueInfo, UpdateReservation } from "wasp/server/operations";
+import { CreateReservation, DeleteReservation, GetAllVenues, GetVenueInfo, UpdateReservation } from "wasp/server/operations";
 
+type GetVenueInfoPayload = {
+  venueId: string;
+  selectedDate: Date;
+}
 
-export const getVenueInfo: GetVenueInfo<void, (Venue & { spaces: (Space & { reservations: Reservation[] })[] })[]> = async (_args, context) => {
+export const getAllVenues: GetAllVenues<void, (Venue & { spaces: Space[] })[]> = async (args, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }
+
   return context.entities.Venue.findMany({
+    include: {
+      spaces: true,
+    },
+  });
+};
+
+export const getVenueInfo: GetVenueInfo<GetVenueInfoPayload, (Venue & { spaces: (Space & { reservations: Reservation[] })[] } | null)> = async (args, context) => {
+  if (!context.user) {
+    throw new HttpError(401);
+  }
+
+  const date = isValid(args.selectedDate) ? startOfDay(args.selectedDate) : startOfToday();
+  
+  return context.entities.Venue.findFirst({
     where: {
-    //   user: {
-    //     id: context.user.id,
-    //   },
+      id: args.venueId,
     },
     include: {
       spaces: {
         include: {
-          reservations: true,
+          reservations: {
+            where: {
+              startTime: {
+                gte: date,
+                lt: addDays(date, 1),
+              },
+            },
+          },
         },
       },
     },

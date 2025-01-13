@@ -196,6 +196,11 @@ query getVenueInfo {
   entities: [User, Venue, Space]
 }
 
+query getAllVenues {
+  fn: import { getAllVenues } from "@src/schedule/operations",
+  entities: [User, Venue, Space]
+}
+
 action generateGptResponse {
   fn: import { generateGptResponse } from "@src/demo-ai-app/operations",
   entities: [User, Task, GptResponse, Venue]
