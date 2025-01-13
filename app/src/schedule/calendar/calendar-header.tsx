@@ -5,11 +5,11 @@ import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/react/20/solid';
 import { WeekViewCalendarProps } from './WeekViewCalendar';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { addDays, format, isValid, parseISO, startOfToday } from 'date-fns';
-import { useCurrentDate } from './hooks/use-current-date';
+import { useSelectedDate } from './providers/date-provider';
 
 
 export const CalendarHeader: FC<{ venue: WeekViewCalendarProps['venue'] }> = ({ venue }) => {
-  const { selectedDate, setSelectedDate } = useCurrentDate();
+  const { selectedDate, setSelectedDate } = useSelectedDate();
 
   return <header
     className={cn('absolute inset-x-0 top-0 z-50 dark:bg-boxdark-2 sticky flex flex-col')}

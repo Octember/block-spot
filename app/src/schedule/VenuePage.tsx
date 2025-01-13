@@ -3,9 +3,10 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { useQuery, getVenueInfo, generateGptResponse, useAction, createReservation } from "wasp/client/operations";
 import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
 import { useToast } from "../client/toast";
-import { useCurrentDate } from './calendar/hooks/use-current-date';
-import { isValid } from "date-fns";
+import { useSelectedDate } from './calendar/providers/date-provider';
+import { isValid, startOfToday } from "date-fns";
 import { parseISO } from "date-fns";
+import DateProvider from "./calendar/providers/date-provider";
 
 const useVenueQuery = (venueId: string, selectedDate: Date) => {
   const [result, setResult] = useState<any>(null);
@@ -23,22 +24,15 @@ const useVenueQuery = (venueId: string, selectedDate: Date) => {
   return { result }
 }
 
-const VenuePage: FC = () => {
+const PageLoader = () => {
   const { venueId } = useParams();
-  // broken because using hook twice instead of once
-  const { selectedDate } = useCurrentDate();
+  const { selectedDate } = useSelectedDate();
 
   if (!venueId) {
     return <div>Venue not found</div>;
   }
 
   const { result: data } = useVenueQuery(venueId, selectedDate);
-
-
-  // useEffect(() => {
-  //   console.log('refetching', selectedDate);
-  //   getVenueInfo({ venueId, selectedDate });
-  // }, [selectedDate]);
 
   const venue = data;
 
@@ -50,6 +44,12 @@ const VenuePage: FC = () => {
     <WeekViewCalendar venue={venue} />
     <GptSection spaceId={venue.spaces[0].id} />
   </div>
+}
+
+const VenuePage: FC = () => {
+  return <DateProvider>
+    <PageLoader />
+  </DateProvider>
 };
 
 export const GptSection: FC<{ spaceId: string }> = ({ spaceId }) => {
