@@ -11,7 +11,7 @@ import { useIsLandingPage } from './hooks/useIsLandingPage';
 import { updateCurrentUser } from 'wasp/client/operations';
 import { Transition } from '@headlessui/react';
 import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import {ToastProvider} from './toast';
+import { ToastProvider } from './toast';
 
 
 /**
@@ -24,13 +24,20 @@ export default function App() {
   const isLandingPage = useIsLandingPage();
   const navigationItems = isLandingPage ? landingPageNavigationItems : appNavigationItems;
 
+  const isSchedulePage = useMemo(() =>
+    location.pathname === routes.VenuePageRoute.build({ params: { venueId: location.pathname.split('/').pop() || 0 } }),
+    [location]
+  );
+
   const shouldDisplayAppNavBar = useMemo(() => {
-    return location.pathname !== routes.LoginRoute.build() && location.pathname !== routes.SignupRoute.build();
+    return location.pathname !== routes.LoginRoute.build() && location.pathname !== routes.SignupRoute.build() &&
+      !isSchedulePage
   }, [location]);
 
   const isAdminDashboard = useMemo(() => {
     return location.pathname.startsWith('/admin');
   }, [location]);
+
 
   useEffect(() => {
     if (user) {
@@ -61,9 +68,11 @@ export default function App() {
           ) : (
             <>
               {shouldDisplayAppNavBar && <NavBar navigationItems={navigationItems} />}
-              <div className='mx-auto max-w-full sm:px-6 lg:px-8'>
+
+              {!isSchedulePage ?
+                <div className='mx-auto max-w-full sm:px-6 lg:px-8'><Outlet /></div> :
                 <Outlet />
-              </div>
+              }
             </>
           )}
 
