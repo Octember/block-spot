@@ -2,21 +2,17 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getVenueInfo } from 'wasp/client/operations';
 import { useSelectedDate } from './date-provider';
+import { useQuery } from '@tanstack/react-query';
 
 const useScheduleQuery = (venueId: string) => {
   const { selectedDate } = useSelectedDate();
 
-  const [result, setResult] = useState<Awaited<ReturnType<typeof getVenueInfo>>>(null);
+  const { data: venue, refetch } = useQuery([getVenueInfo, venueId, selectedDate], () => getVenueInfo({
+    venueId,
+    selectedDate,
+  }));
 
-  function refresh() {
-    getVenueInfo({ venueId, selectedDate }).then(setResult);
-  }
-
-  useEffect(() => {
-    refresh();
-  }, [venueId, selectedDate]);
-
-  return { result, refresh }
+  return { result: venue || null, refresh: refetch }
 }
 
 export const ScheduleQueryContext = createContext<{ venue: Awaited<ReturnType<typeof getVenueInfo>>, refresh: () => void }>({ venue: null, refresh: () => { } });
