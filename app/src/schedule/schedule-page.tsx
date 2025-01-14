@@ -1,30 +1,13 @@
-import { FC, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { createContext, FC, useContext, useEffect, useState } from "react";
+import { Outlet, useParams } from "react-router-dom";
 import { createReservation, generateGptResponse, getVenueInfo } from "wasp/client/operations";
 import { useToast } from "../client/toast";
 import DateProvider, { useSelectedDate } from "./calendar/providers/date-provider";
 import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
-
-const useVenueQuery = (venueId: string) => {
-  const { selectedDate } = useSelectedDate();
-
-  const [result, setResult] = useState<Awaited<ReturnType<typeof getVenueInfo>>>(null);
-
-  useEffect(() => {
-    getVenueInfo({ venueId, selectedDate }).then(setResult);
-  }, [venueId, selectedDate]);
-
-  return { result }
-}
+import { ScheduleQueryProvider, useScheduleContext } from './calendar/providers/schedule-query-provider';
 
 const PageLoader = () => {
-  const { venueId } = useParams();
-
-  if (!venueId) {
-    return <div>Venue not found</div>;
-  }
-
-  const { result: venue } = useVenueQuery(venueId);
+  const { venue } = useScheduleContext();
   if (!venue) {
     return <div>Venue not found</div>;
   }
@@ -37,7 +20,9 @@ const PageLoader = () => {
 
 const SchedulePage: FC = () => {
   return <DateProvider>
-    <PageLoader />
+    <ScheduleQueryProvider>
+      <PageLoader />
+    </ScheduleQueryProvider>
   </DateProvider>
 };
 
