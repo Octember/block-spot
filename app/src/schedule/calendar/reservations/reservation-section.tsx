@@ -12,6 +12,7 @@ import { getRowSpan, getRowIndex, getTimeFromRowIndex, isWithinReservation } fro
 import { DroppableSpace } from './droppable';
 import { getSharedGridStyle, MinutesPerSlot } from './constants';
 import { PixelsPerSlot } from './constants';
+import { useScheduleContext } from '../providers/schedule-query-provider';
 
 export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps & { spaceIds: string[] }) => {
   const setToast = useToast();
@@ -21,7 +22,7 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
     setReservations(venue.spaces.flatMap((space) => space.reservations));
   }, [venue]);
 
-  const { refetch } = useQuery(getVenueInfo);
+  const { refresh } = useScheduleContext();
 
   const [draftReservation, setDraftReservation] = useState<Reservation | null>(
     null
@@ -136,6 +137,7 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
             onDelete={async () => {
               await deleteReservation({ id: reservation.id });
               setToast({ title: "Reservation deleted" });
+              refresh();
             }}
           />
         ))}
@@ -148,7 +150,6 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
             isDraft
             onCreate={async () => {
               setDraftReservation(null);
-              refetch();
             }}
             onDiscardDraft={() => setDraftReservation(null)}
           />

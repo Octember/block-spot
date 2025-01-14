@@ -19,6 +19,7 @@ import {
 import { Reservation } from "wasp/entities";
 import { UpdateButton } from './update-button';
 import { getRowSpan, getRowIndex } from './utilities';
+import { useScheduleContext } from "../providers/schedule-query-provider";
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -41,6 +42,9 @@ function getColorStyles(isDraft: boolean, over: Over | null, isDragging: boolean
 }
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
+
+  const { refresh } = useScheduleContext();
+
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
   const { attributes, listeners, setNodeRef, transform, over, isDragging } = useDraggable({
@@ -96,6 +100,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                       endTime: reservation.endTime,
                       description: description,
                     });
+                    refresh();
+
                     props.onCreate?.();
 
                   } else {
