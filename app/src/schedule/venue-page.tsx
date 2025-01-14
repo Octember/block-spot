@@ -7,7 +7,7 @@ import {
 
 import { VenueList } from './venues';
 
-export default function DemoAppPage() {
+export default function VenuePage() {
 
   const { data: venues, isLoading: isVenueLoading } = useQuery(getAllVenues);
 

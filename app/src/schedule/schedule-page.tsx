@@ -8,32 +8,29 @@ import { isValid, startOfToday } from "date-fns";
 import { parseISO } from "date-fns";
 import DateProvider from "./calendar/providers/date-provider";
 
-const useVenueQuery = (venueId: string, selectedDate: Date) => {
-  const [result, setResult] = useState<any>(null);
-  const [searchParams] = useSearchParams();
+const useVenueQuery = (venueId: string) => {
+  const { selectedDate } = useSelectedDate();
+
+  const [result, setResult] = useState<Awaited<ReturnType<typeof getVenueInfo>>>(null);
 
   useEffect(() => {
-    if (searchParams.get('selected_date')) {
-      const urlSelectedDate = parseISO(searchParams.get('selected_date') ?? '')
-      if (isValid(urlSelectedDate)) {
-        getVenueInfo({ venueId, selectedDate: urlSelectedDate }).then(setResult);
-      }
-    }
-  }, [searchParams, venueId, selectedDate]);
+    getVenueInfo({ venueId, selectedDate }).then(setResult);
+  }, [venueId, selectedDate]);
 
   return { result }
 }
 
 const PageLoader = () => {
   const { venueId } = useParams();
-  const { selectedDate } = useSelectedDate();
 
+  console.log({ venueId });
   if (!venueId) {
     return <div>Venue not found</div>;
   }
 
-  const { result: data } = useVenueQuery(venueId, selectedDate);
+  const { result: data } = useVenueQuery(venueId);
 
+  console.log({ data });
   const venue = data;
 
   if (!venue) {
@@ -46,7 +43,7 @@ const PageLoader = () => {
   </div>
 }
 
-const VenuePage: FC = () => {
+const SchedulePage: FC = () => {
   return <DateProvider>
     <PageLoader />
   </DateProvider>
@@ -57,7 +54,6 @@ export const GptSection: FC<{ spaceId: string }> = ({ spaceId }) => {
   const [message, setMessage] = useState('');
 
   const toast = useToast();
-
 
   return <div className="bg-gray-100 border-t border-gray-200 w-screen overflow-hidden px-6 sticky bottom-0 left-0 -mx-8">
     <form className="my-4 flex w-full justify-center"
@@ -98,4 +94,4 @@ export const GptSection: FC<{ spaceId: string }> = ({ spaceId }) => {
   </div>
 }
 
-export default VenuePage;
+export default SchedulePage;

@@ -17,7 +17,7 @@ export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({ ven
                     <div className="flex min-w-0 gap-x-4">
                         <div className="min-w-0 flex-auto">
                             <p className="text-sm/6 font-semibold text-gray-900">
-                                <Link to={routes.VenuePageRoute.to} params={{ venueId: venue.id }}>
+                                <Link to={routes.ScheduleRoute.to} params={{ venueId: venue.id }}>
                                     <span className="absolute inset-x-0 -top-px bottom-0" />
                                     {venue.name}
                                 </Link>

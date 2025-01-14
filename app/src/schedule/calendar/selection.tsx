@@ -1,33 +1,38 @@
 import { format } from "date-fns";
 import { useState } from "react";
 import { getSharedGridStyle, MinutesPerSlot } from './reservations/constants';
+import { useSelectedDate } from "./providers/date-provider";
 
-function getStartEndTime(selection: {
+function getStartEndTime(date: Date, selection: {
   start: { row: number; col: number };
   current: { row: number; col: number };
 }): { start: Date; end: Date } {
   const isEqual = selection.start.row === selection.current.row;
 
   if (selection.start.row > selection.current.row) {
-    const startTime = calculateTimeFromRow(selection.current.row - 1);
+    const startTime = calculateTimeFromRow(date, selection.current.row - 1);
     const endTime = calculateTimeFromRow(
+      date,
       selection.start.row + (isEqual ? 1 : 0)
     );
     return { start: startTime, end: endTime };
   }
 
-  const startTime = calculateTimeFromRow(selection.start.row - 1);
+  const startTime = calculateTimeFromRow(date, selection.start.row - 1);
   const endTime = calculateTimeFromRow(
+    date,
     selection.current.row + (isEqual ? 1 : 0)
   );
   return { start: startTime, end: endTime };
 }
 
-const calculateTimeFromRow = (row: number): Date => {
-  const date = new Date();
-  date.setHours(8 + Math.floor(row / (60 / MinutesPerSlot)));
-  date.setMinutes((row % (60 / MinutesPerSlot)) * MinutesPerSlot);
-  return date;
+const calculateTimeFromRow = (date: Date, row: number): Date => {
+  // Can cause bugs if date is mutated, need to clone it
+  const result = new Date(date);
+
+  result.setHours(8 + Math.floor(row / (60 / MinutesPerSlot)));
+  result.setMinutes((row % (60 / MinutesPerSlot)) * MinutesPerSlot);
+  return result;
 };
 
 interface GridSelectionProps {
@@ -41,6 +46,8 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
   timeLabels,
   onSelectionComplete,
 }) => {
+  const { selectedDate } = useSelectedDate();
+
   const [selection, setSelection] = useState<{
     start: { row: number; col: number } | null;
     current: { row: number; col: number } | null;
@@ -61,7 +68,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
   const handleMouseUp = () => {
     setIsSelecting(false);
     if (selection.start && selection.current) {
-      const { start, end } = getStartEndTime(selection);
+      const { start, end } = getStartEndTime(selectedDate, selection);
 
       if (onSelectionComplete) {
         onSelectionComplete(start, end, selection.start.col);

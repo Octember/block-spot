@@ -25,7 +25,7 @@ export default function App() {
   const navigationItems = isLandingPage ? landingPageNavigationItems : appNavigationItems;
 
   const isSchedulePage = useMemo(() =>
-    location.pathname === routes.VenuePageRoute.build({ params: { venueId: location.pathname.split('/').pop() || 0 } }),
+    location.pathname === routes.ScheduleRoute.build({ params: { venueId: location.pathname.split('/').pop() || 0 } }),
     [location]
   );
 

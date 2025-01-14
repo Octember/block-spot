@@ -167,21 +167,17 @@ action updateReservation {
 
 //#endregion
 
-route VenuePageRoute { path: "/schedule/:venueId", to: VenuePage }
-page VenuePage {
-  authRequired: true,
-  component: import VenuePage from "@src/schedule/VenuePage",
-  // params: {
-  //   venueId: "string"
-  // }
-}
-
-
-route ScheduleRoute { path: "/schedule", to: SchedulePage }
-
+route ScheduleRoute { path: "/schedule/:venueId", to: SchedulePage }
 page SchedulePage {
   authRequired: true,
-  component: import SchedulePage from "@src/schedule/SchedulePage"
+  component: import SchedulePage from "@src/schedule/schedule-page",
+}
+
+route VenuePageRoute { path: "/schedule", to: VenuePage }
+
+page VenuePage {
+  authRequired: true,
+  component: import VenuePage from "@src/schedule/venue-page"
 }
 
 //#region Demo AI App
