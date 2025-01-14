@@ -20,16 +20,11 @@ const useVenueQuery = (venueId: string) => {
 const PageLoader = () => {
   const { venueId } = useParams();
 
-  console.log({ venueId });
   if (!venueId) {
     return <div>Venue not found</div>;
   }
 
-  const { result: data } = useVenueQuery(venueId);
-
-  console.log({ data });
-  const venue = data;
-
+  const { result: venue } = useVenueQuery(venueId);
   if (!venue) {
     return <div>Venue not found</div>;
   }
