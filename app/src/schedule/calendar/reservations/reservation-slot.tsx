@@ -109,6 +109,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                       id: reservation.id,
                       description: description,
                     });
+                    refresh();
                   }
                   setIsEditing(false);
                 }}
@@ -174,6 +175,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
 
 const ReservationMenu = ({ onEdit, onDelete }: { onEdit: () => void, onDelete: () => void }) => {
+
   return (
     <Popover className="relative">
       <PopoverButton>

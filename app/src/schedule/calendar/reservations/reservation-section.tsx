@@ -85,16 +85,18 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
             spaceId: newSpaceId,
           }
           // update in state to avoid flicker
-          setReservations(reservations.map((reservation) => {
-            if (reservation.id === draggingReservation.id) {
-              return updatedReservation;
-            }
-            return reservation;
-          }))
+          // setReservations(reservations.map((reservation) => {
+          //   if (reservation.id === draggingReservation.id) {
+          //     return updatedReservation;
+          //   }
+          //   return reservation;
+          // }))
 
           await updateReservation({
             ...updatedReservation,
           });
+          refresh();
+
           setToast({ title: "Reservation updated" });
         }
       }}
