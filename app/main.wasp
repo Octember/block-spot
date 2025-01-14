@@ -1,9 +1,9 @@
-app OpenSaaS {
+app BlockSpot {
   wasp: {
     version: "^0.15.0"
   },
 
-  title: "My Open SaaS App",
+  title: "BlockSpot - Online Booking Platform",
 
   head: [
     "<meta charset='utf-8' />",
