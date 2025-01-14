@@ -1,12 +1,9 @@
 import { FC, useEffect, useState } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
-import { useQuery, getVenueInfo, generateGptResponse, useAction, createReservation } from "wasp/client/operations";
-import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
+import { useParams } from "react-router-dom";
+import { createReservation, generateGptResponse, getVenueInfo } from "wasp/client/operations";
 import { useToast } from "../client/toast";
-import { useSelectedDate } from './calendar/providers/date-provider';
-import { isValid, startOfToday } from "date-fns";
-import { parseISO } from "date-fns";
-import DateProvider from "./calendar/providers/date-provider";
+import DateProvider, { useSelectedDate } from "./calendar/providers/date-provider";
+import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
 
 const useVenueQuery = (venueId: string) => {
   const { selectedDate } = useSelectedDate();
