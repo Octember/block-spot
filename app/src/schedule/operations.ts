@@ -1,7 +1,7 @@
 import { addDays, isValid, startOfDay, startOfToday } from "date-fns";
 import { Reservation, Space, Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
-import { CreateReservation, CreateVenue, DeleteReservation, GetAllVenues, GetVenueInfo, UpdateReservation } from "wasp/server/operations";
+import { CreateReservation, CreateVenue, DeleteReservation, GetAllVenues, GetVenueById, GetVenueInfo, UpdateReservation, UpdateVenue } from "wasp/server/operations";
 
 type GetVenueInfoPayload = {
   venueId: string;
@@ -26,7 +26,7 @@ export const getVenueInfo: GetVenueInfo<GetVenueInfoPayload, (Venue & { spaces: 
   }
 
   const date = isValid(args.selectedDate) ? startOfDay(args.selectedDate) : startOfToday();
-  
+
   return context.entities.Venue.findFirst({
     where: {
       id: args.venueId,
@@ -99,5 +99,39 @@ type CreateVenuePayload = Pick<Venue, "name">;
 export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (args, context) => {
   return context.entities.Venue.create({
     data: { name: args.name, address: "" },
+  });
+};
+
+type GetVenueByIdPayload = {
+  venueId: string;
+}
+
+export const getVenueById: GetVenueById<GetVenueByIdPayload, Venue & { spaces: Space[] } | null> = async (args, context) => {
+  return context.entities.Venue.findFirst({ where: { id: args.venueId }, include: { spaces: true } });
+};
+
+type UpdateVenuePayload = Pick<Venue, "id" | "name"> & { spaces: Pick<Space, "id" | "name">[] };
+
+export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (args, context) => {
+
+  return context.entities.Venue.update({
+    where: { id: args.id },
+    data: {
+      name: args.name,
+      spaces: {
+        deleteMany: {
+          NOT: args.spaces.filter(space => Boolean(space.id)).
+            map(space => ({ id: space.id || ''}))
+        },
+
+        upsert: args.spaces.map(space => ({
+          where: { id: space.id || '' },
+
+          update: { name: space.name },
+
+          create: { name: space.name, type: "ROOM", capacity: 1 }
+        })),
+      }
+    }
   });
 };

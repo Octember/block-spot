@@ -1,16 +1,11 @@
 
 import {
-  getVenueInfo,
-  useQuery,
-  getAllVenues
+  getAllVenues,
+  useQuery
 } from 'wasp/client/operations';
 
-import { VenueList } from './venues';
+import { VenueList } from './venue-list';
 
-import { PlusIcon } from '@heroicons/react/20/solid';
-import { Button } from '../client/components/button';
-import { Modal } from '../client/components/modal';
-import { useState } from 'react';
 import { AddVenueButton } from './add-venue/add-venue-button';
 
 export default function VenuePage() {
@@ -29,7 +24,7 @@ export default function VenuePage() {
         </div>
 
         <div className='my-8 border rounded-3xl'>
-          <div className='sm:w-[90%] md:w-[70%] lg:w-[50%] py-10 px-6 mx-auto my-8 space-y-10 '>
+          <div className='sm:w-[90%] md:w-[80%] lg:w-[70%] py-10 px-6 mx-auto my-8 space-y-10 '>
             <div className='flex flex-col justify-center gap-10 border-gray-900/10 dark:border-gray-100/10'>
               <VenueList venues={venues || []} />
             </div>

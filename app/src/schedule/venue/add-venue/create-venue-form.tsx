@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button } from "../../client/components/button";
+import { Button } from "../../../client/components/button";
 import { createVenue } from "wasp/client/operations";
 
 type CreateVenueFormInputs = {

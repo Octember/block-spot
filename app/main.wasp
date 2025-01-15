@@ -156,6 +156,10 @@ action createVenue {
   entities: [Venue]
 }
 
+action updateVenue {
+  fn: import { updateVenue } from "@src/schedule/operations",
+  entities: [Venue]
+}
 
 action createReservation {
   fn: import { createReservation } from "@src/schedule/operations",
@@ -180,11 +184,19 @@ page SchedulePage {
   component: import SchedulePage from "@src/schedule/schedule-page",
 }
 
-route VenuePageRoute { path: "/schedule", to: VenuePage }
+route AllVenuesPageRoute { path: "/venues", to: AllVenuesPage }
+
+page AllVenuesPage {
+  authRequired: true,
+  component: import AllVenuesPage from "@src/schedule/venue/all-venues-page"
+}
+
+
+route VenuePageRoute { path: "/venues/:venueId", to: VenuePage }
 
 page VenuePage {
   authRequired: true,
-  component: import VenuePage from "@src/schedule/venue-page"
+  component: import VenuePage from "@src/schedule/venue/venue-page/venue-page"
 }
 
 //#region Demo AI App
@@ -192,6 +204,11 @@ route DemoAppRoute { path: "/demo-app", to: DemoAppPage }
 page DemoAppPage {
   authRequired: true,
   component: import DemoAppPage from "@src/demo-ai-app/DemoAppPage"
+}
+
+query getVenueById {
+  fn: import { getVenueById } from "@src/schedule/operations",
+  entities: [Venue, Space]
 }
 
 query getVenueInfo {

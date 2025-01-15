@@ -1,9 +1,9 @@
 import { PlusIcon } from '@heroicons/react/20/solid';
-import { Button } from '../../client/components/button';
-import { Modal } from '../../client/components/modal';
+import { Button } from '../../../client/components/button';
+import { Modal } from '../../../client/components/modal';
 import { useState } from 'react';
 import { CreateVenueForm } from './create-venue-form';
-import { useToast } from '../../client/toast';
+import { useToast } from '../../../client/toast';
 
 export function AddVenueButton() {
   const toast = useToast();
