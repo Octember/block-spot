@@ -30,8 +30,6 @@ export default function VenuePage() {
             View Schedule
           </Button>
         </WaspRouterLink>
-
-
       </div>
 
       <UpdateVenueForm onSuccess={() => toast({ title: 'Venue updated', description: 'Venue updated successfully' })} venue={venue} />

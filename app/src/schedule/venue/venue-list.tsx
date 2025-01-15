@@ -4,6 +4,7 @@ import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import { FC } from 'react'
 import { Space, Venue } from 'wasp/entities'
 import { Link, routes } from 'wasp/client/router'
+import { format } from 'date-fns'
 
 
 export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({ venues }) => {
@@ -15,7 +16,7 @@ export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({ ven
           className="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 lg:px-8"
         >
           <div className="flex min-w-0 gap-x-4">
-            <div className="min-w-0 flex-auto">
+            <div className="min-w-0 flex-auto flex-col">
               <p className="text-sm/6 font-semibold text-gray-900">
                 <Link to={routes.VenuePageRoute.to} params={{ venueId: venue.id }}>
                   <span className="absolute inset-x-0 -top-px bottom-0" />
@@ -27,6 +28,7 @@ export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({ ven
                   {venue.address}
                 </a>
               </p>
+              <p className='text-sm'>Created on {format(venue.createdAt, 'yyyy-MM-dd')}</p>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-x-4">

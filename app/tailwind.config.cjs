@@ -46,6 +46,12 @@ module.exports = {
         success: '#219653',
         danger: '#D34053',
         warning: '#FFA70B',
+
+        'primary': '#A69021',
+        'secondary': '#F2CA80',
+        'tertiary': '#D96E11',
+        'quaternary': '#F1F5F9',
+        'quinary': '#E2E8F0',
       },
       screens: {
         '2xsm': '375px',

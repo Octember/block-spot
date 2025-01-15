@@ -14,7 +14,7 @@ const PageLoader = () => {
 
   return <div className="h-full">
     <WeekViewCalendar venue={venue} />
-    <GptSection spaceId={venue.spaces[0].id} />
+    {venue.spaces.length > 0 && <GptSection spaceId={venue.spaces[0].id} />}
   </div>
 }
 

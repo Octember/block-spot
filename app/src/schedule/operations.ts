@@ -17,6 +17,9 @@ export const getAllVenues: GetAllVenues<void, (Venue & { spaces: Space[] })[]> =
     include: {
       spaces: true,
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
 };
 
