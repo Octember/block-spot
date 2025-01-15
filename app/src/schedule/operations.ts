@@ -1,7 +1,7 @@
 import { addDays, isValid, startOfDay, startOfToday } from "date-fns";
 import { Reservation, Space, Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
-import { CreateReservation, DeleteReservation, GetAllVenues, GetVenueInfo, UpdateReservation } from "wasp/server/operations";
+import { CreateReservation, CreateVenue, DeleteReservation, GetAllVenues, GetVenueInfo, UpdateReservation } from "wasp/server/operations";
 
 type GetVenueInfoPayload = {
   venueId: string;
@@ -91,5 +91,13 @@ export const updateReservation: UpdateReservation<UpdateReservationPayload, Rese
   return context.entities.Reservation.update({
     where: { id: args.id },
     data: { description: args.description, startTime: args.startTime, endTime: args.endTime, spaceId: args.spaceId },
+  });
+};
+
+type CreateVenuePayload = Pick<Venue, "name">;
+
+export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (args, context) => {
+  return context.entities.Venue.create({
+    data: { name: args.name, address: "" },
   });
 };

@@ -3,7 +3,7 @@ import { routes } from 'wasp/client/router';
 import { BlogUrl, DocsUrl } from '../../../shared/common';
 
 export const appNavigationItems: NavigationItem[] = [
-  { name: 'Schedule', to: routes.ScheduleRoute.to },
+  { name: 'Your Spaces', to: routes.VenuePageRoute.to },
   // { name: 'File Upload (AWS S3)', to: routes.FileUploadRoute.to },
   { name: 'Pricing', to: routes.PricingPageRoute.to },
   { name: 'Documentation', to: DocsUrl },

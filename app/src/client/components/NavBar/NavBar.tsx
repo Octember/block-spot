@@ -40,7 +40,7 @@ export default function AppNavBar({ navigationItems }: { navigationItems: Naviga
           >
             <NavLogo />
             {isLandingPage && (
-              <span className='ml-2 text-sm font-semibold leading-6 dark:text-white'>Scheduling app</span>
+              <span className='ml-2 text-sm font-semibold leading-6 dark:text-white'>Block Spot</span>
             )}
           </WaspRouterLink>
         </div>

@@ -1,7 +1,5 @@
 import { FC, ReactNode } from "react"
 
-
-
 export const ButtonGroup = ({ items }: { items: ButtonGroupItemProps[] }) => {
   return <span className="isolate inline-flex rounded-md shadow-sm [&>*:not(:first-child)]:-ml-px [&>*:first-child]:rounded-l-md [&>*:last-child]:rounded-r-md">
     {items.map((item, index) => (
