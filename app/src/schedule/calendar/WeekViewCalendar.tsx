@@ -29,7 +29,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
             <div className="grid flex-auto grid-cols-1 grid-rows-1">
               {/* Vertical lines */}
               <div
-                className="col-start-1 col-end-2 row-start-1 grid-rows-1 divide-x divide-gray-100 grid sm:pr-8"
+                className="col-start-1 col-end-2 row-start-1 grid-rows-1 divide-x divide-gray-300 grid sm:pr-8"
                 style={{
                   gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
                 }}
@@ -53,19 +53,19 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
               >
                 <div
                   ref={containerOffset}
-                  className="border-b border-gray-200"
+                  className="border-b border-gray-400"
                 />
 
                 {timeLabels.map((label, index) => (
                   <React.Fragment key={index}>
                     <div className="row-span-1 border-b border-gray-200">
-                      <div className="sticky left-0 z-20 -ml-14 w-14 pr-2 -my-2.5 text-right text-xs/5 text-gray-400">
+                      <div className="sticky left-0 z-20 -ml-14 w-14 pr-2 -my-2.5 text-right text-xs/5 text-gray-500">
                         {label}
                       </div>
                     </div>
                     {/* 30min line */}
                     {Array.from({ length: (60 / MinutesPerSlot) - 1 }).map((_, index) => (
-                      <div key={index} className="row-span-1 border-b border-gray-200"></div>
+                      <div key={index} className={`row-span-1 border-b  ${index % 2 === 0 ? 'border-gray-300' : 'border-gray-200'}`}></div>
                     ))}
                   </React.Fragment>
                 ))}

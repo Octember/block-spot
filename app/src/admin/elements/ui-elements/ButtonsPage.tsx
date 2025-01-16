@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Breadcrumb from '../../layout/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { useRedirectHomeUnlessUserIsAdmin } from '../../useRedirectHomeUnlessUserIsAdmin';
+import { Button } from '../../../client/components/button';
 
 const Buttons = ({ user }: { user: AuthUser }) => {
   useRedirectHomeUnlessUserIsAdmin({ user });
@@ -18,94 +19,26 @@ const Buttons = ({ user }: { user: AuthUser }) => {
         </div>
 
         <div className='p-4 md:p-6 xl:p-9'>
-          <div className='mb-7.5 flex flex-wrap gap-5 xl:gap-20'>
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
+          <div className='mb-7.5 flex flex-wrap gap-5 xl:gap-20 bg-gray-100 p-4 rounded-md'>
+            <Button variant='primary'>
+              Primary Button
+            </Button>
 
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center rounded-md bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
+            <Button variant='secondary'>
+              Secondary Button
+            </Button>
 
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center rounded-full bg-primary py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
+            <Button variant='tertiary'>
+              Tertiary Button
+            </Button>
 
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center rounded-md border border-primary py-4 px-10 text-center font-medium text-primary hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
-          </div>
+            <Button variant='warning'>
+              Warning Button
+            </Button>
 
-          <div className='mb-7.5 flex flex-wrap gap-5 xl:gap-20'>
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center bg-meta-3 py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
-
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center rounded-md bg-meta-3 py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
-
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center rounded-full bg-meta-3 py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
-
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center rounded-md border border-meta-3 py-4 px-10 text-center font-medium text-meta-3 hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
-          </div>
-
-          <div className='flex flex-wrap gap-5 xl:gap-20'>
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center bg-black py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
-
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center rounded-md bg-black py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
-
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center rounded-full bg-black py-4 px-10 text-center font-medium text-white hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
-
-            <Link
-              to='#'
-              className='inline-flex items-center justify-center rounded-md border border-black py-4 px-10 text-center font-medium text-black hover:bg-opacity-90 lg:px-8 xl:px-10'
-            >
-              Button
-            </Link>
+            <Button variant='danger'>
+              Danger Button
+            </Button>
           </div>
         </div>
       </div>
@@ -464,7 +397,7 @@ const Buttons = ({ user }: { user: AuthUser }) => {
           </div>
         </div>
       </div>
-    </DefaultLayout>
+    </DefaultLayout >
   );
 };
 
