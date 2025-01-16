@@ -1,10 +1,11 @@
 import { PropsWithChildren, FC, useState, createContext, useContext } from 'react';
 import { Transition } from '@headlessui/react';
-import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { CheckCircleIcon, ExclamationCircleIcon, XMarkIcon } from '@heroicons/react/20/solid';
 
 const ToastContext = createContext<{ toast: ToastMessage | null, setToast: (toast: ToastMessage | null) => void }>({ toast: null, setToast: () => { } });
 
 export type ToastMessage = {
+  type?: 'success' | 'error';
   title: string;
   description?: string;
   duration?: number;
@@ -27,7 +28,9 @@ export const ToastProvider: FC<PropsWithChildren> = ({ children }) => {
             <div className="p-4">
               <div className="flex items-start">
                 <div className="shrink-0">
-                  <CheckCircleIcon aria-hidden="true" className="size-6 text-green-400" />
+                  {toast?.type === 'success' ?
+                    <CheckCircleIcon aria-hidden="true" className="size-6 text-green-400" /> :
+                    <ExclamationCircleIcon aria-hidden="true" className="size-6 text-red-400" />}
                 </div>
                 <div className="ml-3 w-0 flex-1 pt-0.5">
                   <p className="text-sm font-medium text-gray-900">{toast?.title}</p>
@@ -62,9 +65,9 @@ export const useToast = () => {
   }
 
   return (toast: ToastMessage) => {
-    context.setToast(toast);
+    context.setToast({ ...toast, type: toast.type || 'success' });
     setTimeout(() => {
       context.setToast(null);
-    }, toast.duration || 2000);
+    }, toast.duration || 4000);
   }
 }

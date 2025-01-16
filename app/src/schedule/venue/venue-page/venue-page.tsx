@@ -5,7 +5,6 @@ import { UpdateVenueForm } from './update-venue-form';
 import { PageCard, CardContent } from '../../../client/components/page-card';
 
 export default function VenuePage() {
-  const toast = useToast();
   const { venueId } = useParams();
 
   const { data: venue, isLoading } = useQuery(getVenueById, { venueId: venueId || '' });
@@ -18,7 +17,6 @@ export default function VenuePage() {
     <PageCard>
       <CardContent>
         <UpdateVenueForm
-          onSuccess={() => toast({ title: 'Venue updated', description: 'Venue updated successfully' })}
           venue={venue}
         />
       </CardContent>

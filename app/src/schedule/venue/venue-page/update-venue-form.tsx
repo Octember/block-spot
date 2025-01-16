@@ -6,6 +6,7 @@ import { Button } from "../../../client/components/button";
 import { TextInput } from '../../../client/components/form/text-input';
 import { FormField } from "../../../client/components/form/form-field";
 import { Link as WaspRouterLink, routes } from 'wasp/client/router';
+import { useToast } from "../../../client/toast";
 
 type UpdateVenueFormInputs = {
   name: string
@@ -18,8 +19,11 @@ type UpdateVenueFormInputs = {
 }
 
 export function UpdateVenueForm(
-  { onSuccess, venue }: { onSuccess: (data: UpdateVenueFormInputs) => void, venue: Venue & { spaces: Space[] } }
+  { venue }: { venue: Venue & { spaces: Space[] } }
 ) {
+
+  const toast = useToast();
+
   const {
     register,
     control,
@@ -32,7 +36,7 @@ export function UpdateVenueForm(
       spaces: venue.spaces,
       displayStartHour: venue.displayStartHour,
       displayEndHour: venue.displayEndHour
-    }
+    },
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -41,8 +45,12 @@ export function UpdateVenueForm(
   });
 
   const onSubmit: SubmitHandler<UpdateVenueFormInputs> = async (data) => {
-    await updateVenue({ id: venue.id, name: data.name, spaces: data.spaces, displayStartHour: data.displayStartHour, displayEndHour: data.displayEndHour })
-    onSuccess(data);
+    try {
+      await updateVenue({ id: venue.id, name: data.name, spaces: data.spaces, displayStartHour: data.displayStartHour, displayEndHour: data.displayEndHour })
+      toast({ title: 'Venue updated', description: 'Venue updated successfully' })
+    } catch (error) {
+      toast({ type: 'error', title: 'Something went wrong', description: JSON.stringify(error) || 'Please try again' })
+    }
   }
 
   return (
