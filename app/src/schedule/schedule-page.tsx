@@ -5,6 +5,7 @@ import { useToast } from "../client/toast";
 import DateProvider, { useSelectedDate } from "./calendar/providers/date-provider";
 import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
 import { ScheduleQueryProvider, useScheduleContext } from './calendar/providers/schedule-query-provider';
+import { TextInput } from '../client/components/form/text-input';
 
 const PageLoader = () => {
   const { venue } = useScheduleContext();
@@ -53,7 +54,7 @@ export const GptSection: FC<{ spaceId: string }> = ({ spaceId }) => {
       }}
     >
       <div className="w-full">
-        <input
+        <TextInput
           onChange={(e) => setMessage(e.target.value)}
           value={message}
           type="search"

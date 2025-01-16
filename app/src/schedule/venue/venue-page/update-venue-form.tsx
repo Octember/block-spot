@@ -3,6 +3,7 @@ import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { updateVenue } from "wasp/client/operations";
 import { Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
+import { TextInput } from '../../../client/components/form/text-input';
 
 type UpdateVenueFormInputs = {
   name: string
@@ -42,14 +43,14 @@ export function UpdateVenueForm(
     <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
       <div className='flex flex-col gap-2'>
         <label htmlFor="name">Venue Name</label>
-        <input required {...register("name")} />
+        <TextInput required {...register("name")} />
       </div>
 
       <div className='flex flex-col gap-2'>
         <h2 className='text-lg font-semibold'>Spaces</h2>
         {fields.map((field, index) => (
           <div key={field.id} className='flex gap-2'>
-            <input key={field.id} {...register(`spaces.${index}.name`)} />
+            <TextInput key={field.id} {...register(`spaces.${index}.name`)} />
             <Button
               type="button"
               variant="secondary" icon={<XMarkIcon className='size-4' />}

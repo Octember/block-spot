@@ -20,6 +20,7 @@ import { Reservation } from "wasp/entities";
 import { UpdateButton } from './update-button';
 import { getRowSpan, getRowIndex } from './utilities';
 import { useScheduleContext } from "../providers/schedule-query-provider";
+import { TextInput } from '../../../client/components/form/text-input';
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -114,7 +115,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                   setIsEditing(false);
                 }}
               >
-                <input
+                <TextInput
                   autoFocus
                   ref={descriptionInputRef}
                   id="title"

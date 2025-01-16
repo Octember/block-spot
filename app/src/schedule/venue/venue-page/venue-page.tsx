@@ -19,7 +19,7 @@ export default function VenuePage() {
   return (
     <div className='flex flex-col gap-4 p-4 mt-2 border border-gray-200 rounded-md lg:max-w-4xl mx-auto'>
 
-      <div className='flex justify-between items-center font-bold text-lg'>
+      <div className='flex justify-between items-center font-bold text-md'>
         {venue.name}
         <WaspRouterLink
           to={routes.ScheduleRoute.to}
