@@ -16,27 +16,13 @@ import { getRowSpan, isWithinReservation } from './utilities';
 export const ReservationsSection = () => {
   const setToast = useToast();
   const { venue } = useScheduleContext();
-  const spaceIds = venue.spaces.map((space) => space.id);
-
-  const [reservations, setReservations] = useState(venue.spaces.flatMap((space) => space.reservations));
-  useEffect(() => {
-    setReservations(venue.spaces.flatMap((space) => space.reservations));
-  }, [venue]);
-
   const { refresh } = useScheduleContext();
   const timeLabels = useTimeLabels();
-
   const [draftReservation, setDraftReservation] = useState<Reservation | null>(
     null
   );
   const [draggingReservationId, setDraggingReservationId] = useState<string | null>(null);
-
-  const draggingReservation = useMemo(() => {
-    const match = reservations.find((reservation) => reservation.id === draggingReservationId)
-    if (match) return match;
-    if (draftReservation) return draftReservation;
-    return null;
-  }, [reservations, draggingReservationId, draftReservation])
+  const [reservations, setReservations] = useState(venue.spaces.flatMap((space) => space.reservations));
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -44,6 +30,19 @@ export const ReservationsSection = () => {
     },
   })
   const sensors = useSensors(mouseSensor)
+
+  useEffect(() => {
+    setReservations(venue.spaces.flatMap((space) => space.reservations));
+  }, [venue]);
+
+  const spaceIds = venue.spaces.map((space) => space.id);
+
+  const draggingReservation = useMemo(() => {
+    const match = reservations.find((reservation) => reservation.id === draggingReservationId)
+    if (match) return match;
+    if (draftReservation) return draftReservation;
+    return null;
+  }, [reservations, draggingReservationId, draftReservation])
 
   return <>
     <DndContext sensors={sensors}
@@ -104,7 +103,7 @@ export const ReservationsSection = () => {
       {/* Droppable spaces */}
       {draggingReservation &&
         <ol
-          {...getSharedGridStyle(spaceIds.length)}
+          {...getSharedGridStyle(timeLabels.length, spaceIds.length)}
         >
           {spaceIds.map((spaceId, columnIndex) => (
             Array.from({ length: timeLabels.length * (60 / MinutesPerSlot) }).map((_, rowIndex) => (
@@ -126,7 +125,7 @@ export const ReservationsSection = () => {
       }
 
       <ol
-        {...getSharedGridStyle(spaceIds.length)}
+        {...getSharedGridStyle(timeLabels.length, spaceIds.length)}
       >
         {reservations.map((reservation) => (
           <ReservationSlot

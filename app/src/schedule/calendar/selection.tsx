@@ -100,7 +100,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
 
   return (
     <div
-      {...getSharedGridStyle(spaceCount)}
+      {...getSharedGridStyle(timeLabels.length, spaceCount)}
       onMouseUp={handleMouseUp}
       onMouseLeave={() => setIsSelecting(false)}
     >
