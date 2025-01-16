@@ -11,7 +11,7 @@ export function AddVenueButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return <>
-    <Button icon={<PlusIcon className='w-4 h-4' />} onClick={() => { setIsModalOpen(true) }}> Add Spot </Button>
+    <Button icon={<PlusIcon className='size-4' />} onClick={() => { setIsModalOpen(true) }}> Add Venue </Button>
     <Modal open={isModalOpen} onClose={() => { setIsModalOpen(false) }}>
       <CreateVenueForm onSuccess={(data) => {
         setIsModalOpen(false);

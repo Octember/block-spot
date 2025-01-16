@@ -9,7 +9,7 @@ import { format } from 'date-fns'
 
 export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({ venues }) => {
   return (
-    <ul role="list" className="divide-y divide-gray-100">
+    <ul role="list" className="divide-y divide-gray-100 [&>*:first-child]:rounded-t-3xl [&>*:last-child]:rounded-b-3xl">
       {venues.map((venue) => (
         <li
           key={venue.id}

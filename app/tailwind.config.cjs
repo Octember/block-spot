@@ -70,6 +70,7 @@ module.exports = {
         'title-sm': ['20px', '26px'],
         'title-xsm': ['18px', '24px'],
         'sm': ['13px', '20px'],
+        'md': ['14.5px', '21.75px'],
       },
       spacing: {
         4.5: '1.125rem',

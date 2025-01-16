@@ -61,7 +61,9 @@ export default function App() {
 
   return (
     <>
-      <div className='min-h-screen dark:text-white dark:bg-boxdark-2'>
+      <div className='min-h-screen dark:text-white' style={{
+        backgroundImage: 'url(https://fly.io/phx/ui/images/app-shapes-e20dd6e0903d3a31595108e6e1052a1e.webp?vsn=d)'
+      }}>
         <ToastProvider>
           {isAdminDashboard ? (
             <Outlet />
