@@ -160,6 +160,9 @@ model Venue {
   spaces    Space[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  displayStartHour Int @default(9)
+  displayEndHour   Int @default(17)
 }
 
 model Space {

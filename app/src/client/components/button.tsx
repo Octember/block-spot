@@ -13,7 +13,7 @@ type ButtonProps = {
 export const Button = ({ ariaLabel, icon, children, onClick, type = 'button', variant = 'primary', disabled = false }: ButtonProps) => {
   const variantClasses = {
     primary: 'bg-blue-500 hover:bg-blue-600 text-white',
-    secondary: 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-400 hover:border-gray-500',
+    secondary: 'bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 hover:border-gray-400',
     tertiary: 'bg-white hover:bg-gray-50 text-gray-800',
     danger: 'bg-red-500 hover:bg-red-600 text-white',
     warning: 'bg-white hover:bg-red-100 border border-red-600 text-red-800',
