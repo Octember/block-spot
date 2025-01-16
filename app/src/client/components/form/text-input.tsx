@@ -7,7 +7,6 @@ export const TextInput = forwardRef<
   return (
     <input
       ref={ref}
-      type="text"
       className="border border-gray-300 hover:border-gray-400 rounded-md px-2 py-1 text-md"
       {...props}
     />

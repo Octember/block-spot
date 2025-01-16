@@ -3,7 +3,12 @@ import {
   PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import {
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+  Controller,
+} from "react-hook-form";
 import { updateVenue } from "wasp/client/operations";
 import { Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
@@ -12,6 +17,7 @@ import { FormField } from "../../../client/components/form/form-field";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { useToast } from "../../../client/toast";
 import { Select } from "../../../client/components/form/select";
+import { timeLabels } from "../../calendar/constants";
 
 type UpdateVenueFormInputs = {
   name: string;
@@ -127,11 +133,40 @@ export function UpdateVenueForm({
 
       <div className="flex flex-col gap-2">
         <h2 className="text-md font-semibold">Display Hours</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           {/* TODO: Add a dropdown for the hours */}
-          <TextInput type="number" {...register("displayStartHour")} />
-          <TextInput type="number" {...register("displayEndHour")} />
-          <TimeDropdown />
+          <span className="">Show the hours from</span>
+
+          <Controller
+            name="displayStartHour"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                options={Array.from({ length: 24 }, (_, i) => ({
+                  label: timeLabels[i],
+                  value: String(i),
+                }))}
+                onChange={onChange}
+                value={{ label: timeLabels[value], value: String(value) }}
+              />
+            )}
+          />
+          <span className="">to</span>
+
+          <Controller
+            name="displayEndHour"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                options={Array.from({ length: 24 }, (_, i) => ({
+                  label: timeLabels[i],
+                  value: String(i),
+                }))}
+                onChange={(value) => onChange(Number(value.value))}
+                value={{ label: timeLabels[value], value: String(value) }}
+              />
+            )}
+          />
         </div>
       </div>
 
@@ -152,17 +187,3 @@ export function UpdateVenueForm({
     </form>
   );
 }
-
-const TimeDropdown = () => {
-  return (
-    <Select
-      options={Array.from({ length: 24 }, (_, i) => ({
-        label: i.toString(),
-        value: i.toString(),
-      }))}
-      value={{ label: "12", value: "12" }}
-      onChange={(value) => { }}
-      label="Display Start Hour"
-    />
-  );
-};
