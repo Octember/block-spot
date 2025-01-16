@@ -25,8 +25,8 @@ type UpdateVenueFormInputs = {
     id: string;
     name: string;
   }[];
-  displayStartHour: number;
-  displayEndHour: number;
+  displayStart: number;
+  displayEnd: number;
 };
 
 export function UpdateVenueForm({
@@ -46,8 +46,8 @@ export function UpdateVenueForm({
     defaultValues: {
       name: venue.name,
       spaces: venue.spaces,
-      displayStartHour: venue.displayStartHour,
-      displayEndHour: venue.displayEndHour,
+      displayStart: venue.displayStart / 60,
+      displayEnd: venue.displayEnd / 60,
     },
   });
 
@@ -62,8 +62,8 @@ export function UpdateVenueForm({
         id: venue.id,
         name: data.name,
         spaces: data.spaces,
-        displayStartHour: data.displayStartHour,
-        displayEndHour: data.displayEndHour,
+        displayStart: data.displayStart * 60,
+        displayEnd: data.displayEnd * 60,
       });
       toast({
         title: "Venue updated",
@@ -82,7 +82,10 @@ export function UpdateVenueForm({
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-row justify-between items-center">
         <div className="w-1/2">
-          <FormField label="Venue Name">
+          <FormField
+            label="Venue Name"
+            description="The name of your venue that will be displayed to customers when they make a booking"
+          >
             <TextInput required {...register("name")} />
           </FormField>
         </div>
@@ -105,75 +108,87 @@ export function UpdateVenueForm({
       </div>
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-md font-semibold">Spaces</h2>
-        {fields.map((field, index) => (
-          <div key={field.id} className="flex gap-2">
-            <TextInput key={field.id} {...register(`spaces.${index}.name`)} />
-            <Button
-              type="button"
-              variant="secondary"
-              ariaLabel="Remove Space"
-              icon={<XMarkIcon className="size-4" />}
-              onClick={() => remove(index)}
-            ></Button>
+        <FormField
+          label="Spaces"
+          description="Add or remove bookable spaces in your venue, such as rooms, tables, or equipment"
+        >
+          <div className="flex flex-col gap-2">
+            {fields.map((field, index) => (
+              <div key={field.id} className="flex gap-2">
+                <TextInput key={field.id} {...register(`spaces.${index}.name`)} />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  ariaLabel="Remove Space"
+                  icon={<XMarkIcon className="size-4" />}
+                  onClick={() => remove(index)}
+                ></Button>
+              </div>
+            ))}
+            <div>
+              <Button
+                type="button"
+                variant="secondary"
+                ariaLabel="Add Space"
+                icon={<PlusIcon className="size-4" />}
+                onClick={() => append({ name: "", id: "" })}
+              >
+                Add Space
+              </Button>
+            </div>
           </div>
-        ))}
-        <div>
-          <Button
-            type="button"
-            variant="secondary"
-            ariaLabel="Add Space"
-            icon={<PlusIcon className="size-4" />}
-            onClick={() => append({ name: "", id: "" })}
-          >
-            Add Space
-          </Button>
-        </div>
+        </FormField>
       </div>
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-md font-semibold">Display Hours</h2>
-        <div className="flex gap-2 items-center">
-          <span className="">Show the hours from</span>
+        <FormField
+          label="Display Hours"
+          description="Configure which hours of the day to show in the schedule view"
+        >
+          <div className="flex gap-2 items-center text-md">
+            <span className="items-center">Show the hours from</span>
+            <Controller
+              name="displayStart"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  options={Array.from({ length: 24 }, (_, i) => ({
+                    label: timeLabels[i],
+                    value: String(i),
+                  }))}
+                  onChange={(value) => onChange(Number(value.value))}
+                  value={{ label: timeLabels[value], value: String(value) }}
+                />
+              )}
+            />
+            <span className="">to</span>
 
-          <Controller
-            name="displayStartHour"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                options={Array.from({ length: 24 }, (_, i) => ({
-                  label: timeLabels[i],
-                  value: String(i),
-                }))}
-                onChange={onChange}
-                value={{ label: timeLabels[value], value: String(value) }}
-              />
-            )}
-          />
-          <span className="">to</span>
-
-          <Controller
-            name="displayEndHour"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                options={Array.from({ length: 24 }, (_, i) => ({
-                  label: timeLabels[i],
-                  value: String(i),
-                }))}
-                onChange={(value) => onChange(Number(value.value))}
-                value={{ label: timeLabels[value], value: String(value) }}
-              />
-            )}
-          />
-        </div>
+            <Controller
+              name="displayEnd"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  options={Array.from({ length: 24 }, (_, i) => ({
+                    label: timeLabels[i],
+                    value: String(i),
+                  }))}
+                  onChange={(value) => onChange(Number(value.value))}
+                  value={{ label: timeLabels[value], value: String(value) }}
+                />
+              )}
+            />
+          </div>
+        </FormField>
       </div>
 
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-md font-semibold">Availability</h2>
-
-
+        <FormField
+          label="Availability"
+          description="Set the hours when your venue is open for bookings"
+        >
+          foo
+        </FormField>
       </div>
 
       <div className="flex gap-4">

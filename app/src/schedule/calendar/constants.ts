@@ -30,5 +30,5 @@ export const timeLabels = [
 export function useTimeLabels() {
   const { venue } = useScheduleContext();
 
-  return timeLabels.slice(venue.displayStartHour, venue.displayEndHour);
+  return timeLabels.slice(venue.displayStart / 60, venue.displayEnd / 60);
 }

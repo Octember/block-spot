@@ -31,12 +31,13 @@ function getColorStyles(
   isDragging: boolean,
 ) {
   if (isDragging && over && over.data.current?.occupied) {
-    return "bg-red-50 hover:bg-red-100 border-red-500";
+    return "bg-red-50 hover:bg-red-100 border-red-500 opacity-50";
   }
   if (isDraft || isDragging) {
-    return "bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500";
+    return "bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500 opacity-50";
   }
-  return "bg-gradient-to-br from-gray-200 hover:from-gray-50 to-gray-50 hover:to-gray-300 border-gray-400 hover:border-gray-500";
+
+  return "bg-gradient-to-br from-gray-200 hover:from-gray-50 to-gray-50 hover:to-gray-300 border-gray-400 hover:border-gray-500 ";
 }
 
 export const ReservationSlot = (props: ReservationSlotProps) => {

@@ -161,8 +161,8 @@ model Venue {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  displayStartHour Int @default(9)
-  displayEndHour   Int @default(17)
+  displayStart Int @default(480)
+  displayEnd   Int @default(1080)
 }
 
 model Space {

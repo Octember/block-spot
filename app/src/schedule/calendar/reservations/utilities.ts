@@ -21,15 +21,14 @@ export function getRowIndex(venue: Venue, time: Date) {
     Math.ceil(
       time.getHours() * (60 / MinutesPerSlot) +
         time.getMinutes() / MinutesPerSlot -
-        venue.displayStartHour * (60 / MinutesPerSlot),
+        venue.displayStart / MinutesPerSlot,
     ) + 2
   );
 }
 
 export function getTimeFromRowIndex(venue: Venue, rowIndex: number): Date {
   const totalMinutes =
-    (rowIndex + venue.displayStartHour * (60 / MinutesPerSlot)) *
-    MinutesPerSlot;
+    (rowIndex + venue.displayStart / MinutesPerSlot) * MinutesPerSlot;
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 

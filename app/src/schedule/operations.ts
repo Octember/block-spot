@@ -160,19 +160,20 @@ export const getVenueById: GetVenueById<
 
 type UpdateVenuePayload = Pick<
   Venue,
-  "id" | "name" | "displayStartHour" | "displayEndHour"
+  "id" | "name" | "displayStart" | "displayEnd"
 > & { spaces: Pick<Space, "id" | "name">[] };
 
 export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
   args,
   context,
 ) => {
+  console.log("updateVenue", args);
   return context.entities.Venue.update({
     where: { id: args.id },
     data: {
       name: args.name,
-      displayStartHour: Number(args.displayStartHour),
-      displayEndHour: Number(args.displayEndHour),
+      displayStart: Number(args.displayStart),
+      displayEnd: Number(args.displayEnd),
       spaces: {
         deleteMany: {
           NOT: args.spaces
