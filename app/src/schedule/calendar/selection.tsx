@@ -3,36 +3,41 @@ import { useState } from "react";
 import { getSharedGridStyle, MinutesPerSlot } from './reservations/constants';
 import { useSelectedDate } from "./providers/date-provider";
 import { useTimeLabels } from "./constants";
+import { getTimeFromRowIndex } from './reservations/utilities';
+import { Venue } from "wasp/entities";
+import { useScheduleContext } from "./providers/schedule-query-provider";
 
-function getStartEndTime(date: Date, selection: {
+function getStartEndTime(venue: Venue, date: Date, selection: {
   start: { row: number; col: number };
   current: { row: number; col: number };
 }): { start: Date; end: Date } {
   const isEqual = selection.start.row === selection.current.row;
 
   if (selection.start.row > selection.current.row) {
-    const startTime = calculateTimeFromRow(date, selection.current.row - 1);
+    const startTime = calculateTimeFromRow(venue, date, selection.current.row - 1);
     const endTime = calculateTimeFromRow(
+      venue,
       date,
       selection.start.row + (isEqual ? 1 : 0)
     );
     return { start: startTime, end: endTime };
   }
 
-  const startTime = calculateTimeFromRow(date, selection.start.row - 1);
+  const startTime = calculateTimeFromRow(venue, date, selection.start.row - 1);
   const endTime = calculateTimeFromRow(
+    venue,
     date,
     selection.current.row + (isEqual ? 1 : 0)
   );
   return { start: startTime, end: endTime };
 }
 
-const calculateTimeFromRow = (date: Date, row: number): Date => {
+const calculateTimeFromRow = (venue: Venue, date: Date, row: number): Date => {
   // Can cause bugs if date is mutated, need to clone it
   const result = new Date(date);
+  const hoursMinutes = getTimeFromRowIndex(venue, row);
 
-  result.setHours(8 + Math.floor(row / (60 / MinutesPerSlot)));
-  result.setMinutes((row % (60 / MinutesPerSlot)) * MinutesPerSlot);
+  result.setHours(hoursMinutes.getHours(), hoursMinutes.getMinutes());
   return result;
 };
 
@@ -47,6 +52,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
 }) => {
   const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
+  const { venue } = useScheduleContext();
 
   const [selection, setSelection] = useState<{
     start: { row: number; col: number } | null;
@@ -67,8 +73,9 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
 
   const handleMouseUp = () => {
     setIsSelecting(false);
+
     if (selection.start && selection.current) {
-      const { start, end } = getStartEndTime(selectedDate, selection);
+      const { start, end } = getStartEndTime(venue, selectedDate, selection);
 
       if (onSelectionComplete) {
         onSelectionComplete(start, end, selection.start.col);
@@ -95,6 +102,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
     <div
       {...getSharedGridStyle(spaceCount)}
       onMouseUp={handleMouseUp}
+      onMouseLeave={() => setIsSelecting(false)}
     >
       {Array.from({ length: timeLabels.length * 12 }).map((_, row) =>
         Array.from({ length: spaceCount }).map((_, col) => (

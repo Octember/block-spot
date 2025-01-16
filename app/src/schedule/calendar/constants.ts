@@ -29,7 +29,6 @@ export const timeLabels = [
 
 export function useTimeLabels() {
   const { venue } = useScheduleContext();
-  if (!venue) throw new Error("Venue not found");
 
   return timeLabels.slice(venue.displayStartHour, venue.displayEndHour);
 }

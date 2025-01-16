@@ -15,7 +15,7 @@ const useScheduleQuery = (venueId: string) => {
   return { result: venue || null, refresh: refetch }
 }
 
-export const ScheduleQueryContext = createContext<{ venue: Awaited<ReturnType<typeof getVenueInfo>>, refresh: () => void }>({ venue: null, refresh: () => { } });
+export const ScheduleQueryContext = createContext<{ venue: NonNullable<Awaited<ReturnType<typeof getVenueInfo>>>, refresh: () => void }>({ venue: null, refresh: () => { } });
 
 export const ScheduleQueryProvider = ({ children }: { children: React.ReactNode }) => {
   const { venueId } = useParams();
@@ -23,6 +23,11 @@ export const ScheduleQueryProvider = ({ children }: { children: React.ReactNode 
     return <div>Venue not found</div>;
   }
   const { result: venue, refresh } = useScheduleQuery(venueId);
+
+  if (!venue) {
+    return <div>Venue not found</div>;
+  }
+
   return <ScheduleQueryContext.Provider value={{ venue, refresh }}>
     {children}
   </ScheduleQueryContext.Provider>
@@ -30,7 +35,6 @@ export const ScheduleQueryProvider = ({ children }: { children: React.ReactNode 
 
 export const useScheduleContext = () => {
   const { venue, refresh } = useContext(ScheduleQueryContext);
-  // if (!venue) throw new Error("Venue not found");
 
   return { venue, refresh };
 }

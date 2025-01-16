@@ -9,11 +9,9 @@ import { TextInput } from '../client/components/form/text-input';
 
 const PageLoader = () => {
   const { venue } = useScheduleContext();
-  if (!venue) {
-    return <div>Venue not found</div>;
-  }
 
-  return <div className="h-full">
+
+  return <div className="flex flex-col h-full min-h-screen">
     <WeekViewCalendar venue={venue} />
     {venue.spaces.length > 0 && <GptSection spaceId={venue.spaces[0].id} />}
   </div>

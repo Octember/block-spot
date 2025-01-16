@@ -17,7 +17,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
   const timeLabels = useTimeLabels();
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col flex-1">
       <CalendarHeader venue={venue} />
 
       <div className="isolate flex flex-auto flex-col overflow-auto bg-white">
@@ -73,7 +73,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
               </div>
 
               {/* Events */}
-              <ReservationsSection venue={venue} spaceIds={spaceIds} />
+              <ReservationsSection />
             </div>
           </div>
         </div>

@@ -44,7 +44,7 @@ function getColorStyles(isDraft: boolean, over: Over | null, isDragging: boolean
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
 
-  const { refresh } = useScheduleContext();
+  const { venue, refresh } = useScheduleContext();
 
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
@@ -63,7 +63,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     }
   }, [isDraft]);
 
-  const startRow = getRowIndex(reservation.startTime);
+  const startRow = getRowIndex(venue, reservation.startTime);
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = useMemo(() => getColorStyles(isDraft, over, isDragging), [isDraft, over, isDragging]);
