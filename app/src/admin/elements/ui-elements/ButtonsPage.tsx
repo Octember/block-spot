@@ -20,23 +20,23 @@ const Buttons = ({ user }: { user: AuthUser }) => {
 
         <div className='p-4 md:p-6 xl:p-9'>
           <div className='mb-7.5 flex flex-wrap gap-5 xl:gap-20 bg-gray-100 p-4 rounded-md'>
-            <Button variant='primary'>
+            <Button variant='primary' ariaLabel='Primary Button'>
               Primary Button
             </Button>
 
-            <Button variant='secondary'>
+            <Button variant='secondary' ariaLabel='Secondary Button'>
               Secondary Button
             </Button>
 
-            <Button variant='tertiary'>
+            <Button variant='tertiary' ariaLabel='Tertiary Button'>
               Tertiary Button
             </Button>
 
-            <Button variant='warning'>
+            <Button variant='warning' ariaLabel='Warning Button'>
               Warning Button
             </Button>
 
-            <Button variant='danger'>
+            <Button variant='danger' ariaLabel='Danger Button'>
               Danger Button
             </Button>
           </div>

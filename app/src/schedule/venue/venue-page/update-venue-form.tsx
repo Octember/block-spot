@@ -55,7 +55,7 @@ export function UpdateVenueForm(
             params={{ venueId: venue.id }}
             className='flex items-center -m-1.5 p-1.5 text-gray-900 duration-300 ease-in-out hover:text-yellow-500'
           >
-            <Button variant='secondary' icon={<ArrowUpRightIcon className='size-4' />} onClick={() => { }}>
+            <Button variant='secondary' ariaLabel="View Schedule" icon={<ArrowUpRightIcon className='size-4' />} onClick={() => { }}>
               View Schedule
             </Button>
           </WaspRouterLink>
@@ -63,26 +63,34 @@ export function UpdateVenueForm(
       </div>
 
       <div className='flex flex-col gap-2'>
-        <h2 className='text-lg font-semibold'>Spaces</h2>
+        <h2 className='text-md font-semibold'>Spaces</h2>
         {fields.map((field, index) => (
           <div key={field.id} className='flex gap-2'>
             <TextInput key={field.id} {...register(`spaces.${index}.name`)} />
             <Button
               type="button"
-              variant="secondary" icon={<XMarkIcon className='size-4' />}
+              variant="secondary"
+              ariaLabel="Remove Space"
+              icon={<XMarkIcon className='size-4' />}
               onClick={() => remove(index)}>
-              Remove
             </Button>
           </div>
         ))}
         <div>
-          <Button type="button" variant="secondary" icon={<PlusIcon className='size-4' />} onClick={() => append({ name: '', id: '' })}>Add Space</Button>
+          <Button
+            type="button"
+            variant="secondary"
+            ariaLabel="Add Space"
+            icon={<PlusIcon className='size-4' />}
+            onClick={() => append({ name: '', id: '' })}>
+            Add Space
+          </Button>
         </div>
       </div>
 
       <div className='flex gap-4'>
-        <Button disabled={!isDirty} type="submit">Update Venue</Button>
-        <Button disabled type="button" variant="danger" onClick={() => { }}>Delete Venue</Button>
+        <Button disabled={!isDirty} type="submit" ariaLabel="Update Venue">Update Venue</Button>
+        <Button disabled type="button" variant="danger" onClick={() => { }} ariaLabel="Delete Venue">Delete Venue</Button>
       </div>
     </form>
   )

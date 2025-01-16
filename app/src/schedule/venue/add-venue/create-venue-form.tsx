@@ -31,7 +31,7 @@ export function CreateVenueForm(
       {errors.venueName && <span>This field is required</span>}
 
       <div className="flex justify-end">
-        <Button type="submit">Create Venue</Button>
+        <Button type="submit" ariaLabel="Create Venue">Create Venue</Button>
       </div>
     </form>
   )
