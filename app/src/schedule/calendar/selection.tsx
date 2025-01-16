@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { getSharedGridStyle, MinutesPerSlot } from './reservations/constants';
 import { useSelectedDate } from "./providers/date-provider";
+import { useTimeLabels } from "./constants";
 
 function getStartEndTime(date: Date, selection: {
   start: { row: number; col: number };
@@ -37,15 +38,14 @@ const calculateTimeFromRow = (date: Date, row: number): Date => {
 
 interface GridSelectionProps {
   spaceCount: number;
-  timeLabels: string[];
   onSelectionComplete?: (start: Date, end: Date, spaceIndex: number) => void;
 }
 
 export const GridSelection: React.FC<GridSelectionProps> = ({
   spaceCount,
-  timeLabels,
   onSelectionComplete,
 }) => {
+  const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
 
   const [selection, setSelection] = useState<{

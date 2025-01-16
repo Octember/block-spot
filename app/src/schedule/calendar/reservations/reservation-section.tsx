@@ -5,7 +5,7 @@ import { deleteReservation, getVenueInfo, updateReservation, useQuery } from 'wa
 import { Reservation } from 'wasp/entities';
 import { useToast } from '../../../client/toast';
 import { WeekViewCalendarProps } from '../WeekViewCalendar';
-import { timeLabels } from '../constants';
+import { useTimeLabels } from '../constants';
 import { GridSelection } from '../selection';
 import { ReservationSlot } from './reservation-slot';
 import { getRowSpan, getRowIndex, getTimeFromRowIndex, isWithinReservation } from './utilities';
@@ -23,6 +23,7 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
   }, [venue]);
 
   const { refresh } = useScheduleContext();
+  const timeLabels = useTimeLabels();
 
   const [draftReservation, setDraftReservation] = useState<Reservation | null>(
     null
@@ -160,7 +161,6 @@ export const ReservationsSection = ({ venue, spaceIds }: WeekViewCalendarProps &
     </DndContext>
     <GridSelection
       spaceCount={venue.spaces.length}
-      timeLabels={timeLabels}
       onSelectionComplete={(start: Date, end: Date, spaceIndex: number) => {
         setDraftReservation({
           id: "draft",

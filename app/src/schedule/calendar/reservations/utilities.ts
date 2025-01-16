@@ -1,6 +1,8 @@
 import { addMinutes, differenceInMinutes, isAfter, isBefore, isWithinInterval } from "date-fns";
 import { Reservation } from "wasp/entities";
 import { MinutesPerSlot } from "./constants";
+import { useTimeLabels } from "../constants";
+import { useScheduleContext } from "../providers/schedule-query-provider";
 
 export function getRowSpan(reservation: Reservation) {
   const start = reservation.startTime;
@@ -10,13 +12,25 @@ export function getRowSpan(reservation: Reservation) {
 }
 
 export function getRowIndex(time: Date) {
+  const { venue } = useScheduleContext();
+  if (!venue) throw new Error("Venue not found");
+
+  console.log(time.getHours(), time.getMinutes(), venue.displayStartHour);
+
+  console.log(time)
+  console.log("One", time.getHours() * (60 / MinutesPerSlot));
+  console.log("Two", time.getMinutes() / MinutesPerSlot);
+  console.log("Three", venue.displayStartHour * (60 / MinutesPerSlot));
+
   return Math.ceil(time.getHours() * (60 / MinutesPerSlot) +
     time.getMinutes() / MinutesPerSlot -
-    7 * (60 / MinutesPerSlot)) - 2;
+    venue.displayStartHour * (60 / MinutesPerSlot)) + 2;
 }
 
 export function getTimeFromRowIndex(rowIndex: number): Date {
-  const totalMinutes = (rowIndex + 3 + 7 * (60 / MinutesPerSlot)) * MinutesPerSlot;
+  const { venue } = useScheduleContext();
+
+  const totalMinutes = (rowIndex + 3 + venue.displayStartHour * (60 / MinutesPerSlot)) * MinutesPerSlot;
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 

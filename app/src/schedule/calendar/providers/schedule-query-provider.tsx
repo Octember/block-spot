@@ -29,5 +29,8 @@ export const ScheduleQueryProvider = ({ children }: { children: React.ReactNode 
 }
 
 export const useScheduleContext = () => {
-  return useContext(ScheduleQueryContext);
+  const { venue, refresh } = useContext(ScheduleQueryContext);
+  // if (!venue) throw new Error("Venue not found");
+
+  return { venue, refresh };
 }

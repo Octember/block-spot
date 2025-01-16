@@ -2,7 +2,7 @@ import React, { FC, useRef } from "react";
 import { Reservation, Space, Venue } from "wasp/entities";
 
 import { CalendarHeader } from "./calendar-header";
-import { timeLabels } from "./constants";
+import { useTimeLabels } from "./constants";
 import { MinutesPerSlot, PixelsPerSlot } from './reservations/constants';
 import { ReservationsSection } from "./reservations/reservation-section";
 
@@ -14,6 +14,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
 
   const containerOffset = useRef(null);
   const spaceIds = venue.spaces.map((space) => space.id);
+  const timeLabels = useTimeLabels();
 
   return (
     <div className="flex h-full flex-col">
