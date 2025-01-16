@@ -1,14 +1,26 @@
 import { addDays, isValid, startOfDay, startOfToday } from "date-fns";
 import { Reservation, Space, Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
-import { CreateReservation, CreateVenue, DeleteReservation, GetAllVenues, GetVenueById, GetVenueInfo, UpdateReservation, UpdateVenue } from "wasp/server/operations";
+import {
+  CreateReservation,
+  CreateVenue,
+  DeleteReservation,
+  GetAllVenues,
+  GetVenueById,
+  GetVenueInfo,
+  UpdateReservation,
+  UpdateVenue,
+} from "wasp/server/operations";
 
 type GetVenueInfoPayload = {
   venueId: string;
   selectedDate: Date;
-}
+};
 
-export const getAllVenues: GetAllVenues<void, (Venue & { spaces: Space[] })[]> = async (args, context) => {
+export const getAllVenues: GetAllVenues<
+  void,
+  (Venue & { spaces: Space[] })[]
+> = async (args, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -18,17 +30,22 @@ export const getAllVenues: GetAllVenues<void, (Venue & { spaces: Space[] })[]> =
       spaces: true,
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
   });
 };
 
-export const getVenueInfo: GetVenueInfo<GetVenueInfoPayload, (Venue & { spaces: (Space & { reservations: Reservation[] })[] } | null)> = async (args, context) => {
+export const getVenueInfo: GetVenueInfo<
+  GetVenueInfoPayload,
+  (Venue & { spaces: (Space & { reservations: Reservation[] })[] }) | null
+> = async (args, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }
 
-  const date = isValid(args.selectedDate) ? startOfDay(args.selectedDate) : startOfToday();
+  const date = isValid(args.selectedDate)
+    ? startOfDay(args.selectedDate)
+    : startOfToday();
 
   return context.entities.Venue.findFirst({
     where: {
@@ -49,18 +66,23 @@ export const getVenueInfo: GetVenueInfo<GetVenueInfoPayload, (Venue & { spaces: 
       },
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
   });
 };
 
-type CreateReservationPayload = Pick<Reservation, "spaceId" | "startTime" | "endTime" | "description">;
+type CreateReservationPayload = Pick<
+  Reservation,
+  "spaceId" | "startTime" | "endTime" | "description"
+>;
 
-export const createReservation: CreateReservation<CreateReservationPayload, Reservation> = async (args, context) => {
-
+export const createReservation: CreateReservation<
+  CreateReservationPayload,
+  Reservation
+> = async (args, context) => {
   console.log("createReservation", args);
   if (!context.user) {
-    throw new HttpError(401)
+    throw new HttpError(401);
   }
 
   const endTime = new Date(args.endTime);
@@ -82,24 +104,41 @@ export const createReservation: CreateReservation<CreateReservationPayload, Rese
 
 type DeleteReservationPayload = Pick<Reservation, "id">;
 
-export const deleteReservation: DeleteReservation<DeleteReservationPayload, Reservation> = async (args, context) => {
+export const deleteReservation: DeleteReservation<
+  DeleteReservationPayload,
+  Reservation
+> = async (args, context) => {
   return context.entities.Reservation.delete({
     where: { id: args.id },
   });
 };
 
-type UpdateReservationPayload = Pick<Reservation, "id"> & Partial<Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">>;
+type UpdateReservationPayload = Pick<Reservation, "id"> &
+  Partial<
+    Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">
+  >;
 
-export const updateReservation: UpdateReservation<UpdateReservationPayload, Reservation> = async (args, context) => {
+export const updateReservation: UpdateReservation<
+  UpdateReservationPayload,
+  Reservation
+> = async (args, context) => {
   return context.entities.Reservation.update({
     where: { id: args.id },
-    data: { description: args.description, startTime: args.startTime, endTime: args.endTime, spaceId: args.spaceId },
+    data: {
+      description: args.description,
+      startTime: args.startTime,
+      endTime: args.endTime,
+      spaceId: args.spaceId,
+    },
   });
 };
 
 type CreateVenuePayload = Pick<Venue, "name">;
 
-export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (args, context) => {
+export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (
+  args,
+  context,
+) => {
   return context.entities.Venue.create({
     data: { name: args.name, address: "" },
   });
@@ -107,16 +146,27 @@ export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (args, 
 
 type GetVenueByIdPayload = {
   venueId: string;
-}
-
-export const getVenueById: GetVenueById<GetVenueByIdPayload, Venue & { spaces: Space[] } | null> = async (args, context) => {
-  return context.entities.Venue.findFirst({ where: { id: args.venueId }, include: { spaces: true } });
 };
 
-type UpdateVenuePayload = Pick<Venue, "id" | "name" | "displayStartHour" | "displayEndHour"> & { spaces: Pick<Space, "id" | "name">[] };
+export const getVenueById: GetVenueById<
+  GetVenueByIdPayload,
+  (Venue & { spaces: Space[] }) | null
+> = async (args, context) => {
+  return context.entities.Venue.findFirst({
+    where: { id: args.venueId },
+    include: { spaces: true },
+  });
+};
 
-export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (args, context) => {
+type UpdateVenuePayload = Pick<
+  Venue,
+  "id" | "name" | "displayStartHour" | "displayEndHour"
+> & { spaces: Pick<Space, "id" | "name">[] };
 
+export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
+  args,
+  context,
+) => {
   return context.entities.Venue.update({
     where: { id: args.id },
     data: {
@@ -125,18 +175,19 @@ export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (args, 
       displayEndHour: Number(args.displayEndHour),
       spaces: {
         deleteMany: {
-          NOT: args.spaces.filter(space => Boolean(space.id)).
-            map(space => ({ id: space.id || ''}))
+          NOT: args.spaces
+            .filter((space) => Boolean(space.id))
+            .map((space) => ({ id: space.id || "" })),
         },
 
-        upsert: args.spaces.map(space => ({
-          where: { id: space.id || '' },
+        upsert: args.spaces.map((space) => ({
+          where: { id: space.id || "" },
 
           update: { name: space.name },
 
-          create: { name: space.name, type: "ROOM", capacity: 1 }
+          create: { name: space.name, type: "ROOM", capacity: 1 },
         })),
-      }
-    }
+      },
+    },
   });
 };

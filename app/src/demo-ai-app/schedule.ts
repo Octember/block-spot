@@ -5,7 +5,7 @@ export type GeneratedSchedule = {
 
 export type MainTask = {
   name: string;
-  priority: 'low' | 'medium' | 'high';
+  priority: "low" | "medium" | "high";
 };
 
 export type SubTask = {

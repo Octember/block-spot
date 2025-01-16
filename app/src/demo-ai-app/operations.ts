@@ -1,4 +1,4 @@
-import {Task, GptResponse, Venue} from 'wasp/entities';
+import { Task, GptResponse, Venue } from "wasp/entities";
 import type {
   GenerateGptResponse,
   CreateTask,
@@ -6,15 +6,15 @@ import type {
   UpdateTask,
   GetGptResponses,
   GetAllTasksByUser,
-} from 'wasp/server/operations';
-import { HttpError } from 'wasp/server';
-import { GeneratedSchedule } from './schedule';
-import OpenAI from 'openai';
+} from "wasp/server/operations";
+import { HttpError } from "wasp/server";
+import { GeneratedSchedule } from "./schedule";
+import OpenAI from "openai";
 
 const openai = setupOpenAI();
 function setupOpenAI() {
   if (!process.env.OPENAI_API_KEY) {
-    return new HttpError(500, 'OpenAI API key is not set');
+    return new HttpError(500, "OpenAI API key is not set");
   }
   return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 }
@@ -31,7 +31,7 @@ async function extractDate(message: string) {
     }
 
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo-0125",  // You can choose any available model
+      model: "gpt-3.5-turbo-0125", // You can choose any available model
       messages: [
         {
           role: "system",
@@ -41,25 +41,28 @@ async function extractDate(message: string) {
                     If the user only specifies a time, use that time as the start time, and the end time will be 30 minutes after the start time.
           
                     Use today's date, ${new Date().toISOString()} to determine the date of the reservation.
-                    ALWAYS return the time in the format '{"start": "YYYY-MM-DD HH:MM", "end": "YYYY-MM-DD HH:MM", "description": "<description>"}'`
+                    ALWAYS return the time in the format '{"start": "YYYY-MM-DD HH:MM", "end": "YYYY-MM-DD HH:MM", "description": "<description>"}'`,
         },
         {
           role: "user",
-          content: message
-        }
+          content: message,
+        },
       ],
-      max_tokens: 50
+      max_tokens: 50,
     });
     console.log("Result:", response.choices);
-    
+
     return response.choices[0].message.content?.trim();
   } catch (error) {
-    console.error('Error parsing date:', error);
+    console.error("Error parsing date:", error);
     return null;
   }
 }
 
-export const generateGptResponse: GenerateGptResponse<GptPayload, string> = async ({ message }, context) => {
+export const generateGptResponse: GenerateGptResponse<
+  GptPayload,
+  string
+> = async ({ message }, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -73,16 +76,13 @@ export const generateGptResponse: GenerateGptResponse<GptPayload, string> = asyn
     const hasCredits = context.user.credits > 0;
     const hasValidSubscription =
       !!context.user.subscriptionStatus &&
-      context.user.subscriptionStatus !== 'deleted' &&
-      context.user.subscriptionStatus !== 'past_due';
+      context.user.subscriptionStatus !== "deleted" &&
+      context.user.subscriptionStatus !== "past_due";
 
     const date = await extractDate(message);
-      // const canUserContinue = hasCredits || hasValidSubscription;
-
+    // const canUserContinue = hasCredits || hasValidSubscription;
 
     return date ? date : "No date found";
-
-    
 
     // return JSON.parse(gptArgs);
   } catch (error: any) {
@@ -98,12 +98,15 @@ export const generateGptResponse: GenerateGptResponse<GptPayload, string> = asyn
     }
     console.error(error);
     const statusCode = error.statusCode || 500;
-    const errorMessage = error.message || 'Internal server error';
+    const errorMessage = error.message || "Internal server error";
     throw new HttpError(statusCode, errorMessage);
   }
 };
 
-export const createTask: CreateTask<Pick<Task, 'description'>, Task> = async ({ description }, context) => {
+export const createTask: CreateTask<Pick<Task, "description">, Task> = async (
+  { description },
+  context,
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -118,7 +121,10 @@ export const createTask: CreateTask<Pick<Task, 'description'>, Task> = async ({ 
   return task;
 };
 
-export const updateTask: UpdateTask<Partial<Task>, Task> = async ({ id, isDone, time }, context) => {
+export const updateTask: UpdateTask<Partial<Task>, Task> = async (
+  { id, isDone, time },
+  context,
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -136,7 +142,10 @@ export const updateTask: UpdateTask<Partial<Task>, Task> = async ({ id, isDone, 
   return task;
 };
 
-export const deleteTask: DeleteTask<Pick<Task, 'id'>, Task> = async ({ id }, context) => {
+export const deleteTask: DeleteTask<Pick<Task, "id">, Task> = async (
+  { id },
+  context,
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -152,7 +161,10 @@ export const deleteTask: DeleteTask<Pick<Task, 'id'>, Task> = async ({ id }, con
 //#endregion
 
 //#region Queries
-export const getGptResponses: GetGptResponses<void, GptResponse[]> = async (_args, context) => {
+export const getGptResponses: GetGptResponses<void, GptResponse[]> = async (
+  _args,
+  context,
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -165,7 +177,10 @@ export const getGptResponses: GetGptResponses<void, GptResponse[]> = async (_arg
   });
 };
 
-export const getAllTasksByUser: GetAllTasksByUser<void, Task[]> = async (_args, context) => {
+export const getAllTasksByUser: GetAllTasksByUser<void, Task[]> = async (
+  _args,
+  context,
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -176,7 +191,7 @@ export const getAllTasksByUser: GetAllTasksByUser<void, Task[]> = async (_args, 
       },
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
   });
 };

@@ -1,27 +1,33 @@
-import { ArrowUpRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import {
+  ArrowUpRightIcon,
+  PlusIcon,
+  XMarkIcon,
+} from "@heroicons/react/20/solid";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { updateVenue } from "wasp/client/operations";
 import { Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
-import { TextInput } from '../../../client/components/form/text-input';
+import { TextInput } from "../../../client/components/form/text-input";
 import { FormField } from "../../../client/components/form/form-field";
-import { Link as WaspRouterLink, routes } from 'wasp/client/router';
+import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { useToast } from "../../../client/toast";
+import { Select } from "../../../client/components/form/select";
 
 type UpdateVenueFormInputs = {
-  name: string
+  name: string;
   spaces: {
-    id: string
-    name: string
-  }[]
-  displayStartHour: number
-  displayEndHour: number
-}
+    id: string;
+    name: string;
+  }[];
+  displayStartHour: number;
+  displayEndHour: number;
+};
 
-export function UpdateVenueForm(
-  { venue }: { venue: Venue & { spaces: Space[] } }
-) {
-
+export function UpdateVenueForm({
+  venue,
+}: {
+  venue: Venue & { spaces: Space[] };
+}) {
   const toast = useToast();
 
   const {
@@ -35,9 +41,9 @@ export function UpdateVenueForm(
       name: venue.name,
       spaces: venue.spaces,
       displayStartHour: venue.displayStartHour,
-      displayEndHour: venue.displayEndHour
+      displayEndHour: venue.displayEndHour,
     },
-  })
+  });
 
   const { fields, append, remove } = useFieldArray({
     control: control,
@@ -46,15 +52,28 @@ export function UpdateVenueForm(
 
   const onSubmit: SubmitHandler<UpdateVenueFormInputs> = async (data) => {
     try {
-      await updateVenue({ id: venue.id, name: data.name, spaces: data.spaces, displayStartHour: data.displayStartHour, displayEndHour: data.displayEndHour })
-      toast({ title: 'Venue updated', description: 'Venue updated successfully' })
+      await updateVenue({
+        id: venue.id,
+        name: data.name,
+        spaces: data.spaces,
+        displayStartHour: data.displayStartHour,
+        displayEndHour: data.displayEndHour,
+      });
+      toast({
+        title: "Venue updated",
+        description: "Venue updated successfully",
+      });
     } catch (error) {
-      toast({ type: 'error', title: 'Something went wrong', description: JSON.stringify(error) || 'Please try again' })
+      toast({
+        type: "error",
+        title: "Something went wrong",
+        description: JSON.stringify(error) || "Please try again",
+      });
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-4'>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-row justify-between items-center">
         <div className="w-1/2">
           <FormField label="Venue Name">
@@ -65,27 +84,32 @@ export function UpdateVenueForm(
           <WaspRouterLink
             to={routes.ScheduleRoute.to}
             params={{ venueId: venue.id }}
-            className='flex items-center -m-1.5 p-1.5 text-gray-900 duration-300 ease-in-out hover:text-yellow-500'
+            className="flex items-center -m-1.5 p-1.5 text-gray-900 duration-300 ease-in-out hover:text-yellow-500"
           >
-            <Button variant='secondary' ariaLabel="View Schedule" icon={<ArrowUpRightIcon className='size-4' />} onClick={() => { }}>
+            <Button
+              variant="secondary"
+              ariaLabel="View Schedule"
+              icon={<ArrowUpRightIcon className="size-4" />}
+              onClick={() => { }}
+            >
               View Schedule
             </Button>
           </WaspRouterLink>
         </div>
       </div>
 
-      <div className='flex flex-col gap-2'>
-        <h2 className='text-md font-semibold'>Spaces</h2>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-md font-semibold">Spaces</h2>
         {fields.map((field, index) => (
-          <div key={field.id} className='flex gap-2'>
+          <div key={field.id} className="flex gap-2">
             <TextInput key={field.id} {...register(`spaces.${index}.name`)} />
             <Button
               type="button"
               variant="secondary"
               ariaLabel="Remove Space"
-              icon={<XMarkIcon className='size-4' />}
-              onClick={() => remove(index)}>
-            </Button>
+              icon={<XMarkIcon className="size-4" />}
+              onClick={() => remove(index)}
+            ></Button>
           </div>
         ))}
         <div>
@@ -93,26 +117,52 @@ export function UpdateVenueForm(
             type="button"
             variant="secondary"
             ariaLabel="Add Space"
-            icon={<PlusIcon className='size-4' />}
-            onClick={() => append({ name: '', id: '' })}>
+            icon={<PlusIcon className="size-4" />}
+            onClick={() => append({ name: "", id: "" })}
+          >
             Add Space
           </Button>
         </div>
       </div>
 
-      <div className='flex flex-col gap-2'>
-        <h2 className='text-md font-semibold'>Display Hours</h2>
-        <div className='flex gap-2'>
+      <div className="flex flex-col gap-2">
+        <h2 className="text-md font-semibold">Display Hours</h2>
+        <div className="flex gap-2">
           {/* TODO: Add a dropdown for the hours */}
           <TextInput type="number" {...register("displayStartHour")} />
           <TextInput type="number" {...register("displayEndHour")} />
+          <TimeDropdown />
         </div>
       </div>
 
-      <div className='flex gap-4'>
-        <Button disabled={!isDirty} type="submit" ariaLabel="Update Venue">Update Venue</Button>
-        <Button disabled type="button" variant="danger" onClick={() => { }} ariaLabel="Delete Venue">Delete Venue</Button>
+      <div className="flex gap-4">
+        <Button disabled={!isDirty} type="submit" ariaLabel="Update Venue">
+          Update Venue
+        </Button>
+        <Button
+          disabled
+          type="button"
+          variant="danger"
+          onClick={() => { }}
+          ariaLabel="Delete Venue"
+        >
+          Delete Venue
+        </Button>
       </div>
     </form>
-  )
+  );
 }
+
+const TimeDropdown = () => {
+  return (
+    <Select
+      options={Array.from({ length: 24 }, (_, i) => ({
+        label: i.toString(),
+        value: i.toString(),
+      }))}
+      value={{ label: "12", value: "12" }}
+      onChange={(value) => { }}
+      label="Display Start Hour"
+    />
+  );
+};

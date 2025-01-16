@@ -1,4 +1,10 @@
-import { addMinutes, differenceInMinutes, isAfter, isBefore, isWithinInterval } from "date-fns";
+import {
+  addMinutes,
+  differenceInMinutes,
+  isAfter,
+  isBefore,
+  isWithinInterval,
+} from "date-fns";
 import { Reservation, Venue } from "wasp/entities";
 import { MinutesPerSlot } from "./constants";
 import { useScheduleContext } from "../providers/schedule-query-provider";
@@ -11,14 +17,19 @@ export function getRowSpan(reservation: Reservation) {
 }
 
 export function getRowIndex(venue: Venue, time: Date) {
-
-  return Math.ceil(time.getHours() * (60 / MinutesPerSlot) +
-    time.getMinutes() / MinutesPerSlot -
-    venue.displayStartHour * (60 / MinutesPerSlot)) + 2;
+  return (
+    Math.ceil(
+      time.getHours() * (60 / MinutesPerSlot) +
+        time.getMinutes() / MinutesPerSlot -
+        venue.displayStartHour * (60 / MinutesPerSlot),
+    ) + 2
+  );
 }
 
 export function getTimeFromRowIndex(venue: Venue, rowIndex: number): Date {
-  const totalMinutes = (rowIndex + venue.displayStartHour * (60 / MinutesPerSlot)) * MinutesPerSlot;
+  const totalMinutes =
+    (rowIndex + venue.displayStartHour * (60 / MinutesPerSlot)) *
+    MinutesPerSlot;
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
@@ -27,11 +38,17 @@ export function getTimeFromRowIndex(venue: Venue, rowIndex: number): Date {
   return result;
 }
 
-export function isWithinReservation(venue: Venue, rowIndex: number, rowSpan: number, target: Reservation) {
+export function isWithinReservation(
+  venue: Venue,
+  rowIndex: number,
+  rowSpan: number,
+  target: Reservation,
+) {
   const startTime = getTimeFromRowIndex(venue, rowIndex);
   const endTime = addMinutes(startTime, rowSpan * MinutesPerSlot);
 
-  const result = isAfter(endTime, target.startTime) && isBefore(startTime, target.endTime);
+  const result =
+    isAfter(endTime, target.startTime) && isBefore(startTime, target.endTime);
 
   return result;
 }

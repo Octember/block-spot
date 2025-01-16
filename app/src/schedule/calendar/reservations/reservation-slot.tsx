@@ -1,26 +1,19 @@
 import { Over, useDraggable } from "@dnd-kit/core";
-import {
-  Popover,
-  PopoverButton,
-  PopoverPanel
-} from "@headlessui/react";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import {
   CheckIcon,
   EllipsisHorizontalIcon,
   PencilSquareIcon,
-  TrashIcon
+  TrashIcon,
 } from "@heroicons/react/20/solid";
 import { addMinutes, format } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  createReservation,
-  updateReservation
-} from "wasp/client/operations";
+import { createReservation, updateReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
-import { UpdateButton } from './update-button';
-import { getRowSpan, getRowIndex } from './utilities';
+import { UpdateButton } from "./update-button";
+import { getRowSpan, getRowIndex } from "./utilities";
 import { useScheduleContext } from "../providers/schedule-query-provider";
-import { TextInput } from '../../../client/components/form/text-input';
+import { TextInput } from "../../../client/components/form/text-input";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
 
 type ReservationSlotProps = {
@@ -32,7 +25,11 @@ type ReservationSlotProps = {
   onDelete?: () => void;
 };
 
-function getColorStyles(isDraft: boolean, over: Over | null, isDragging: boolean) {
+function getColorStyles(
+  isDraft: boolean,
+  over: Over | null,
+  isDragging: boolean,
+) {
   if (isDragging && over && over.data.current?.occupied) {
     return "bg-red-50 hover:bg-red-100 border-red-500";
   }
@@ -43,19 +40,19 @@ function getColorStyles(isDraft: boolean, over: Over | null, isDragging: boolean
 }
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
-
   const { venue, refresh } = useScheduleContext();
 
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
-  const { attributes, listeners, setNodeRef, transform, over, isDragging } = useDraggable({
-    id: `reservation-${reservation.id}`,
-    data: {
-      reservationId: reservation.id,
-      startTime: reservation.startTime,
-      endTime: reservation.endTime,
-    },
-  });
+  const { attributes, listeners, setNodeRef, transform, over, isDragging } =
+    useDraggable({
+      id: `reservation-${reservation.id}`,
+      data: {
+        reservationId: reservation.id,
+        startTime: reservation.startTime,
+        endTime: reservation.endTime,
+      },
+    });
 
   useEffect(() => {
     if (isDraft && descriptionInputRef.current) {
@@ -66,13 +63,15 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const startRow = getRowIndex(venue, reservation.startTime);
   const rowSpan = getRowSpan(reservation);
 
-  const colorStyles = useMemo(() => getColorStyles(isDraft, over, isDragging), [isDraft, over, isDragging]);
+  const colorStyles = useMemo(
+    () => getColorStyles(isDraft, over, isDragging),
+    [isDraft, over, isDragging],
+  );
 
   // Take into account the current drag position
   const newTimes = useMemo(() => {
     if (isDragging && transform) {
-
-      const delta = transform.y / (PixelsPerSlot) * MinutesPerSlot;
+      const delta = (transform.y / PixelsPerSlot) * MinutesPerSlot;
       const rounded = Math.round(delta / MinutesPerSlot) * MinutesPerSlot;
 
       return {
@@ -95,7 +94,9 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,
-        transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+        transform: transform
+          ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+          : undefined,
       }}
       ref={setNodeRef}
       {...attributes}
@@ -122,7 +123,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                     refresh();
 
                     props.onCreate?.();
-
                   } else {
                     await updateReservation({
                       id: reservation.id,
@@ -151,20 +151,16 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                     <CheckIcon className="size-5 bg-green-500 hover:bg-green-600 rounded p-0.5 text-white" />
                   </button>
                 )}
-                {isDraft &&
+                {isDraft && (
                   <div className="flex flex-row justify-end gap-2">
-                    <UpdateButton
-                      type="submit"
-                      color="green"
-                      text="Create"
-                    />
+                    <UpdateButton type="submit" color="green" text="Create" />
                     <UpdateButton
                       color="red"
                       onClick={() => props.onDiscardDraft?.()}
                       text="Cancel"
                     />
                   </div>
-                }
+                )}
               </form>
             ) : (
               <p className="font-semibold text-gray-700">
@@ -174,7 +170,9 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
             <ReservationMenu
               onEdit={() => setIsEditing(true)}
-              onDelete={() => props.isDraft ? props.onDiscardDraft?.() : props.onDelete?.()}
+              onDelete={() =>
+                props.isDraft ? props.onDiscardDraft?.() : props.onDelete?.()
+              }
             />
           </div>
 
@@ -192,13 +190,17 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
           </div>
         </div>
       </a>
-    </li >
+    </li>
   );
 };
 
-
-const ReservationMenu = ({ onEdit, onDelete }: { onEdit: () => void, onDelete: () => void }) => {
-
+const ReservationMenu = ({
+  onEdit,
+  onDelete,
+}: {
+  onEdit: () => void;
+  onDelete: () => void;
+}) => {
   return (
     <Popover className="relative">
       <PopoverButton>

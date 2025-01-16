@@ -1,12 +1,11 @@
-import { useDroppable } from '@dnd-kit/core';
-
+import { useDroppable } from "@dnd-kit/core";
 
 function getColor(isOver: boolean, occupied: boolean) {
   if (isOver) {
     return "bg-violet-200 bg-opacity-50";
   }
 
-  return ""
+  return "";
 }
 
 export const DroppableSpace = ({
@@ -14,7 +13,7 @@ export const DroppableSpace = ({
   columnIndex,
   rowIndex,
   rowSpan,
-  occupied
+  occupied,
 }: {
   spaceId: string;
   columnIndex: number;
@@ -32,11 +31,14 @@ export const DroppableSpace = ({
     // disabled: occupied,
   });
 
-  return <li ref={setNodeRef}
-    className={`${getColor(isOver, occupied)}`}
-    style={{
-      gridRow: `${rowIndex + 1} / span ${rowSpan}`,
-      gridColumnStart: columnIndex + 1,
-    }}
-  />
-}
+  return (
+    <li
+      ref={setNodeRef}
+      className={`${getColor(isOver, occupied)}`}
+      style={{
+        gridRow: `${rowIndex + 1} / span ${rowSpan}`,
+        gridColumnStart: columnIndex + 1,
+      }}
+    />
+  );
+};

@@ -1,13 +1,15 @@
-import { useParams } from 'react-router-dom';
-import { getVenueById, useQuery } from 'wasp/client/operations';
-import { useToast } from '../../../client/toast';
-import { UpdateVenueForm } from './update-venue-form';
-import { PageCard, CardContent } from '../../../client/components/page-card';
+import { useParams } from "react-router-dom";
+import { getVenueById, useQuery } from "wasp/client/operations";
+import { useToast } from "../../../client/toast";
+import { UpdateVenueForm } from "./update-venue-form";
+import { PageCard, CardContent } from "../../../client/components/page-card";
 
 export default function VenuePage() {
   const { venueId } = useParams();
 
-  const { data: venue, isLoading } = useQuery(getVenueById, { venueId: venueId || '' });
+  const { data: venue, isLoading } = useQuery(getVenueById, {
+    venueId: venueId || "",
+  });
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -16,10 +18,8 @@ export default function VenuePage() {
   return (
     <PageCard>
       <CardContent>
-        <UpdateVenueForm
-          venue={venue}
-        />
+        <UpdateVenueForm venue={venue} />
       </CardContent>
     </PageCard>
-  )
+  );
 }

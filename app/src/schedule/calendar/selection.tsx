@@ -1,24 +1,32 @@
 import { format } from "date-fns";
 import { useState } from "react";
-import { getSharedGridStyle, MinutesPerSlot } from './reservations/constants';
+import { getSharedGridStyle, MinutesPerSlot } from "./reservations/constants";
 import { useSelectedDate } from "./providers/date-provider";
 import { useTimeLabels } from "./constants";
-import { getTimeFromRowIndex } from './reservations/utilities';
+import { getTimeFromRowIndex } from "./reservations/utilities";
 import { Venue } from "wasp/entities";
 import { useScheduleContext } from "./providers/schedule-query-provider";
 
-function getStartEndTime(venue: Venue, date: Date, selection: {
-  start: { row: number; col: number };
-  current: { row: number; col: number };
-}): { start: Date; end: Date } {
+function getStartEndTime(
+  venue: Venue,
+  date: Date,
+  selection: {
+    start: { row: number; col: number };
+    current: { row: number; col: number };
+  },
+): { start: Date; end: Date } {
   const isEqual = selection.start.row === selection.current.row;
 
   if (selection.start.row > selection.current.row) {
-    const startTime = calculateTimeFromRow(venue, date, selection.current.row - 1);
+    const startTime = calculateTimeFromRow(
+      venue,
+      date,
+      selection.current.row - 1,
+    );
     const endTime = calculateTimeFromRow(
       venue,
       date,
-      selection.start.row + (isEqual ? 1 : 0)
+      selection.start.row + (isEqual ? 1 : 0),
     );
     return { start: startTime, end: endTime };
   }
@@ -27,7 +35,7 @@ function getStartEndTime(venue: Venue, date: Date, selection: {
   const endTime = calculateTimeFromRow(
     venue,
     date,
-    selection.current.row + (isEqual ? 1 : 0)
+    selection.current.row + (isEqual ? 1 : 0),
   );
   return { start: startTime, end: endTime };
 }
@@ -112,7 +120,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
             onMouseDown={() => handleMouseDown(row, col)}
             onMouseMove={() => handleMouseMove(row, col)}
           />
-        ))
+        )),
       )}
     </div>
   );

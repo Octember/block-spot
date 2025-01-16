@@ -3,7 +3,7 @@ import { Reservation, Space, Venue } from "wasp/entities";
 
 import { CalendarHeader } from "./calendar-header";
 import { useTimeLabels } from "./constants";
-import { MinutesPerSlot, PixelsPerSlot } from './reservations/constants';
+import { MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
 
 export interface WeekViewCalendarProps {
@@ -11,7 +11,6 @@ export interface WeekViewCalendarProps {
 }
 
 export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
-
   const containerOffset = useRef(null);
   const spaceIds = venue.spaces.map((space) => space.id);
   const timeLabels = useTimeLabels();
@@ -41,7 +40,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
                       key={index}
                       className={`col-start-${index + 1} row-span-full}`}
                     />
-                  )
+                  ),
                 )}
               </div>
 
@@ -65,9 +64,14 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
                       </div>
                     </div>
                     {/* 30min line */}
-                    {Array.from({ length: (60 / MinutesPerSlot) - 1 }).map((_, index) => (
-                      <div key={index} className={`row-span-1 border-b  ${getBorderStyle(index)}`}></div>
-                    ))}
+                    {Array.from({ length: 60 / MinutesPerSlot - 1 }).map(
+                      (_, index) => (
+                        <div
+                          key={index}
+                          className={`row-span-1 border-b  ${getBorderStyle(index)}`}
+                        ></div>
+                      ),
+                    )}
                   </React.Fragment>
                 ))}
               </div>
@@ -78,12 +82,12 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
 function getBorderStyle(index: number) {
-  if (index === 0) return 'border-b border-gray-300';
-  if (index % 2 === 0) return 'border-b border-gray-200';
-  return 'border-b border-gray-100';
+  if (index === 0) return "border-b border-gray-300";
+  if (index % 2 === 0) return "border-b border-gray-200";
+  return "border-b border-gray-100";
 }
