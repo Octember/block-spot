@@ -134,7 +134,6 @@ export function UpdateVenueForm({
       <div className="flex flex-col gap-2">
         <h2 className="text-md font-semibold">Display Hours</h2>
         <div className="flex gap-2 items-center">
-          {/* TODO: Add a dropdown for the hours */}
           <span className="">Show the hours from</span>
 
           <Controller
@@ -168,6 +167,13 @@ export function UpdateVenueForm({
             )}
           />
         </div>
+      </div>
+
+
+      <div className="flex flex-col gap-2">
+        <h2 className="text-md font-semibold">Availability</h2>
+
+
       </div>
 
       <div className="flex gap-4">
