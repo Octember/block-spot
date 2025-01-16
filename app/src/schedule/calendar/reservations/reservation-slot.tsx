@@ -10,7 +10,7 @@ import {
   PencilSquareIcon,
   TrashIcon
 } from "@heroicons/react/20/solid";
-import { format } from "date-fns";
+import { addMinutes, format } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   createReservation,
@@ -21,6 +21,7 @@ import { UpdateButton } from './update-button';
 import { getRowSpan, getRowIndex } from './utilities';
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { TextInput } from '../../../client/components/form/text-input';
+import { MinutesPerSlot, PixelsPerSlot } from "./constants";
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -66,6 +67,24 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = useMemo(() => getColorStyles(isDraft, over, isDragging), [isDraft, over, isDragging]);
+
+  // Take into account the current drag position
+  const newTimes = useMemo(() => {
+    if (isDragging && transform) {
+
+      const delta = transform.y / (PixelsPerSlot) * MinutesPerSlot;
+      const rounded = Math.round(delta / MinutesPerSlot) * MinutesPerSlot;
+
+      return {
+        startTime: addMinutes(reservation.startTime, rounded),
+        endTime: addMinutes(reservation.endTime, rounded),
+      };
+    }
+    return {
+      startTime: reservation.startTime,
+      endTime: reservation.endTime,
+    };
+  }, [isDragging, transform]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(reservation.description);
@@ -162,8 +181,12 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
           <div className="flex flex-row justify-between h-full">
             <p className="text-gray-500 group-hover:text-gray-700">
               <time dateTime="2022-01-12T06:00">
-                {format(reservation.startTime, "h:mm a")} -{" "}
-                {format(reservation.endTime, "h:mm a")}
+                {/* {isDragging ? <span className="text-gray-500">Dragging</span> : */}
+                <>
+                  {format(newTimes.startTime, "h:mm a")} -{" "}
+                  {format(newTimes.endTime, "h:mm a")}
+                </>
+                {/* } */}
               </time>
             </p>
           </div>

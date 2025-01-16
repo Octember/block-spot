@@ -50,7 +50,6 @@ export const ReservationsSection = () => {
         const reservationId = event.active.data.current?.reservationId;
         setDraggingReservationId(reservationId);
       }}
-      // collisionDetection={pointerWithin}
       onDragEnd={async (e) => {
         const delta = Math.round(e.delta.y / (PixelsPerSlot));
         const newSpaceId = e.over?.data.current?.spaceId || draftReservation?.spaceId;
