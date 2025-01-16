@@ -3,7 +3,7 @@ import { useDroppable } from '@dnd-kit/core';
 
 function getColor(isOver: boolean, occupied: boolean) {
   if (isOver) {
-    return "bg-gray-200";
+    return "bg-violet-200 bg-opacity-50";
   }
 
   return ""

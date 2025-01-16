@@ -66,7 +66,7 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
                     </div>
                     {/* 30min line */}
                     {Array.from({ length: (60 / MinutesPerSlot) - 1 }).map((_, index) => (
-                      <div key={index} className={`row-span-1 border-b  ${index % 2 === 0 ? 'border-gray-300' : 'border-gray-200'}`}></div>
+                      <div key={index} className={`row-span-1 border-b  ${getBorderStyle(index)}`}></div>
                     ))}
                   </React.Fragment>
                 ))}
@@ -81,3 +81,9 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
     </div >
   );
 };
+
+function getBorderStyle(index: number) {
+  if (index === 0) return 'border-b border-gray-300';
+  if (index % 2 === 0) return 'border-b border-gray-200';
+  return 'border-b border-gray-100';
+}
