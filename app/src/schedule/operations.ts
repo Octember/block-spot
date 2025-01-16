@@ -113,7 +113,7 @@ export const getVenueById: GetVenueById<GetVenueByIdPayload, Venue & { spaces: S
   return context.entities.Venue.findFirst({ where: { id: args.venueId }, include: { spaces: true } });
 };
 
-type UpdateVenuePayload = Pick<Venue, "id" | "name"> & { spaces: Pick<Space, "id" | "name">[] };
+type UpdateVenuePayload = Pick<Venue, "id" | "name" | "displayStartHour" | "displayEndHour"> & { spaces: Pick<Space, "id" | "name">[] };
 
 export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (args, context) => {
 
@@ -121,6 +121,8 @@ export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (args, 
     where: { id: args.id },
     data: {
       name: args.name,
+      displayStartHour: Number(args.displayStartHour),
+      displayEndHour: Number(args.displayEndHour),
       spaces: {
         deleteMany: {
           NOT: args.spaces.filter(space => Boolean(space.id)).

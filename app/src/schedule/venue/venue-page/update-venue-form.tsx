@@ -13,6 +13,8 @@ type UpdateVenueFormInputs = {
     id: string
     name: string
   }[]
+  displayStartHour: number
+  displayEndHour: number
 }
 
 export function UpdateVenueForm(
@@ -27,7 +29,9 @@ export function UpdateVenueForm(
   } = useForm<UpdateVenueFormInputs>({
     defaultValues: {
       name: venue.name,
-      spaces: venue.spaces
+      spaces: venue.spaces,
+      displayStartHour: venue.displayStartHour,
+      displayEndHour: venue.displayEndHour
     }
   })
 
@@ -37,7 +41,7 @@ export function UpdateVenueForm(
   });
 
   const onSubmit: SubmitHandler<UpdateVenueFormInputs> = async (data) => {
-    await updateVenue({ id: venue.id, name: data.name, spaces: data.spaces.map(space => ({ id: space.id, name: space.name })) })
+    await updateVenue({ id: venue.id, name: data.name, spaces: data.spaces, displayStartHour: data.displayStartHour, displayEndHour: data.displayEndHour })
     onSuccess(data);
   }
 
@@ -85,6 +89,15 @@ export function UpdateVenueForm(
             onClick={() => append({ name: '', id: '' })}>
             Add Space
           </Button>
+        </div>
+      </div>
+
+      <div className='flex flex-col gap-2'>
+        <h2 className='text-md font-semibold'>Display Hours</h2>
+        <div className='flex gap-2'>
+          {/* TODO: Add a dropdown for the hours */}
+          <TextInput type="number" {...register("displayStartHour")} />
+          <TextInput type="number" {...register("displayEndHour")} />
         </div>
       </div>
 
