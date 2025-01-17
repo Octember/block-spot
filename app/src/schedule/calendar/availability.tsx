@@ -24,8 +24,6 @@ export const AvailabilitySection: FC = () => {
         const startRow = getRowIndexFromMinutes(venue, rule.startTimeMinutes);
         const endRow = getRowIndexFromMinutes(venue, rule.endTimeMinutes);
 
-
-        console.log("startRow", startRow, "endRow", endRow);
         const rowSpan = endRow - startRow;
 
         return (

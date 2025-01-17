@@ -15,7 +15,7 @@ import {
 const ToastContext = createContext<{
   toast: ToastMessage | null;
   setToast: (toast: ToastMessage | null) => void;
-}>({ toast: null, setToast: () => {} });
+}>({ toast: null, setToast: () => { } });
 
 export type ToastMessage = {
   type?: "success" | "error";
@@ -42,12 +42,13 @@ export const ToastProvider: FC<PropsWithChildren> = ({ children }) => {
               <div className="p-4">
                 <div className="flex items-start">
                   <div className="shrink-0">
-                    {toast?.type === "success" ? (
+                    {toast?.type === "success" && (
                       <CheckCircleIcon
                         aria-hidden="true"
                         className="size-6 text-green-400"
                       />
-                    ) : (
+                    )}
+                    {toast?.type === "error" && (
                       <ExclamationCircleIcon
                         aria-hidden="true"
                         className="size-6 text-red-400"

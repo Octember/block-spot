@@ -19,17 +19,17 @@ export const HorizontalDividers: FC = () => {
 
     {timeLabels.map((label, index) => (
       <React.Fragment key={index}>
-        <div className="row-span-1 border-b border-gray-200">
+        <div className={`row-span-1 border-b ${getBorderStyle(0)}`}>
           <div className="sticky left-0 z-20 -ml-14 w-14 pr-2 -my-2.5 text-right text-xs/5 text-gray-500">
             {label}
           </div>
         </div>
-        {/* 30min line */}
+        {/* 15, 30, 45min line */}
         {Array.from({ length: 60 / MinutesPerSlot - 1 }).map(
           (_, index) => (
             <div
               key={index}
-              className={`row-span-1 border-b ${getBorderStyle(index)}`}
+              className={`row-span-1 border-b ${getBorderStyle(index + 1)}`}
             ></div>
           ),
         )}
@@ -39,9 +39,11 @@ export const HorizontalDividers: FC = () => {
 }
 
 function getBorderStyle(index: number) {
-  if (index === 0) return "border-b border-gray-200";
-  if (index % 2 === 0) return "border-b border-gray-300";
-  return "border-b border-gray-100";
+  console.log("index", index);
+
+  if (index === 0 || index === 2) return "border-b border-gray-100";
+  if (index === 1) return "border-b border-gray-200";
+  if (index === 3) return "border-b border-gray-300";
 }
 
 export const VerticalDividers: FC = () => {

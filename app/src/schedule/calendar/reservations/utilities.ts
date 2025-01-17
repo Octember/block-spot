@@ -39,7 +39,6 @@ export function getRowIndexFromMinutes(venue: Venue, minutes: number) {
   const result =
     Math.ceil((minutes - venue.displayStart) / MinutesPerSlot) +
     HEADER_ROW_COUNT;
-  console.log("result", result, "minutes", minutes, "displayStart", venue.displayStart);
 
   if (result <= 0) {
     return 1;
