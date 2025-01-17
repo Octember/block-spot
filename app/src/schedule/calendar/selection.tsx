@@ -16,26 +16,27 @@ function getStartEndTime(
   },
 ): { start: Date; end: Date } {
   const isEqual = selection.start.row === selection.current.row;
+  console.log("selection", selection);
 
   if (selection.start.row > selection.current.row) {
     const startTime = calculateTimeFromRow(
       venue,
       date,
-      selection.current.row - 1,
+      selection.current.row,
     );
     const endTime = calculateTimeFromRow(
       venue,
       date,
-      selection.start.row + (isEqual ? 1 : 0),
+      selection.start.row + 1,
     );
     return { start: startTime, end: endTime };
   }
 
-  const startTime = calculateTimeFromRow(venue, date, selection.start.row - 1);
+  const startTime = calculateTimeFromRow(venue, date, selection.start.row);
   const endTime = calculateTimeFromRow(
     venue,
     date,
-    selection.current.row + (isEqual ? 1 : 0),
+    selection.current.row + 1
   );
   return { start: startTime, end: endTime };
 }
@@ -114,11 +115,12 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
     >
       {Array.from({ length: timeLabels.length * 12 }).map((_, row) =>
         Array.from({ length: spaceCount }).map((_, col) => (
+          // Add ones to account for 1-based grid indexing
           <div
-            key={`${row}-${col}`}
-            className={`${getGridCell(row, col)} inset-1 rounded cursor-pointer`}
-            onMouseDown={() => handleMouseDown(row, col)}
-            onMouseMove={() => handleMouseMove(row, col)}
+            key={`${row + 1}-${col}`}
+            className={`${getGridCell(row + 1, col)} inset-1 rounded cursor-pointer`}
+            onMouseDown={() => handleMouseDown(row + 1, col)}
+            onMouseMove={() => handleMouseMove(row + 1, col)}
           />
         )),
       )}
