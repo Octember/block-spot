@@ -19,12 +19,13 @@ export const HorizontalDividers: FC = () => {
 
     {timeLabels.map((label, index) => (
       <React.Fragment key={index}>
+        {/* 15min line and label */}
         <div className={`row-span-1 border-b ${getBorderStyle(0)}`}>
           <div className="sticky left-0 z-20 -ml-14 w-14 pr-2 -my-2.5 text-right text-xs/5 text-gray-500">
             {label}
           </div>
         </div>
-        {/* 15, 30, 45min line */}
+        {/* 30, 45, 60min line */}
         {Array.from({ length: 60 / MinutesPerSlot - 1 }).map(
           (_, index) => (
             <div
