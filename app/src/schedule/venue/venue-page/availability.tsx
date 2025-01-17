@@ -42,7 +42,7 @@ export const AvailabilityRuleForm = ({
           <div className="flex">
             <Button
               onClick={() =>
-                append({ days: [], startTimeMinutes: 0, endTimeMinutes: 0 })
+                append({ days: [], startTimeMinutes: 0, endTimeMinutes: 0, spaceIds: [] })
               }
               variant="secondary"
               icon={<PlusIcon className="size-4" />}
@@ -68,6 +68,7 @@ export const AvailabilityRuleBlock = ({
   control: Control<UpdateVenueFormInputs>;
   index: number;
   rule: {
+    spaceIds: string[];
     days: string[];
     startTimeMinutes: number;
     endTimeMinutes: number;
@@ -77,51 +78,85 @@ export const AvailabilityRuleBlock = ({
 
   return <div className="flex flex-row justify-between gap-2 items-center bg-gray-200 border border-gray-300 p-4 rounded-md">
 
-    <div className="flex flex-row gap-1 items-center">
-      <Controller
-        name={`availabilityRules.${index}.days`}
+    <div className="flex flex-row gap-1.5 items-center">
+      {/* <Controller
+        name={`availabilityRules.${index}.spaceIds`}
         control={control}
         render={({ field: { onChange, value } }) => (
           <MultiSelect
+            disabled
             options={venue.spaces.map((space) => ({
               label: space.name,
               value: space.id,
             }))}
-            value={rule.days.map((day) => ({
-              label: day,
-              value: day,
-            }))}
+            value={[]}
             onChange={(value) => onChange(value.map((v) => v.value))}
             placeholder="All spaces"
+          />
+        )}
+      /> */}
+
+      <div className="text-sm">
+        Spaces are available from
+      </div>
+
+      <Controller
+        name={`availabilityRules.${index}.startTimeMinutes`}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            size='sm'
+            options={Array.from({ length: 24 }, (_, i) => ({
+              label: timeLabels[i],
+              value: String(i),
+            }))}
+            onChange={(value) => onChange(Number(value.value))}
+            value={{ label: timeLabels[value / 60], value: String(value) }}
           />
         )}
       />
 
       <div className="text-sm">
-        are available from
-      </div>
-
-      <Select
-        options={Array.from({ length: 24 }, (_, i) => ({
-          label: timeLabels[i],
-          value: String(i),
-        }))}
-        value={{ label: timeLabels[rule.startTimeMinutes / 60], value: String(rule.startTimeMinutes) }}
-        onChange={(value) => { }}
-        placeholder="Select a time"
-      />
-      <div className="text-sm">
         to
       </div>
 
-      <Select
-        options={Array.from({ length: 24 }, (_, i) => ({
-          label: timeLabels[i],
-          value: String(i),
-        }))}
-        value={{ label: timeLabels[rule.endTimeMinutes / 60], value: String(rule.endTimeMinutes) }}
-        onChange={(value) => { }}
-        placeholder="Select a time"
+      <Controller
+        name={`availabilityRules.${index}.endTimeMinutes`}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            size='sm'
+            options={Array.from({ length: 24 }, (_, i) => ({
+              label: timeLabels[i],
+              value: String(i),
+            }))}
+            onChange={(value) => onChange(Number(value.value))}
+            value={{ label: timeLabels[value / 60], value: String(value) }}
+          />
+        )}
+      />
+
+      <div className="text-sm">
+        on
+      </div>
+
+      <Controller
+        name={`availabilityRules.${index}.days`}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <MultiSelect
+            options={Days.map((day) => ({
+              label: day.label,
+              value: day.value,
+            }))}
+            value={value.map((day) => ({
+              label: day,
+              value: day,
+            }))}
+            onChange={(value) => onChange(value.map((v) => v.value))}
+            placeholder="every day"
+          />
+        )}
       />
     </div>
 
@@ -133,3 +168,14 @@ export const AvailabilityRuleBlock = ({
     />
   </div>
 };
+
+
+const Days = [
+  { label: "Monday", value: "Mon" },
+  { label: "Tuesday", value: "Tue" },
+  { label: "Wednesday", value: "Wed" },
+  { label: "Thursday", value: "Thu" },
+  { label: "Friday", value: "Fri" },
+  { label: "Saturday", value: "Sat" },
+  { label: "Sunday", value: "Sun" },
+];

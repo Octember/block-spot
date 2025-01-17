@@ -19,20 +19,21 @@ interface SelectOption {
 type Size = "sm" | "md";
 
 const sizeClasses: Record<Size, string> = {
-  sm: "min-w-20",
+  sm: "min-w-15",
   md: "min-w-30",
 }
 
 export const Select = forwardRef<
   HTMLSelectElement,
   {
+    disabled?: boolean;
     options: SelectOption[];
     value: SelectOption;
     onChange: (value: SelectOption) => void;
     placeholder?: string;
     size?: Size;
   }
->(({ options, value, onChange, placeholder = "Select...", size = "md", ...props }, ref) => {
+>(({ options, value, onChange, placeholder = "Select...", size = "md", disabled = false, ...props }, ref) => {
   const [selectedRef, setSelectedRef] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -42,11 +43,12 @@ export const Select = forwardRef<
   }, [selectedRef]);
 
   const sizeClass = sizeClasses[size];
+  const cursorClass = disabled ? "cursor-not-allowed" : "cursor-pointer";
 
   return (
-    <Listbox value={value} onChange={onChange} ref={ref} {...props}>
+    <Listbox value={value} onChange={onChange} ref={ref} {...props} disabled={disabled}>
       <div className={`relative ${sizeClass}`}>
-        <ListboxButton className="grid w-full cursor-pointer grid-cols-1 rounded-md bg-white py-0.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+        <ListboxButton className={`grid w-full ${cursorClass} grid-cols-1 rounded-md bg-white py-0.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6`}>
           <span className="col-start-1 row-start-1 truncate pr-6">
             {value.label || placeholder}
           </span>
@@ -76,20 +78,22 @@ export const Select = forwardRef<
 export const MultiSelect = forwardRef<
   HTMLDivElement,
   {
+    disabled?: boolean;
     options: SelectOption[];
     value: SelectOption[];
     onChange: (value: SelectOption[]) => void;
     placeholder?: string;
     size?: Size;
   }
->(({ options, value, onChange, placeholder = "Select...", size = "md", ...props }, ref) => {
+>(({ options, value, onChange, placeholder = "Select...", size = "md", disabled = false, ...props }, ref) => {
 
   const sizeClass = sizeClasses[size];
+  const cursorClass = disabled ? "cursor-not-allowed" : "cursor-pointer";
 
   return (
-    <Listbox value={value} onChange={onChange} ref={ref} {...props} multiple>
+    <Listbox value={value} onChange={onChange} ref={ref} {...props} multiple disabled={disabled}>
       <div className={`relative ${sizeClass}`}>
-        <ListboxButton className="grid w-full cursor-pointer grid-cols-1 rounded-md bg-white py-0.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+        <ListboxButton className={`grid w-full ${cursorClass} grid-cols-1 rounded-md bg-white py-0.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6`}>
           <span className="col-start-1 row-start-1 truncate pr-6">
             {value.map((v) => v.label).join(", ") || placeholder}
           </span>

@@ -93,7 +93,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               View Schedule
             </Button>
@@ -181,14 +181,14 @@ export function UpdateVenueForm({
       <AvailabilityRuleForm venue={venue} control={control} />
 
       <div className="flex gap-4">
-        <Button disabled={!isDirty} type="submit" ariaLabel="Update Venue">
+        <Button disabled={!isDirty} type="submit" ariaLabel="Update Venue" variant={isDirty ? "primary" : "secondary"}>
           Update Venue
         </Button>
         <Button
           disabled
           type="button"
           variant="danger"
-          onClick={() => {}}
+          onClick={() => { }}
           ariaLabel="Delete Venue"
         >
           Delete Venue

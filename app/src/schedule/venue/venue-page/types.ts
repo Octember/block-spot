@@ -7,6 +7,7 @@ export type UpdateVenueFormInputs = {
   displayStart: number;
   displayEnd: number;
   availabilityRules: {
+    spaceIds: string[];
     days: string[];
     startTimeMinutes: number;
     endTimeMinutes: number;
