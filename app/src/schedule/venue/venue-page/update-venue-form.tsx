@@ -10,7 +10,12 @@ import {
   Controller,
   Control,
 } from "react-hook-form";
-import { getVenueById, updateVenue, updateVenueAvailability, useQuery } from "wasp/client/operations";
+import {
+  getVenueById,
+  updateVenue,
+  updateVenueAvailability,
+  useQuery,
+} from "wasp/client/operations";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { TextInput } from "../../../client/components/form/text-input";
@@ -24,7 +29,9 @@ import { UpdateVenueFormInputs } from "./types";
 import { useScheduleContext } from "../../calendar/providers/schedule-query-provider";
 import { useEffect } from "react";
 
-function transformToFormInputs(venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] }): UpdateVenueFormInputs {
+function transformToFormInputs(
+  venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] },
+): UpdateVenueFormInputs {
   return {
     name: venue.name,
     spaces: venue.spaces,
@@ -53,7 +60,7 @@ export function UpdateVenueForm({
     watch,
     formState: { errors, isDirty },
   } = useForm<UpdateVenueFormInputs>({
-    defaultValues: transformToFormInputs(venue)
+    defaultValues: transformToFormInputs(venue),
   });
 
   useEffect(() => {
@@ -114,7 +121,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => { }}
+              onClick={() => {}}
             >
               View Schedule
             </Button>
@@ -214,7 +221,7 @@ export function UpdateVenueForm({
           disabled
           type="button"
           variant="danger"
-          onClick={() => { }}
+          onClick={() => {}}
           ariaLabel="Delete Venue"
         >
           Delete Venue

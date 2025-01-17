@@ -3,10 +3,19 @@ import { AvailabilityRule, Reservation, Space, Venue } from "wasp/entities";
 
 import { CalendarHeader } from "./calendar-header";
 import { useTimeLabels } from "./constants";
-import { getSharedGridStyle, MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
+import {
+  getSharedGridStyle,
+  MinutesPerSlot,
+  PixelsPerSlot,
+} from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
-import { useScheduleContext } from './providers/schedule-query-provider';
-import { getRowSpan, getRowIndex, getTimeFromRowIndex } from './reservations/utilities';
+import { useScheduleContext } from "./providers/schedule-query-provider";
+import {
+  getRowSpan,
+  getRowIndex,
+  getTimeFromRowIndex,
+  getRowIndexFromMinutes,
+} from "./reservations/utilities";
 
 export interface WeekViewCalendarProps {
   venue: Venue & { spaces: (Space & { reservations: Reservation[] })[] };
@@ -104,58 +113,56 @@ export const AvailabilitySection: FC = () => {
   const unavailabilityBlocks = getUnavailabilityBlocks(
     availabilityRules,
     venue.displayStart,
-    venue.displayEnd
+    venue.displayEnd,
   );
 
   console.log("unavailability blocks", unavailabilityBlocks);
 
-  return <div
-    {...getSharedGridStyle(timeLabels.length, venue.spaces.length)}
-
-  >
-    {unavailabilityBlocks.map((rule, index) => {
-      const startTime = new Date();
-      startTime.setMinutes(rule.startTimeMinutes);
-      const endTime = new Date();
-      endTime.setMinutes(rule.endTimeMinutes);
-
-      const startRow = getRowIndex(venue, startTime);
-      const endRow = getRowIndex(venue, endTime);
-      const rowSpan = endRow - startRow;
+  return (
+    <div {...getSharedGridStyle(timeLabels.length, venue.spaces.length)}>
+      {unavailabilityBlocks.map((rule, index) => {
+        const startRow = getRowIndexFromMinutes(venue, rule.startTimeMinutes);
+        const endRow = getRowIndexFromMinutes(venue, rule.endTimeMinutes);
 
 
-      return (
-        <div key={rule.id}
-          className="relative flex bg-gray-500 opacity-50 col-span-full "
-          style={{
-            gridRow: `${startRow} / span ${rowSpan}`,
-          }}
-        />
-      );
-    })}
-  </div >
+        console.log("startRow", startRow, "endRow", endRow);
+        const rowSpan = endRow - startRow;
+
+        return (
+          <div
+            key={rule.id}
+            className="relative flex bg-gray-500 opacity-50 col-span-full "
+            style={{
+              gridRow: `${startRow} / span ${rowSpan}`,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
 };
-
-
 
 const getUnavailabilityBlocks = (
   availabilityRules: AvailabilityRule[],
   venueStart: number,
-  venueEnd: number
+  venueEnd: number,
 ) => {
   const unavailabilityBlocks = [];
 
   // Sort rules by start time
-  const sortedRules = [...availabilityRules].sort((a, b) =>
-    a.startTimeMinutes - b.startTimeMinutes
+  const sortedRules = [...availabilityRules].sort(
+    (a, b) => a.startTimeMinutes - b.startTimeMinutes,
   );
 
   // Start from venue opening if first availability doesn't start at opening
-  if (sortedRules.length === 0 || sortedRules[0].startTimeMinutes > venueStart) {
+  if (
+    sortedRules.length === 0 ||
+    sortedRules[0].startTimeMinutes > venueStart
+  ) {
     unavailabilityBlocks.push({
-      id: 'before-first',
-      startTimeMinutes: venueStart,
-      endTimeMinutes: sortedRules[0]?.startTimeMinutes || venueEnd
+      id: "before-first",
+      startTimeMinutes: 0,
+      endTimeMinutes: sortedRules[0]?.startTimeMinutes || venueEnd,
     });
   }
 
@@ -168,7 +175,7 @@ const getUnavailabilityBlocks = (
       unavailabilityBlocks.push({
         id: `gap-${i}`,
         startTimeMinutes: currentRule.endTimeMinutes,
-        endTimeMinutes: nextRule.startTimeMinutes
+        endTimeMinutes: nextRule.startTimeMinutes,
       });
     }
   }
@@ -177,9 +184,9 @@ const getUnavailabilityBlocks = (
   const lastRule = sortedRules[sortedRules.length - 1];
   if (lastRule && lastRule.endTimeMinutes <= 24 * 60) {
     unavailabilityBlocks.push({
-      id: 'after-last',
+      id: "after-last",
       startTimeMinutes: lastRule.endTimeMinutes,
-      endTimeMinutes: 24 * 60
+      endTimeMinutes: 24 * 60,
     });
   }
 

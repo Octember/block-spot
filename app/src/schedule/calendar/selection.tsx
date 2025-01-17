@@ -19,25 +19,13 @@ function getStartEndTime(
   console.log("selection", selection);
 
   if (selection.start.row > selection.current.row) {
-    const startTime = calculateTimeFromRow(
-      venue,
-      date,
-      selection.current.row,
-    );
-    const endTime = calculateTimeFromRow(
-      venue,
-      date,
-      selection.start.row + 1,
-    );
+    const startTime = calculateTimeFromRow(venue, date, selection.current.row);
+    const endTime = calculateTimeFromRow(venue, date, selection.start.row + 1);
     return { start: startTime, end: endTime };
   }
 
   const startTime = calculateTimeFromRow(venue, date, selection.start.row);
-  const endTime = calculateTimeFromRow(
-    venue,
-    date,
-    selection.current.row + 1
-  );
+  const endTime = calculateTimeFromRow(venue, date, selection.current.row + 1);
   return { start: startTime, end: endTime };
 }
 

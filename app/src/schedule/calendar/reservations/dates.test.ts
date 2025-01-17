@@ -25,4 +25,4 @@ test("getRowIndex", () => {
   for (let i = mockVenue.displayStart + 30; i < mockVenue.displayEnd; i += 15) {
     verifyMinutes(i);
   }
-}); 
+});

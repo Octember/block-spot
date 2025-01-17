@@ -16,23 +16,36 @@ export function getRowSpan(reservation: Reservation) {
   return Math.ceil(duration / MinutesPerSlot);
 }
 
-  // Magic number 2 is to account for the header row and the 1 based index of the rows
+// Magic number 2 is to account for the header row and the 1 based index of the rows
 
 const HEADER_ROW_COUNT = 2;
 
 export function getRowIndex(venue: Venue, time: Date) {
-  const rowIndex = Math.ceil(
-    time.getHours() * (60 / MinutesPerSlot) +
-      time.getMinutes() / MinutesPerSlot -
-      venue.displayStart / MinutesPerSlot,
-  ) + HEADER_ROW_COUNT;
+  const rowIndex =
+    Math.ceil(
+      time.getHours() * (60 / MinutesPerSlot) +
+        time.getMinutes() / MinutesPerSlot -
+        venue.displayStart / MinutesPerSlot,
+    ) + HEADER_ROW_COUNT;
 
   if (rowIndex <= 0) {
     return 1;
   }
 
   return rowIndex;
-  // return Math.min(rowIndex, venue.displayEnd / MinutesPerSlot);
+}
+
+export function getRowIndexFromMinutes(venue: Venue, minutes: number) {
+  const result =
+    Math.ceil((minutes - venue.displayStart) / MinutesPerSlot) +
+    HEADER_ROW_COUNT;
+  console.log("result", result, "minutes", minutes, "displayStart", venue.displayStart);
+
+  if (result <= 0) {
+    return 1;
+  }
+
+  return result;
 }
 
 export function getTimeFromRowIndex(venue: Venue, rowIndex: number): Date {

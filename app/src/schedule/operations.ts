@@ -38,7 +38,10 @@ export const getAllVenues: GetAllVenues<
 
 export const getVenueInfo: GetVenueInfo<
   GetVenueInfoPayload,
-  (Venue & { spaces: (Space & { reservations: Reservation[] })[] } & { availabilityRules: AvailabilityRule[] }) | null
+  | (Venue & { spaces: (Space & { reservations: Reservation[] })[] } & {
+      availabilityRules: AvailabilityRule[];
+    })
+  | null
 > = async (args, context) => {
   if (!context.user) {
     throw new HttpError(401);
@@ -210,12 +213,17 @@ export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
   });
 };
 
-
 type UpdateVenueAvailabilityPayload = Pick<Venue, "id"> & {
-  availabilityRules: Pick<AvailabilityRule, "startTimeMinutes" | "endTimeMinutes" | "days" >[];
+  availabilityRules: Pick<
+    AvailabilityRule,
+    "startTimeMinutes" | "endTimeMinutes" | "days"
+  >[];
 };
 
-export const updateVenueAvailability: UpdateVenueAvailability<UpdateVenueAvailabilityPayload, Venue> = async (args, context) => {
+export const updateVenueAvailability: UpdateVenueAvailability<
+  UpdateVenueAvailabilityPayload,
+  Venue
+> = async (args, context) => {
   return context.entities.Venue.update({
     where: { id: args.id },
     data: {
@@ -230,4 +238,3 @@ export const updateVenueAvailability: UpdateVenueAvailability<UpdateVenueAvailab
     },
   });
 };
-
