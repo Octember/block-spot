@@ -8,31 +8,24 @@ import {
   useFieldArray,
   useForm,
   Controller,
+  Control,
 } from "react-hook-form";
 import { updateVenue } from "wasp/client/operations";
-import { Space, Venue } from "wasp/entities";
+import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { TextInput } from "../../../client/components/form/text-input";
 import { FormField } from "../../../client/components/form/form-field";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { useToast } from "../../../client/toast";
-import { Select } from "../../../client/components/form/select";
+import { Select, MultiSelect } from "../../../client/components/form/select";
 import { timeLabels } from "../../calendar/constants";
-
-type UpdateVenueFormInputs = {
-  name: string;
-  spaces: {
-    id: string;
-    name: string;
-  }[];
-  displayStart: number;
-  displayEnd: number;
-};
+import { AvailabilityRuleForm } from "./availability";
+import { UpdateVenueFormInputs } from "./types";
 
 export function UpdateVenueForm({
   venue,
 }: {
-  venue: Venue & { spaces: Space[] };
+  venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] };
 }) {
   const toast = useToast();
 
@@ -48,6 +41,7 @@ export function UpdateVenueForm({
       spaces: venue.spaces,
       displayStart: venue.displayStart / 60,
       displayEnd: venue.displayEnd / 60,
+      availabilityRules: venue.availabilityRules,
     },
   });
 
@@ -79,8 +73,8 @@ export function UpdateVenueForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      <div className="flex flex-row justify-between items-center">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <div className="flex flex-row justify-between">
         <div className="w-1/2">
           <FormField
             label="Venue Name"
@@ -89,7 +83,7 @@ export function UpdateVenueForm({
             <TextInput required {...register("name")} />
           </FormField>
         </div>
-        <div className="w-1/2 flex justify-end">
+        <div className="w-1/2 h-full flex justify-end">
           <WaspRouterLink
             to={routes.ScheduleRoute.to}
             params={{ venueId: venue.id }}
@@ -99,7 +93,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => { }}
+              onClick={() => {}}
             >
               View Schedule
             </Button>
@@ -115,7 +109,10 @@ export function UpdateVenueForm({
           <div className="flex flex-col gap-2">
             {fields.map((field, index) => (
               <div key={field.id} className="flex gap-2">
-                <TextInput key={field.id} {...register(`spaces.${index}.name`)} />
+                <TextInput
+                  key={field.id}
+                  {...register(`spaces.${index}.name`)}
+                />
                 <Button
                   type="button"
                   variant="secondary"
@@ -181,15 +178,7 @@ export function UpdateVenueForm({
         </FormField>
       </div>
 
-
-      <div className="flex flex-col gap-2">
-        <FormField
-          label="Availability"
-          description="Set the hours when your venue is open for bookings"
-        >
-          foo
-        </FormField>
-      </div>
+      <AvailabilityRuleForm venue={venue} control={control} />
 
       <div className="flex gap-4">
         <Button disabled={!isDirty} type="submit" ariaLabel="Update Venue">
@@ -199,7 +188,7 @@ export function UpdateVenueForm({
           disabled
           type="button"
           variant="danger"
-          onClick={() => { }}
+          onClick={() => {}}
           ariaLabel="Delete Venue"
         >
           Delete Venue

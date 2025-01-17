@@ -163,6 +163,8 @@ model Venue {
 
   displayStart Int @default(480)
   displayEnd   Int @default(1080)
+
+  availabilityRules AvailabilityRule[] // Venue-level availability rules
 }
 
 model Space {
@@ -175,4 +177,20 @@ model Space {
   reservations Reservation[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+}
+
+
+model AvailabilityRule {
+  id          String    @id @default(uuid())
+  venueId     String    // Availability applies at venue level
+  venue       Venue     @relation(fields: [venueId], references: [id])
+  // in the future maybe add a FK constraint on spaceIds
+
+  spaceIds    String[] @default([]) // Optional: Availability applies at space level
+  days        String[] // Example: ["Mon", "Tue", "Wed"]
+  startTimeMinutes   Int
+  endTimeMinutes     Int
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
