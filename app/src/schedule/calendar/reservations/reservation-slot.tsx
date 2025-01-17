@@ -1,4 +1,4 @@
-import { Over, useDraggable } from "@dnd-kit/core";
+import { Over, useDndContext, useDraggable } from "@dnd-kit/core";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import {
   CheckIcon,
@@ -25,10 +25,14 @@ type ReservationSlotProps = {
   onDelete?: () => void;
 };
 
+const GrayColorStyle = "bg-gradient-to-br from-gray-200 hover:from-gray-50 to-gray-50 hover:to-gray-300 border-gray-400 hover:border-gray-500";
+const BlueColorStyle = "bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500";
+
 function getColorStyles(
   isDraft: boolean,
   over: Over | null,
   isDragging: boolean,
+  otherNodeDragging: boolean,
 ) {
   const opacityStyle = isDragging ? "opacity-50" : "";
 
@@ -36,14 +40,23 @@ function getColorStyles(
     return `bg-red-50 hover:bg-red-100 border-red-500 ${opacityStyle}`;
   }
   if (isDraft || isDragging) {
-    return `bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500 ${opacityStyle}`;
+    return `${BlueColorStyle} ${opacityStyle}`;
   }
 
-  return "bg-gradient-to-br from-gray-200 hover:from-gray-50 to-gray-50 hover:to-gray-300 border-gray-400 hover:border-gray-500 ";
+  if (otherNodeDragging) {
+    return GrayColorStyle;
+  }
+
+  return BlueColorStyle;
 }
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
   const { venue, refresh } = useScheduleContext();
+  const dndContext = useDndContext();
+  const otherNodeDragging = useMemo(
+    () => Boolean(dndContext.active),
+    [dndContext.active],
+  );
 
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
@@ -67,8 +80,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = useMemo(
-    () => getColorStyles(isDraft, over, isDragging),
-    [isDraft, over, isDragging],
+    () => getColorStyles(isDraft, over, isDragging, otherNodeDragging),
+    [isDraft, over, isDragging, otherNodeDragging],
   );
 
   // Take into account the current drag position

@@ -39,8 +39,6 @@ export const HorizontalDividers: FC = () => {
 }
 
 function getBorderStyle(index: number) {
-  console.log("index", index);
-
   if (index === 0 || index === 2) return "border-b border-gray-100";
   if (index === 1) return "border-b border-gray-200";
   if (index === 3) return "border-b border-gray-300";
