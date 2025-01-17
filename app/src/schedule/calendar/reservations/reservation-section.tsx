@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { deleteReservation, updateReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { useToast } from "../../../client/toast";
-import { WeekViewCalendarProps } from "../WeekViewCalendar";
 import { useTimeLabels } from "../constants";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { GridSelection } from "../selection";
@@ -113,13 +112,6 @@ export const ReservationsSection = () => {
               ),
               spaceId: newSpaceId,
             };
-            // update in state to avoid flicker
-            // setReservations(reservations.map((reservation) => {
-            //   if (reservation.id === draggingReservation.id) {
-            //     return updatedReservation;
-            //   }
-            //   return reservation;
-            // }))
 
             await updateReservation({
               ...updatedReservation,
