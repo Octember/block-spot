@@ -38,7 +38,7 @@ export const getAllVenues: GetAllVenues<
 
 export const getVenueInfo: GetVenueInfo<
   GetVenueInfoPayload,
-  (Venue & { spaces: (Space & { reservations: Reservation[] })[] }) | null
+  (Venue & { spaces: (Space & { reservations: Reservation[] })[] } & { availabilityRules: AvailabilityRule[] }) | null
 > = async (args, context) => {
   if (!context.user) {
     throw new HttpError(401);
@@ -53,6 +53,7 @@ export const getVenueInfo: GetVenueInfo<
       id: args.venueId,
     },
     include: {
+      availabilityRules: true,
       spaces: {
         include: {
           reservations: {

@@ -3,8 +3,10 @@ import { Reservation, Space, Venue } from "wasp/entities";
 
 import { CalendarHeader } from "./calendar-header";
 import { useTimeLabels } from "./constants";
-import { MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
+import { getSharedGridStyle, MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
+import { useScheduleContext } from './providers/schedule-query-provider';
+import { getRowSpan, getRowIndex } from './reservations/utilities';
 
 export interface WeekViewCalendarProps {
   venue: Venue & { spaces: (Space & { reservations: Reservation[] })[] };
@@ -12,7 +14,6 @@ export interface WeekViewCalendarProps {
 
 export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
   const containerOffset = useRef(null);
-  const spaceIds = venue.spaces.map((space) => space.id);
   const timeLabels = useTimeLabels();
 
   return (
@@ -76,6 +77,8 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
                 ))}
               </div>
 
+              {/* Availability */}
+              <AvailabilitySection />
               {/* Events */}
               <ReservationsSection />
             </div>
@@ -84,6 +87,42 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
       </div>
     </div>
   );
+};
+
+export const AvailabilitySection: FC = () => {
+  const timeLabels = useTimeLabels();
+  const { venue } = useScheduleContext();
+
+  const availabilityRules = venue.availabilityRules;
+
+
+  return <div
+    {...getSharedGridStyle(timeLabels.length, venue.spaces.length)}
+  // style={{
+  // gridTemplateColumns: undefined,
+  // }}
+  >
+    {availabilityRules.map((rule, index) => {
+      const startTime = new Date();
+      startTime.setMinutes(rule.startTimeMinutes);
+      const endTime = new Date();
+      endTime.setMinutes(rule.endTimeMinutes);
+
+      const startRow = getRowIndex(venue, startTime);
+      const endRow = getRowIndex(venue, endTime);
+      const rowSpan = endRow - startRow;
+
+      console.log("RULE", rule.id, startRow, endRow, rowSpan);
+      return (
+        <div key={rule.id}
+          className="relative flex bg-violet-500 col-span-full row-span-full"
+          style={{
+            gridRow: `${startRow} / span ${rowSpan}`,
+          }}
+        />
+      );
+    })}
+  </div >
 };
 
 function getBorderStyle(index: number) {

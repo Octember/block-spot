@@ -10,7 +10,7 @@ import {
   Controller,
   Control,
 } from "react-hook-form";
-import { updateVenue, updateVenueAvailability } from "wasp/client/operations";
+import { getVenueById, updateVenue, updateVenueAvailability, useQuery } from "wasp/client/operations";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { TextInput } from "../../../client/components/form/text-input";
@@ -21,6 +21,18 @@ import { Select, MultiSelect } from "../../../client/components/form/select";
 import { timeLabels } from "../../calendar/constants";
 import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
+import { useScheduleContext } from "../../calendar/providers/schedule-query-provider";
+import { useEffect } from "react";
+
+function transformToFormInputs(venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] }): UpdateVenueFormInputs {
+  return {
+    name: venue.name,
+    spaces: venue.spaces,
+    displayStart: venue.displayStart / 60,
+    displayEnd: venue.displayEnd / 60,
+    availabilityRules: venue.availabilityRules,
+  };
+}
 
 export function UpdateVenueForm({
   venue,
@@ -28,6 +40,10 @@ export function UpdateVenueForm({
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] };
 }) {
   const toast = useToast();
+
+  const { refetch } = useQuery(getVenueById, {
+    venueId: venue.id,
+  });
 
   const {
     register,
@@ -37,14 +53,12 @@ export function UpdateVenueForm({
     watch,
     formState: { errors, isDirty },
   } = useForm<UpdateVenueFormInputs>({
-    defaultValues: {
-      name: venue.name,
-      spaces: venue.spaces,
-      displayStart: venue.displayStart / 60,
-      displayEnd: venue.displayEnd / 60,
-      availabilityRules: venue.availabilityRules,
-    },
+    defaultValues: transformToFormInputs(venue)
   });
+
+  useEffect(() => {
+    reset(transformToFormInputs(venue));
+  }, [venue]);
 
   const { fields, append, remove } = useFieldArray({
     control: control,
@@ -65,7 +79,6 @@ export function UpdateVenueForm({
         id: venue.id,
         availabilityRules: data.availabilityRules,
       });
-      reset();
 
       toast({
         title: "Venue updated",
