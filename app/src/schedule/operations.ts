@@ -10,6 +10,7 @@ import {
   GetVenueInfo,
   UpdateReservation,
   UpdateVenue,
+  UpdateVenueAvailability,
 } from "wasp/server/operations";
 
 type GetVenueInfoPayload = {
@@ -207,3 +208,25 @@ export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
     },
   });
 };
+
+
+type UpdateVenueAvailabilityPayload = Pick<Venue, "id"> & {
+  availabilityRules: Pick<AvailabilityRule, "startTimeMinutes" | "endTimeMinutes" | "days" >[];
+};
+
+export const updateVenueAvailability: UpdateVenueAvailability<UpdateVenueAvailabilityPayload, Venue> = async (args, context) => {
+  return context.entities.Venue.update({
+    where: { id: args.id },
+    data: {
+      availabilityRules: {
+        deleteMany: {},
+        create: args.availabilityRules.map((rule) => ({
+          days: [],
+          startTimeMinutes: rule.startTimeMinutes,
+          endTimeMinutes: rule.endTimeMinutes,
+        })),
+      },
+    },
+  });
+};
+

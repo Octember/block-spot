@@ -10,7 +10,7 @@ import {
   Controller,
   Control,
 } from "react-hook-form";
-import { updateVenue } from "wasp/client/operations";
+import { updateVenue, updateVenueAvailability } from "wasp/client/operations";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { TextInput } from "../../../client/components/form/text-input";
@@ -33,6 +33,7 @@ export function UpdateVenueForm({
     register,
     control,
     handleSubmit,
+    reset,
     watch,
     formState: { errors, isDirty },
   } = useForm<UpdateVenueFormInputs>({
@@ -59,6 +60,13 @@ export function UpdateVenueForm({
         displayStart: data.displayStart * 60,
         displayEnd: data.displayEnd * 60,
       });
+
+      await updateVenueAvailability({
+        id: venue.id,
+        availabilityRules: data.availabilityRules,
+      });
+      reset();
+
       toast({
         title: "Venue updated",
         description: "Venue updated successfully",
@@ -93,7 +101,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               View Schedule
             </Button>
@@ -193,7 +201,7 @@ export function UpdateVenueForm({
           disabled
           type="button"
           variant="danger"
-          onClick={() => {}}
+          onClick={() => { }}
           ariaLabel="Delete Venue"
         >
           Delete Venue

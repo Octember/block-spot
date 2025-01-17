@@ -176,6 +176,11 @@ action updateReservation {
   entities: [Reservation, Space, Venue]
 }
 
+action updateVenueAvailability {
+  fn: import { updateVenueAvailability } from "@src/schedule/operations",
+  entities: [Venue, AvailabilityRule]
+}
+
 //#endregion
 
 route ScheduleRoute { path: "/schedule/:venueId", to: SchedulePage }

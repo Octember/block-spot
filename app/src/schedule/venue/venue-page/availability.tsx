@@ -21,8 +21,6 @@ export const AvailabilityRuleForm = ({
     name: "availabilityRules",
   });
 
-  console.log("avail rules: ", fields);
-
   return (
     <div className="flex flex-col gap-2">
       <FormField
