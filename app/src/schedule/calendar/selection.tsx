@@ -1,11 +1,10 @@
-import { format } from "date-fns";
 import { useState } from "react";
-import { getSharedGridStyle, MinutesPerSlot } from "./reservations/constants";
-import { useSelectedDate } from "./providers/date-provider";
-import { useTimeLabels } from "./constants";
-import { getTimeFromRowIndex } from "./reservations/utilities";
 import { Venue } from "wasp/entities";
+import { useTimeLabels } from "./constants";
+import { useSelectedDate } from "./providers/date-provider";
 import { useScheduleContext } from "./providers/schedule-query-provider";
+import { getSharedGridStyle } from "./reservations/constants";
+import { getTimeFromRowIndex } from "./reservations/utilities";
 
 function getStartEndTime(
   venue: Venue,

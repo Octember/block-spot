@@ -114,13 +114,24 @@ export const ReservationsSection = () => {
               spaceId: newSpaceId,
             };
 
-            await updateReservation({
-              ...updatedReservation,
-            });
+            // Hack to avoid flickering, state will be updated after the refetch below
+            setReservations([
+              ...reservations.filter((r) => r.id !== draggingReservation.id),
+              updatedReservation,
+            ]);
+            try {
 
-            refresh();
+              await updateReservation({
+                ...updatedReservation,
+              });
 
-            setToast({ title: "Reservation updated" });
+              refresh();
+
+              setToast({ title: "Reservation updated" });
+            } catch (e) {
+              setToast({ title: "Something went wrong", type: "error" });
+            }
+
           }
         }}
       >

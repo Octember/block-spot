@@ -1,20 +1,20 @@
-import { Over, useDndContext, useDraggable } from "@dnd-kit/core";
+import { Over, useDraggable } from "@dnd-kit/core";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import {
   CheckIcon,
   EllipsisHorizontalIcon,
   PencilSquareIcon,
-  TrashIcon,
+  TrashIcon
 } from "@heroicons/react/20/solid";
 import { addMinutes, format } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createReservation, updateReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
-import { UpdateButton } from "./update-button";
-import { getRowSpan, getRowIndex } from "./utilities";
-import { useScheduleContext } from "../providers/schedule-query-provider";
 import { TextInput } from "../../../client/components/form/text-input";
+import { useScheduleContext } from "../providers/schedule-query-provider";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
+import { UpdateButton } from "./update-button";
+import { getRowIndex, getRowSpan } from "./utilities";
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -112,17 +112,22 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       {...attributes}
       {...listeners}
     >
-      <div className="absolute h-full w-full left-0 top-0 flex flex-col justify-between">
-        <div className="w-full bg-purple-400 h-4 opacity-50" />
-        <div className="w-full bg-purple-400 h-4 opacity-50" />
-      </div>
-
-
-
       <a
         href="#"
-        className={`group w-full my-1 mx-2 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
+        className={`relative group w-full my-1 mx-2 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
       >
+        {/* {isDraft &&
+          <div className="absolute h-full w-full left-0 top-0 flex flex-col justify-between pointer-events-none">
+            <div className="flex w-full justify-center pointer-events-auto cursor-row-resize h-3 ">
+              <ArrowUpIcon className="size-4" />
+            </div>
+
+            <div className="flex w-full justify-center pointer-events-auto cursor-row-resize h-3 ">
+              <ArrowDownIcon className="size-4" />
+            </div>
+          </div>
+        } */}
+
         <div className="flex flex-col flex-1">
           <div className="flex flex-row justify-between">
             {isDraft || isEditing ? (
