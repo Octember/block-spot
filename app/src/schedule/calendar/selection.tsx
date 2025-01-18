@@ -4,7 +4,7 @@ import { useTimeLabels } from "./constants";
 import { useSelectedDate } from "./providers/date-provider";
 import { useScheduleContext } from "./providers/schedule-query-provider";
 import { getSharedGridStyle } from "./reservations/constants";
-import { getTimeFromRowIndex } from "./reservations/utilities";
+import { getTimeFromRowIndex, getRowIndexFromMinutes } from "./reservations/utilities";
 
 function getStartEndTime(
   venue: Venue,
@@ -45,7 +45,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
 }) => {
   const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
-  const { venue } = useScheduleContext();
+  const { venue, unavailabileBlocks } = useScheduleContext();
 
   const [selection, setSelection] = useState<{
     start: { row: number; col: number } | null;
@@ -53,24 +53,57 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
   }>({ start: null, current: null });
   const [isSelecting, setIsSelecting] = useState(false);
 
+  const isTimeAvailable = (row: number): boolean => {
+    const timeInMinutes = getTimeFromRowIndex(venue, row).getHours() * 60 +
+      getTimeFromRowIndex(venue, row).getMinutes();
+
+    return !unavailabileBlocks.some(block =>
+      timeInMinutes >= block.startTimeMinutes &&
+      timeInMinutes < block.endTimeMinutes
+    );
+  };
+
   const handleMouseDown = (row: number, col: number) => {
+    if (!isTimeAvailable(row)) {
+      return;
+    }
+
     setIsSelecting(true);
     setSelection({ start: { row, col }, current: { row, col } });
   };
 
   const handleMouseMove = (row: number, col: number) => {
+    if (!isTimeAvailable(row)) {
+      handleMouseUp();
+      return;
+    }
+
     if (isSelecting) {
       setSelection((prev) => ({ ...prev, current: { row, col } }));
     }
   };
 
   const handleMouseUp = () => {
+    console.log("mouse up");
     setIsSelecting(false);
 
     if (selection.start && selection.current) {
-      const { start, end } = getStartEndTime(venue, selectedDate, selection);
+      // Validate entire selection range
+      const minRow = Math.min(selection.start.row, selection.current.row);
+      const maxRow = Math.max(selection.start.row, selection.current.row);
 
-      if (onSelectionComplete) {
+      // Check if any row in the selection is unavailable
+      const isSelectionValid = Array.from(
+        { length: maxRow - minRow + 1 },
+        (_, i) => minRow + i
+      ).every(row => isTimeAvailable(row));
+
+
+      if (isSelectionValid && onSelectionComplete) {
+        const { start, end } = getStartEndTime(venue, selectedDate, {
+          start: selection.start,
+          current: selection.current
+        });
         onSelectionComplete(start, end, selection.start.col);
       }
     }
@@ -79,6 +112,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
 
   const getGridCell = (row: number, col: number) => {
     if (!selection.start || !selection.current || !isSelecting) return "";
+    if (!isTimeAvailable(row)) return "";
 
     const minRow = Math.min(selection.start.row, selection.current.row);
     const maxRow = Math.max(selection.start.row, selection.current.row);
@@ -102,7 +136,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
           // Add ones to account for 1-based grid indexing
           <div
             key={`${row + 1}-${col}`}
-            className={`${getGridCell(row + 1, col)} inset-1 rounded cursor-pointer`}
+            className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1) ? 'cursor-pointer' : ''}`}
             onMouseDown={() => handleMouseDown(row + 1, col)}
             onMouseMove={() => handleMouseMove(row + 1, col)}
           />

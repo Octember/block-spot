@@ -20,7 +20,7 @@ export const AvailabilitySection: FC = () => {
         return (
           <div
             key={rule.id}
-            className="relative flex bg-gray-500 opacity-50 col-span-full "
+            className="relative flex bg-gray-500 opacity-50 col-span-full z-1"
             style={{
               gridRow: `${startRow} / span ${rowSpan}`,
             }}

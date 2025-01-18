@@ -109,7 +109,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
   return (
     <li
-      className="relative flex"
+      className="relative flex z-20"
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,
