@@ -34,7 +34,7 @@ const calculateTimeFromRow = (venue: Venue, date: Date, row: number): Date => {
   const result = new Date(date);
   const hoursMinutes = getTimeFromRowIndex(venue, row);
 
-  result.setHours(hoursMinutes.getHours(), hoursMinutes.getMinutes());
+  result.setHours(hoursMinutes.getHours(), hoursMinutes.getMinutes(), 0, 0);
   return result;
 };
 

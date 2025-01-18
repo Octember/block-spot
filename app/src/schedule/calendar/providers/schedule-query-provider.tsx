@@ -16,13 +16,18 @@ const useScheduleQuery = (venueId: string) => {
       }),
   );
 
-  return { result: venue || null, refresh: refetch };
+  return {
+    result: venue || null,
+    refresh: () => {
+      refetch();
+    },
+  };
 };
 
 export const ScheduleQueryContext = createContext<{
   venue: NonNullable<Awaited<ReturnType<typeof getVenueInfo>>>;
   refresh: () => void;
-}>({ venue: null, refresh: () => {} });
+}>({ venue: null, refresh: () => { } });
 
 export const ScheduleQueryProvider = ({
   children,

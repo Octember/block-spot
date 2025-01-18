@@ -13,7 +13,9 @@ export function getRowSpan(reservation: Reservation) {
   const start = reservation.startTime;
   const end = reservation.endTime;
   const duration = differenceInMinutes(end, start);
-  return Math.ceil(duration / MinutesPerSlot);
+
+  const result = Math.ceil(duration / MinutesPerSlot);
+  return result;
 }
 
 // Magic number 2 is to account for the header row and the 1 based index of the rows

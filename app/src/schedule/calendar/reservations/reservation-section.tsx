@@ -35,6 +35,7 @@ export const ReservationsSection = () => {
   const sensors = useSensors(mouseSensor);
 
   useEffect(() => {
+    console.log("venue changed");
     setReservations(venue.spaces.flatMap((space) => space.reservations));
   }, [venue]);
 
@@ -116,6 +117,7 @@ export const ReservationsSection = () => {
             await updateReservation({
               ...updatedReservation,
             });
+
             refresh();
 
             setToast({ title: "Reservation updated" });

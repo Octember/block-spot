@@ -52,15 +52,9 @@ function getColorStyles(
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
   const { venue, refresh } = useScheduleContext();
-  const dndContext = useDndContext();
-  const otherNodeDragging = useMemo(
-    () => Boolean(dndContext.active),
-    [dndContext.active],
-  );
-
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
-  const { attributes, listeners, setNodeRef, transform, over, isDragging } =
+  const { attributes, listeners, setNodeRef, transform, over, isDragging, active } =
     useDraggable({
       id: `reservation-${reservation.id}`,
       data: {
@@ -80,8 +74,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = useMemo(
-    () => getColorStyles(isDraft, over, isDragging, otherNodeDragging),
-    [isDraft, over, isDragging, otherNodeDragging],
+    () => getColorStyles(isDraft, over, isDragging, Boolean(active)),
+    [isDraft, over, isDragging, active],
   );
 
   // Take into account the current drag position
@@ -99,7 +93,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       startTime: reservation.startTime,
       endTime: reservation.endTime,
     };
-  }, [isDragging, transform]);
+  }, [reservation, isDragging, transform]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(reservation.description);
