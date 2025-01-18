@@ -112,6 +112,13 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       {...attributes}
       {...listeners}
     >
+      <div className="absolute h-full w-full left-0 top-0 flex flex-col justify-between">
+        <div className="w-full bg-purple-400 h-4 opacity-50" />
+        <div className="w-full bg-purple-400 h-4 opacity-50" />
+      </div>
+
+
+
       <a
         href="#"
         className={`group w-full my-1 mx-2 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}

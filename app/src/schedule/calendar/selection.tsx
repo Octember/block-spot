@@ -15,9 +15,6 @@ function getStartEndTime(
     current: { row: number; col: number };
   },
 ): { start: Date; end: Date } {
-  const isEqual = selection.start.row === selection.current.row;
-  console.log("selection", selection);
-
   if (selection.start.row > selection.current.row) {
     const startTime = calculateTimeFromRow(venue, date, selection.current.row);
     const endTime = calculateTimeFromRow(venue, date, selection.start.row + 1);
