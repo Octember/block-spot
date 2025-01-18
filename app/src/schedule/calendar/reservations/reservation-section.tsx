@@ -120,7 +120,6 @@ export const ReservationsSection = () => {
               updatedReservation,
             ]);
             try {
-
               await updateReservation({
                 ...updatedReservation,
               });
@@ -131,7 +130,6 @@ export const ReservationsSection = () => {
             } catch (e) {
               setToast({ title: "Something went wrong", type: "error" });
             }
-
           }
         }}
       >

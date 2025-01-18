@@ -15,7 +15,7 @@ import {
 const ToastContext = createContext<{
   toast: ToastMessage | null;
   setToast: (toast: ToastMessage | null) => void;
-}>({ toast: null, setToast: () => { } });
+}>({ toast: null, setToast: () => {} });
 
 export type ToastMessage = {
   type?: "success" | "error";

@@ -4,7 +4,7 @@ import {
   CheckIcon,
   EllipsisHorizontalIcon,
   PencilSquareIcon,
-  TrashIcon
+  TrashIcon,
 } from "@heroicons/react/20/solid";
 import { addMinutes, format } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -25,8 +25,10 @@ type ReservationSlotProps = {
   onDelete?: () => void;
 };
 
-const GrayColorStyle = "bg-gradient-to-br from-gray-200 hover:from-gray-50 to-gray-50 hover:to-gray-300 border-gray-400 hover:border-gray-500";
-const BlueColorStyle = "bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500";
+const GrayColorStyle =
+  "bg-gradient-to-br from-gray-200 hover:from-gray-50 to-gray-50 hover:to-gray-300 border-gray-400 hover:border-gray-500";
+const BlueColorStyle =
+  "bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500";
 
 function getColorStyles(
   isDraft: boolean,
@@ -54,15 +56,22 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const { venue, refresh } = useScheduleContext();
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
-  const { attributes, listeners, setNodeRef, transform, over, isDragging, active } =
-    useDraggable({
-      id: `reservation-${reservation.id}`,
-      data: {
-        reservationId: reservation.id,
-        startTime: reservation.startTime,
-        endTime: reservation.endTime,
-      },
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    over,
+    isDragging,
+    active,
+  } = useDraggable({
+    id: `reservation-${reservation.id}`,
+    data: {
+      reservationId: reservation.id,
+      startTime: reservation.startTime,
+      endTime: reservation.endTime,
+    },
+  });
 
   useEffect(() => {
     if (isDraft && descriptionInputRef.current) {

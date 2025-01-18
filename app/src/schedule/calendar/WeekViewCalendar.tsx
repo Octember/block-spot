@@ -1,15 +1,12 @@
 import React, { FC, useRef } from "react";
 import { Reservation, Space, Venue } from "wasp/entities";
 
-import { AvailabilitySection } from './availability';
+import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
 import { useTimeLabels } from "./constants";
-import {
-  MinutesPerSlot,
-  PixelsPerSlot
-} from "./reservations/constants";
+import { MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
-import { HorizontalDividers, VerticalDividers } from './dividers';
+import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { useScheduleContext } from "./providers/schedule-query-provider";
 
 export interface WeekViewCalendarProps {
@@ -43,5 +40,3 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
     </div>
   );
 };
-
-
