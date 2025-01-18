@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for my-wasp-app-server-wispy-water-4698 on 2025-01-14T17:38:02-05:00
+# fly.toml app configuration file generated for block-spot-server on 2025-01-17T23:24:04-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'my-wasp-app-server-wispy-water-4698'
+app = 'block-spot-server'
 primary_region = 'mia'
 
 [build]
