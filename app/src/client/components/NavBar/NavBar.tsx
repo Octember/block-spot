@@ -19,7 +19,7 @@ export interface NavigationItem {
 }
 
 const NavLogo = () => (
-  <img className="h-8 w-8" src={logo} alt="Your SaaS App" />
+  <img className="h-8 w-8" src={logo} alt="BlockSpot" />
 );
 
 export default function AppNavBar({
@@ -101,7 +101,7 @@ export default function AppNavBar({
               to={routes.LandingPageRoute.to}
               className="-m-1.5 p-1.5"
             >
-              <span className="sr-only">Your SaaS</span>
+              <span className="sr-only">BlockSpot</span>
               <NavLogo />
             </WaspRouterLink>
             <button
