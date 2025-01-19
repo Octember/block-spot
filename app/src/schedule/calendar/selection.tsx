@@ -84,7 +84,6 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
   };
 
   const handleMouseUp = () => {
-    console.log("mouse up");
     setIsSelecting(false);
 
     if (selection.start && selection.current) {

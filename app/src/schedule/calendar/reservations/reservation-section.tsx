@@ -35,7 +35,6 @@ export const ReservationsSection = () => {
   const sensors = useSensors(mouseSensor);
 
   useEffect(() => {
-    console.log("venue changed");
     setReservations(venue.spaces.flatMap((space) => space.reservations));
   }, [venue]);
 

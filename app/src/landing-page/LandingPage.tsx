@@ -16,9 +16,9 @@ export default function LandingPage() {
     <div className="bg-white dark:text-white dark:bg-boxdark-2">
       <main className="isolate dark:bg-boxdark-2">
         <Hero />
-        <Clients />
+        {/* <Clients /> */}
         <Features features={features} />
-        <Testimonials testimonials={testimonials} />
+        {/* <Testimonials testimonials={testimonials} /> */}
         <FAQ faqs={faqs} />
       </main>
       <Footer footerNavigation={footerNavigation} />

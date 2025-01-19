@@ -2,11 +2,11 @@ import { Link as ReactRouterLink } from "react-router-dom";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { useAuth } from "wasp/client/auth";
 import { useState, Dispatch, SetStateAction } from "react";
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel } from "@headlessui/react";
 import { BiLogIn } from "react-icons/bi";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { HiBars3 } from "react-icons/hi2";
-import logo from "../../static/logo.webp";
+import logo from "../../static/logo.svg";
 import DropdownUser from "../../../user/DropdownUser";
 import { UserMenuItems } from "../../../user/UserMenuItems";
 import DarkModeSwitcher from "../DarkModeSwitcher";
@@ -45,14 +45,14 @@ export default function AppNavBar({
         <div className="flex items-center lg:flex-1">
           <WaspRouterLink
             to={routes.LandingPageRoute.to}
-            className="flex items-center -m-1.5 p-1.5 text-gray-900 duration-300 ease-in-out hover:text-yellow-500"
+            className="flex items-center -m-1.5 p-1.5 text-gray-900 duration-300 ease-in-out hover:text-yellow-500 bg:hover-yellow-200"
           >
             <NavLogo />
-            {isLandingPage && (
-              <span className="ml-2 text-sm font-semibold leading-6 dark:text-white">
-                Block Spot
-              </span>
-            )}
+            {/* {isLandingPage && ( */}
+            <span className="ml-2 text-sm font-semibold leading-6 dark:text-white">
+              blockspot
+            </span>
+            {/* )} */}
           </WaspRouterLink>
         </div>
         <div className="flex lg:hidden">
@@ -95,7 +95,7 @@ export default function AppNavBar({
         onClose={setMobileMenuOpen}
       >
         <div className="fixed inset-0 z-50" />
-        <Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white dark:text-white dark:bg-boxdark px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+        <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white dark:text-white dark:bg-boxdark px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
             <WaspRouterLink
               to={routes.LandingPageRoute.to}
@@ -137,7 +137,7 @@ export default function AppNavBar({
               </div>
             </div>
           </div>
-        </Dialog.Panel>
+        </DialogPanel>
       </Dialog>
     </header>
   );
