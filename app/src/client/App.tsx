@@ -21,6 +21,10 @@ import { Transition } from "@headlessui/react";
 import { CheckCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { ToastProvider } from "./toast";
 
+
+import LogRocket from 'logrocket';
+LogRocket.init('myj73s/blockspot');
+
 /**
  * use this component to wrap all child components
  * this is useful for templates, themes, and context

@@ -21,19 +21,19 @@ export const CalendarHeader: FC<{ venue: WeekViewCalendarProps["venue"] }> = ({
       <div className="flex px-4 py-2 gap-2 items-center">
         <ButtonGroup
           items={[
-            { label: "Years", onClick: () => {} },
-            { label: "Months", onClick: () => {} },
+            { label: "Years", onClick: () => { } },
+            { label: "Months", onClick: () => { } },
           ]}
         />
 
         <ButtonGroup
           items={[
             {
-              label: <ChevronLeftIcon className="size-6" />,
+              label: <ChevronLeftIcon className="size-5" />,
               onClick: () => setSelectedDate(addDays(selectedDate, -1)),
             },
             {
-              label: <ChevronRightIcon className="size-6" />,
+              label: <ChevronRightIcon className="size-5" />,
               onClick: () => setSelectedDate(addDays(selectedDate, 1)),
             },
           ]}

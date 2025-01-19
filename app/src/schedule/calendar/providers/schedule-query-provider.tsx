@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getVenueInfo } from "wasp/client/operations";
 import { useSelectedDate } from "./date-provider";
@@ -44,16 +44,25 @@ export const ScheduleQueryProvider = ({
   if (!venueId) {
     return <div>Venue not found</div>;
   }
+
+  // Cache to avoid a flicker when the venue is loading
+  const lastVenue = useRef<NonNullable<Awaited<ReturnType<typeof getVenueInfo>>> | null>(null);
   const { result: venue, refresh } = useScheduleQuery(venueId);
 
-  const unavailabileBlocks = venue ? getUnavailabilityBlocks(venue) : [];
+  if (venue) {
+    lastVenue.current = venue;
+  }
 
-  if (!venue) {
+  const venueToUse = lastVenue.current || venue;
+
+  const unavailabileBlocks = venueToUse ? getUnavailabilityBlocks(venueToUse) : [];
+
+  if (!venueToUse) {
     return <div>Venue not found</div>;
   }
 
   return (
-    <ScheduleQueryContext.Provider value={{ venue, unavailabileBlocks, refresh }}>
+    <ScheduleQueryContext.Provider value={{ venue: venueToUse, unavailabileBlocks, refresh }}>
       {children}
     </ScheduleQueryContext.Provider>
   );
