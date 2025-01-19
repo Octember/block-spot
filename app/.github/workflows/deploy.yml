@@ -1,0 +1,15 @@
+name: Deploy to Fly
+
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  deploy:
+    name: Deploy with Wasp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wasp-lang/deploy-action@main
+        with:
+          fly-token: ${{ secrets.FLY_TOKEN }}
+          server-url: ${{ secrets.SERVER_URL }}
