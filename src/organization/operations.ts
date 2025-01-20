@@ -9,6 +9,17 @@ type CreateInvitationInput = {
   role: 'OWNER' | 'MEMBER'
 }
 
+type CancelInvitationInput = {
+  invitationId: string
+  organizationId: string
+}
+
+type UpdateMemberRoleInput = {
+  organizationId: string
+  userId: string
+  role: 'OWNER' | 'MEMBER'
+}
+
 type AcceptInvitationInput = {
   token: string
 }
@@ -180,5 +191,92 @@ export const listInvitations = async (args: ListInvitationsInput, context: any):
       status: 'PENDING'
     },
     orderBy: { createdAt: 'desc' }
+  })
+}
+
+export const cancelInvitation = async (args: CancelInvitationInput, context: any) => {
+  if (!context.user) {
+    throw new HttpError(401, 'Not authorized')
+  }
+
+  const organization = await context.entities.Organization.findUnique({
+    where: { id: args.organizationId },
+    include: {
+      users: {
+        where: { userId: context.user.id, role: 'OWNER' }
+      }
+    }
+  })
+
+  if (!organization || organization.users.length === 0) {
+    throw new HttpError(403, 'Not authorized to cancel invitations for this organization')
+  }
+
+  const invitation = await context.entities.Invitation.findUnique({
+    where: { id: args.invitationId }
+  })
+
+  if (!invitation || invitation.organizationId !== args.organizationId) {
+    throw new HttpError(404, 'Invitation not found')
+  }
+
+  return context.entities.Invitation.update({
+    where: { id: args.invitationId },
+    data: { status: 'CANCELLED' }
+  })
+}
+
+export const updateMemberRole = async (args: UpdateMemberRoleInput, context: any) => {
+  if (!context.user) {
+    throw new HttpError(401, 'Not authorized')
+  }
+
+  // Check if current user is an owner
+  const organization = await context.entities.Organization.findUnique({
+    where: { id: args.organizationId },
+    include: {
+      users: {
+        where: { userId: context.user.id, role: 'OWNER' }
+      }
+    }
+  })
+
+  if (!organization || organization.users.length === 0) {
+    throw new HttpError(403, 'Not authorized to update member roles')
+  }
+
+  // Check if target user exists in organization
+  const targetMembership = await context.entities.OrganizationUser.findFirst({
+    where: {
+      organizationId: args.organizationId,
+      userId: args.userId
+    }
+  })
+
+  if (!targetMembership) {
+    throw new HttpError(404, 'Member not found')
+  }
+
+  // Prevent removing the last owner
+  if (targetMembership.role === 'OWNER' && args.role === 'MEMBER') {
+    const ownerCount = await context.entities.OrganizationUser.count({
+      where: {
+        organizationId: args.organizationId,
+        role: 'OWNER'
+      }
+    })
+
+    if (ownerCount <= 1) {
+      throw new HttpError(400, 'Cannot remove the last owner')
+    }
+  }
+
+  return context.entities.OrganizationUser.update({
+    where: {
+      id: targetMembership.id
+    },
+    data: {
+      role: args.role
+    }
   })
 } 

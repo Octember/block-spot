@@ -433,3 +433,13 @@ action acceptInvitation {
   fn: import { acceptInvitation } from "@src/organization/operations.js",
   entities: [Organization, Invitation, OrganizationUser]
 }
+
+action cancelInvitation {
+  fn: import { cancelInvitation } from "@src/organization/operations.js",
+  entities: [Organization, Invitation, OrganizationUser]
+}
+
+action updateMemberRole {
+  fn: import { updateMemberRole } from "@src/organization/operations.js",
+  entities: [Organization, OrganizationUser]
+}
