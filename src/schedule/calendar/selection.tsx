@@ -4,7 +4,10 @@ import { useTimeLabels } from "./constants";
 import { useSelectedDate } from "./providers/date-provider";
 import { useScheduleContext } from "./providers/schedule-query-provider";
 import { getSharedGridStyle } from "./reservations/constants";
-import { getTimeFromRowIndex, getRowIndexFromMinutes } from "./reservations/utilities";
+import {
+  getTimeFromRowIndex,
+  getRowIndexFromMinutes,
+} from "./reservations/utilities";
 
 function getStartEndTime(
   venue: Venue,
@@ -54,12 +57,14 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
   const [isSelecting, setIsSelecting] = useState(false);
 
   const isTimeAvailable = (row: number): boolean => {
-    const timeInMinutes = getTimeFromRowIndex(venue, row).getHours() * 60 +
+    const timeInMinutes =
+      getTimeFromRowIndex(venue, row).getHours() * 60 +
       getTimeFromRowIndex(venue, row).getMinutes();
 
-    return !unavailabileBlocks.some(block =>
-      timeInMinutes >= block.startTimeMinutes &&
-      timeInMinutes < block.endTimeMinutes
+    return !unavailabileBlocks.some(
+      (block) =>
+        timeInMinutes >= block.startTimeMinutes &&
+        timeInMinutes < block.endTimeMinutes,
     );
   };
 
@@ -94,14 +99,13 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
       // Check if any row in the selection is unavailable
       const isSelectionValid = Array.from(
         { length: maxRow - minRow + 1 },
-        (_, i) => minRow + i
-      ).every(row => isTimeAvailable(row));
-
+        (_, i) => minRow + i,
+      ).every((row) => isTimeAvailable(row));
 
       if (isSelectionValid && onSelectionComplete) {
         const { start, end } = getStartEndTime(venue, selectedDate, {
           start: selection.start,
-          current: selection.current
+          current: selection.current,
         });
         onSelectionComplete(start, end, selection.start.col);
       }
@@ -135,7 +139,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
           // Add ones to account for 1-based grid indexing
           <div
             key={`${row + 1}-${col}`}
-            className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1) ? 'cursor-pointer' : ''}`}
+            className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1) ? "cursor-pointer" : ""}`}
             onMouseDown={() => handleMouseDown(row + 1, col)}
             onMouseMove={() => handleMouseMove(row + 1, col)}
           />

@@ -1,7 +1,7 @@
-import { ServerClient } from 'postmark'
-import { formatInTimeZone } from 'date-fns-tz'
+import { ServerClient } from "postmark";
+import { formatInTimeZone } from "date-fns-tz";
 
-const postmarkClient = new ServerClient(process.env.POSTMARK_API_TOKEN!)
+const postmarkClient = new ServerClient(process.env.POSTMARK_API_TOKEN!);
 
 export async function sendInvitationEmail({
   email,
@@ -9,33 +9,29 @@ export async function sendInvitationEmail({
   organizationName,
   role,
   token,
-  expiresAt
+  expiresAt,
 }: {
-  email: string
-  inviterName: string
-  organizationName: string
-  role: 'OWNER' | 'MEMBER'
-  token: string
-  expiresAt: Date
+  email: string;
+  inviterName: string;
+  organizationName: string;
+  role: "OWNER" | "MEMBER";
+  token: string;
+  expiresAt: Date;
 }) {
-  const acceptUrl = `${process.env.WASP_WEB_CLIENT_URL}/accept-invitation?token=${token}`
-  const expirationDate = formatInTimeZone(
-    expiresAt,
-    'UTC',
-    'MMMM do, yyyy'
-  )
+  const acceptUrl = `${process.env.WASP_WEB_CLIENT_URL}/accept-invitation?token=${token}`;
+  const expirationDate = formatInTimeZone(expiresAt, "UTC", "MMMM do, yyyy");
 
   await postmarkClient.sendEmailWithTemplate({
     From: process.env.EMAIL_FROM!,
     To: email,
-    TemplateAlias: 'user-invitation',
+    TemplateAlias: "user-invitation",
     TemplateModel: {
       email,
       inviterName,
       organizationName,
       role: role.toLowerCase(),
       acceptUrl,
-      expirationDate
-    }
-  })
-} 
+      expirationDate,
+    },
+  });
+}

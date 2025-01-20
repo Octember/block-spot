@@ -8,7 +8,6 @@ export const AvailabilitySection: FC = () => {
   const timeLabels = useTimeLabels();
   const { venue, unavailabileBlocks } = useScheduleContext();
 
-
   return (
     <div {...getSharedGridStyle(timeLabels.length, venue.spaces.length)}>
       {unavailabileBlocks.map((rule, index) => {

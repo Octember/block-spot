@@ -16,9 +16,8 @@ export default function Hero() {
               <span className="italic">Happier</span> Customers.
             </h1>
             <p className="mt-6 mx-auto max-w-2xl text-lg leading-8 text-gray-600 dark:text-white">
-              An easy-to-use reservation tool built to help small businesses save time and grow.
-
-
+              An easy-to-use reservation tool built to help small businesses
+              save time and grow.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a

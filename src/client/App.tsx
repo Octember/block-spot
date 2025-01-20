@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useMemo
-} from "react";
+import { useEffect, useMemo } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "wasp/client/auth";
 import { updateCurrentUser } from "wasp/client/operations";
@@ -12,8 +9,8 @@ import { appNavigationItems } from "./components/NavBar/contentSections";
 import CookieConsentBanner from "./components/cookie-consent/Banner";
 import { ToastProvider } from "./toast";
 
-import LogRocket from 'logrocket';
-LogRocket.init('myj73s/blockspot');
+import LogRocket from "logrocket";
+LogRocket.init("myj73s/blockspot");
 
 /**
  * use this component to wrap all child components

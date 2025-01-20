@@ -1,43 +1,43 @@
-import React, { useState } from 'react'
-import { useToast } from '../../client/toast'
+import React, { useState } from "react";
+import { useToast } from "../../client/toast";
 
 type RoleSelectProps = {
-  currentRole: 'OWNER' | 'MEMBER'
-  isOwner: boolean
-  onUpdateRole: (newRole: 'OWNER' | 'MEMBER') => Promise<void>
-  disabled?: boolean
-}
+  currentRole: "OWNER" | "MEMBER";
+  isOwner: boolean;
+  onUpdateRole: (newRole: "OWNER" | "MEMBER") => Promise<void>;
+  disabled?: boolean;
+};
 
 export function RoleSelect({
   currentRole,
   isOwner,
   onUpdateRole,
-  disabled
+  disabled,
 }: RoleSelectProps) {
-  const [isUpdating, setIsUpdating] = useState(false)
-  const toast = useToast()
+  const [isUpdating, setIsUpdating] = useState(false);
+  const toast = useToast();
 
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newRole = e.target.value as 'OWNER' | 'MEMBER'
-    if (newRole === currentRole) return
+    const newRole = e.target.value as "OWNER" | "MEMBER";
+    if (newRole === currentRole) return;
 
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
-      await onUpdateRole(newRole)
+      await onUpdateRole(newRole);
       toast({
-        title: 'Role updated',
-        description: `Member role updated to ${newRole.toLowerCase()}`
-      })
+        title: "Role updated",
+        description: `Member role updated to ${newRole.toLowerCase()}`,
+      });
     } catch (err: any) {
       toast({
-        type: 'error',
-        title: 'Failed to update role',
-        description: err.message || 'Please try again'
-      })
+        type: "error",
+        title: "Failed to update role",
+        description: err.message || "Please try again",
+      });
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   return (
     <select
@@ -45,12 +45,12 @@ export function RoleSelect({
       onChange={handleChange}
       disabled={disabled || isUpdating || !isOwner}
       className={`px-2 py-1 text-xs font-semibold rounded-full 
-        ${currentRole === 'OWNER' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}
-        ${isOwner ? 'cursor-pointer' : 'cursor-not-allowed'}
+        ${currentRole === "OWNER" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}
+        ${isOwner ? "cursor-pointer" : "cursor-not-allowed"}
         disabled:opacity-50`}
     >
-      <option value='MEMBER'>Member</option>
-      <option value='OWNER'>Owner</option>
+      <option value="MEMBER">Member</option>
+      <option value="OWNER">Owner</option>
     </select>
-  )
-} 
+  );
+}

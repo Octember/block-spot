@@ -7,28 +7,29 @@ import {
 import { getCustomerPortalUrl, useQuery } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { logout, useAuth } from "wasp/client/auth";
-import { OrganizationSection } from '../organization/OrganizationPage'
-import { getUserOrganizations } from 'wasp/client/operations'
-import { InviteMembers } from '../organization/InviteMembers'
+import { OrganizationSection } from "../organization/OrganizationPage";
+import { getUserOrganizations } from "wasp/client/operations";
 
 export default function AccountPage() {
-  const { data: user } = useAuth()
-  const { data: organizations, isLoading } = useQuery(getUserOrganizations)
+  const { data: user } = useAuth();
+  const { data: organizations, isLoading } = useQuery(getUserOrganizations);
 
-  if (isLoading || !user) return <div>Loading...</div>
+  if (isLoading || !user) return <div>Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold leading-tight text-gray-900">Account Settings</h1>
+          <h1 className="text-3xl font-bold leading-tight text-gray-900">
+            Account Settings
+          </h1>
 
           <div className="mt-8">
             <OrganizationSection />
           </div>
 
-          <div className="mt-10 ">
-            <div className="overflow-hidden border border-gray-900/10 shadow-lg sm:rounded-lg mb-4 dark:border-gray-100/10">
+          <div className="mt-10">
+            <div className="overflow-hidden border border-gray-900/10 shadow-lg sm:rounded-lg mb-4 dark:border-gray-100/10 bg-white">
               <div className="px-4 py-5 sm:px-6 lg:px-8">
                 <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">
                   Account Information
@@ -91,27 +92,28 @@ export default function AccountPage() {
           </div>
 
           {/* Organizations */}
-          <div className='space-y-4'>
-            <h2 className='text-lg font-medium text-gray-900'>Your Organizations</h2>
+          <div className="space-y-4">
+            <h2 className="text-lg font-medium text-gray-900">
+              Your Organizations
+            </h2>
             {organizations?.map((org) => {
-              const userRole = org.users.find(u => u.userId === user.id)?.role
+              const userRole = org.users.find(
+                (u) => u.userId === user.id,
+              )?.role;
               return (
-                <div key={org.id} className='bg-white shadow rounded-lg p-6'>
-                  <div className='flex justify-between items-start'>
+                <div key={org.id} className="bg-white shadow rounded-lg p-6">
+                  <div className="flex justify-between items-start">
                     <div>
-                      <h3 className='text-lg font-medium text-gray-900'>{org.name}</h3>
-                      <p className='mt-1 text-sm text-gray-500'>
+                      <h3 className="text-lg font-medium text-gray-900">
+                        {org.name}
+                      </h3>
+                      <p className="mt-1 text-sm text-gray-500">
                         Role: {userRole?.toLowerCase()}
                       </p>
                     </div>
                   </div>
-                  {userRole === 'OWNER' && (
-                    <div className='mt-6'>
-                      <InviteMembers organizationId={org.id} />
-                    </div>
-                  )}
                 </div>
-              )
+              );
             })}
           </div>
         </div>

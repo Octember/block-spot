@@ -1,4 +1,4 @@
-import {AvailabilityRule, Venue} from 'wasp/entities';
+import { AvailabilityRule, Venue } from "wasp/entities";
 
 export const getUnavailabilityBlocks = (
   venue: Venue & { availabilityRules: AvailabilityRule[] },

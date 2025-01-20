@@ -18,9 +18,7 @@ export interface NavigationItem {
   to: string;
 }
 
-const NavLogo = () => (
-  <img className="h-8 w-8" src={logo} alt="BlockSpot" />
-);
+const NavLogo = () => <img className="h-8 w-8" src={logo} alt="BlockSpot" />;
 
 export default function AppNavBar({
   navigationItems,

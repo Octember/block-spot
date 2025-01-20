@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { getVenueInfo } from "wasp/client/operations";
 import { useSelectedDate } from "./date-provider";
 import { useQuery } from "@tanstack/react-query";
-import { getUnavailabilityBlocks } from './availability-utils';
+import { getUnavailabilityBlocks } from "./availability-utils";
 
 const useScheduleQuery = (venueId: string) => {
   const { selectedDate } = useSelectedDate();
@@ -33,7 +33,7 @@ export const ScheduleQueryContext = createContext<{
     endTimeMinutes: number;
   }[];
   refresh: () => void;
-}>({ venue: null, unavailabileBlocks: [], refresh: () => { } });
+}>({ venue: null, unavailabileBlocks: [], refresh: () => {} });
 
 export const ScheduleQueryProvider = ({
   children,
@@ -46,7 +46,9 @@ export const ScheduleQueryProvider = ({
   }
 
   // Cache to avoid a flicker when the venue is loading
-  const lastVenue = useRef<NonNullable<Awaited<ReturnType<typeof getVenueInfo>>> | null>(null);
+  const lastVenue = useRef<NonNullable<
+    Awaited<ReturnType<typeof getVenueInfo>>
+  > | null>(null);
   const { result: venue, refresh } = useScheduleQuery(venueId);
 
   if (venue) {
@@ -55,14 +57,18 @@ export const ScheduleQueryProvider = ({
 
   const venueToUse = lastVenue.current || venue;
 
-  const unavailabileBlocks = venueToUse ? getUnavailabilityBlocks(venueToUse) : [];
+  const unavailabileBlocks = venueToUse
+    ? getUnavailabilityBlocks(venueToUse)
+    : [];
 
   if (!venueToUse) {
     return <div>Venue not found</div>;
   }
 
   return (
-    <ScheduleQueryContext.Provider value={{ venue: venueToUse, unavailabileBlocks, refresh }}>
+    <ScheduleQueryContext.Provider
+      value={{ venue: venueToUse, unavailabileBlocks, refresh }}
+    >
       {children}
     </ScheduleQueryContext.Provider>
   );
