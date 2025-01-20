@@ -4,7 +4,7 @@ import { Link } from "wasp/client/router";
 import { routes } from "wasp/client/router";
 import { useAuth } from "wasp/client/auth";
 import { acceptInvitation, getInvitationDetails } from "wasp/client/operations";
-import { SignupForm } from "wasp/client/auth";
+import { SignupForm, FormInput } from "wasp/client/auth";
 import { useQuery } from "wasp/client/operations";
 
 type InvitationDetails = {
@@ -136,7 +136,17 @@ export function InvitationPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Create an Account
             </h3>
-            <SignupForm />
+            <SignupForm
+              additionalFields={[
+                (form) => (
+                  <FormInput
+                    type="hidden"
+                    {...form.register('invitationToken')}
+                    value={token}
+                  />
+                )
+              ]}
+            />
           </div>
         </div>
       </div>

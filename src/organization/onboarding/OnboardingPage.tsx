@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { routes } from "wasp/client/router";
 import { useAuth } from "wasp/client/auth";
 import {
   createOrganization,
   createVenue,
+  getUserOrganizations,
   updateVenue,
+  useQuery,
 } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
 import { useToast } from "../../client/toast";
@@ -59,8 +61,21 @@ const ONBOARDING_STEPS: Record<string, OnboardingStep> = {
 type StepId = keyof typeof ONBOARDING_STEPS;
 
 export function OrganizationOnboardingPage() {
-  const { step = "welcome" } = useParams();
   const navigate = useNavigate();
+
+  const { data: organizations } = useQuery(getUserOrganizations);
+
+
+  console.log("hello", organizations)
+  useEffect(() => {
+    if (organizations && organizations.length > 0) {
+      if (organizations[0].onboardingState?.hasCompletedOnboarding) {
+        navigate("/");
+      }
+    }
+  }, [organizations, navigate]);
+
+  const { step = "welcome" } = useParams();
   const { data: user, isLoading } = useAuth();
   const toast = useToast();
   const [formData, setFormData] = useState({

@@ -238,13 +238,6 @@ enum InvitationStatus {
   CANCELLED
 }
 
-enum OnboardingStep {
-  PROFILE
-  PAYMENT
-  TEAM
-  SPACES
-  COMPLETED
-}
 
 model OnboardingState {
   id              String   @id @default(uuid())
@@ -256,8 +249,9 @@ model OnboardingState {
   hasAddedPaymentMethod  Boolean @default(false)
   hasInvitedMembers     Boolean @default(false)
   hasCreatedFirstSpace  Boolean @default(false)
+  hasCompletedOnboarding Boolean @default(false)
   
-  currentStep     OnboardingStep  @default(PROFILE)
+  currentStep     String  @default("Welcome")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }

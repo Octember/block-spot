@@ -1,5 +1,6 @@
 import {
   Invitation,
+  OnboardingState,
   Organization,
   OrganizationUser,
   User,
@@ -38,6 +39,7 @@ type GetUserOrganizationsResponse = Organization & {
   users: (OrganizationUser & {
     user: User;
   })[];
+  onboardingState: OnboardingState;
 };
 
 type GetInvitationDetailsInput = {
