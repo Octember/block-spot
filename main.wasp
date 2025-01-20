@@ -449,3 +449,13 @@ page AcceptInvitationPage {
   authRequired: true,
   component: import { AcceptInvitationPage } from "@src/organization/accept-invitation-page"
 }
+
+route InvitationRoute { path: "/invitation/:token", to: InvitationPage }
+page InvitationPage {
+  component: import { InvitationPage } from "@src/organization/invitation-page"
+}
+
+query getInvitationDetails {
+  fn: import { getInvitationDetails } from "@src/organization/operations.js",
+  entities: [Organization, Invitation]
+}

@@ -6,10 +6,17 @@ import {
 } from "../payment/plans";
 import { getCustomerPortalUrl, useQuery } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
-import { logout } from "wasp/client/auth";
+import { logout, useAuth } from "wasp/client/auth";
 import { OrganizationSection } from '../organization/OrganizationPage'
+import { getUserOrganizations } from 'wasp/client/operations'
+import { InviteMembers } from '../organization/InviteMembers'
 
-export default function AccountPage({ user }: { user: User }) {
+export default function AccountPage() {
+  const { data: user } = useAuth()
+  const { data: organizations, isLoading } = useQuery(getUserOrganizations)
+
+  if (isLoading || !user) return <div>Loading...</div>
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="py-10">
@@ -29,7 +36,7 @@ export default function AccountPage({ user }: { user: User }) {
               </div>
               <div className="border-t border-gray-900/10 dark:border-gray-100/10 px-4 py-5 sm:p-0">
                 <dl className="sm:divide-y sm:divide-gray-900/10 sm:dark:divide-gray-100/10">
-                  {!!user.email && (
+                  {!!user?.email && (
                     <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                       <dt className="text-sm font-medium text-gray-500 dark:text-white">
                         Email address
@@ -39,7 +46,7 @@ export default function AccountPage({ user }: { user: User }) {
                       </dd>
                     </div>
                   )}
-                  {!!user.username && (
+                  {!!user?.username && (
                     <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
                       <dt className="text-sm font-medium text-gray-500 dark:text-white">
                         Username
@@ -81,6 +88,31 @@ export default function AccountPage({ user }: { user: User }) {
                 logout
               </button>
             </div>
+          </div>
+
+          {/* Organizations */}
+          <div className='space-y-4'>
+            <h2 className='text-lg font-medium text-gray-900'>Your Organizations</h2>
+            {organizations?.map((org) => {
+              const userRole = org.users.find(u => u.userId === user.id)?.role
+              return (
+                <div key={org.id} className='bg-white shadow rounded-lg p-6'>
+                  <div className='flex justify-between items-start'>
+                    <div>
+                      <h3 className='text-lg font-medium text-gray-900'>{org.name}</h3>
+                      <p className='mt-1 text-sm text-gray-500'>
+                        Role: {userRole?.toLowerCase()}
+                      </p>
+                    </div>
+                  </div>
+                  {userRole === 'OWNER' && (
+                    <div className='mt-6'>
+                      <InviteMembers organizationId={org.id} />
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>

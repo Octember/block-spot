@@ -35,6 +35,10 @@ type GetUserOrganizationsResponse = Organization & {
   })[]
 }
 
+type GetInvitationDetailsInput = {
+  token: string
+}
+
 export const getUserOrganizations = async (_args: void, context: any): Promise<GetUserOrganizationsResponse[]> => {
   if (!context.user) {
     throw new HttpError(401, 'Not authorized')
@@ -79,31 +83,34 @@ export const createInvitation = async (args: CreateInvitationInput, context: any
     throw new HttpError(403, 'Not authorized to invite users to this organization')
   }
 
-  // Check if user is already a member
-  const existingUser = await context.entities.User.findUnique({
-    where: { email: args.email },
-    include: {
-      organizations: {
-        where: { organizationId: args.organizationId }
+  // Only check for existing user/invitation if an email is provided
+  if (args.email) {
+    // Check if user is already a member
+    const existingUser = await context.entities.User.findUnique({
+      where: { email: args.email },
+      include: {
+        organizations: {
+          where: { organizationId: args.organizationId }
+        }
       }
+    })
+
+    if (existingUser?.organizations.length > 0) {
+      throw new HttpError(400, 'User is already a member of this organization')
     }
-  })
 
-  if (existingUser?.organizations.length > 0) {
-    throw new HttpError(400, 'User is already a member of this organization')
-  }
+    // Check for existing pending invitation
+    const existingInvitation = await context.entities.Invitation.findFirst({
+      where: {
+        email: args.email,
+        organizationId: args.organizationId,
+        status: 'PENDING'
+      }
+    })
 
-  // Check for existing pending invitation
-  const existingInvitation = await context.entities.Invitation.findFirst({
-    where: {
-      email: args.email,
-      organizationId: args.organizationId,
-      status: 'PENDING'
+    if (existingInvitation) {
+      throw new HttpError(400, 'Invitation already exists for this email')
     }
-  })
-
-  if (existingInvitation) {
-    throw new HttpError(400, 'Invitation already exists for this email')
   }
 
   const expiresAt = addDays(new Date(), 7) // Invitation expires in 7 days
@@ -111,7 +118,7 @@ export const createInvitation = async (args: CreateInvitationInput, context: any
 
   const invitation = await context.entities.Invitation.create({
     data: {
-      email: args.email,
+      email: args.email || '', // Store empty string for open invitations
       role: args.role,
       organizationId: args.organizationId,
       invitedById: context.user.id,
@@ -121,15 +128,17 @@ export const createInvitation = async (args: CreateInvitationInput, context: any
     }
   })
 
-  // Send invitation email
-  await sendInvitationEmail({
-    email: args.email,
-    inviterName: organization.users[0].user.email!, // Using email as name for now
-    organizationName: organization.name,
-    role: args.role,
-    token,
-    expiresAt
-  })
+  // Only send email if an email address was provided
+  if (args.email) {
+    await sendInvitationEmail({
+      email: args.email,
+      inviterName: organization.users[0].user.email!, // Using email as name for now
+      organizationName: organization.name,
+      role: args.role,
+      token,
+      expiresAt
+    })
+  }
   
   return invitation
 }
@@ -160,8 +169,22 @@ export const acceptInvitation = async (args: AcceptInvitationInput, context: any
     throw new HttpError(400, 'Invitation has expired')
   }
 
-  if (invitation.email !== context.user.email) {
+  // For open invitations (no email), any logged-in user can accept
+  // For email-specific invitations, verify the email matches
+  if (invitation.email && invitation.email !== context.user.email) {
     throw new HttpError(403, 'This invitation was sent to a different email address')
+  }
+
+  // Check if user is already a member
+  const existingMembership = await context.entities.OrganizationUser.findFirst({
+    where: {
+      userId: context.user.id,
+      organizationId: invitation.organizationId
+    }
+  })
+
+  if (existingMembership) {
+    throw new HttpError(400, 'You are already a member of this organization')
   }
 
   // Create organization membership
@@ -294,4 +317,37 @@ export const updateMemberRole = async (args: UpdateMemberRoleInput, context: any
       role: args.role
     }
   })
+}
+
+export const getInvitationDetails = async (args: GetInvitationDetailsInput, context: any) => {
+  const invitation = await context.entities.Invitation.findUnique({
+    where: { token: args.token },
+    include: {
+      organization: true,
+      invitedBy: true
+    }
+  })
+
+  if (!invitation) {
+    throw new HttpError(404, 'Invitation not found')
+  }
+
+  if (invitation.status !== 'PENDING') {
+    throw new HttpError(400, 'Invitation is no longer valid')
+  }
+
+  if (invitation.expiresAt < new Date()) {
+    await context.entities.Invitation.update({
+      where: { id: invitation.id },
+      data: { status: 'EXPIRED' }
+    })
+    throw new HttpError(400, 'Invitation has expired')
+  }
+
+  return {
+    organizationName: invitation.organization.name,
+    inviterName: invitation.invitedBy.email,
+    role: invitation.role,
+    email: invitation.email
+  }
 } 
