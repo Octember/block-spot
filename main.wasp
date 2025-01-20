@@ -474,3 +474,8 @@ action createOrganization {
   fn: import { createOrganization } from "@src/organization/operations.js",
   entities: [Organization]
 }
+
+action updateOnboardingState {
+  fn: import { updateOnboardingState } from "@src/organization/operations.js",
+  entities: [Organization, OrganizationUser, OnboardingState]
+}

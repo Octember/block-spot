@@ -52,6 +52,16 @@ type CreateOrganizationInput = {
   teamSize: string;
 };
 
+type UpdateOnboardingStateInput = {
+  organizationId: string;
+  updates: {
+    hasCompletedProfile?: boolean;
+    hasAddedPaymentMethod?: boolean;
+    hasInvitedMembers?: boolean;
+    hasCompletedOnboarding?: boolean;
+  };
+};
+
 export const getUserOrganizations = async (
   _args: void,
   context: any,
@@ -422,4 +432,44 @@ export const createOrganization = async (
   });
 
   return organization;
+};
+
+export const updateOnboardingState = async (
+  args: UpdateOnboardingStateInput,
+  context: any
+) => {
+  if (!context.user) {
+    throw new HttpError(401, "Not authorized");
+  }
+
+  // Check if user is a member of the organization
+  const membership = await context.entities.OrganizationUser.findFirst({
+    where: {
+      userId: context.user.id,
+      organizationId: args.organizationId,
+    },
+  });
+
+  if (!membership) {
+    throw new HttpError(403, "Not authorized to update this organization's onboarding state");
+  }
+
+  // Get or create onboarding state
+  let onboardingState = await context.entities.OnboardingState.findUnique({
+    where: { organizationId: args.organizationId },
+  });
+
+  if (!onboardingState) {
+    onboardingState = await context.entities.OnboardingState.create({
+      data: {
+        organizationId: args.organizationId,
+      },
+    });
+  }
+
+  // Update onboarding state
+  return context.entities.OnboardingState.update({
+    where: { organizationId: args.organizationId },
+    data: args.updates,
+  });
 };

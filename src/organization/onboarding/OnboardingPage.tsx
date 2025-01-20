@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { routes } from "wasp/client/router";
 import { useAuth } from "wasp/client/auth";
+import type { Organization, OnboardingState } from 'wasp/entities';
 import {
   createOrganization,
   createVenue,
   getUserOrganizations,
   updateVenue,
+  updateOnboardingState,
   useQuery,
 } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
@@ -60,21 +62,70 @@ const ONBOARDING_STEPS: Record<string, OnboardingStep> = {
 
 type StepId = keyof typeof ONBOARDING_STEPS;
 
+const getOnboardingUpdates = (step: string): Partial<OnboardingState> => {
+  const updates: Partial<OnboardingState> = {};
+  switch (step) {
+    case "organization":
+      updates.hasCompletedProfile = true;
+      break;
+    case "spaces":
+      updates.hasAddedPaymentMethod = true;
+      break;
+    case "invite":
+      updates.hasInvitedMembers = true;
+      break;
+    case "complete":
+      updates.hasCompletedOnboarding = true;
+      break;
+  }
+  return updates;
+};
+
+const getTargetStep = (onboardingState: OnboardingState | null, organization: OrganizationWithOnboarding | undefined) => {
+  if (!onboardingState) return 'welcome';
+  if (onboardingState.hasInvitedMembers) return 'complete';
+  if (onboardingState.hasAddedPaymentMethod) return 'invite';
+  if (onboardingState.hasCompletedProfile) return 'spaces';
+  return organization ? 'spaces' : 'welcome';
+};
+
+type OrganizationWithOnboarding = Organization & {
+  onboardingState: OnboardingState | null;
+};
+
+const determineOnboardingStep = (
+  currentStep: string,
+  organization: OrganizationWithOnboarding | undefined
+): { shouldRedirect: boolean; targetStep: string } => {
+  if (!organization) {
+    return { shouldRedirect: false, targetStep: "welcome" };
+  }
+
+  const { onboardingState } = organization;
+
+  if (onboardingState?.hasCompletedOnboarding) {
+    return { shouldRedirect: true, targetStep: "/" };
+  }
+
+  if ((currentStep === "welcome" || currentStep === "organization") && organization) {
+    return { shouldRedirect: true, targetStep: "/onboarding/spaces" };
+  }
+
+  const targetStep = getTargetStep(onboardingState, organization);
+
+  const currentStepIndex = Object.values(ONBOARDING_STEPS).findIndex(s => s.id === currentStep);
+  const targetStepIndex = Object.values(ONBOARDING_STEPS).findIndex(s => s.id === targetStep);
+  const shouldRedirect = currentStepIndex > targetStepIndex;
+
+  return {
+    shouldRedirect,
+    targetStep: shouldRedirect ? `/onboarding/${targetStep}` : currentStep,
+  };
+};
+
 export function OrganizationOnboardingPage() {
   const navigate = useNavigate();
-
   const { data: organizations } = useQuery(getUserOrganizations);
-
-
-  console.log("hello", organizations)
-  useEffect(() => {
-    if (organizations && organizations.length > 0) {
-      if (organizations[0].onboardingState?.hasCompletedOnboarding) {
-        navigate("/");
-      }
-    }
-  }, [organizations, navigate]);
-
   const { step = "welcome" } = useParams();
   const { data: user, isLoading } = useAuth();
   const toast = useToast();
@@ -84,12 +135,37 @@ export function OrganizationOnboardingPage() {
     teamSize: "",
   });
 
+  useEffect(() => {
+    if (organizations?.[0]) {
+      const { shouldRedirect, targetStep } = determineOnboardingStep(step, organizations[0]);
+      if (shouldRedirect) {
+        navigate(targetStep);
+      }
+    }
+  }, [organizations, step, navigate]);
+
   if (isLoading || !user) {
     return <div>Loading...</div>;
   }
 
   const currentStep =
     ONBOARDING_STEPS[step.toUpperCase() as StepId] || ONBOARDING_STEPS.WELCOME;
+
+  const updateProgress = async (organizationId: string, step: string) => {
+    try {
+
+      const updates = getOnboardingUpdates(step);
+
+      if (Object.keys(updates).length > 0) {
+        await updateOnboardingState({
+          organizationId,
+          updates,
+        });
+      }
+    } catch (error: any) {
+      console.error('Failed to update onboarding state:', error);
+    }
+  };
 
   const handleNext = async () => {
     if (currentStep.id === "organization") {
@@ -99,6 +175,7 @@ export function OrganizationOnboardingPage() {
           type: formData.organizationType,
           teamSize: formData.teamSize,
         });
+        await updateProgress(org.id, currentStep.id);
       } catch (error: any) {
         toast({
           type: "error",
@@ -107,6 +184,8 @@ export function OrganizationOnboardingPage() {
         });
         return;
       }
+    } else if (organizations?.[0]) {
+      await updateProgress(organizations[0].id, currentStep.id);
     }
 
     if (currentStep.next) {
