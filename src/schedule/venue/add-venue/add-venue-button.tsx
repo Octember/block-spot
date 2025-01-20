@@ -19,8 +19,7 @@ export function AddVenueButton() {
           setIsModalOpen(true);
         }}
       >
-        {" "}
-        Add Venue{" "}
+        Add Venue
       </Button>
       <Modal
         open={isModalOpen}

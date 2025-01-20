@@ -13,6 +13,21 @@ model Organization {
   users     OrganizationUser[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Billing and subscription fields
+  stripeCustomerId       String?   @unique
+  subscriptionStatus     String?   // 'active', 'trialing', 'past_due', 'canceled'
+  subscriptionPlanId     String?
+  trialEndsAt           DateTime?
+
+  // Relations
+  invitations           Invitation[]
+  onboardingState       OnboardingState?
+}
+
+enum OrganizationUserRole {
+  OWNER
+  MEMBER
 }
 
 model OrganizationUser {
@@ -22,6 +37,8 @@ model OrganizationUser {
 
   userId String
   user   User @relation(fields: [userId], references: [id])
+
+  role OrganizationUserRole @default(MEMBER)
 }
 
 model User {
@@ -29,6 +46,7 @@ model User {
   createdAt DateTime @default(now())
 
   organizations   OrganizationUser[]
+  sentInvitations Invitation[] @relation("SentInvitations")
 
   email               String?  @unique
   username            String?  @unique
@@ -193,4 +211,51 @@ model AvailabilityRule {
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+}
+
+model Invitation {
+  id            String   @id @default(uuid())
+  email         String
+  role          OrganizationUserRole
+  organization  Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  invitedBy     User    @relation("SentInvitations", fields: [invitedById], references: [id])
+  invitedById   String
+  
+  status        InvitationStatus @default(PENDING)
+  token         String   @unique
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}
+
+enum OnboardingStep {
+  PROFILE
+  PAYMENT
+  TEAM
+  SPACES
+  COMPLETED
+}
+
+model OnboardingState {
+  id              String   @id @default(uuid())
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  organizationId  String   @unique
+  
+  // Onboarding steps completion
+  hasCompletedProfile    Boolean @default(false)
+  hasAddedPaymentMethod  Boolean @default(false)
+  hasInvitedMembers     Boolean @default(false)
+  hasCreatedFirstSpace  Boolean @default(false)
+  
+  currentStep     OnboardingStep  @default(PROFILE)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }

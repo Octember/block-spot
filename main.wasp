@@ -413,3 +413,23 @@ job sendNewsletter {
   entities: [User]
 }
 //#endregion
+
+query getUserOrganizations {
+  fn: import { getUserOrganizations } from "@src/organization/operations.js",
+  entities: [Organization, OrganizationUser, User]
+}
+
+query listInvitations {
+  fn: import { listInvitations } from "@src/organization/operations.js",
+  entities: [Organization, Invitation, OrganizationUser]
+}
+
+action createInvitation {
+  fn: import { createInvitation } from "@src/organization/operations.js",
+  entities: [Organization, Invitation, OrganizationUser, User]
+}
+
+action acceptInvitation {
+  fn: import { acceptInvitation } from "@src/organization/operations.js",
+  entities: [Organization, Invitation, OrganizationUser]
+}
