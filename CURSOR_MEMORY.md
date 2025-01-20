@@ -2,6 +2,9 @@
 
 ## Code Style & Practices
 
+### Filenames
+- use dash-case for filenames
+
 ### Wasp Operations
 1. Never manually type Wasp queries/operations - use them directly:
 ```typescript

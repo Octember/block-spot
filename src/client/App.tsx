@@ -8,6 +8,7 @@ import NavBar from "./components/NavBar/NavBar";
 import { appNavigationItems } from "./components/NavBar/contentSections";
 import CookieConsentBanner from "./components/cookie-consent/Banner";
 import { ToastProvider } from "./toast";
+import { useOnboardingRedirect } from "./hooks/useOnboardingRedirect";
 
 import LogRocket from "logrocket";
 LogRocket.init("myj73s/blockspot");
@@ -20,6 +21,8 @@ export default function App() {
   const location = useLocation();
   const { data: user } = useAuth();
   const navigationItems = appNavigationItems;
+
+  useOnboardingRedirect();
 
   const isSchedulePage = useMemo(
     () =>
