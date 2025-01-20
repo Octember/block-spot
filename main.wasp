@@ -443,3 +443,9 @@ action updateMemberRole {
   fn: import { updateMemberRole } from "@src/organization/operations.js",
   entities: [Organization, OrganizationUser]
 }
+
+route AcceptInvitationRoute { path: "/accept-invitation", to: AcceptInvitationPage }
+page AcceptInvitationPage {
+  authRequired: true,
+  component: import { AcceptInvitationPage } from "@src/organization/accept-invitation-page"
+}

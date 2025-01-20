@@ -2,6 +2,7 @@ import { Invitation, Organization, OrganizationUser, User } from 'wasp/entities'
 import { HttpError } from 'wasp/server'
 import { v4 as uuidv4 } from 'uuid'
 import { addDays } from 'date-fns'
+import { sendInvitationEmail } from './email'
 
 type CreateInvitationInput = {
   email: string
@@ -66,7 +67,10 @@ export const createInvitation = async (args: CreateInvitationInput, context: any
     where: { id: args.organizationId },
     include: {
       users: {
-        where: { userId: context.user.id, role: 'OWNER' }
+        where: { userId: context.user.id, role: 'OWNER' },
+        include: {
+          user: true
+        }
       }
     }
   })
@@ -102,19 +106,30 @@ export const createInvitation = async (args: CreateInvitationInput, context: any
     throw new HttpError(400, 'Invitation already exists for this email')
   }
 
+  const expiresAt = addDays(new Date(), 7) // Invitation expires in 7 days
+  const token = uuidv4()
+
   const invitation = await context.entities.Invitation.create({
     data: {
       email: args.email,
       role: args.role,
       organizationId: args.organizationId,
       invitedById: context.user.id,
-      token: uuidv4(),
-      expiresAt: addDays(new Date(), 7), // Invitation expires in 7 days
+      token,
+      expiresAt,
       status: 'PENDING'
     }
   })
 
-  // TODO: Send invitation email
+  // Send invitation email
+  await sendInvitationEmail({
+    email: args.email,
+    inviterName: organization.users[0].user.email!, // Using email as name for now
+    organizationName: organization.name,
+    role: args.role,
+    token,
+    expiresAt
+  })
   
   return invitation
 }
