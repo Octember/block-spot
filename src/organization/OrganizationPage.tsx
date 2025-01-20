@@ -1,5 +1,11 @@
 import { XMarkIcon } from "@heroicons/react/20/solid";
-import { cancelInvitation, getUserOrganization, listInvitations, updateMemberRole, useQuery } from "wasp/client/operations";
+import {
+  cancelInvitation,
+  getUserOrganization,
+  listInvitations,
+  updateMemberRole,
+  useQuery,
+} from "wasp/client/operations";
 import { useToast } from "../client/toast";
 import { InviteMemberButton } from "./components/invite-member-form";
 import { RoleSelect } from "./components/role-select";

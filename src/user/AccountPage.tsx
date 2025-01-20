@@ -16,9 +16,7 @@ export default function AccountPage() {
 
   if (isLoading || !user) return <div>Loading...</div>;
 
-  const userRole = organization?.users.find(
-    (u) => u.userId === user.id,
-  )?.role;
+  const userRole = organization?.users.find((u) => u.userId === user.id)?.role;
 
   return (
     <div className="min-h-screen">
@@ -101,7 +99,10 @@ export default function AccountPage() {
               Your Organizations
             </h2>
 
-            <div key={organization?.id} className="bg-white shadow rounded-lg p-6">
+            <div
+              key={organization?.id}
+              className="bg-white shadow rounded-lg p-6"
+            >
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-lg font-medium text-gray-900">

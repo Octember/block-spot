@@ -51,7 +51,7 @@ export const onAfterSignup: OnAfterSignupHook = async ({
     if (invitation.email && invitation.email !== user.email) {
       throw new HttpError(
         403,
-        "This invitation was sent to a different email address"
+        "This invitation was sent to a different email address",
       );
     }
 

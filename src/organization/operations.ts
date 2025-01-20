@@ -437,7 +437,7 @@ export const createOrganization = async (
 
 export const updateOnboardingState = async (
   args: UpdateOnboardingStateInput,
-  context: any
+  context: any,
 ) => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
@@ -452,7 +452,10 @@ export const updateOnboardingState = async (
   });
 
   if (!membership) {
-    throw new HttpError(403, "Not authorized to update this organization's onboarding state");
+    throw new HttpError(
+      403,
+      "Not authorized to update this organization's onboarding state",
+    );
   }
 
   // Get or create onboarding state

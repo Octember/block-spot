@@ -141,10 +141,10 @@ export function InvitationPage() {
                 (form) => (
                   <FormInput
                     type="hidden"
-                    {...form.register('invitationToken')}
+                    {...form.register("invitationToken")}
                     value={token}
                   />
-                )
+                ),
               ]}
             />
           </div>

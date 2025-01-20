@@ -13,8 +13,8 @@ export function useOnboardingRedirect() {
     if (user && organization && !location.pathname.startsWith("/onboarding")) {
       const onboardingState = organization.onboardingState;
       if (!onboardingState?.hasCompletedOnboarding) {
-        navigate("/onboarding");
+        navigate("/onboarding?redirect=true");
       }
     }
   }, [user, organization, location.pathname, navigate]);
-} 
+}
