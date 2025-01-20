@@ -11,33 +11,45 @@ import { Button } from "../../client/components/button";
 import { useToast } from "../../client/toast";
 import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
-const ONBOARDING_STEPS = {
+type OnboardingStep = {
+  id: string;
+  title: string;
+  name: string;
+  description?: string;
+  next: string | null;
+}
+
+const ONBOARDING_STEPS: Record<string, OnboardingStep> = {
   WELCOME: {
     id: "welcome",
-    title: "Welcome",
-    description: "Let's get your organization set up",
+    name: "Welcome",
+    title: "Welcome to blockspot!",
     next: "organization",
   },
   ORGANIZATION: {
     id: "organization",
+    name: "Organization",
     title: "Organization Details",
     description: "Tell us about your organization",
     next: "spaces",
   },
   SPACES: {
     id: "spaces",
+    name: "Spaces",
     title: "Setup Spaces",
     description: "Create your first venue and spaces",
     next: "invite",
   },
   INVITE: {
     id: "invite",
+    name: "Invite Team",
     title: "Invite Your Team",
     description: "Get your team onboard",
     next: "complete",
   },
   COMPLETE: {
     id: "complete",
+    name: "Complete",
     title: "All Set!",
     description: "You're ready to go",
     next: null,
@@ -56,7 +68,6 @@ export function OrganizationOnboardingPage() {
     organizationType: "",
     teamSize: "",
   });
-  const [organization, setOrganization] = useState<any>(null);
 
   if (isLoading || !user) {
     return <div>Loading...</div>;
@@ -73,7 +84,6 @@ export function OrganizationOnboardingPage() {
           type: formData.organizationType,
           teamSize: formData.teamSize,
         });
-        setOrganization(org);
       } catch (error: any) {
         toast({
           type: "error",
@@ -126,7 +136,7 @@ export function OrganizationOnboardingPage() {
 
         <div className="mt-10 bg-white shadow rounded-lg p-6">
           <h1 className="text-3xl font-bold">{currentStep.title}</h1>
-          <p className="mt-2 text-gray-600">{currentStep.description}</p>
+          {currentStep.description && <p className="mt-2 text-gray-600">{currentStep.description}</p>}
 
           <div className="mt-8">{renderStep()}</div>
         </div>
@@ -139,24 +149,23 @@ function OnboardingProgress({ currentStep }: { currentStep: string }) {
   const steps = Object.values(ONBOARDING_STEPS);
 
   return (
-    <nav aria-label="Progress" className="w-full">
+    <nav aria-label="Progress" className="w-full px-8">
       <ol role="list" className="flex items-center">
         {steps.map((step, index) => (
           <li
             key={step.id}
-            className={`relative ${index !== steps.length - 1 ? "pr-32" : ""}`}
+            className={`relative ${index !== steps.length - 1 ? "pr-24" : ""}`}
           >
             <div className="flex items-center">
               <div
                 className={`relative flex h-8 w-8 items-center justify-center rounded-full
-                  ${
-                    currentStep === step.id
-                      ? "border-2 border-indigo-600 bg-white"
-                      : Object.values(ONBOARDING_STEPS).findIndex(
-                            (s) => s.id === currentStep,
-                          ) > index
-                        ? "bg-indigo-600"
-                        : "border-2 border-gray-300 bg-white"
+                  ${currentStep === step.id
+                    ? "border-2 border-indigo-600 bg-white"
+                    : Object.values(ONBOARDING_STEPS).findIndex(
+                      (s) => s.id === currentStep,
+                    ) > index
+                      ? "bg-indigo-600"
+                      : "border-2 border-gray-300 bg-white"
                   }`}
               >
                 <span
@@ -168,7 +177,7 @@ function OnboardingProgress({ currentStep }: { currentStep: string }) {
               )}
             </div>
             <span className="absolute -bottom-6 w-max text-sm font-medium text-gray-500">
-              {step.title}
+              {step.name}
             </span>
           </li>
         ))}
@@ -181,9 +190,8 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
   return (
     <div className="space-y-6">
       <div className="prose">
-        <h2>Welcome to Block Spot!</h2>
         <p>
-          We're excited to help you and your team manage your schedule more
+          We're excited to help your team manage your schedule more
           effectively. Let's get your organization set up in just a few steps.
         </p>
       </div>
