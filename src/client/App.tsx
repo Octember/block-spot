@@ -1,26 +1,16 @@
-import "./Main.css";
-import NavBar from "./components/NavBar/NavBar";
-import CookieConsentBanner from "./components/cookie-consent/Banner";
-import { appNavigationItems } from "./components/NavBar/contentSections";
-import { landingPageNavigationItems } from "../landing-page/contentSections";
 import {
-  useMemo,
   useEffect,
-  PropsWithChildren,
-  FC,
-  useState,
-  createContext,
-  useContext,
+  useMemo
 } from "react";
-import { routes } from "wasp/client/router";
 import { Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "wasp/client/auth";
-import { useIsLandingPage } from "./hooks/useIsLandingPage";
 import { updateCurrentUser } from "wasp/client/operations";
-import { Transition } from "@headlessui/react";
-import { CheckCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { routes } from "wasp/client/router";
+import "./Main.css";
+import NavBar from "./components/NavBar/NavBar";
+import { appNavigationItems } from "./components/NavBar/contentSections";
+import CookieConsentBanner from "./components/cookie-consent/Banner";
 import { ToastProvider } from "./toast";
-
 
 import LogRocket from 'logrocket';
 LogRocket.init('myj73s/blockspot');
@@ -32,10 +22,7 @@ LogRocket.init('myj73s/blockspot');
 export default function App() {
   const location = useLocation();
   const { data: user } = useAuth();
-  const isLandingPage = useIsLandingPage();
-  const navigationItems = isLandingPage
-    ? landingPageNavigationItems
-    : appNavigationItems;
+  const navigationItems = appNavigationItems;
 
   const isSchedulePage = useMemo(
     () =>
@@ -81,10 +68,10 @@ export default function App() {
   return (
     <>
       <div
-        className="min-h-screen h-full dark:text-white bg-purple-100"
+        className="min-h-screen h-full dark:text-white "
         style={{
-          // backgroundImage:
-          // "url(https://fly.io/phx/ui/images/app-shapes-e20dd6e0903d3a31595108e6e1052a1e.webp?vsn=d)",
+          backgroundImage:
+            "url(https://fly.io/phx/ui/images/app-shapes-e20dd6e0903d3a31595108e6e1052a1e.webp?vsn=d)",
         }}
       >
         <ToastProvider>
@@ -97,7 +84,7 @@ export default function App() {
               )}
 
               {!isSchedulePage ? (
-                <div className="mx-auto max-w-full h-full">
+                <div className="mx-auto max-w-full overflow-y-auto h-full">
                   <Outlet />
                 </div>
               ) : (
