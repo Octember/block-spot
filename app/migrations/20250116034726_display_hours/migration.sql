@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Venue" ADD COLUMN     "displayEndHour" INTEGER NOT NULL DEFAULT 17,
-ADD COLUMN     "displayStartHour" INTEGER NOT NULL DEFAULT 9;

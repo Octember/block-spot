@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 export const PageCard = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="my-8 border rounded-3xl bg-white dark:bg-boxdark-2 lg:w-[80%] xl:w-[70%] mx-auto">
+    <div className="my-8  mb-100 border rounded-3xl bg-white dark:bg-boxdark-2 lg:w-[80%] xl:w-[70%] mx-auto">
       {children}
     </div>
   );
