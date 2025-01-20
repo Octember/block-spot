@@ -1,113 +1,123 @@
-import React, { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { routes } from 'wasp/client/router'
-import { useAuth } from 'wasp/client/auth'
-import { createOrganization, createVenue, updateVenue } from 'wasp/client/operations'
-import { Button } from '../../client/components/button'
-import { useToast } from '../../client/toast'
-import { ArrowRightIcon, PlusIcon, XMarkIcon } from '@heroicons/react/20/solid'
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { routes } from "wasp/client/router";
+import { useAuth } from "wasp/client/auth";
+import {
+  createOrganization,
+  createVenue,
+  updateVenue,
+} from "wasp/client/operations";
+import { Button } from "../../client/components/button";
+import { useToast } from "../../client/toast";
+import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
 const ONBOARDING_STEPS = {
   WELCOME: {
-    id: 'welcome',
-    title: 'Welcome',
+    id: "welcome",
+    title: "Welcome",
     description: "Let's get your organization set up",
-    next: 'organization'
+    next: "organization",
   },
   ORGANIZATION: {
-    id: 'organization',
-    title: 'Organization Details',
-    description: 'Tell us about your organization',
-    next: 'spaces'
+    id: "organization",
+    title: "Organization Details",
+    description: "Tell us about your organization",
+    next: "spaces",
   },
   SPACES: {
-    id: 'spaces',
-    title: 'Setup Spaces',
-    description: 'Create your first venue and spaces',
-    next: 'invite'
+    id: "spaces",
+    title: "Setup Spaces",
+    description: "Create your first venue and spaces",
+    next: "invite",
   },
   INVITE: {
-    id: 'invite',
-    title: 'Invite Your Team',
-    description: 'Get your team onboard',
-    next: 'complete'
+    id: "invite",
+    title: "Invite Your Team",
+    description: "Get your team onboard",
+    next: "complete",
   },
   COMPLETE: {
-    id: 'complete',
-    title: 'All Set!',
+    id: "complete",
+    title: "All Set!",
     description: "You're ready to go",
-    next: null
-  }
-} as const
+    next: null,
+  },
+} as const;
 
-type StepId = keyof typeof ONBOARDING_STEPS
+type StepId = keyof typeof ONBOARDING_STEPS;
 
 export function OrganizationOnboardingPage() {
-  const { step = 'welcome' } = useParams()
-  const navigate = useNavigate()
-  const { data: user, isLoading } = useAuth()
-  const toast = useToast()
+  const { step = "welcome" } = useParams();
+  const navigate = useNavigate();
+  const { data: user, isLoading } = useAuth();
+  const toast = useToast();
   const [formData, setFormData] = useState({
-    organizationName: '',
-    organizationType: '',
-    teamSize: ''
-  })
-  const [organization, setOrganization] = useState<any>(null)
+    organizationName: "",
+    organizationType: "",
+    teamSize: "",
+  });
+  const [organization, setOrganization] = useState<any>(null);
 
   if (isLoading || !user) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
-  const currentStep = ONBOARDING_STEPS[step.toUpperCase() as StepId] || ONBOARDING_STEPS.WELCOME
+  const currentStep =
+    ONBOARDING_STEPS[step.toUpperCase() as StepId] || ONBOARDING_STEPS.WELCOME;
 
   const handleNext = async () => {
-    if (currentStep.id === 'organization') {
+    if (currentStep.id === "organization") {
       try {
         const org = await createOrganization({
           name: formData.organizationName,
           type: formData.organizationType,
-          teamSize: formData.teamSize
-        })
-        setOrganization(org)
+          teamSize: formData.teamSize,
+        });
+        setOrganization(org);
       } catch (error: any) {
         toast({
-          type: 'error',
-          title: 'Failed to create organization',
-          description: error.message || 'Please try again'
-        })
-        return
+          type: "error",
+          title: "Failed to create organization",
+          description: error.message || "Please try again",
+        });
+        return;
       }
     }
 
     if (currentStep.next) {
-      navigate(`/onboarding/${currentStep.next}`)
+      navigate(`/onboarding/${currentStep.next}`);
     } else {
-      navigate(routes.ScheduleRoute.to)
+      navigate(routes.ScheduleRoute.to);
     }
-  }
+  };
 
   const renderStep = () => {
     switch (currentStep.id) {
-      case 'welcome':
-        return <WelcomeStep onNext={handleNext} />
-      case 'organization':
+      case "welcome":
+        return <WelcomeStep onNext={handleNext} />;
+      case "organization":
         return (
           <OrganizationStep
             formData={formData}
             setFormData={setFormData}
             onNext={handleNext}
           />
-        )
-      case 'spaces':
-        return <SpacesStep organizationName={formData.organizationName} onNext={handleNext} />
-      case 'invite':
-        return <InviteStep onNext={handleNext} />
-      case 'complete':
-        return <CompleteStep onNext={handleNext} />
+        );
+      case "spaces":
+        return (
+          <SpacesStep
+            organizationName={formData.organizationName}
+            onNext={handleNext}
+          />
+        );
+      case "invite":
+        return <InviteStep onNext={handleNext} />;
+      case "complete":
+        return <CompleteStep onNext={handleNext} />;
       default:
-        return <WelcomeStep onNext={handleNext} />
+        return <WelcomeStep onNext={handleNext} />;
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -118,34 +128,40 @@ export function OrganizationOnboardingPage() {
           <h1 className="text-3xl font-bold">{currentStep.title}</h1>
           <p className="mt-2 text-gray-600">{currentStep.description}</p>
 
-          <div className="mt-8">
-            {renderStep()}
-          </div>
+          <div className="mt-8">{renderStep()}</div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function OnboardingProgress({ currentStep }: { currentStep: string }) {
-  const steps = Object.values(ONBOARDING_STEPS)
+  const steps = Object.values(ONBOARDING_STEPS);
 
   return (
     <nav aria-label="Progress" className="w-full">
       <ol role="list" className="flex items-center">
         {steps.map((step, index) => (
-          <li key={step.id} className={`relative ${index !== steps.length - 1 ? 'pr-32' : ''}`}>
+          <li
+            key={step.id}
+            className={`relative ${index !== steps.length - 1 ? "pr-32" : ""}`}
+          >
             <div className="flex items-center">
               <div
                 className={`relative flex h-8 w-8 items-center justify-center rounded-full
-                  ${currentStep === step.id
-                    ? 'border-2 border-indigo-600 bg-white'
-                    : Object.values(ONBOARDING_STEPS).findIndex(s => s.id === currentStep) > index
-                      ? 'bg-indigo-600'
-                      : 'border-2 border-gray-300 bg-white'
+                  ${
+                    currentStep === step.id
+                      ? "border-2 border-indigo-600 bg-white"
+                      : Object.values(ONBOARDING_STEPS).findIndex(
+                            (s) => s.id === currentStep,
+                          ) > index
+                        ? "bg-indigo-600"
+                        : "border-2 border-gray-300 bg-white"
                   }`}
               >
-                <span className={`h-2.5 w-2.5 rounded-full ${currentStep === step.id ? 'bg-indigo-600' : ''}`} />
+                <span
+                  className={`h-2.5 w-2.5 rounded-full ${currentStep === step.id ? "bg-indigo-600" : ""}`}
+                />
               </div>
               {index !== steps.length - 1 && (
                 <div className="absolute left-8 top-4 w-full h-0.5 -translate-y-1/2 bg-gray-300" />
@@ -158,7 +174,7 @@ function OnboardingProgress({ currentStep }: { currentStep: string }) {
         ))}
       </ol>
     </nav>
-  )
+  );
 }
 
 function WelcomeStep({ onNext }: { onNext: () => void }) {
@@ -167,50 +183,64 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
       <div className="prose">
         <h2>Welcome to Block Spot!</h2>
         <p>
-          We're excited to help you and your team manage your schedule more effectively.
-          Let's get your organization set up in just a few steps.
+          We're excited to help you and your team manage your schedule more
+          effectively. Let's get your organization set up in just a few steps.
         </p>
       </div>
-      <Button onClick={onNext} ariaLabel="Get Started" icon={<ArrowRightIcon className='size-4' />}>
+      <Button
+        onClick={onNext}
+        ariaLabel="Get Started"
+        icon={<ArrowRightIcon className="size-4" />}
+      >
         Get Started
       </Button>
     </div>
-  )
+  );
 }
 
 function OrganizationStep({
   formData,
   setFormData,
-  onNext
+  onNext,
 }: {
-  formData: any
-  setFormData: (data: any) => void
-  onNext: () => void
+  formData: any;
+  setFormData: (data: any) => void;
+  onNext: () => void;
 }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-6">
         <div>
-          <label htmlFor="organizationName" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="organizationName"
+            className="block text-sm font-medium text-gray-700"
+          >
             Organization Name
           </label>
           <input
             type="text"
             id="organizationName"
             value={formData.organizationName}
-            onChange={(e) => setFormData({ ...formData, organizationName: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, organizationName: e.target.value })
+            }
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
           />
         </div>
 
         <div>
-          <label htmlFor="organizationType" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="organizationType"
+            className="block text-sm font-medium text-gray-700"
+          >
             Organization Type
           </label>
           <select
             id="organizationType"
             value={formData.organizationType}
-            onChange={(e) => setFormData({ ...formData, organizationType: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, organizationType: e.target.value })
+            }
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
           >
             <option value="">Select type...</option>
@@ -222,13 +252,18 @@ function OrganizationStep({
         </div>
 
         <div>
-          <label htmlFor="teamSize" className="block text-sm font-medium text-gray-700">
+          <label
+            htmlFor="teamSize"
+            className="block text-sm font-medium text-gray-700"
+          >
             Team Size
           </label>
           <select
             id="teamSize"
             value={formData.teamSize}
-            onChange={(e) => setFormData({ ...formData, teamSize: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, teamSize: e.target.value })
+            }
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
           >
             <option value="">Select size...</option>
@@ -242,82 +277,96 @@ function OrganizationStep({
 
       <Button
         onClick={onNext}
-        disabled={!formData.organizationName || !formData.organizationType || !formData.teamSize}
+        disabled={
+          !formData.organizationName ||
+          !formData.organizationType ||
+          !formData.teamSize
+        }
         ariaLabel="Continue"
       >
         Continue
       </Button>
     </div>
-  )
+  );
 }
 
-function SpacesStep({ organizationName, onNext }: { organizationName: string, onNext: () => void }) {
-  const toast = useToast()
-  const [isCreating, setIsCreating] = useState(false)
-  const [spaces, setSpaces] = useState<{ name: string; type: string; capacity: number }[]>([
-    { name: '', type: 'Conference Room', capacity: 1 }
-  ])
+function SpacesStep({
+  organizationName,
+  onNext,
+}: {
+  organizationName: string;
+  onNext: () => void;
+}) {
+  const toast = useToast();
+  const [isCreating, setIsCreating] = useState(false);
+  const [spaces, setSpaces] = useState<
+    { name: string; type: string; capacity: number }[]
+  >([{ name: "", type: "Conference Room", capacity: 1 }]);
 
   const handleAddSpace = () => {
-    setSpaces([...spaces, { name: '', type: 'Conference Room', capacity: 1 }])
-  }
+    setSpaces([...spaces, { name: "", type: "Conference Room", capacity: 1 }]);
+  };
 
   const handleRemoveSpace = (index: number) => {
-    setSpaces(spaces.filter((_, i) => i !== index))
-  }
+    setSpaces(spaces.filter((_, i) => i !== index));
+  };
 
-  const handleSpaceChange = (index: number, field: string, value: string | number) => {
-    const newSpaces = [...spaces]
-    newSpaces[index] = { ...newSpaces[index], [field]: value }
-    setSpaces(newSpaces)
-  }
+  const handleSpaceChange = (
+    index: number,
+    field: string,
+    value: string | number,
+  ) => {
+    const newSpaces = [...spaces];
+    newSpaces[index] = { ...newSpaces[index], [field]: value };
+    setSpaces(newSpaces);
+  };
 
   const handleCreateVenueAndSpaces = async () => {
-    setIsCreating(true)
+    setIsCreating(true);
     try {
       // First create the venue
       const venue = await createVenue({
-        name: organizationName
-      })
+        name: organizationName,
+      });
 
       // Then update it with spaces
       await updateVenue({
         id: venue.id,
         name: venue.name,
         displayStart: 480, // 8 AM
-        displayEnd: 1080,  // 6 PM
-        spaces: spaces.map(space => ({
+        displayEnd: 1080, // 6 PM
+        spaces: spaces.map((space) => ({
           name: space.name,
-          id: ''  // Empty ID for new spaces
-        }))
-      })
+          id: "", // Empty ID for new spaces
+        })),
+      });
 
-
-      onNext()
+      onNext();
     } catch (error: any) {
       toast({
-        type: 'error',
-        title: 'Failed to create venue',
-        description: error.message || 'Please try again'
-      })
+        type: "error",
+        title: "Failed to create venue",
+        description: error.message || "Please try again",
+      });
     } finally {
-      setIsCreating(false)
+      setIsCreating(false);
     }
-  }
+  };
 
-  const isValid = spaces.every(space =>
-    space.name.trim() !== '' &&
-    space.type.trim() !== '' &&
-    space.capacity > 0
-  )
+  const isValid = spaces.every(
+    (space) =>
+      space.name.trim() !== "" &&
+      space.type.trim() !== "" &&
+      space.capacity > 0,
+  );
 
   return (
     <div className="space-y-6">
       <div className="prose">
         <h2>Setup Spaces</h2>
         <p>
-          Create your first venue and define the spaces within it.
-          You can always add more spaces later.
+          Create your first venue and define the spaces within it. You can
+          always add more spaces later.
         </p>
       </div>
 
@@ -332,7 +381,9 @@ function SpacesStep({ organizationName, onNext }: { organizationName: string, on
                 <input
                   type="text"
                   value={space.name}
-                  onChange={(e) => handleSpaceChange(index, 'name', e.target.value)}
+                  onChange={(e) =>
+                    handleSpaceChange(index, "name", e.target.value)
+                  }
                   placeholder="e.g., Main Conference Room"
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                 />
@@ -345,7 +396,9 @@ function SpacesStep({ organizationName, onNext }: { organizationName: string, on
                   </label>
                   <select
                     value={space.type}
-                    onChange={(e) => handleSpaceChange(index, 'type', e.target.value)}
+                    onChange={(e) =>
+                      handleSpaceChange(index, "type", e.target.value)
+                    }
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                   >
                     <option value="Conference Room">Conference Room</option>
@@ -364,7 +417,13 @@ function SpacesStep({ organizationName, onNext }: { organizationName: string, on
                     type="number"
                     min="1"
                     value={space.capacity}
-                    onChange={(e) => handleSpaceChange(index, 'capacity', parseInt(e.target.value) || 1)}
+                    onChange={(e) =>
+                      handleSpaceChange(
+                        index,
+                        "capacity",
+                        parseInt(e.target.value) || 1,
+                      )
+                    }
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                   />
                 </div>
@@ -398,11 +457,11 @@ function SpacesStep({ organizationName, onNext }: { organizationName: string, on
           disabled={!isValid || isCreating}
           ariaLabel="Continue"
         >
-          {isCreating ? 'Creating...' : 'Continue'}
+          {isCreating ? "Creating..." : "Continue"}
         </Button>
       </div>
     </div>
-  )
+  );
 }
 
 function InviteStep({ onNext }: { onNext: () => void }) {
@@ -411,7 +470,8 @@ function InviteStep({ onNext }: { onNext: () => void }) {
       <div className="prose">
         <h2>Invite Your Team</h2>
         <p>
-          Block Spot works best with your whole team. Invite them now, or do it later from your organization settings.
+          Block Spot works best with your whole team. Invite them now, or do it
+          later from your organization settings.
         </p>
       </div>
 
@@ -424,7 +484,7 @@ function InviteStep({ onNext }: { onNext: () => void }) {
         </Button>
       </div>
     </div>
-  )
+  );
 }
 
 function CompleteStep({ onNext }: { onNext: () => void }) {
@@ -433,13 +493,13 @@ function CompleteStep({ onNext }: { onNext: () => void }) {
       <div className="prose">
         <h2>You're All Set!</h2>
         <p>
-          Your organization is ready to go. You can now start managing your schedule
-          and collaborating with your team.
+          Your organization is ready to go. You can now start managing your
+          schedule and collaborating with your team.
         </p>
       </div>
       <Button onClick={onNext} ariaLabel="Get Started">
         Get Started
       </Button>
     </div>
-  )
-} 
+  );
+}

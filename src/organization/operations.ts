@@ -398,7 +398,7 @@ export const getInvitationDetails = async (
 
 export const createOrganization = async (
   args: CreateOrganizationInput,
-  context: any
+  context: any,
 ) => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
@@ -413,10 +413,10 @@ export const createOrganization = async (
       users: {
         create: {
           userId: context.user.id,
-          role: "OWNER"
-        }
-      }
-    }
+          role: "OWNER",
+        },
+      },
+    },
   });
 
   return organization;
