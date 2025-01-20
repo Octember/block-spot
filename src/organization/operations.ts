@@ -35,7 +35,7 @@ type ListInvitationsInput = {
   organizationId: string;
 };
 
-type GetUserOrganizationsResponse = Organization & {
+type GetUserOrganizationResponse = Organization & {
   users: (OrganizationUser & {
     user: User;
   })[];
@@ -62,15 +62,15 @@ type UpdateOnboardingStateInput = {
   };
 };
 
-export const getUserOrganizations = async (
+export const getUserOrganization = async (
   _args: void,
   context: any,
-): Promise<GetUserOrganizationsResponse[]> => {
+): Promise<GetUserOrganizationResponse> => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
   }
 
-  return context.entities.Organization.findMany({
+  return context.entities.Organization.findFirst({
     where: {
       users: {
         some: {
@@ -84,6 +84,7 @@ export const getUserOrganizations = async (
           user: true,
         },
       },
+      onboardingState: true,
     },
   });
 };

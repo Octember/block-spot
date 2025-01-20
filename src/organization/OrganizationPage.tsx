@@ -1,18 +1,6 @@
-import { useQuery } from "wasp/client/operations";
-import {
-  listInvitations,
-  getUserOrganizations,
-  cancelInvitation,
-  updateMemberRole,
-} from "wasp/client/operations";
-import type {
-  Organization,
-  OrganizationUser,
-  User,
-  Invitation,
-} from "wasp/entities";
-import { useToast } from "../client/toast";
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import { cancelInvitation, getUserOrganization, listInvitations, updateMemberRole, useQuery } from "wasp/client/operations";
+import { useToast } from "../client/toast";
 import { InviteMemberButton } from "./components/invite-member-form";
 import { RoleSelect } from "./components/role-select";
 import { InviteMembers } from "./InviteMembers";
@@ -20,22 +8,21 @@ import { InviteMembers } from "./InviteMembers";
 export function OrganizationSection() {
   const toast = useToast();
   const {
-    data: organizations,
+    data: organization,
     isLoading,
     error,
-  } = useQuery(getUserOrganizations);
+  } = useQuery(getUserOrganization);
   const { data: invitations } = useQuery(listInvitations, {
-    organizationId: organizations?.[0]?.id ?? "",
+    organizationId: organization?.id ?? "",
   });
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  if (!organizations?.length) return <div>No organizations found.</div>;
+  if (!organization) return <div>No organization found.</div>;
 
-  const organization = organizations[0];
   const isOwner = organization.users.some(
     (member) =>
-      member.user.id === organizations[0].users[0].user.id &&
+      member.user.id === organization.users[0].user.id &&
       member.role === "OWNER",
   );
 
@@ -130,7 +117,7 @@ export function OrganizationSection() {
                         handleUpdateRole(member.user.id, newRole)
                       }
                       disabled={
-                        member.user.id === organizations[0].users[0].user.id
+                        member.user.id === organization.users[0].user.id
                       } // Can't change own role
                     />
                   </td>

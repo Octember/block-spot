@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { routes } from "wasp/client/router";
+import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "wasp/client/auth";
-import type { Organization, OnboardingState } from 'wasp/entities';
 import {
   createOrganization,
   createVenue,
-  getUserOrganizations,
-  updateVenue,
+  getUserOrganization,
   updateOnboardingState,
-  useQuery,
+  updateVenue,
+  useQuery
 } from "wasp/client/operations";
+import { routes } from "wasp/client/router";
+import type { OnboardingState, Organization } from 'wasp/entities';
 import { Button } from "../../client/components/button";
 import { useToast } from "../../client/toast";
-import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
 type OnboardingStep = {
   id: string;
@@ -103,6 +103,10 @@ const determineOnboardingStep = (
 
   const { onboardingState } = organization;
 
+  if (!onboardingState) {
+    return { shouldRedirect: false, targetStep: "welcome" };
+  }
+
   if (onboardingState?.hasCompletedOnboarding) {
     return { shouldRedirect: true, targetStep: "/" };
   }
@@ -112,6 +116,7 @@ const determineOnboardingStep = (
   }
 
   const targetStep = getTargetStep(onboardingState, organization);
+  console.log("targetStep", targetStep);
 
   const currentStepIndex = Object.values(ONBOARDING_STEPS).findIndex(s => s.id === currentStep);
   const targetStepIndex = Object.values(ONBOARDING_STEPS).findIndex(s => s.id === targetStep);
@@ -125,7 +130,8 @@ const determineOnboardingStep = (
 
 export function OrganizationOnboardingPage() {
   const navigate = useNavigate();
-  const { data: organizations } = useQuery(getUserOrganizations);
+  const { data: organization } = useQuery(getUserOrganization);
+
   const { step = "welcome" } = useParams();
   const { data: user, isLoading } = useAuth();
   const toast = useToast();
@@ -136,13 +142,13 @@ export function OrganizationOnboardingPage() {
   });
 
   useEffect(() => {
-    if (organizations?.[0]) {
-      const { shouldRedirect, targetStep } = determineOnboardingStep(step, organizations[0]);
+    if (organization) {
+      const { shouldRedirect, targetStep } = determineOnboardingStep(step, organization);
       if (shouldRedirect) {
         navigate(targetStep);
       }
     }
-  }, [organizations, step, navigate]);
+  }, [organization, step, navigate]);
 
   if (isLoading || !user) {
     return <div>Loading...</div>;
@@ -184,8 +190,10 @@ export function OrganizationOnboardingPage() {
         });
         return;
       }
-    } else if (organizations?.[0]) {
-      await updateProgress(organizations[0].id, currentStep.id);
+    }
+
+    if (organization) {
+      await updateProgress(organization.id, currentStep.id);
     }
 
     if (currentStep.next) {

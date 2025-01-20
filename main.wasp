@@ -414,8 +414,8 @@ job sendNewsletter {
 }
 //#endregion
 
-query getUserOrganizations {
-  fn: import { getUserOrganizations } from "@src/organization/operations.js",
+query getUserOrganization {
+  fn: import { getUserOrganization } from "@src/organization/operations.js",
   entities: [Organization, OrganizationUser, User]
 }
 

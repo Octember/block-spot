@@ -8,13 +8,17 @@ import { getCustomerPortalUrl, useQuery } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { logout, useAuth } from "wasp/client/auth";
 import { OrganizationSection } from "../organization/OrganizationPage";
-import { getUserOrganizations } from "wasp/client/operations";
+import { getUserOrganization } from "wasp/client/operations";
 
 export default function AccountPage() {
   const { data: user } = useAuth();
-  const { data: organizations, isLoading } = useQuery(getUserOrganizations);
+  const { data: organization, isLoading } = useQuery(getUserOrganization);
 
   if (isLoading || !user) return <div>Loading...</div>;
+
+  const userRole = organization?.users.find(
+    (u) => u.userId === user.id,
+  )?.role;
 
   return (
     <div className="min-h-screen">
@@ -96,25 +100,19 @@ export default function AccountPage() {
             <h2 className="text-lg font-medium text-gray-900">
               Your Organizations
             </h2>
-            {organizations?.map((org) => {
-              const userRole = org.users.find(
-                (u) => u.userId === user.id,
-              )?.role;
-              return (
-                <div key={org.id} className="bg-white shadow rounded-lg p-6">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900">
-                        {org.name}
-                      </h3>
-                      <p className="mt-1 text-sm text-gray-500">
-                        Role: {userRole?.toLowerCase()}
-                      </p>
-                    </div>
-                  </div>
+
+            <div key={organization?.id} className="bg-white shadow rounded-lg p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900">
+                    {organization?.name}
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Role: {userRole?.toLowerCase()}
+                  </p>
                 </div>
-              );
-            })}
+              </div>
+            </div>
           </div>
         </div>
       </div>
