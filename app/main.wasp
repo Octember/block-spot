@@ -3,19 +3,19 @@ app BlockSpot {
     version: "^0.15.0"
   },
 
-  title: "BlockSpot - Online Booking Platform",
+  title: "BlockSpot - Booking & Reservations",
 
   head: [
     "<meta charset='utf-8' />",
-    "<meta name='description' content='BlockSpot is an online booking platform for small businesses.' />",
+    "<meta name='description' content='BlockSpot is a booking platform for small businesses.' />",
     "<meta name='author' content='BlockSpot' />",
-    "<meta name='keywords' content='booking, platform, small business, online booking, reservation, scheduling' />",
+    "<meta name='keywords' content='booking, platform, small business, booking, reservation, scheduling' />",
     
     "<meta property='og:type' content='website' />",
     "<meta property='og:title' content='BlockSpot' />",
     "<meta property='og:site_name' content='BlockSpot' />",
     "<meta property='og:url' content='https://blockspot.com' />",
-    "<meta property='og:description' content='BlockSpot is an online booking platform for small businesses.' />",
+    "<meta property='og:description' content='BlockSpot is a booking platform for small businesses.' />",
     "<meta property='og:image' content='https://blockspot.com/public-banner.webp' />",
     "<meta name='twitter:image' content='https://blockspot.com/public-banner.webp' />",
     "<meta name='twitter:image:width' content='800' />",

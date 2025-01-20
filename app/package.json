@@ -1,6 +1,9 @@
 {
   "name": "opensaas",
   "type": "module",
+  "scripts": {
+    "deploy": "REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_51PEPbeKH8PRewdkByKnAv47TvmgskgFwUx2BePcaurI06lgKflfCyhq4VbC7mZDoFIsASM4nYyZ7Vba61ib6IrDM007ygLxYt7 wasp deploy fly deploy"
+  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.523.0",
     "@aws-sdk/s3-request-presigner": "^3.523.0",
@@ -28,7 +31,7 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "4.11.0",
     "react-router-dom": "^6.26.2",
-    "stripe": "11.15.0",
+    "stripe": "13.4.0",
     "tailwind-merge": "^2.2.1",
     "vanilla-cookieconsent": "^3.0.1",
     "wasp": "file:.wasp/out/sdk/wasp",
