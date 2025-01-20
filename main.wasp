@@ -459,3 +459,18 @@ query getInvitationDetails {
   fn: import { getInvitationDetails } from "@src/organization/operations.js",
   entities: [Organization, Invitation]
 }
+
+route OrganizationOnboardingRoute { 
+  path: "/onboarding/:step?", 
+  to: OrganizationOnboardingPage 
+}
+
+page OrganizationOnboardingPage {
+  component: import { OrganizationOnboardingPage } from "@src/organization/onboarding/OnboardingPage.tsx",
+  authRequired: true
+}
+
+action createOrganization {
+  fn: import { createOrganization } from "@src/organization/operations.js",
+  entities: [Organization]
+}

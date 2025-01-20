@@ -20,6 +20,8 @@ model Organization {
   subscriptionPlanId     String?
   trialEndsAt           DateTime?
 
+  type String?
+
   // Relations
   invitations           Invitation[]
   onboardingState       OnboardingState?

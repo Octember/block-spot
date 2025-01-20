@@ -44,6 +44,12 @@ type GetInvitationDetailsInput = {
   token: string;
 };
 
+type CreateOrganizationInput = {
+  name: string;
+  type: string;
+  teamSize: string;
+};
+
 export const getUserOrganizations = async (
   _args: void,
   context: any,
@@ -388,4 +394,30 @@ export const getInvitationDetails = async (
     role: invitation.role,
     email: invitation.email,
   };
+};
+
+export const createOrganization = async (
+  args: CreateOrganizationInput,
+  context: any
+) => {
+  if (!context.user) {
+    throw new HttpError(401, "Not authorized");
+  }
+
+  // Create the organization
+  const organization = await context.entities.Organization.create({
+    data: {
+      name: args.name,
+      type: args.type,
+      // teamSize: args.teamSize,
+      users: {
+        create: {
+          userId: context.user.id,
+          role: "OWNER"
+        }
+      }
+    }
+  });
+
+  return organization;
 };
