@@ -97,7 +97,7 @@ export default function App() {
               )}
 
               {!isSchedulePage ? (
-                <div className="mx-auto max-w-full">
+                <div className="mx-auto max-w-full h-full">
                   <Outlet />
                 </div>
               ) : (
