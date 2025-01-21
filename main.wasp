@@ -5,6 +5,10 @@ app BlockSpot {
 
   title: "BlockSpot - Booking & Reservations",
 
+  server: {
+    setupFn: import { setupServer } from "@src/server/setup",
+  },
+
   head: [
     "<meta charset='utf-8' />",
     "<meta name='description' content='BlockSpot is a booking platform for small businesses.' />",

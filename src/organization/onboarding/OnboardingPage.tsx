@@ -5,12 +5,17 @@ import {
   createOrganization,
   getUserOrganization,
   updateOnboardingState,
-  useQuery
+  useQuery,
 } from "wasp/client/operations";
 import { routes } from "wasp/client/router";
 import type { OnboardingState, Organization } from "wasp/entities";
 import { useToast } from "../../client/toast";
-import { determineOnboardingStep, getOnboardingUpdates, ONBOARDING_STEPS, StepId } from "./constants";
+import {
+  determineOnboardingStep,
+  getOnboardingUpdates,
+  ONBOARDING_STEPS,
+  StepId,
+} from "./constants";
 import {
   CompleteStep,
   InviteStep,

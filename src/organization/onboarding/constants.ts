@@ -4,7 +4,6 @@ export type OrganizationWithOnboarding = Organization & {
   onboardingState: OnboardingState | null;
 };
 
-
 type OnboardingStep = {
   id: string;
   title: string;
