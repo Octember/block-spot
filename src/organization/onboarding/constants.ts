@@ -72,9 +72,7 @@ export const getOnboardingUpdates = (
   return updates;
 };
 
-export const getTargetStep = (
-  onboardingState: OnboardingState | null,
-) => {
+export const getTargetStep = (onboardingState: OnboardingState | null) => {
   console.log("onboardingState", onboardingState);
 
   if (!onboardingState) return "welcome";

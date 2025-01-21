@@ -44,9 +44,8 @@ export function OrganizationOnboardingPage() {
 
   useEffect(() => {
     if (organization) {
-      const { shouldRedirect, targetStep } = determineOnboardingStep(
-        organization,
-      );
+      const { shouldRedirect, targetStep } =
+        determineOnboardingStep(organization);
       if (shouldRedirect) {
         navigate(targetStep);
       }

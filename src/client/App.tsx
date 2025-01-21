@@ -14,7 +14,6 @@ import LogRocket from "logrocket";
 
 LogRocket.init("myj73s/blockspot");
 
-
 /**
  * use this component to wrap all child components
  * this is useful for templates, themes, and context
@@ -23,7 +22,6 @@ export default function App() {
   const location = useLocation();
   const { data: user } = useAuth();
   const navigationItems = appNavigationItems;
-
 
   useOnboardingRedirect();
 
@@ -37,11 +35,7 @@ export default function App() {
   );
 
   const shouldDisplayAppNavBar = useMemo(() => {
-    return (
-      location.pathname !== routes.LoginRoute.build() &&
-      location.pathname !== routes.SignupRoute.build() &&
-      !isSchedulePage
-    );
+    return !isSchedulePage;
   }, [location]);
 
   const isAdminDashboard = useMemo(() => {
