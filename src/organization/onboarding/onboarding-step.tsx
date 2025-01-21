@@ -101,7 +101,7 @@ export function SpacesStep({
   onNext,
 }: {
   organizationName: string;
-  onNext: () => void;
+  onNext: () => Promise<void>;
 }) {
   const toast = useToast();
   const [isCreating, setIsCreating] = useState(false);
@@ -147,7 +147,8 @@ export function SpacesStep({
         })),
       });
 
-      onNext();
+      // Only call onNext after both operations are complete
+      await onNext();
     } catch (error: any) {
       toast({
         type: "error",

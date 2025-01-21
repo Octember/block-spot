@@ -60,7 +60,7 @@ export const getOnboardingUpdates = (
       updates.hasCompletedProfile = true;
       break;
     case "spaces":
-      updates.hasAddedPaymentMethod = true;
+      updates.hasCreatedFirstSpace = true;
       break;
     case "invite":
       updates.hasInvitedMembers = true;
@@ -74,17 +74,18 @@ export const getOnboardingUpdates = (
 
 export const getTargetStep = (
   onboardingState: OnboardingState | null,
-  organization: OrganizationWithOnboarding | undefined,
 ) => {
+  console.log("onboardingState", onboardingState);
+
   if (!onboardingState) return "welcome";
+  if (onboardingState.hasCompletedOnboarding) return "complete";
   if (onboardingState.hasInvitedMembers) return "complete";
-  if (onboardingState.hasAddedPaymentMethod) return "invite";
+  if (onboardingState.hasCreatedFirstSpace) return "invite";
   if (onboardingState.hasCompletedProfile) return "spaces";
-  return organization ? "spaces" : "welcome";
+  return "organization";
 };
 
 export const determineOnboardingStep = (
-  currentStep: string,
   organization: OrganizationWithOnboarding | undefined,
 ): { shouldRedirect: boolean; targetStep: string } => {
   if (!organization) {
@@ -101,25 +102,10 @@ export const determineOnboardingStep = (
     return { shouldRedirect: true, targetStep: "/" };
   }
 
-  if (
-    (currentStep === "welcome" || currentStep === "organization") &&
-    organization
-  ) {
-    return { shouldRedirect: true, targetStep: "/onboarding/spaces" };
-  }
-
-  const targetStep = getTargetStep(onboardingState, organization);
-
-  const currentStepIndex = Object.values(ONBOARDING_STEPS).findIndex(
-    (s) => s.id === currentStep,
-  );
-  const targetStepIndex = Object.values(ONBOARDING_STEPS).findIndex(
-    (s) => s.id === targetStep,
-  );
-  const shouldRedirect = currentStepIndex > targetStepIndex;
+  const targetStep = getTargetStep(onboardingState);
 
   return {
-    shouldRedirect,
-    targetStep: shouldRedirect ? `/onboarding/${targetStep}` : currentStep,
+    shouldRedirect: true,
+    targetStep: `/onboarding/${targetStep}`,
   };
 };

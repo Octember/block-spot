@@ -45,7 +45,6 @@ export function OrganizationOnboardingPage() {
   useEffect(() => {
     if (organization) {
       const { shouldRedirect, targetStep } = determineOnboardingStep(
-        step,
         organization,
       );
       if (shouldRedirect) {
@@ -93,9 +92,7 @@ export function OrganizationOnboardingPage() {
         });
         return;
       }
-    }
-
-    if (organization) {
+    } else if (organization) {
       await updateProgress(organization.id, currentStep.id);
     }
 
