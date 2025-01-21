@@ -1,4 +1,3 @@
-
 export const PixelsPerSlot = 16;
 export const MinutesPerSlot = 15;
 

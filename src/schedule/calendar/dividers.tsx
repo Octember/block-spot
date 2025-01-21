@@ -1,7 +1,11 @@
 import React from "react";
 import { FC } from "react";
 import { useTimeLabels } from "./constants";
-import { MinutesPerSlot, PixelsPerSlot, getGridTemplateColumns } from './reservations/constants';
+import {
+  MinutesPerSlot,
+  PixelsPerSlot,
+  getGridTemplateColumns,
+} from "./reservations/constants";
 import { useScheduleContext } from "./providers/schedule-query-provider";
 
 export const HorizontalDividers: FC = () => {

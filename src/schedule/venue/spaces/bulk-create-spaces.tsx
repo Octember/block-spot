@@ -98,7 +98,7 @@ const BulkSpaceCreatorModal = ({
 
       await createSpaces({
         venueId,
-        spaces: spaceNames.map(name => ({
+        spaces: spaceNames.map((name) => ({
           name,
           capacity: formData.capacity,
           type: formData.spaceType.value,
@@ -171,7 +171,9 @@ const BulkSpaceCreatorModal = ({
                   <Select
                     options={numberingStyleOptions}
                     value={formData.numberingStyle}
-                    onChange={(value) => handleChange("numberingStyle", value.value)}
+                    onChange={(value) =>
+                      handleChange("numberingStyle", value.value)
+                    }
                   />
                 </FormField>
               </div>

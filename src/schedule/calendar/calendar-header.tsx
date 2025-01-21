@@ -6,7 +6,7 @@ import { WeekViewCalendarProps } from "./WeekViewCalendar";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { addDays, format, isValid, parseISO, startOfToday } from "date-fns";
 import { useSelectedDate } from "./providers/date-provider";
-import { getGridTemplateColumns } from './reservations/constants';
+import { getGridTemplateColumns } from "./reservations/constants";
 
 export const CalendarHeader: FC<{ venue: WeekViewCalendarProps["venue"] }> = ({
   venue,
@@ -22,8 +22,8 @@ export const CalendarHeader: FC<{ venue: WeekViewCalendarProps["venue"] }> = ({
       <div className="flex px-4 py-2 gap-2 items-center">
         <ButtonGroup
           items={[
-            { label: "Years", onClick: () => { } },
-            { label: "Months", onClick: () => { } },
+            { label: "Years", onClick: () => {} },
+            { label: "Months", onClick: () => {} },
           ]}
         />
 
@@ -44,7 +44,6 @@ export const CalendarHeader: FC<{ venue: WeekViewCalendarProps["venue"] }> = ({
           {format(selectedDate, "MMMM d, yyyy")}
         </div>
       </div>
-
     </header>
   );
 };

@@ -70,7 +70,7 @@ export const AddSpaceModal = ({
             {...register("capacity", {
               required: true,
               valueAsNumber: true,
-              min: 1
+              min: 1,
             })}
           />
         </FormField>
@@ -84,11 +84,7 @@ export const AddSpaceModal = ({
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            ariaLabel="Add Space"
-          >
+          <Button type="submit" disabled={isSubmitting} ariaLabel="Add Space">
             Add Space
           </Button>
         </div>

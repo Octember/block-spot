@@ -249,7 +249,7 @@ type CreateSpacePayload = {
 
 export const createSpace: CreateSpace<CreateSpacePayload, Space> = async (
   args,
-  context
+  context,
 ) => {
   if (!context.user) {
     throw new HttpError(401);
@@ -285,7 +285,7 @@ type CreateSpacesPayload = {
 
 export const createSpaces: CreateSpaces<CreateSpacesPayload, Space[]> = async (
   args,
-  context
+  context,
 ) => {
   if (!context.user) {
     throw new HttpError(401);
@@ -301,7 +301,7 @@ export const createSpaces: CreateSpaces<CreateSpacesPayload, Space[]> = async (
   }
 
   // Create all spaces in a single database operation
- await context.entities.Space.createMany({
+  await context.entities.Space.createMany({
     data: args.spaces.map((space) => ({
       name: space.name,
       venueId: args.venueId,
@@ -315,12 +315,12 @@ export const createSpaces: CreateSpaces<CreateSpacesPayload, Space[]> = async (
     where: {
       venueId: args.venueId,
       name: {
-        in: args.spaces.map(space => space.name)
-      }
+        in: args.spaces.map((space) => space.name),
+      },
     },
     orderBy: {
-      createdAt: "desc"
+      createdAt: "desc",
     },
-    take: args.spaces.length
+    take: args.spaces.length,
   });
 };

@@ -4,7 +4,7 @@ import { Reservation, Space, Venue } from "wasp/entities";
 import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
-import { getGridTemplateColumns } from './reservations/constants';
+import { getGridTemplateColumns } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
 
 export interface WeekViewCalendarProps {
@@ -17,17 +17,14 @@ export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
       <CalendarHeader venue={venue} />
 
       <div className="isolate flex flex-auto flex-col overflow-x-auto bg-white">
-
-
-
-        <div
-          className="flex min-w-max w-full flex-none flex-col"
-        >
+        <div className="flex min-w-max w-full flex-none flex-col">
           <div className="z-30 flex-none bg-white shadow sm:pr-8">
             <div
               className="-mr-px grid divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500"
               style={{
-                gridTemplateColumns: getGridTemplateColumns(venue.spaces.length),
+                gridTemplateColumns: getGridTemplateColumns(
+                  venue.spaces.length,
+                ),
               }}
             >
               <div className="col-end-1 w-14" />
