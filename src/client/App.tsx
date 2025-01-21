@@ -11,7 +11,9 @@ import { ToastProvider } from "./toast";
 import { useOnboardingRedirect } from "./hooks/useOnboardingRedirect";
 
 import LogRocket from "logrocket";
+
 LogRocket.init("myj73s/blockspot");
+
 
 /**
  * use this component to wrap all child components
@@ -21,6 +23,7 @@ export default function App() {
   const location = useLocation();
   const { data: user } = useAuth();
   const navigationItems = appNavigationItems;
+
 
   useOnboardingRedirect();
 

@@ -85,6 +85,7 @@ app BlockSpot {
 
   client: {
     rootComponent: import App from "@src/client/App",
+    setupFn: import { setupClient } from "@src/client/setup",
   },
 
   emailSender: {
