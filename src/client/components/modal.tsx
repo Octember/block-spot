@@ -1,6 +1,13 @@
 "use client";
 
-import { Description, Dialog, DialogBackdrop, DialogDescription, DialogPanel, DialogTitle } from "@headlessui/react";
+import {
+  Description,
+  Dialog,
+  DialogBackdrop,
+  DialogDescription,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 import { ReactNode } from "react";
 
 type ModalHeading = {

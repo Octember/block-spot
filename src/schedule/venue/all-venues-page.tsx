@@ -8,7 +8,7 @@ import {
   PageCard,
 } from "../../client/components/layouts/page-card";
 import { AddVenueButton } from "./add-venue/add-venue-button";
-import { BulkSpaceCreator } from "./create-spaces";
+import { BulkSpaceCreator } from "./spaces/bulk-create-spaces";
 
 export default function VenuePage() {
   const { data: venues, isLoading: isVenueLoading } = useQuery(getAllVenues);

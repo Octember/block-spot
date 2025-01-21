@@ -2,18 +2,25 @@ import {
   ArrowRightIcon,
   DocumentDuplicateIcon,
   MinusCircleIcon,
+  NumberedListIcon,
   PlusCircleIcon,
+  QueueListIcon,
 } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
-import { Modal } from "../../client/components/modal";
-import { Button } from "../../client/components/button";
+import { Modal } from "../../../client/components/modal";
+import { Button } from "../../../client/components/button";
 
 export const BulkSpaceCreator = () => {
   const [showModal, setShowModal] = useState(false);
 
   return (
     <>
-      <Button onClick={() => setShowModal(true)} ariaLabel="Create Spaces">
+      <Button
+        onClick={() => setShowModal(true)}
+        ariaLabel="Create Spaces"
+        variant="secondary"
+        icon={<QueueListIcon className="size-4" />}
+      >
         Create Spaces
       </Button>
       <BulkSpaceCreatorModal
@@ -69,12 +76,16 @@ const BulkSpaceCreatorModal = ({
   };
 
   return (
-    <Modal open={open} onClose={onClose} size="lg" heading={{
-      title: "Create Multiple Spaces",
-      description: "Quickly add multiple similar spaces"
-    }}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      size="lg"
+      heading={{
+        title: "Create Multiple Spaces",
+        description: "Quickly add multiple similar spaces",
+      }}
+    >
       <div className="bg-white rounded-lg w-full max-w-4xl">
-
         <div className="p-6">
           <div className="mb-6">
             <h3 className="text-sm font-medium text-gray-700 mb-3">
