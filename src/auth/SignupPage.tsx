@@ -23,7 +23,7 @@ const AuthLayoutV2: React.FC<{ children: React.ReactNode }> = ({
           Welcome to BlockSpot! We're excited to help you streamline your venue scheduling and management. Create your account to start booking spaces, managing events, and making the most of your venues.
         </p>
         <p className="mt-4">
-          Join BILLIONS of venue managers who trust BlockSpot to handle their scheduling needs efficiently and professionally.
+          Join <span className="font-bold">BILLIONS</span> of venue managers who trust BlockSpot to handle their scheduling needs efficiently and professionally.
         </p>
       </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -55,11 +55,11 @@ export function Signup() {
         additionalFields={
           [
             {
-              name: 'address',
-              label: 'Address',
+              name: 'name',
+              label: 'Name',
               type: 'input',
               validations: {
-                required: 'Address is required',
+                required: 'Name is required',
               },
             },
           ]
