@@ -162,7 +162,7 @@ model Reservation {
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
   spaceId     String
-  space       Space             @relation(fields: [spaceId], references: [id])
+  space       Space             @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   description String?
 }
 
@@ -250,7 +250,7 @@ model OnboardingState {
   hasInvitedMembers     Boolean @default(false)
   hasCreatedFirstSpace  Boolean @default(false)
   hasCompletedOnboarding Boolean @default(false)
-  
+
   currentStep     String  @default("Welcome")
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

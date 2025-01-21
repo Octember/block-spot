@@ -7,6 +7,7 @@ import {
   CreateSpaces,
   CreateVenue,
   DeleteReservation,
+  DeleteSpace,
   GetAllVenues,
   GetVenueById,
   GetVenueInfo,
@@ -322,5 +323,19 @@ export const createSpaces: CreateSpaces<CreateSpacesPayload, Space[]> = async (
       createdAt: "desc",
     },
     take: args.spaces.length,
+  });
+};
+
+type DeleteSpacePayload = {
+  spaceId: string;
+};
+
+export const deleteSpace: DeleteSpace<DeleteSpacePayload, Space> = async (args, context) => {
+  if (!context.user) {
+    throw new HttpError(401);
+  }
+
+  return context.entities.Space.delete({
+    where: { id: args.spaceId },
   });
 };

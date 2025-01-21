@@ -4,6 +4,10 @@ import { Space } from 'wasp/entities';
 import { Squares2X2Icon, TrashIcon } from '@heroicons/react/24/outline';
 import { AddSpaceModal } from './add-space-modal';
 import pluralize from 'pluralize';
+import { DeleteSpaceButton } from './delete-space-button';
+
+const ListItemStyle =
+  "flex flex-row p-2 rounded-md border border-gray-200 items-center h-16";
 
 export const SpaceCard = ({ space }: { space: Space }) => {
   return (
@@ -19,9 +23,7 @@ export const SpaceCard = ({ space }: { space: Space }) => {
       </div>
 
       <div className="flex flex-row items-center gap-2">
-        <button>
-          <TrashIcon className="size-6 stroke-gray-500 hover:stroke-red-700" />
-        </button>
+        <DeleteSpaceButton spaceId={space.id} />
         <button>
           <ChevronRightIcon className="size-6 stroke-gray-500 hover:stroke-gray-700" />
         </button>
@@ -30,8 +32,6 @@ export const SpaceCard = ({ space }: { space: Space }) => {
   );
 };
 
-const ListItemStyle =
-  "flex flex-row p-2 rounded-md border border-gray-200 items-center h-16";
 
 export const AddSpaceButton = ({ venueId }: { venueId: string }) => {
   const [showModal, setShowModal] = useState(false);

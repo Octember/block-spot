@@ -31,6 +31,25 @@ const { data: organizations } = useQuery(getUserOrganizations);
    - Other common UI elements
 3. Maintain consistency by leveraging existing component library
 
+#### Shared Component Usage
+
+1. Modal Component (`src/client/components/modal.tsx`):
+   - Use for all confirmation dialogs and forms
+   - Supports `heading`, `footer`, and `size` props
+   - Handles backdrop and animations automatically
+
+2. Button Component (`src/client/components/button.tsx`):
+   - Use for all clickable actions
+   - Variants: primary, secondary, tertiary, danger, warning
+   - Always provide `ariaLabel` for accessibility
+   - Supports icons via `icon` prop
+
+3. Toast Notifications (`src/client/toast.tsx`):
+   - Use for all success/error feedback
+   - Types: success, error
+   - Auto-dismisses after 4 seconds by default
+   - Support title and optional description
+
 ### Function & Code Organization
 
 1. Keep functions under 200 lines of code
