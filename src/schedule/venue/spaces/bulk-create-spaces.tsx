@@ -2,15 +2,17 @@ import {
   ArrowRightIcon,
   DocumentDuplicateIcon,
   MinusCircleIcon,
-  NumberedListIcon,
   PlusCircleIcon,
   QueueListIcon,
 } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
 import { Modal } from "../../../client/components/modal";
 import { Button } from "../../../client/components/button";
+import { TextInput } from "../../../client/components/form/text-input";
+import { Select } from "../../../client/components/form/select";
+import { FormField } from "../../../client/components/form/form-field";
 
-export const BulkSpaceCreator = () => {
+export const BulkSpaceCreator = ({ venueId }: { venueId: string }) => {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -26,6 +28,7 @@ export const BulkSpaceCreator = () => {
       <BulkSpaceCreatorModal
         open={showModal}
         onClose={() => setShowModal(false)}
+        venueId={venueId}
       />
     </>
   );
@@ -34,22 +37,36 @@ export const BulkSpaceCreator = () => {
 const BulkSpaceCreatorModal = ({
   open,
   onClose,
+  venueId,
 }: {
   open: boolean;
   onClose: () => void;
+  venueId: string;
 }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [formData, setFormData] = useState({
     baseName: "",
-    numberingStyle: "number",
-    spaceType: "pottery-wheel",
+    numberingStyle: { value: "number", label: "Number (1, 2, 3)" },
+    spaceType: { value: "pottery-wheel", label: "Pottery Wheel" },
     capacity: 1,
     quantity: 10,
   });
 
+  const numberingStyleOptions = [
+    { value: "number", label: "Number (1, 2, 3)" },
+    { value: "letter", label: "Letter (A, B, C)" },
+    { value: "custom", label: "Custom..." },
+  ];
+
+  const spaceTypeOptions = [
+    { value: "pottery-wheel", label: "Pottery Wheel" },
+    { value: "workstation", label: "Workstation" },
+    { value: "custom", label: "Custom..." },
+  ];
+
   const handleChange = (
     field: keyof typeof formData,
-    value: string | number,
+    value: string | number | { value: string; label: string },
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -86,65 +103,43 @@ const BulkSpaceCreatorModal = ({
       }}
     >
       <div className="bg-white rounded-lg w-full max-w-4xl">
-        <div className="p-6">
+        <div className="">
           <div className="mb-6">
             <h3 className="text-sm font-medium text-gray-700 mb-3">
               Space Template
             </h3>
             <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Base Name
-                  </label>
-                  <input
+                <FormField label="Base Name">
+                  <TextInput
                     type="text"
-                    className="w-full px-3 py-2 border rounded-md"
                     placeholder="e.g., Pottery Wheel"
                     value={formData.baseName}
                     onChange={(e) => handleChange("baseName", e.target.value)}
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Numbering Style
-                  </label>
-                  <select
-                    className="w-full px-3 py-2 border rounded-md bg-white"
+                </FormField>
+                <FormField label="Numbering Style">
+                  <Select
+                    options={numberingStyleOptions}
                     value={formData.numberingStyle}
-                    onChange={(e) =>
-                      handleChange("numberingStyle", e.target.value)
+                    onChange={(value) =>
+                      handleChange("numberingStyle", value.value)
                     }
-                  >
-                    <option value="number">Number (1, 2, 3)</option>
-                    <option value="letter">Letter (A, B, C)</option>
-                    <option value="custom">Custom...</option>
-                  </select>
-                </div>
+                  />
+                </FormField>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Space Type
-                  </label>
-                  <select
-                    className="w-full px-3 py-2 border rounded-md bg-white"
+                <FormField label="Space Type">
+                  <Select
+                    options={spaceTypeOptions}
                     value={formData.spaceType}
-                    onChange={(e) => handleChange("spaceType", e.target.value)}
-                  >
-                    <option value="pottery-wheel">Pottery Wheel</option>
-                    <option value="workstation">Workstation</option>
-                    <option value="custom">Custom...</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Capacity (per space)
-                  </label>
-                  <input
+                    onChange={(value) => handleChange("spaceType", value.value)}
+                  />
+                </FormField>
+                <FormField label="Capacity (per space)">
+                  <TextInput
                     type="number"
-                    className="w-full px-3 py-2 border rounded-md"
                     placeholder="1"
                     value={formData.capacity}
                     onChange={(e) =>
@@ -152,7 +147,7 @@ const BulkSpaceCreatorModal = ({
                     }
                     min={1}
                   />
-                </div>
+                </FormField>
               </div>
             </div>
           </div>
@@ -168,9 +163,9 @@ const BulkSpaceCreatorModal = ({
                 icon={<MinusCircleIcon className="size-5" />}
                 ariaLabel="Decrease quantity"
               />
-              <input
+              <TextInput
                 type="number"
-                className="w-20 px-3 py-2 border rounded-md text-center"
+                className="w-20 text-center"
                 value={formData.quantity}
                 onChange={(e) =>
                   handleChange("quantity", parseInt(e.target.value))

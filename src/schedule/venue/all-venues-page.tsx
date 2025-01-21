@@ -17,7 +17,6 @@ export default function VenuePage() {
     <PageCard>
       <CardHeader title="Spaces">
         <AddVenueButton />
-        <BulkSpaceCreator />
       </CardHeader>
       <VenueList venues={venues || []} />
     </PageCard>

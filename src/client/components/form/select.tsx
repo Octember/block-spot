@@ -67,7 +67,11 @@ export const Select = forwardRef<
       >
         <div className={`relative ${sizeClass}`}>
           <ListboxButton
-            className={`grid w-full ${cursorClass} grid-cols-1 rounded-md bg-white py-0.5 pl-3 pr-2 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6`}
+            className={`grid w-full ${cursorClass} grid-cols-1 rounded-md bg-white py-0.5 pl-3 pr-2
+               text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 
+               focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6
+               h-8
+              `}
           >
             <span className="col-start-1 row-start-1 truncate pr-6">
               {value.label || placeholder}
