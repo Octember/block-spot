@@ -20,10 +20,10 @@ export const CardHeader = ({
   children?: ReactNode;
 }) => {
   return (
-    <header className="sm:px-6 lg:px-8 py-4 border-b">
-      <div className="sm:flex items-center justify-between">
+    <header className="px-6 lg:px-8 py-4 border-b">
+      <div className="flex items-center justify-between">
         <h2 className="font-medium text-lg text-navy-900">{title}</h2>
-        {children}
+        <div className="flex flex-row items-center gap-2">{children}</div>
       </div>
     </header>
   );

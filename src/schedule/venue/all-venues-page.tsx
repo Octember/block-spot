@@ -6,7 +6,7 @@ import {
   CardContent,
   CardHeader,
   PageCard,
-} from "../../client/components/page-card";
+} from "../../client/components/layouts/page-card";
 import { AddVenueButton } from "./add-venue/add-venue-button";
 import { BulkSpaceCreator } from "./create-spaces";
 

@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { getVenueById, useQuery } from "wasp/client/operations";
 import { useToast } from "../../../client/toast";
 import { UpdateVenueForm } from "./update-venue-form";
-import { PageCard, CardContent } from "../../../client/components/page-card";
+import { PageCard, CardContent } from "../../../client/components/layouts/page-card";
 
 export default function VenuePage() {
   const { venueId } = useParams();

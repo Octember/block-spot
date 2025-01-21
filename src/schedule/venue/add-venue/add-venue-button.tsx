@@ -22,6 +22,10 @@ export function AddVenueButton() {
         Add Venue
       </Button>
       <Modal
+        heading={{
+          title: "Add Venue",
+          description: "Add a new venue to your organization",
+        }}
         open={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);

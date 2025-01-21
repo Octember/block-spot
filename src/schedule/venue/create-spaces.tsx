@@ -69,14 +69,11 @@ const BulkSpaceCreatorModal = ({
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} size="lg" heading={{
+      title: "Create Multiple Spaces",
+      description: "Quickly add multiple similar spaces"
+    }}>
       <div className="bg-white rounded-lg w-full max-w-4xl">
-        <div className="p-4 border-b">
-          <h2 className="text-xl font-semibold">Create Multiple Spaces</h2>
-          <p className="text-sm text-gray-600 mt-1">
-            Quickly add multiple similar spaces
-          </p>
-        </div>
 
         <div className="p-6">
           <div className="mb-6">

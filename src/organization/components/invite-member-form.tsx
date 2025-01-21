@@ -23,22 +23,24 @@ export function InviteMemberButton({
       <Button onClick={() => setIsModalOpen(true)} ariaLabel="Invite Member">
         Invite Member
       </Button>
-      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium leading-6 text-gray-900">
-            Invite New Member
-          </h3>
-          <InviteMemberForm
-            organizationId={organizationId}
-            onSuccess={(email) => {
-              setIsModalOpen(false);
-              toast({
-                title: "Invitation sent",
-                description: `Invitation sent to ${email}`,
-              });
-            }}
-          />
-        </div>
+      <Modal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        heading={{
+          title: "Invite New Member",
+          description: "Invite a new member to your organization",
+        }}
+      >
+        <InviteMemberForm
+          organizationId={organizationId}
+          onSuccess={(email) => {
+            setIsModalOpen(false);
+            toast({
+              title: "Invitation sent",
+              description: `Invitation sent to ${email}`,
+            });
+          }}
+        />
       </Modal>
     </>
   );
