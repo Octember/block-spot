@@ -3,65 +3,71 @@ import { FC } from "react";
 import { Space, Venue } from "wasp/entities";
 import { Link, routes } from "wasp/client/router";
 import { format } from "date-fns";
+import {
+  BuildingOffice2Icon,
+  BuildingStorefrontIcon,
+  Cog8ToothIcon,
+  Squares2X2Icon,
+} from "@heroicons/react/24/outline";
+import { Button } from "../../client/components/button";
 
 export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({
   venues,
 }) => {
   return (
-    <ul
-      role="list"
-      className="divide-y divide-gray-100 [&>*:first-child]:rounded-t-3xl [&>*:last-child]:rounded-b-3xl"
-    >
+    <ul role="list" className="gap-4">
       {venues.map((venue) => (
-        <li
-          key={venue.id}
-          className="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 lg:px-8"
-        >
-          <div className="flex min-w-0 gap-x-4">
-            <div className="min-w-0 flex-auto flex-col">
-              <p className="text-sm/6 font-semibold text-gray-900">
-                <Link
-                  to={routes.VenuePageRoute.to}
-                  params={{ venueId: venue.id }}
-                >
-                  <span className="absolute inset-x-0 -top-px bottom-0" />
-                  {venue.name}
-                </Link>
-              </p>
-              <p className="mt-1 flex text-xs/5 text-gray-500">
-                <a
-                  href={`mailto:${""}`}
-                  className="relative truncate hover:underline"
-                >
-                  {venue.address}
-                </a>
-              </p>
-              <p className="text-sm">
-                Created on {format(venue.createdAt, "yyyy-MM-dd")}
-              </p>
-            </div>
-          </div>
-          <div className="flex shrink-0 items-center gap-x-4">
-            <div className="hidden sm:flex sm:flex-col sm:items-end">
-              <p className="text-sm/6 text-gray-900">
-                {venue.spaces.length} spaces (
-                {venue.spaces.map((space) => space.type).join(", ")})
-              </p>
-
-              <div className="mt-1 flex items-center gap-x-1.5">
-                <div className="flex-none rounded-full bg-emerald-500/20 p-1">
-                  <div className="size-1.5 rounded-full bg-emerald-500" />
-                </div>
-                <p className="text-xs/5 text-gray-500">Online</p>
-              </div>
-            </div>
-            <ChevronRightIcon
-              aria-hidden="true"
-              className="size-5 flex-none text-gray-400"
-            />
-          </div>
-        </li>
+        <VenueCard venue={venue} key={venue.id} />
       ))}
     </ul>
+  );
+};
+
+const VenueCard = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
+  return (
+    <li className="relative flex flex-col justify-between gap-x-6 px-4 py-5 sm:px-6 lg:px-8 border border-gray-200 rounded-md">
+      <div className="flex flex-row justify-between border-b border-gray-200 pb-4">
+        <h2 className="text-lg font-bold flex flex-row items-center gap-2">
+          <BuildingOffice2Icon className="size-6" />
+          {venue.name}
+        </h2>
+        <div>
+          <Link to={routes.VenuePageRoute.to} params={{ venueId: venue.id }}>
+            <Button
+              icon={<Cog8ToothIcon className="size-4" />}
+              ariaLabel="Settings"
+              variant="tertiary"
+            />
+          </Link>
+        </div>
+      </div>
+
+      <ul className="flex flex-col gap-2 p-2">
+        {venue.spaces.map((space) => (
+          <SpaceCard space={space} key={space.id} />
+        ))}
+      </ul>
+    </li>
+  );
+};
+
+const SpaceCard = ({ space }: { space: Space }) => {
+  return (
+    <li
+      key={space.id}
+      className="flex flex-row justify-between bg-gray-100 p-2 rounded-md border border-gray-200 items-center"
+    >
+      <div className="flex flex-row items-center gap-4">
+        <Squares2X2Icon className="size-5" />
+        <div className="flex flex-col gap-0.5">
+          <div className="text-md font-semibold">{space.name}</div>
+          <div className="text-sm text-gray-500">
+            Capacity: {space.capacity} people
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-row items-center gap-2"></div>
+    </li>
   );
 };

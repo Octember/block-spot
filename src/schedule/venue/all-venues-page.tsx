@@ -8,14 +8,16 @@ import {
   PageCard,
 } from "../../client/components/page-card";
 import { AddVenueButton } from "./add-venue/add-venue-button";
+import { BulkSpaceCreator } from "./create-spaces";
 
 export default function VenuePage() {
   const { data: venues, isLoading: isVenueLoading } = useQuery(getAllVenues);
 
   return (
     <PageCard>
-      <CardHeader title="Venues">
+      <CardHeader title="Spaces">
         <AddVenueButton />
+        <BulkSpaceCreator />
       </CardHeader>
       <VenueList venues={venues || []} />
     </PageCard>
