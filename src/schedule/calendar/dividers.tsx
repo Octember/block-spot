@@ -1,7 +1,7 @@
 import React from "react";
 import { FC } from "react";
 import { useTimeLabels } from "./constants";
-import { MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
+import { MinutesPerSlot, PixelsPerSlot, getGridTemplateColumns } from './reservations/constants';
 import { useScheduleContext } from "./providers/schedule-query-provider";
 
 export const HorizontalDividers: FC = () => {
@@ -19,7 +19,7 @@ export const HorizontalDividers: FC = () => {
         <React.Fragment key={index}>
           {/* 15min line and label */}
           <div className={`row-span-1 border-b ${getBorderStyle(0)}`}>
-            <div className="sticky left-0 z-20 -ml-14 w-14 pr-2 -my-2.5 text-right text-xs/5 text-gray-500">
+            <div className="sticky left-0 z-99 -ml-14 w-14 pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none">
               {label}
             </div>
           </div>
@@ -49,7 +49,7 @@ export const VerticalDividers: FC = () => {
     <div
       className="col-start-1 col-end-2 row-start-1 grid-rows-1 divide-x divide-gray-300 grid sm:pr-8"
       style={{
-        gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
+        gridTemplateColumns: getGridTemplateColumns(venue.spaces.length),
       }}
     >
       {Array.from({ length: venue.spaces.length + 1 }).map((_, index) => (

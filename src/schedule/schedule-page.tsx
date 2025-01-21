@@ -22,7 +22,7 @@ const PageLoader = () => {
   return (
     <div className="flex flex-col h-full min-h-screen">
       <WeekViewCalendar venue={venue} />
-      {venue.spaces.length > 0 && <GptSection spaceId={venue.spaces[0].id} />}
+      {/* {venue.spaces.length > 0 && <GptSection spaceId={venue.spaces[0].id} />} */}
     </div>
   );
 };

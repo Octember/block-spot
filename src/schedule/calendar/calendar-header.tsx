@@ -6,6 +6,7 @@ import { WeekViewCalendarProps } from "./WeekViewCalendar";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { addDays, format, isValid, parseISO, startOfToday } from "date-fns";
 import { useSelectedDate } from "./providers/date-provider";
+import { getGridTemplateColumns } from './reservations/constants';
 
 export const CalendarHeader: FC<{ venue: WeekViewCalendarProps["venue"] }> = ({
   venue,
@@ -21,8 +22,8 @@ export const CalendarHeader: FC<{ venue: WeekViewCalendarProps["venue"] }> = ({
       <div className="flex px-4 py-2 gap-2 items-center">
         <ButtonGroup
           items={[
-            { label: "Years", onClick: () => {} },
-            { label: "Months", onClick: () => {} },
+            { label: "Years", onClick: () => { } },
+            { label: "Months", onClick: () => { } },
           ]}
         />
 
@@ -44,26 +45,6 @@ export const CalendarHeader: FC<{ venue: WeekViewCalendarProps["venue"] }> = ({
         </div>
       </div>
 
-      <div className="z-30 flex-none bg-white shadow sm:pr-8">
-        <div
-          className="-mr-px grid divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500"
-          style={{
-            gridTemplateColumns: `repeat(${venue.spaces.length}, minmax(0, 1fr))`,
-          }}
-        >
-          <div className="col-end-1 w-14" />
-          {venue.spaces.map((space, index) => (
-            <div
-              key={space.id}
-              className="flex items-center justify-center py-2"
-            >
-              <span className="flex items-baseline font-medium text-gray-900">
-                {space.name}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
     </header>
   );
 };
