@@ -161,6 +161,16 @@ action createVenue {
   entities: [Venue]
 }
 
+action createSpace {
+  fn: import { createSpace } from "@src/schedule/operations",
+  entities: [Space, Venue]
+}
+
+action createSpaces {
+  fn: import { createSpaces } from "@src/schedule/operations",
+  entities: [Space, Venue]
+}
+
 action updateVenue {
   fn: import { updateVenue } from "@src/schedule/operations",
   entities: [Venue]

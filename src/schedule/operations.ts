@@ -3,6 +3,8 @@ import { AvailabilityRule, Reservation, Space, Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
   CreateReservation,
+  CreateSpace,
+  CreateSpaces,
   CreateVenue,
   DeleteReservation,
   GetAllVenues,
@@ -235,5 +237,90 @@ export const updateVenueAvailability: UpdateVenueAvailability<
         })),
       },
     },
+  });
+};
+
+type CreateSpacePayload = {
+  venueId: string;
+  name: string;
+  capacity: number;
+  type?: string;
+};
+
+export const createSpace: CreateSpace<CreateSpacePayload, Space> = async (
+  args,
+  context
+) => {
+  if (!context.user) {
+    throw new HttpError(401);
+  }
+
+  // Verify venue exists and user has access
+  const venue = await context.entities.Venue.findFirst({
+    where: { id: args.venueId },
+  });
+
+  if (!venue) {
+    throw new HttpError(404, "Venue not found");
+  }
+
+  return context.entities.Space.create({
+    data: {
+      name: args.name,
+      venueId: args.venueId,
+      capacity: args.capacity,
+      type: args.type || "ROOM", // Default type
+    },
+  });
+};
+
+type CreateSpacesPayload = {
+  venueId: string;
+  spaces: {
+    name: string;
+    capacity: number;
+    type?: string;
+  }[];
+};
+
+export const createSpaces: CreateSpaces<CreateSpacesPayload, Space[]> = async (
+  args,
+  context
+) => {
+  if (!context.user) {
+    throw new HttpError(401);
+  }
+
+  // Verify venue exists and user has access
+  const venue = await context.entities.Venue.findFirst({
+    where: { id: args.venueId },
+  });
+
+  if (!venue) {
+    throw new HttpError(404, "Venue not found");
+  }
+
+  // Create all spaces in a single database operation
+ await context.entities.Space.createMany({
+    data: args.spaces.map((space) => ({
+      name: space.name,
+      venueId: args.venueId,
+      capacity: space.capacity,
+      type: space.type || "ROOM", // Default type
+    })),
+  });
+
+  // Fetch and return the created spaces
+  return context.entities.Space.findMany({
+    where: {
+      venueId: args.venueId,
+      name: {
+        in: args.spaces.map(space => space.name)
+      }
+    },
+    orderBy: {
+      createdAt: "desc"
+    },
+    take: args.spaces.length
   });
 };

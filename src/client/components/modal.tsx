@@ -42,7 +42,7 @@ export function Modal({
       />
 
       <div className="fixed inset-0 z-999 w-screen overflow-y-auto">
-        <div className="flex min-h-full items-end justify-center text-center sm:p-0">
+        <div className="flex min-h-full items-center justify-center text-center sm:p-0">
           <DialogPanel
             transition
             className={`

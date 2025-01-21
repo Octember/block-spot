@@ -11,6 +11,8 @@ import { Button } from "../../../client/components/button";
 import { TextInput } from "../../../client/components/form/text-input";
 import { Select } from "../../../client/components/form/select";
 import { FormField } from "../../../client/components/form/form-field";
+import { createSpaces } from "wasp/client/operations";
+import { useToast } from "../../../client/toast";
 
 export const BulkSpaceCreator = ({ venueId }: { venueId: string }) => {
   const [showModal, setShowModal] = useState(false);
@@ -44,6 +46,8 @@ const BulkSpaceCreatorModal = ({
   venueId: string;
 }) => {
   const [showPreview, setShowPreview] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const toast = useToast();
   const [formData, setFormData] = useState({
     baseName: "",
     numberingStyle: { value: "number", label: "Number (1, 2, 3)" },
@@ -79,7 +83,7 @@ const BulkSpaceCreatorModal = ({
     handleChange("quantity", newQuantity);
   };
 
-  const generatePreview = () => {
+  const generateSpaceNames = () => {
     const items = [];
     for (let i = 1; i <= formData.quantity; i++) {
       items.push(`${formData.baseName} ${i}`);
@@ -87,9 +91,34 @@ const BulkSpaceCreatorModal = ({
     return items;
   };
 
-  const handleSubmit = () => {
-    // TODO: Implement space creation
-    onClose();
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      const spaceNames = generateSpaceNames();
+
+      await createSpaces({
+        venueId,
+        spaces: spaceNames.map(name => ({
+          name,
+          capacity: formData.capacity,
+          type: formData.spaceType.value,
+        })),
+      });
+
+      toast({
+        title: "Spaces created",
+        description: `Successfully created ${formData.quantity} spaces`,
+      });
+      onClose();
+    } catch (err: any) {
+      toast({
+        title: "Error creating spaces",
+        description: err.message || "Please try again",
+        type: "error",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -113,9 +142,10 @@ const BulkSpaceCreatorModal = ({
             <Button
               onClick={handleSubmit}
               icon={<ArrowRightIcon className="size-5" />}
+              disabled={isSubmitting || !formData.baseName}
               ariaLabel="Create Spaces"
             >
-              Create Spaces
+              {isSubmitting ? "Creating..." : "Create Spaces"}
             </Button>
           </div>
         </div>
@@ -141,21 +171,19 @@ const BulkSpaceCreatorModal = ({
                   <Select
                     options={numberingStyleOptions}
                     value={formData.numberingStyle}
-                    onChange={(value) =>
-                      handleChange("numberingStyle", value.value)
-                    }
+                    onChange={(value) => handleChange("numberingStyle", value.value)}
                   />
                 </FormField>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                {/* <FormField label="Space Type">
+                <FormField label="Space Type">
                   <Select
                     options={spaceTypeOptions}
                     value={formData.spaceType}
                     onChange={(value) => handleChange("spaceType", value.value)}
                   />
-                </FormField> */}
+                </FormField>
                 <FormField label="Capacity (per space)">
                   <TextInput
                     type="number"
@@ -211,7 +239,7 @@ const BulkSpaceCreatorModal = ({
           {showPreview && (
             <div className="mt-4 p-4 border rounded-lg max-h-48 overflow-y-auto">
               <div className="space-y-2">
-                {generatePreview().map((name, i) => (
+                {generateSpaceNames().map((name, i) => (
                   <div key={i} className="text-sm text-gray-600">
                     {name}
                   </div>

@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { Modal } from "../../../client/components/modal";
 import { Button } from "../../../client/components/button";
 import { TextInput } from "../../../client/components/form/text-input";
-import { Select } from "../../../client/components/form/select";
 import { FormField } from "../../../client/components/form/form-field";
+import { createSpace } from "wasp/client/operations";
+
+type AddSpaceFormInputs = {
+  name: string;
+  capacity: number;
+};
 
 export const AddSpaceModal = ({
   open,
@@ -14,31 +19,30 @@ export const AddSpaceModal = ({
   onClose: () => void;
   venueId: string;
 }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    capacity: 1,
-    type: { value: "pottery-wheel", label: "Pottery Wheel" },
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+    reset,
+  } = useForm<AddSpaceFormInputs>({
+    defaultValues: {
+      name: "",
+      capacity: 1,
+    },
   });
 
-  const spaceTypeOptions = [
-    { value: "pottery-wheel", label: "Pottery Wheel" },
-    { value: "workstation", label: "Workstation" },
-    { value: "custom", label: "Custom..." },
-  ];
-
-  const handleChange = (
-    field: keyof typeof formData,
-    value: string | number | { value: string; label: string },
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleSubmit = () => {
-    // TODO: Implement space creation
-    onClose();
+  const onSubmit: SubmitHandler<AddSpaceFormInputs> = async (data) => {
+    try {
+      await createSpace({
+        venueId,
+        name: data.name,
+        capacity: data.capacity,
+      });
+      reset();
+      onClose();
+    } catch (err: any) {
+      console.error("Failed to create space:", err);
+    }
   };
 
   return (
@@ -50,21 +54,12 @@ export const AddSpaceModal = ({
         description: "Add a new space to your venue",
       }}
     >
-      <div className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <FormField label="Space Name">
           <TextInput
             type="text"
             placeholder="e.g., Pottery Wheel 1"
-            value={formData.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-          />
-        </FormField>
-
-        <FormField label="Space Type">
-          <Select
-            options={spaceTypeOptions}
-            value={formData.type}
-            onChange={(value) => handleChange("type", value.value)}
+            {...register("name", { required: true })}
           />
         </FormField>
 
@@ -72,20 +67,32 @@ export const AddSpaceModal = ({
           <TextInput
             type="number"
             min="1"
-            value={formData.capacity}
-            onChange={(e) => handleChange("capacity", parseInt(e.target.value))}
+            {...register("capacity", {
+              required: true,
+              valueAsNumber: true,
+              min: 1
+            })}
           />
         </FormField>
 
         <div className="flex justify-end gap-2 pt-4">
-          <Button variant="secondary" onClick={onClose} ariaLabel="Cancel">
+          <Button
+            variant="secondary"
+            onClick={onClose}
+            type="button"
+            ariaLabel="Cancel"
+          >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} ariaLabel="Add Space">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            ariaLabel="Add Space"
+          >
             Add Space
           </Button>
         </div>
-      </div>
+      </form>
     </Modal>
   );
 };
