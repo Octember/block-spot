@@ -101,6 +101,25 @@ const BulkSpaceCreatorModal = ({
         title: "Create Multiple Spaces",
         description: "Quickly add multiple similar spaces",
       }}
+      footer={
+        <div className="flex justify-between items-center p-4 border-t bg-gray-50">
+          <div className="text-sm text-gray-600">
+            This will create {formData.quantity} spaces
+          </div>
+          <div className="flex gap-3">
+            <Button onClick={onClose} variant="tertiary" ariaLabel="Cancel">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              icon={<ArrowRightIcon className="size-5" />}
+              ariaLabel="Create Spaces"
+            >
+              Create Spaces
+            </Button>
+          </div>
+        </div>
+      }
     >
       <div className="bg-white rounded-lg w-full max-w-4xl">
         <div className="">
@@ -130,13 +149,13 @@ const BulkSpaceCreatorModal = ({
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <FormField label="Space Type">
+                {/* <FormField label="Space Type">
                   <Select
                     options={spaceTypeOptions}
                     value={formData.spaceType}
                     onChange={(value) => handleChange("spaceType", value.value)}
                   />
-                </FormField>
+                </FormField> */}
                 <FormField label="Capacity (per space)">
                   <TextInput
                     type="number"
@@ -165,7 +184,6 @@ const BulkSpaceCreatorModal = ({
               />
               <TextInput
                 type="number"
-                className="w-20 text-center"
                 value={formData.quantity}
                 onChange={(e) =>
                   handleChange("quantity", parseInt(e.target.value))
@@ -201,24 +219,6 @@ const BulkSpaceCreatorModal = ({
               </div>
             </div>
           )}
-        </div>
-
-        <div className="flex justify-between items-center p-4 border-t bg-gray-50">
-          <div className="text-sm text-gray-600">
-            This will create {formData.quantity} spaces
-          </div>
-          <div className="flex gap-3">
-            <Button onClick={onClose} variant="tertiary" ariaLabel="Cancel">
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              icon={<ArrowRightIcon className="size-5" />}
-              ariaLabel="Create Spaces"
-            >
-              Create Spaces
-            </Button>
-          </div>
         </div>
       </div>
     </Modal>

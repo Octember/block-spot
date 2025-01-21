@@ -1,12 +1,9 @@
 "use client";
 
 import {
-  Description,
   Dialog,
   DialogBackdrop,
-  DialogDescription,
-  DialogPanel,
-  DialogTitle,
+  DialogPanel
 } from "@headlessui/react";
 import { ReactNode } from "react";
 
@@ -21,12 +18,14 @@ export function Modal({
   onClose,
   size = "md",
   heading,
+  footer,
 }: {
   children: ReactNode;
   open: boolean;
   onClose: () => void;
   size?: "sm" | "md" | "lg";
   heading?: ModalHeading;
+  footer?: ReactNode;
 }) {
   const sizeClass =
     size === "sm"
@@ -36,14 +35,14 @@ export function Modal({
         : "sm:max-w-xl";
 
   return (
-    <Dialog open={open} onClose={onClose} className="relative z-10">
+    <Dialog open={open} onClose={onClose} className="relative z-9999">
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-gray-500/50 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
       />
 
-      <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-        <div className="flex min-h-full items-end justify-center text-center items-center sm:p-0">
+      <div className="fixed inset-0 z-999 w-screen overflow-y-auto">
+        <div className="flex min-h-full items-end justify-center text-center sm:p-0">
           <DialogPanel
             transition
             className={`
@@ -64,6 +63,7 @@ export function Modal({
               </div>
             )}
             <div className="p-4">{children}</div>
+            {footer}
           </DialogPanel>
         </div>
       </div>
