@@ -85,7 +85,6 @@ export const createReservation: CreateReservation<
   CreateReservationPayload,
   Reservation
 > = async (args, context) => {
-  console.log("createReservation", args);
   if (!context.user) {
     throw new HttpError(401);
   }
