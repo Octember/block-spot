@@ -1,0 +1,27 @@
+
+
+.signupForm > * {
+  h2 {
+    /* content: 'Get started today'; */
+    /* display: none; */
+    visibility: hidden;
+    position: relative;
+    margin-top: 0 !important;
+    margin-bottom: 12px !important;
+  }
+  h2::after {
+    display: block;
+    content: 'Start scheduling in minutes';
+    visibility: visible;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 22px;
+    font-weight: 500;
+    /* margin-top: -20px; */
+  }
+
+  form {
+    margin-top: 0;
+  }
+}
