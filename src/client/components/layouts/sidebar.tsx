@@ -6,19 +6,10 @@ import { useAppNavigation } from "../../hooks/use-app-navigation";
 import logo from "../../static/logo.svg";
 
 export default function Sidebar() {
-  const { data: user } = useAuth();
   const navItems = useAppNavigation();
 
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
-      <div className="flex h-14 shrink-0 items-end">
-        <WaspRouterLink to="/" className="flex flex-row items-center">
-          <img className="h-8 w-8" src={logo} alt="BlockSpot" />
-          <span className="ml-2 text-sm font-semibold leading-6 dark:text-white">
-            blockspot
-          </span>
-        </WaspRouterLink>
-      </div>
+    <div className="pt-16 flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
       <nav className="flex flex-1 flex-col">
         <ul role="list" className="flex flex-1 flex-col gap-y-7">
           <li>
@@ -56,17 +47,6 @@ export default function Sidebar() {
                 </li>
               ))}
             </ul>
-          </li>
-
-          <li className="-mx-6 mt-auto">
-            <WaspRouterLink
-              to="/account"
-              className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-50"
-            >
-              <UserCircleIcon className="size-8" />
-              <span className="sr-only">Your profile</span>
-              <span aria-hidden="true">{user?.email}</span>
-            </WaspRouterLink>
           </li>
         </ul>
       </nav>
