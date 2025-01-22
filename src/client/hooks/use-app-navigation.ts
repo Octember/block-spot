@@ -25,6 +25,8 @@ export function useAppNavigation(): NavigationItem[] {
 
   const { data: venues } = useQuery(getAllVenues);
 
+  console.log(venues);
+
   const firstVenue = venues?.[0];
 
   const navItems: NavigationItem[] = useMemo(

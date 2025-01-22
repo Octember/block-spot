@@ -30,7 +30,28 @@ export const getAllVenues: GetAllVenues<
     throw new HttpError(401);
   }
 
+  const userOrgs = await context.entities.User.findFirst({
+    where: {
+      id: context.user.id,
+    },
+    include: {
+      organizations: true,
+    }
+  });
+
+  // TODO: middleware to check if user belongs to an organization and current current org
+  const organizationId = userOrgs?.organizations.pop()?.organizationId;
+
+  if (!organizationId) {
+    throw new HttpError(500, "User does not belong to an organization");
+  }
+
   return context.entities.Venue.findMany({
+    where: {
+      organization: {
+        id: organizationId,
+      },
+    },
     include: {
       spaces: true,
     },
@@ -147,8 +168,29 @@ export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (
   args,
   context,
 ) => {
+  if (!context.user) {
+    throw new HttpError(401);
+  }
+
+  const userOrgs = await context.entities.User.findFirst({
+    where: {
+      id: context.user.id,
+    },
+    include: {
+      organizations: true,
+    }
+  });
+
+  const organizationId = userOrgs?.organizations.pop()?.organizationId;
+
+
+  if (!organizationId) {
+    throw new HttpError(401, "User does not belong to an organization");
+  }
+
   return context.entities.Venue.create({
     data: {
+      organizationId,
       name: args.name,
       address: "",
       availabilityRules: {

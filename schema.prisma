@@ -25,6 +25,8 @@ model Organization {
   // Relations
   invitations           Invitation[]
   onboardingState       OnboardingState?
+
+  venues        Venue[]
 }
 
 enum OrganizationUserRole {
@@ -175,6 +177,9 @@ enum ReservationStatus {
 // venue and space
 model Venue {
   id        String   @id @default(uuid())
+  organizationId String
+  organization Organization @relation(fields: [organizationId], references: [id])
+
   name      String
   address   String
   spaces    Space[]

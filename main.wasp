@@ -158,7 +158,7 @@ action updateUserById {
 
 action createVenue {
   fn: import { createVenue } from "@src/schedule/operations",
-  entities: [Venue]
+  entities: [Venue, User]
 }
 
 action createSpace {

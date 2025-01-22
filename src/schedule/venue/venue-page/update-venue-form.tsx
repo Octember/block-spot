@@ -217,7 +217,7 @@ export function UpdateVenueForm({
         >
           Update Venue
         </Button>
-        <Button
+        {/* <Button
           disabled
           type="button"
           variant="danger"
@@ -225,7 +225,7 @@ export function UpdateVenueForm({
           ariaLabel="Delete Venue"
         >
           Delete Venue
-        </Button>
+        </Button> */}
       </div>
     </form>
   );
