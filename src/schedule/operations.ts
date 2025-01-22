@@ -36,7 +36,7 @@ export const getAllVenues: GetAllVenues<
     },
     include: {
       organizations: true,
-    }
+    },
   });
 
   // TODO: middleware to check if user belongs to an organization and current current org
@@ -178,11 +178,10 @@ export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (
     },
     include: {
       organizations: true,
-    }
+    },
   });
 
   const organizationId = userOrgs?.organizations.pop()?.organizationId;
-
 
   if (!organizationId) {
     throw new HttpError(401, "User does not belong to an organization");

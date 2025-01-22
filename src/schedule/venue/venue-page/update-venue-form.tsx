@@ -121,7 +121,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => { }}
+              onClick={() => {}}
             >
               View Schedule
             </Button>

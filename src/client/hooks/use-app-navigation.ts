@@ -3,6 +3,7 @@ import { routes } from "wasp/client/router";
 import { useAuth } from "wasp/client/auth";
 import {
   BuildingLibraryIcon,
+  BuildingOfficeIcon,
   CalendarIcon,
   Cog8ToothIcon,
   Squares2X2Icon,
@@ -31,32 +32,15 @@ export function useAppNavigation(): NavigationItem[] {
 
   const navItems: NavigationItem[] = useMemo(
     () => [
+      {
+        name: "Spaces",
+        route: routes.AllVenuesPageRoute.build({}),
+        icon: BuildingOfficeIcon,
+        count: "20+",
+        current: location.pathname === routes.AllVenuesPageRoute.build({}),
+      },
       ...(firstVenue
         ? [
-            {
-              name: "Venue",
-              route: routes.VenuePageRoute.build({
-                params: { venueId: firstVenue.id },
-              }),
-              icon: BuildingLibraryIcon,
-              count: "20+",
-              current: location.pathname === routes.VenuePageRoute.build({
-                params: { venueId: firstVenue.id },
-              }),
-            },
-            {
-              name: "Spaces",
-              route: routes.VenuePageRouteChildren.build({
-                params: { venueId: firstVenue.id, "*": "spaces" },
-              }),
-              icon: Squares2X2Icon,
-              count: firstVenue.spaces.length.toString(),
-              current:
-                location.pathname ===
-                routes.VenuePageRouteChildren.build({
-                  params: { venueId: firstVenue.id, "*": "spaces" },
-                }),
-            },
             {
               name: "Calendar",
               route: routes.ScheduleRoute.build({

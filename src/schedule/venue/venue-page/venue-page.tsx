@@ -1,8 +1,6 @@
 import { Route, Routes, useParams } from "react-router-dom";
 import { getVenueById, useQuery } from "wasp/client/operations";
-import {
-  CardContent
-} from "../../../client/components/layouts/page-card";
+import { CardContent } from "../../../client/components/layouts/page-card";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { UpdateVenueForm } from "./update-venue-form";
 import { SpaceList } from "../spaces/space-list";
@@ -22,35 +20,40 @@ export default function VenuePage() {
 
   return (
     <Routes>
-      <Route path="/" element={
-        <SidebarLayout
-          header={{
-            title: venue.name,
-            description: "Manage your venue settings and spaces",
-          }}
-        >
-          <UpdateVenueForm venue={venue} />
-        </SidebarLayout>
-      } />
-      <Route path="/spaces" element={
-        <SpacesPage venue={venue} />
-      } />
+      <Route
+        path="/"
+        element={
+          <SidebarLayout
+            header={{
+              title: venue.name,
+              description: "Manage your venue settings and spaces",
+            }}
+          >
+            <UpdateVenueForm venue={venue} />
+          </SidebarLayout>
+        }
+      />
+      <Route path="/spaces" element={<SpacesPage venue={venue} />} />
     </Routes>
   );
 }
 
 const SpacesPage = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
-  return <SidebarLayout
-    header={{
-      title: venue.name,
-      description: "Manage your venue settings and spaces",
-      actions: <>
-        <BulkSpaceCreator venueId={venue.id} />
-      </>
-    }}
-  >
-    <li className="relative flex flex-col justify-between gap-x-6 py-5 bg-white border border-gray-200 rounded-md">
-      <SpaceList venueId={venue.id} spaces={venue.spaces} />
-    </li>
-  </SidebarLayout >
-}
+  return (
+    <SidebarLayout
+      header={{
+        title: venue.name,
+        description: "Manage your venue settings and spaces",
+        actions: (
+          <>
+            <BulkSpaceCreator venueId={venue.id} />
+          </>
+        ),
+      }}
+    >
+      <li className="relative flex flex-col justify-between gap-x-6 py-5 bg-white border border-gray-200 rounded-md">
+        <SpaceList venueId={venue.id} spaces={venue.spaces} />
+      </li>
+    </SidebarLayout>
+  );
+};
