@@ -73,8 +73,6 @@ export const getOnboardingUpdates = (
 };
 
 export const getTargetStep = (onboardingState: OnboardingState | null) => {
-  console.log("onboardingState", onboardingState);
-
   if (!onboardingState) return "welcome";
   if (onboardingState.hasCompletedOnboarding) return "complete";
   if (onboardingState.hasInvitedMembers) return "complete";

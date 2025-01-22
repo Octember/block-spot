@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Route, Router, Routes, useParams } from "react-router-dom";
 import { getVenueById, useQuery } from "wasp/client/operations";
 import { useToast } from "../../../client/toast";
 import { UpdateVenueForm } from "./update-venue-form";
@@ -30,8 +30,10 @@ export default function VenuePage() {
       }}
     >
       <CardContent>
-
-        <UpdateVenueForm venue={venue} />
+        <Routes>
+          <Route path="/" element={<UpdateVenueForm venue={venue} />} />
+          <Route path="/spaces" element={<div>Spaces</div>} />
+        </Routes>
       </CardContent>
     </SidebarLayout>
   );

@@ -48,10 +48,10 @@ module.exports = {
         warning: "#FFA70B",
 
         dustyblue: {
-          300: '#d0e1ec',
-          500: '#b1cedf',
-          light: '#639CBF',
-          dark: '#2F4C73',
+          300: "#d0e1ec",
+          500: "#b1cedf",
+          light: "#639CBF",
+          dark: "#2F4C73",
         },
       },
       screens: {

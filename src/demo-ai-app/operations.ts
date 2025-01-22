@@ -50,7 +50,6 @@ async function extractDate(message: string) {
       ],
       max_tokens: 50,
     });
-    console.log("Result:", response.choices);
 
     return response.choices[0].message.content?.trim();
   } catch (error) {

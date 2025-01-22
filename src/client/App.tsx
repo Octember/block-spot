@@ -35,7 +35,11 @@ export default function App() {
   );
 
   const shouldDisplayAppNavBar = useMemo(() => {
-    return !isSchedulePage && !location.pathname.startsWith("/venue") && !location.pathname.startsWith("/account");
+    return (
+      !isSchedulePage &&
+      !location.pathname.startsWith("/venue") &&
+      !location.pathname.startsWith("/account")
+    );
   }, [location]);
 
   const isAdminDashboard = useMemo(() => {

@@ -1,50 +1,23 @@
-import {
-  CalendarIcon,
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  UsersIcon,
-} from "@heroicons/react/24/outline";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "wasp/client/auth";
+import { Link as WaspRouterLink } from "wasp/client/router";
 import { cn } from "../../cn";
-import logo from '../../static/logo.svg';
 import { useAppNavigation } from "../../hooks/use-app-navigation";
-import { Link as WaspRouterLink } from 'wasp/client/router';
-
-const navigation = [
-  { name: "Dashboard", href: "#", icon: HomeIcon, count: "5", current: true },
-  { name: "Team", href: "#", icon: UsersIcon, current: false },
-  {
-    name: "Projects",
-    href: "#",
-    icon: FolderIcon,
-    count: "12",
-    current: false,
-  },
-  {
-    name: "Calendar",
-    href: "#",
-    icon: CalendarIcon,
-    count: "20+",
-    current: false,
-  },
-  { name: "Documents", href: "#", icon: DocumentDuplicateIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
-];
+import logo from "../../static/logo.svg";
 
 export default function Sidebar() {
-
+  const { data: user } = useAuth();
   const navItems = useAppNavigation();
 
   return (
     <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-dustyblue-300 px-6">
       <div className="flex h-14 shrink-0 items-end">
-        <div className="flex flex-row items-center">
+        <WaspRouterLink to="/" className="flex flex-row items-center">
           <img className="h-8 w-8" src={logo} alt="BlockSpot" />
           <span className="ml-2 text-sm font-semibold leading-6 dark:text-white">
             blockspot
           </span>
-        </div>
+        </WaspRouterLink>
       </div>
       <nav className="flex flex-1 flex-col">
         <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -53,7 +26,7 @@ export default function Sidebar() {
               {navItems.map((item) => (
                 <li key={item.name}>
                   <WaspRouterLink
-                    to={item.route}
+                    to={item.route as any}
                     className={cn(
                       item.current
                         ? "bg-gray-50 text-dustyblue-dark"
@@ -86,18 +59,14 @@ export default function Sidebar() {
           </li>
 
           <li className="-mx-6 mt-auto">
-            <a
-              href="#"
+            <WaspRouterLink
+              to="/account"
               className="flex items-center gap-x-4 px-6 py-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-50"
             >
-              <img
-                alt=""
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                className="size-8 rounded-full bg-gray-50"
-              />
+              <UserCircleIcon className="size-8" />
               <span className="sr-only">Your profile</span>
-              <span aria-hidden="true">Tom Cook</span>
-            </a>
+              <span aria-hidden="true">{user?.email}</span>
+            </WaspRouterLink>
           </li>
         </ul>
       </nav>

@@ -65,7 +65,6 @@ export function OrganizationSection() {
   return (
     <div className="space-y-6">
       <div>
-
         <div className="bg-white shadow rounded-lg p-6">
           <h3 className="text-lg font-semibold">{organization.name}</h3>
           <p className="text-gray-500 text-sm">

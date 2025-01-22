@@ -8,10 +8,10 @@ import { getCustomerPortalUrl, useQuery } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { logout, useAuth } from "wasp/client/auth";
 import { OrganizationSection } from "../organization/OrganizationPage";
-import { getUserOrganization, listInvitations } from 'wasp/client/operations';
+import { getUserOrganization, listInvitations } from "wasp/client/operations";
 import { SidebarLayout } from "../client/components/layouts/sidebar-layout";
-import { InviteMemberButton } from '../organization/components/invite-member-form';
-import { InviteMembers } from '../organization/InviteMembers';
+import { InviteMemberButton } from "../organization/components/invite-member-form";
+import { InviteMembers } from "../organization/InviteMembers";
 
 export default function AccountPage() {
   const { data: user } = useAuth();
@@ -25,20 +25,23 @@ export default function AccountPage() {
       member.role === "OWNER",
   );
 
-
   if (isLoading || !user) return <div>Loading...</div>;
 
   const userRole = organization?.users.find((u) => u.userId === user.id)?.role;
 
   return (
-    <SidebarLayout header={{
-      title: "Account Settings", description: "Manage your account settings and subscriptions.",
-      actions: isOwner ?
-        <div className="flex gap-2">
-          <InviteMemberButton organizationId={organization.id} />
-          <InviteMembers organizationId={organization.id} />
-        </div> : null
-    }}>
+    <SidebarLayout
+      header={{
+        title: "Account Settings",
+        description: "Manage your account settings and subscriptions.",
+        actions: isOwner ? (
+          <div className="flex gap-2">
+            <InviteMemberButton organizationId={organization.id} />
+            <InviteMembers organizationId={organization.id} />
+          </div>
+        ) : null,
+      }}
+    >
       <OrganizationSection />
 
       <div className="mt-10">
@@ -110,10 +113,7 @@ export default function AccountPage() {
           Your Organizations
         </h2>
 
-        <div
-          key={organization?.id}
-          className="bg-white shadow rounded-lg p-6"
-        >
+        <div key={organization?.id} className="bg-white shadow rounded-lg p-6">
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-lg font-medium text-gray-900">
@@ -126,7 +126,7 @@ export default function AccountPage() {
           </div>
         </div>
       </div>
-    </SidebarLayout >
+    </SidebarLayout>
   );
 }
 

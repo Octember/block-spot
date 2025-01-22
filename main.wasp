@@ -223,6 +223,7 @@ page AllVenuesPage {
 
 
 route VenuePageRoute { path: "/venues/:venueId", to: VenuePage }
+route VenuePageRouteChildren { path: "/venues/:venueId/*", to: VenuePage }
 
 page VenuePage {
   authRequired: true,
