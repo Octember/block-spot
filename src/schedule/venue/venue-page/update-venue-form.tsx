@@ -121,7 +121,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               View Schedule
             </Button>
@@ -129,7 +129,7 @@ export function UpdateVenueForm({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      {/* <div className="flex flex-col gap-2">
         <FormField
           label="Spaces"
           description="Add or remove bookable spaces in your venue, such as rooms, tables, or equipment"
@@ -163,7 +163,7 @@ export function UpdateVenueForm({
             </div>
           </div>
         </FormField>
-      </div>
+      </div> */}
 
       <div className="flex flex-col gap-2">
         <FormField
@@ -221,7 +221,7 @@ export function UpdateVenueForm({
           disabled
           type="button"
           variant="danger"
-          onClick={() => {}}
+          onClick={() => { }}
           ariaLabel="Delete Venue"
         >
           Delete Venue

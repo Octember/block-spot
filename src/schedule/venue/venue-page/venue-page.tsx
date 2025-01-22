@@ -1,15 +1,13 @@
-import { Route, Router, Routes, useParams } from "react-router-dom";
+import { Route, Routes, useParams } from "react-router-dom";
 import { getVenueById, useQuery } from "wasp/client/operations";
-import { useToast } from "../../../client/toast";
-import { UpdateVenueForm } from "./update-venue-form";
 import {
-  PageCard,
-  CardContent,
+  CardContent
 } from "../../../client/components/layouts/page-card";
-import { Tabs } from "../../../client/components/tabs";
-import { XMarkIcon } from "@heroicons/react/20/solid";
-import { PageLayout } from "../../../client/components/layouts/page-layout";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
+import { UpdateVenueForm } from "./update-venue-form";
+import { SpaceList } from "../spaces/space-list";
+import { Space, Venue } from "wasp/entities";
+import { BulkSpaceCreator } from "../spaces/bulk-create-spaces";
 
 export default function VenuePage() {
   const { venueId } = useParams();
@@ -23,18 +21,36 @@ export default function VenuePage() {
   if (!venueId || !venue) return <div>Venue not found</div>;
 
   return (
-    <SidebarLayout
-      header={{
-        title: venue.name,
-        description: "Manage your venue settings and spaces",
-      }}
-    >
-      <CardContent>
-        <Routes>
-          <Route path="/" element={<UpdateVenueForm venue={venue} />} />
-          <Route path="/spaces" element={<div>Spaces</div>} />
-        </Routes>
-      </CardContent>
-    </SidebarLayout>
+    <Routes>
+      <Route path="/" element={
+        <SidebarLayout
+          header={{
+            title: venue.name,
+            description: "Manage your venue settings and spaces",
+          }}
+        >
+          <UpdateVenueForm venue={venue} />
+        </SidebarLayout>
+      } />
+      <Route path="/spaces" element={
+        <SpacesPage venue={venue} />
+      } />
+    </Routes>
   );
+}
+
+const SpacesPage = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
+  return <SidebarLayout
+    header={{
+      title: venue.name,
+      description: "Manage your venue settings and spaces",
+      actions: <>
+        <BulkSpaceCreator venueId={venue.id} />
+      </>
+    }}
+  >
+    <li className="relative flex flex-col justify-between gap-x-6 py-5 bg-white border border-gray-200 rounded-md">
+      <SpaceList venueId={venue.id} spaces={venue.spaces} />
+    </li>
+  </SidebarLayout >
 }

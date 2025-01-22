@@ -8,6 +8,7 @@ import { Space, Venue } from "wasp/entities";
 import { Button } from "../../client/components/button";
 import { BulkSpaceCreator } from "./spaces/bulk-create-spaces";
 import { AddSpaceButton, SpaceCard } from "./spaces/space-card";
+import { SpaceList } from './spaces/space-list';
 
 export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({
   venues,
@@ -42,12 +43,7 @@ const VenueCard = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
         </div>
       </div>
 
-      <ul className="flex flex-col gap-2 px-4 py-2 sm:px-6 lg:px-8">
-        {venue.spaces.map((space) => (
-          <SpaceCard space={space} key={space.id} />
-        ))}
-        <AddSpaceButton venueId={venue.id} />
-      </ul>
+      <SpaceList venueId={venue.id} spaces={venue.spaces} />
     </li>
   );
 };

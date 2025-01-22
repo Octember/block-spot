@@ -4,6 +4,7 @@ import { useAuth } from "wasp/client/auth";
 import {
   BuildingLibraryIcon,
   CalendarIcon,
+  Cog8ToothIcon,
   Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import { Route } from "wasp/client";
@@ -54,12 +55,25 @@ export function useAppNavigation(): NavigationItem[] {
                   params: { venueId: firstVenue.id, "*": "spaces" },
                 }),
             },
+            {
+              name: "Calendar",
+              route: routes.ScheduleRoute.build({
+                params: { venueId: firstVenue.id },
+              }),
+              icon: CalendarIcon,
+              count: firstVenue.spaces.length.toString(),
+              current:
+                location.pathname ===
+                routes.ScheduleRoute.build({
+                  params: { venueId: firstVenue.id },
+                }),
+            },
           ]
         : []),
       {
         name: "Account",
         route: routes.AccountRoute.to,
-        icon: CalendarIcon,
+        icon: Cog8ToothIcon,
         current: location.pathname === routes.AccountRoute.to,
       },
     ],
