@@ -50,6 +50,43 @@ const { data: organizations } = useQuery(getUserOrganizations);
    - Auto-dismisses after 4 seconds by default
    - Support title and optional description
 
+### Form Handling
+
+1. Use react-hook-form for all forms:
+   ```typescript
+   const {
+     register,
+     handleSubmit,
+     formState: { isSubmitting },
+     reset,
+   } = useForm<FormInputs>({
+     defaultValues: { ... }
+   });
+   ```
+
+2. Form Structure:
+   - Wrap in `<form onSubmit={handleSubmit(onSubmit)}>` 
+   - Use `FormField` component for field wrappers
+   - Use shared input components (TextInput, Select, etc.)
+   - Place buttons in flex container with gap
+
+3. Form Validation:
+   - Add validation rules via register options
+   - Use `required`, `min`, `valueAsNumber` etc.
+   - Handle server errors with toast notifications
+
+4. Form State:
+   - Use `isSubmitting` for loading states
+   - Disable submit button while submitting
+   - Reset form after successful submission
+   - Close modals after success
+
+5. Form Feedback:
+   - Show success toasts after submission
+   - Show error toasts with descriptions
+   - Clear validation feedback
+   - Proper button states (loading, disabled)
+
 ### Function & Code Organization
 
 1. Keep functions under 200 lines of code

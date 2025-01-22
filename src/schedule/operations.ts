@@ -14,6 +14,7 @@ import {
   UpdateReservation,
   UpdateVenue,
   UpdateVenueAvailability,
+  UpdateSpace,
 } from "wasp/server/operations";
 
 type GetVenueInfoPayload = {
@@ -337,5 +338,27 @@ export const deleteSpace: DeleteSpace<DeleteSpacePayload, Space> = async (args, 
 
   return context.entities.Space.delete({
     where: { id: args.spaceId },
+  });
+};
+
+type UpdateSpacePayload = {
+  spaceId: string;
+  name: string;
+  capacity: number;
+  type?: string;
+};
+
+export const updateSpace: UpdateSpace<UpdateSpacePayload, Space> = async (args, context) => {
+  if (!context.user) {
+    throw new HttpError(401);
+  }
+
+  return context.entities.Space.update({
+    where: { id: args.spaceId },
+    data: {
+      name: args.name,
+      capacity: args.capacity,
+      type: args.type,
+    },
   });
 };

@@ -98,7 +98,7 @@ export function OrganizationOnboardingPage() {
     if (currentStep.next) {
       navigate(`/onboarding/${currentStep.next}`);
     } else {
-      navigate(routes.ScheduleRoute.to);
+      navigate(routes.AllVenuesPageRoute.to);
     }
   };
 

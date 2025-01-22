@@ -169,7 +169,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                   id="title"
                   name="title"
                   type="text"
-                  className="block text-xs font-medium py-0.5 max-w-40 rounded placeholder:text-gray-400 focus:outline-0"
+                  className="block text-xs font-medium py-0.5  rounded placeholder:text-gray-400 focus:outline-0"
                   placeholder="Description"
                   value={description || undefined}
                   onChange={(e) => {

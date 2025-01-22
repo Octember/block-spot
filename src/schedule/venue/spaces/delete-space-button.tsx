@@ -15,7 +15,7 @@ export const DeleteSpaceButton = ({ spaceId }: { spaceId: string }) => {
       setIsOpen(false);
       toast({
         type: 'success',
-        title: 'Space deleted successfully',
+        title: 'Space deleted',
       });
     } catch (error) {
       console.error('Failed to delete space:', error);

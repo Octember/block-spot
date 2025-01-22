@@ -176,6 +176,11 @@ action deleteSpace {
   entities: [Space]
 }
 
+action updateSpace {
+  fn: import { updateSpace } from "@src/schedule/operations",
+  entities: [Space]
+}
+
 action updateVenue {
   fn: import { updateVenue } from "@src/schedule/operations",
   entities: [Venue]
