@@ -10,7 +10,7 @@ export default function Sidebar() {
   const navItems = useAppNavigation();
 
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-dustyblue-300 px-6">
+    <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
       <div className="flex h-14 shrink-0 items-end">
         <WaspRouterLink to="/" className="flex flex-row items-center">
           <img className="h-8 w-8" src={logo} alt="BlockSpot" />
