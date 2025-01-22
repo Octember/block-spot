@@ -35,7 +35,7 @@ export default function App() {
   );
 
   const shouldDisplayAppNavBar = useMemo(() => {
-    return !isSchedulePage;
+    return !isSchedulePage && !location.pathname.startsWith("/venue");
   }, [location]);
 
   const isAdminDashboard = useMemo(() => {
@@ -81,10 +81,10 @@ export default function App() {
               )}
 
               {!isSchedulePage ? (
-                <div className="mx-auto max-w-full overflow-y-auto h-full">
-                  <Outlet />
-                </div>
+                // <div className="mx-auto max-w-full overflow-y-auto h-full">
+                <Outlet />
               ) : (
+                // </div>
                 <Outlet />
               )}
             </>

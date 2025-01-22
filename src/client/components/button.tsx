@@ -38,7 +38,10 @@ export const Button = ({
       aria-label={ariaLabel}
       disabled={disabled}
       type={type}
-      className={cn(`inline-flex items-center gap-x-1 rounded-md px-2 py-1 text-sm font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  focus-visible:outline-blue-600 ${variantClasses[variant]} ${disabledClasses}`, className)}
+      className={cn(
+        `inline-flex items-center gap-x-1 rounded-md px-2 py-1 text-sm font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  focus-visible:outline-blue-600 ${variantClasses[variant]} ${disabledClasses}`,
+        className,
+      )}
       onClick={onClick}
     >
       {icon}

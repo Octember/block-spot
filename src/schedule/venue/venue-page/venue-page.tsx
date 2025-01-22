@@ -9,6 +9,7 @@ import {
 import { Tabs } from "../../../client/components/tabs";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { PageLayout } from "../../../client/components/layouts/page-layout";
+import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 
 export default function VenuePage() {
   const { venueId } = useParams();
@@ -22,7 +23,12 @@ export default function VenuePage() {
   if (!venueId || !venue) return <div>Venue not found</div>;
 
   return (
-    <PageLayout header={{ title: venue.name, description: 'Manage your venue settings and spaces' }}>
+    <SidebarLayout
+      header={{
+        title: venue.name,
+        description: "Manage your venue settings and spaces",
+      }}
+    >
       <CardContent>
         <Tabs
           tabs={[
@@ -33,6 +39,6 @@ export default function VenuePage() {
         />
         <UpdateVenueForm venue={venue} />
       </CardContent>
-    </PageLayout>
+    </SidebarLayout>
   );
 }
