@@ -331,7 +331,10 @@ type DeleteSpacePayload = {
   spaceId: string;
 };
 
-export const deleteSpace: DeleteSpace<DeleteSpacePayload, Space> = async (args, context) => {
+export const deleteSpace: DeleteSpace<DeleteSpacePayload, Space> = async (
+  args,
+  context,
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -348,7 +351,10 @@ type UpdateSpacePayload = {
   type?: string;
 };
 
-export const updateSpace: UpdateSpace<UpdateSpacePayload, Space> = async (args, context) => {
+export const updateSpace: UpdateSpace<UpdateSpacePayload, Space> = async (
+  args,
+  context,
+) => {
   if (!context.user) {
     throw new HttpError(401);
   }

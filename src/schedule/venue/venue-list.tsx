@@ -1,6 +1,6 @@
 import {
   BuildingOffice2Icon,
-  Cog8ToothIcon
+  Cog8ToothIcon,
 } from "@heroicons/react/24/outline";
 import { FC } from "react";
 import { Link, routes } from "wasp/client/router";

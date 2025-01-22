@@ -34,11 +34,13 @@ const { data: organizations } = useQuery(getUserOrganizations);
 #### Shared Component Usage
 
 1. Modal Component (`src/client/components/modal.tsx`):
+
    - Use for all confirmation dialogs and forms
    - Supports `heading`, `footer`, and `size` props
    - Handles backdrop and animations automatically
 
 2. Button Component (`src/client/components/button.tsx`):
+
    - Use for all clickable actions
    - Variants: primary, secondary, tertiary, danger, warning
    - Always provide `ariaLabel` for accessibility
@@ -53,6 +55,7 @@ const { data: organizations } = useQuery(getUserOrganizations);
 ### Form Handling
 
 1. Use react-hook-form for all forms:
+
    ```typescript
    const {
      register,
@@ -65,17 +68,20 @@ const { data: organizations } = useQuery(getUserOrganizations);
    ```
 
 2. Form Structure:
-   - Wrap in `<form onSubmit={handleSubmit(onSubmit)}>` 
+
+   - Wrap in `<form onSubmit={handleSubmit(onSubmit)}>`
    - Use `FormField` component for field wrappers
    - Use shared input components (TextInput, Select, etc.)
    - Place buttons in flex container with gap
 
 3. Form Validation:
+
    - Add validation rules via register options
    - Use `required`, `min`, `valueAsNumber` etc.
    - Handle server errors with toast notifications
 
 4. Form State:
+
    - Use `isSubmitting` for loading states
    - Disable submit button while submitting
    - Reset form after successful submission

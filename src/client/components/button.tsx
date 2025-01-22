@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { cn } from "../cn";
 
 type ButtonProps = {
   ariaLabel: string;
@@ -8,6 +9,7 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset";
   variant?: "primary" | "secondary" | "tertiary" | "danger" | "warning";
   disabled?: boolean;
+  className?: string;
 };
 
 export const Button = ({
@@ -18,6 +20,7 @@ export const Button = ({
   type = "button",
   variant = "primary",
   disabled = false,
+  className,
 }: ButtonProps) => {
   const variantClasses = {
     primary: "bg-blue-500 hover:bg-blue-600 text-white",
@@ -35,7 +38,7 @@ export const Button = ({
       aria-label={ariaLabel}
       disabled={disabled}
       type={type}
-      className={`inline-flex items-center gap-x-1 rounded-md px-2 py-1 text-sm font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  focus-visible:outline-blue-600 ${variantClasses[variant]} ${disabledClasses}`}
+      className={cn(`inline-flex items-center gap-x-1 rounded-md px-2 py-1 text-sm font-medium shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  focus-visible:outline-blue-600 ${variantClasses[variant]} ${disabledClasses}`, className)}
       onClick={onClick}
     >
       {icon}

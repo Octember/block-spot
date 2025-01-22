@@ -1,12 +1,12 @@
-import { PencilIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { PencilIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { updateSpace } from 'wasp/client/operations';
-import { Modal } from '../../../client/components/modal';
-import { useToast } from '../../../client/toast';
-import { Button } from '../../../client/components/button';
-import { TextInput } from '../../../client/components/form/text-input';
-import { FormField } from '../../../client/components/form/form-field';
+import { updateSpace } from "wasp/client/operations";
+import { Modal } from "../../../client/components/modal";
+import { useToast } from "../../../client/toast";
+import { Button } from "../../../client/components/button";
+import { TextInput } from "../../../client/components/form/text-input";
+import { FormField } from "../../../client/components/form/form-field";
 
 type Space = {
   id: string;
@@ -34,7 +34,7 @@ export const UpdateSpaceButton = ({ space }: { space: Space }) => {
     defaultValues: {
       name: space.name,
       capacity: space.capacity,
-      type: space.type || 'ROOM',
+      type: space.type || "ROOM",
     },
   });
 
@@ -48,15 +48,15 @@ export const UpdateSpaceButton = ({ space }: { space: Space }) => {
       });
       setIsOpen(false);
       toast({
-        type: 'success',
-        title: 'Space updated successfully',
+        type: "success",
+        title: "Space updated successfully",
       });
     } catch (error) {
-      console.error('Failed to update space:', error);
+      console.error("Failed to update space:", error);
       toast({
-        type: 'error',
-        title: 'Failed to update space',
-        description: 'Please try again later',
+        type: "error",
+        title: "Failed to update space",
+        description: "Please try again later",
       });
     }
   };
@@ -66,7 +66,10 @@ export const UpdateSpaceButton = ({ space }: { space: Space }) => {
       <Button
         ariaLabel="Edit space"
         variant="tertiary"
-        icon={<PencilIcon className="size-4 stroke-gray-500 hover:stroke-blue-700" />}
+        className="group"
+        icon={
+          <PencilIcon className="size-4 stroke-gray-500 group-hover:stroke-blue-700" />
+        }
         onClick={() => setIsOpen(true)}
       />
 
@@ -76,7 +79,7 @@ export const UpdateSpaceButton = ({ space }: { space: Space }) => {
         size="sm"
         heading={{
           title: "Update Space",
-          description: "Update the space details below."
+          description: "Update the space details below.",
         }}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -131,4 +134,4 @@ export const UpdateSpaceButton = ({ space }: { space: Space }) => {
       </Modal>
     </>
   );
-}; 
+};

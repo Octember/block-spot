@@ -6,6 +6,9 @@ import {
   PageCard,
   CardContent,
 } from "../../../client/components/layouts/page-card";
+import { Tabs } from "../../../client/components/tabs";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+import { PageLayout } from "../../../client/components/layouts/page-layout";
 
 export default function VenuePage() {
   const { venueId } = useParams();
@@ -19,10 +22,17 @@ export default function VenuePage() {
   if (!venueId || !venue) return <div>Venue not found</div>;
 
   return (
-    <PageCard>
+    <PageLayout header={{ title: venue.name, description: 'Manage your venue settings and spaces' }}>
       <CardContent>
+        <Tabs
+          tabs={[
+            { name: "Spaces", href: "#", current: true, icon: XMarkIcon },
+            { name: "Settings", href: "#", current: false, icon: XMarkIcon },
+            { name: "Bookings", href: "#", current: false, icon: XMarkIcon },
+          ]}
+        />
         <UpdateVenueForm venue={venue} />
       </CardContent>
-    </PageCard>
+    </PageLayout>
   );
 }

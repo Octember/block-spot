@@ -1,11 +1,11 @@
-import { ChevronRightIcon, PlusIcon } from '@heroicons/react/20/solid';
-import { useState } from 'react';
-import { Space } from 'wasp/entities';
-import { Squares2X2Icon, TrashIcon } from '@heroicons/react/24/outline';
-import { AddSpaceModal } from './add-space-modal';
-import pluralize from 'pluralize';
-import { DeleteSpaceButton } from './delete-space-button';
-import { UpdateSpaceButton } from './update-space-button';
+import { ChevronRightIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { useState } from "react";
+import { Space } from "wasp/entities";
+import { Squares2X2Icon, TrashIcon } from "@heroicons/react/24/outline";
+import { AddSpaceModal } from "./add-space-modal";
+import pluralize from "pluralize";
+import { DeleteSpaceButton } from "./delete-space-button";
+import { UpdateSpaceButton } from "./update-space-button";
 
 const ListItemStyle =
   "flex flex-row p-2 rounded-md border border-gray-200 items-center h-16";
@@ -30,7 +30,6 @@ export const SpaceCard = ({ space }: { space: Space }) => {
     </li>
   );
 };
-
 
 export const AddSpaceButton = ({ venueId }: { venueId: string }) => {
   const [showModal, setShowModal] = useState(false);

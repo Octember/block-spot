@@ -29,7 +29,9 @@ export const PageHeader = ({
         <h2 className="font-semibold text-2xl text-navy-900">{title}</h2>
         {description && <p className="text-sm text-gray-500">{description}</p>}
       </div>
-      {actions && <div className="flex flex-row items-center gap-2">{actions}</div>}
+      {actions && (
+        <div className="flex flex-row items-center gap-2">{actions}</div>
+      )}
     </div>
   );
 };

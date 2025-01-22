@@ -9,7 +9,7 @@ import {
 } from "../../client/components/layouts/page-card";
 import { AddVenueButton } from "./add-venue/add-venue-button";
 import { BulkSpaceCreator } from "./spaces/bulk-create-spaces";
-import { PageLayout } from '../../client/components/layouts/page-layout';
+import { PageLayout } from "../../client/components/layouts/page-layout";
 
 export default function VenuePage() {
   const { data: venues, isLoading: isVenueLoading } = useQuery(getAllVenues);
@@ -21,7 +21,6 @@ export default function VenuePage() {
         description: "Manage your venues and spaces",
       }}
     >
-
       <VenueList venues={venues || []} />
     </PageLayout>
   );
