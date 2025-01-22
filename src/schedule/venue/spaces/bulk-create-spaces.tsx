@@ -79,7 +79,7 @@ const BulkSpaceCreatorModal = ({
   };
 
   const handleQuantityChange = (delta: number) => {
-    const newQuantity = Math.max(1, formData.quantity + delta);
+    const newQuantity = Math.max(1, Math.min(100, formData.quantity + delta));
     handleChange("quantity", newQuantity);
   };
 
@@ -216,9 +216,13 @@ const BulkSpaceCreatorModal = ({
                 type="number"
                 value={formData.quantity}
                 onChange={(e) =>
-                  handleChange("quantity", parseInt(e.target.value))
+                  handleChange(
+                    "quantity",
+                    Math.min(100, parseInt(e.target.value)) || 1,
+                  )
                 }
                 min={1}
+                max={100}
               />
               <Button
                 onClick={() => handleQuantityChange(1)}
