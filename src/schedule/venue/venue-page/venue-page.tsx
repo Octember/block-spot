@@ -30,13 +30,7 @@ export default function VenuePage() {
       }}
     >
       <CardContent>
-        <Tabs
-          tabs={[
-            { name: "Spaces", href: "#", current: true, icon: XMarkIcon },
-            { name: "Settings", href: "#", current: false, icon: XMarkIcon },
-            { name: "Bookings", href: "#", current: false, icon: XMarkIcon },
-          ]}
-        />
+
         <UpdateVenueForm venue={venue} />
       </CardContent>
     </SidebarLayout>

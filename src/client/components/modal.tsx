@@ -49,7 +49,7 @@ export function Modal({
              `}
           >
             {heading && (
-              <div className="border-b border-gray-200 p-4">
+              <div className="border-b border-gray-200 py-4 px-6">
                 <h2 className="text-xl font-semibold">{heading.title}</h2>
                 {heading?.description && (
                   <p className="text-sm text-gray-600 mt-1">
@@ -58,7 +58,7 @@ export function Modal({
                 )}
               </div>
             )}
-            <div className="p-4">{children}</div>
+            <div className="py-4 px-6">{children}</div>
             {footer}
           </DialogPanel>
         </div>

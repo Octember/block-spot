@@ -24,7 +24,7 @@ export const PageHeader = ({
   actions,
 }: NonNullable<PageLayoutProps["header"]>) => {
   return (
-    <div className="px-6 lg:px-8 py-4 flex flex-row justify-between">
+    <div className="px-6 lg:px-8 pb-4 pt-8 flex flex-row justify-between">
       <div>
         <h2 className="font-semibold text-2xl text-navy-900">{title}</h2>
         {description && <p className="text-sm text-gray-500">{description}</p>}

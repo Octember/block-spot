@@ -47,11 +47,12 @@ module.exports = {
         danger: "#D34053",
         warning: "#FFA70B",
 
-        primary: "#A69021",
-        secondary: "#F2CA80",
-        tertiary: "#D96E11",
-        quaternary: "#F1F5F9",
-        quinary: "#E2E8F0",
+        dustyblue: {
+          300: '#d0e1ec',
+          500: '#b1cedf',
+          light: '#639CBF',
+          dark: '#2F4C73',
+        },
       },
       screens: {
         "2xsm": "375px",
