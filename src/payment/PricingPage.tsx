@@ -23,20 +23,40 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
   [PaymentPlanId.Hobby]: {
     name: prettyPaymentPlanName(PaymentPlanId.Hobby),
     price: "$9.99",
-    description: "All you need to get started",
-    features: ["Limited monthly usage", "Basic support"],
+    description: "Perfect for small businesses just getting started",
+    features: [
+      "Up to 50 bookings per month",
+      "1 venue location",
+      "Basic email support",
+      "Calendar sync",
+      "Customer self-booking"
+    ],
   },
   [PaymentPlanId.Pro]: {
     name: prettyPaymentPlanName(PaymentPlanId.Pro),
     price: "$19.99",
-    description: "Our most popular plan",
-    features: ["Unlimited monthly usage", "Priority customer support"],
+    description: "For growing businesses with multiple spaces",
+    features: [
+      "Unlimited bookings",
+      "Multiple venues & spaces",
+      "Priority support",
+      "Advanced availability rules",
+      "Custom booking forms",
+      "Staff management",
+      "Analytics & reporting"
+    ],
   },
   [PaymentPlanId.Credits10]: {
     name: prettyPaymentPlanName(PaymentPlanId.Credits10),
     price: "$9.99",
-    description: "One-time purchase of 10 credits for your account",
-    features: ["Use credits for e.g. OpenAI API calls", "No expiration date"],
+    description: "Pay-as-you-go for seasonal businesses",
+    features: [
+      "10 booking credits",
+      "No monthly commitment",
+      "Basic features included",
+      "Credits never expire",
+      "Upgrade anytime"
+    ],
   },
 };
 
