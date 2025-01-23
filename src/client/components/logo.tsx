@@ -1,6 +1,5 @@
-import { Link as WaspRouterLink } from 'wasp/client/router';
-import logo from '../static/logo.svg';
-
+import { Link as WaspRouterLink } from "wasp/client/router";
+import logo from "../static/logo.svg";
 
 export const LogoComponent = () => {
   return (

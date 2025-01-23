@@ -30,14 +30,14 @@ const VenueCard = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
           <BuildingOffice2Icon className="size-6" />
           {venue.name}
         </h2>
-        <div>
+        <div className="flex flex-row gap-2 items-center">
           <BulkSpaceCreator venueId={venue.id} />
 
           <Link to={routes.VenuePageRoute.to} params={{ venueId: venue.id }}>
             <Button
-              icon={<Cog8ToothIcon className="size-4" />}
+              icon={<Cog8ToothIcon className="size-5" />}
               ariaLabel="Settings"
-              variant="tertiary"
+              variant="secondary"
             />
           </Link>
         </div>

@@ -14,14 +14,14 @@ import {
   HomeIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { Bars3Icon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { cn } from "../../cn";
 import logo from "../../static/logo.svg";
 import { CardHeader } from "./page-card";
 import { PageHeader } from "./page-layout";
 import { Link as WaspRouterLink } from "wasp/client/router";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
-import { LogoComponent } from '../logo';
+import { LogoComponent } from "../logo";
 import { useAuth } from "wasp/client/auth";
 
 type SidebarLayoutProps = {
@@ -37,7 +37,7 @@ export const SidebarLayout = ({ children, header }: SidebarLayoutProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-full">
       <MenuDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
       <SidebarHeader setMenuOpen={setMenuOpen} />
@@ -132,7 +132,6 @@ const SidebarHeader = ({
 }: {
   setMenuOpen: (open: boolean) => void;
 }) => {
-
   const { data: user } = useAuth();
 
   return (
@@ -157,20 +156,25 @@ const SidebarHeader = ({
         <span className="sr-only">Your profile</span>
         <span aria-hidden="true">{user?.email}</span>
       </WaspRouterLink>
-    </div >
+    </div>
   );
 };
 
-const CloseSidebarButton = forwardRef<HTMLButtonElement, { onClick: () => void }>(({ onClick }, ref) => {
-  return <div className="absolute left-full top-0 flex w-16 justify-center pt-5 duration-300 ease-in-out data-[closed]:opacity-0">
-    <button
-      ref={ref}
-      type="button"
-      onClick={onClick}
-      className="-m-2.5 p-2.5"
-    >
-      <span className="sr-only">Close sidebar</span>
-      <XMarkIcon aria-hidden="true" className="size-6 text-white" />
-    </button>
-  </div>
+const CloseSidebarButton = forwardRef<
+  HTMLButtonElement,
+  { onClick: () => void }
+>(({ onClick }, ref) => {
+  return (
+    <div className="absolute left-full top-0 flex w-16 justify-center pt-5 duration-300 ease-in-out data-[closed]:opacity-0">
+      <button
+        ref={ref}
+        type="button"
+        onClick={onClick}
+        className="-m-2.5 p-2.5"
+      >
+        <span className="sr-only">Close sidebar</span>
+        <XMarkIcon aria-hidden="true" className="size-6 text-white" />
+      </button>
+    </div>
+  );
 });

@@ -38,7 +38,8 @@ export default function App() {
     return (
       !isSchedulePage &&
       !location.pathname.startsWith("/venue") &&
-      !location.pathname.startsWith("/account")
+      !location.pathname.startsWith("/account") &&
+      !location.pathname.startsWith("/team")
     );
   }, [location]);
 

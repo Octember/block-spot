@@ -1,54 +1,38 @@
 import { Route, Routes, useParams } from "react-router-dom";
 import { getVenueById, useQuery } from "wasp/client/operations";
-import { CardContent } from "../../../client/components/layouts/page-card";
+import { Venue } from "wasp/entities";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
-import { UpdateVenueForm } from "./update-venue-form";
-import { SpaceList } from "../spaces/space-list";
-import { Space, Venue } from "wasp/entities";
 import { BulkSpaceCreator } from "../spaces/bulk-create-spaces";
+import { SpaceList } from "../spaces/space-list";
+import { HoursAndAvailabilityPage } from "./hours-and-availability";
+import { UpdateVenuePage } from "./update-venue-page";
 
 export default function VenuePage() {
-  const { venueId } = useParams();
-
-  const { data: venue, isLoading } = useQuery(getVenueById, {
-    venueId: venueId || "",
-  });
-
-  if (isLoading) return <div>Loading...</div>;
-
-  if (!venueId || !venue) return <div>Venue not found</div>;
-
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <SidebarLayout
-            header={{
-              title: venue.name,
-              description: "Manage your venue settings and spaces",
-            }}
-          >
-            <UpdateVenueForm venue={venue} />
-          </SidebarLayout>
-        }
-      />
-      <Route path="/spaces" element={<SpacesPage venue={venue} />} />
+      <Route path="/" element={<UpdateVenuePage />} />
+      <Route path="/spaces" element={<SpacesPage />} />
+      <Route path="/availability" element={<HoursAndAvailabilityPage />} />
     </Routes>
   );
 }
 
-const SpacesPage = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
+const SpacesPage = () => {
+  const { venueId } = useParams();
+  const { data: venue, isLoading } = useQuery(getVenueById, {
+    venueId: venueId || "",
+  });
+
+  if (isLoading) return null;
+
+  if (!venueId || !venue) return null;
+
   return (
     <SidebarLayout
       header={{
         title: venue.name,
         description: "Manage your venue settings and spaces",
-        actions: (
-          <>
-            <BulkSpaceCreator venueId={venue.id} />
-          </>
-        ),
+        actions: <BulkSpaceCreator venueId={venue.id} />,
       }}
     >
       <li className="relative flex flex-col justify-between gap-x-6 py-5 bg-white border border-gray-200 rounded-md">
@@ -56,4 +40,8 @@ const SpacesPage = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
       </li>
     </SidebarLayout>
   );
+};
+
+const AvailabilityPage = ({ venue }: { venue: Venue }) => {
+  return <div>Availability</div>;
 };

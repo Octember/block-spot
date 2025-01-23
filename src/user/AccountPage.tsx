@@ -1,29 +1,24 @@
-import type { User } from "wasp/entities";
+import { logout, useAuth } from "wasp/client/auth";
+import {
+  getCustomerPortalUrl,
+  getUserOrganization,
+  useQuery,
+} from "wasp/client/operations";
+import { Link as WaspRouterLink, routes } from "wasp/client/router";
+import { SidebarLayout } from "../client/components/layouts/sidebar-layout";
 import {
   type SubscriptionStatus,
-  prettyPaymentPlanName,
   parsePaymentPlanId,
+  prettyPaymentPlanName,
 } from "../payment/plans";
-import { getCustomerPortalUrl, useQuery } from "wasp/client/operations";
-import { Link as WaspRouterLink, routes } from "wasp/client/router";
-import { logout, useAuth } from "wasp/client/auth";
-import { OrganizationSection } from "../organization/OrganizationPage";
-import { getUserOrganization, listInvitations } from "wasp/client/operations";
-import { SidebarLayout } from "../client/components/layouts/sidebar-layout";
-import { InviteMemberButton } from "../organization/components/invite-member-form";
-import { InviteMembers } from "../organization/InviteMembers";
+import { Button } from "../client/components/button";
+import { Cog8ToothIcon } from "@heroicons/react/24/outline";
 
 export default function AccountPage() {
   const { data: user } = useAuth();
   const { data: organization, isLoading } = useQuery(getUserOrganization);
 
   if (!organization) return <div>No organization found.</div>;
-
-  const isOwner = organization.users.some(
-    (member) =>
-      member.user.id === organization.users[0].user.id &&
-      member.role === "OWNER",
-  );
 
   if (isLoading || !user) return <div>Loading...</div>;
 
@@ -33,18 +28,32 @@ export default function AccountPage() {
     <SidebarLayout
       header={{
         title: "Account Settings",
-        description: "Manage your account settings and subscriptions.",
-        actions: isOwner ? (
-          <div className="flex gap-2">
-            <InviteMemberButton organizationId={organization.id} />
-            <InviteMembers organizationId={organization.id} />
-          </div>
-        ) : null,
+        description: "Manage your account settings and subscription.",
+        actions: (
+          <>
+            <Button
+              icon={<Cog8ToothIcon className="size-5" />}
+              ariaLabel="Log out"
+              variant="warning"
+              onClick={logout}
+            >
+              Log out
+            </Button>
+
+            <WaspRouterLink to={routes.PasswordResetRoute.to}>
+              <Button
+                icon={<Cog8ToothIcon className="size-5" />}
+                ariaLabel="Reset Password"
+                variant="secondary"
+              >
+                Reset Password
+              </Button>
+            </WaspRouterLink>
+          </>
+        ),
       }}
     >
-      <OrganizationSection />
-
-      <div className="mt-10">
+      <div className="">
         <div className="overflow-hidden border border-gray-900/10 shadow-lg sm:rounded-lg mb-4 dark:border-gray-100/10 bg-white">
           <div className="px-4 py-5 sm:px-6 lg:px-8">
             <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">
@@ -86,24 +95,8 @@ export default function AccountPage() {
                   credits={user.credits}
                 />
               </div>
-              <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500 dark:text-white">
-                  About
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900 dark:text-gray-400 sm:col-span-2 sm:mt-0">
-                  I'm a cool customer.
-                </dd>
-              </div>
             </dl>
           </div>
-        </div>
-        <div className="inline-flex w-full justify-end">
-          <button
-            onClick={logout}
-            className="inline-flex justify-center mx-8 py-2 px-4 border border-transparent shadow-md text-sm font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            logout
-          </button>
         </div>
       </div>
 

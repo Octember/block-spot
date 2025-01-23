@@ -230,6 +230,12 @@ page VenuePage {
   component: import VenuePage from "@src/schedule/venue/venue-page/venue-page"
 }
 
+route TeamRoute { path: "/team", to: TeamPage }
+page TeamPage {
+  authRequired: true,
+  component: import TeamPage from "@src/team/TeamPage"
+}
+
 //#region Demo AI App
 route DemoAppRoute { path: "/demo-app", to: DemoAppPage }
 page DemoAppPage {

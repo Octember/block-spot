@@ -48,10 +48,6 @@ export function UpdateVenueForm({
 }) {
   const toast = useToast();
 
-  const { refetch } = useQuery(getVenueById, {
-    venueId: venue.id,
-  });
-
   const {
     register,
     control,
@@ -101,7 +97,7 @@ export function UpdateVenueForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 bg-white p-4 rounded-md border border-gray-200 shadow-sm">
       <div className="flex flex-row justify-between">
         <div className="w-1/2">
           <FormField
@@ -121,92 +117,13 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               View Schedule
             </Button>
           </WaspRouterLink>
         </div>
       </div>
-
-      {/* <div className="flex flex-col gap-2">
-        <FormField
-          label="Spaces"
-          description="Add or remove bookable spaces in your venue, such as rooms, tables, or equipment"
-        >
-          <div className="flex flex-col gap-2">
-            {fields.map((field, index) => (
-              <div key={field.id} className="flex gap-2">
-                <TextInput
-                  key={field.id}
-                  {...register(`spaces.${index}.name`)}
-                />
-                <Button
-                  type="button"
-                  variant="secondary"
-                  ariaLabel="Remove Space"
-                  icon={<XMarkIcon className="size-4" />}
-                  onClick={() => remove(index)}
-                ></Button>
-              </div>
-            ))}
-            <div>
-              <Button
-                type="button"
-                variant="secondary"
-                ariaLabel="Add Space"
-                icon={<PlusIcon className="size-4" />}
-                onClick={() => append({ name: "", id: "" })}
-              >
-                Add Space
-              </Button>
-            </div>
-          </div>
-        </FormField>
-      </div> */}
-
-      <div className="flex flex-col gap-2">
-        <FormField
-          label="Display Hours"
-          description="Configure which hours of the day to show in the schedule view"
-        >
-          <div className="flex gap-2 items-center text-md">
-            <span className="items-center">Show the hours from</span>
-            <Controller
-              name="displayStart"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  options={Array.from({ length: 24 }, (_, i) => ({
-                    label: timeLabels[i],
-                    value: String(i),
-                  }))}
-                  onChange={(value) => onChange(Number(value.value))}
-                  value={{ label: timeLabels[value], value: String(value) }}
-                />
-              )}
-            />
-            <span className="">to</span>
-
-            <Controller
-              name="displayEnd"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  options={Array.from({ length: 24 }, (_, i) => ({
-                    label: timeLabels[i],
-                    value: String(i),
-                  }))}
-                  onChange={(value) => onChange(Number(value.value))}
-                  value={{ label: timeLabels[value], value: String(value) }}
-                />
-              )}
-            />
-          </div>
-        </FormField>
-      </div>
-
-      <AvailabilityRuleForm venue={venue} control={control} />
 
       <div className="flex gap-4">
         <Button
@@ -217,15 +134,6 @@ export function UpdateVenueForm({
         >
           Update Venue
         </Button>
-        {/* <Button
-          disabled
-          type="button"
-          variant="danger"
-          onClick={() => { }}
-          ariaLabel="Delete Venue"
-        >
-          Delete Venue
-        </Button> */}
       </div>
     </form>
   );

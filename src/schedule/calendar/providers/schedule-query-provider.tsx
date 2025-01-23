@@ -33,7 +33,7 @@ export const ScheduleQueryContext = createContext<{
     endTimeMinutes: number;
   }[];
   refresh: () => void;
-}>({ venue: null, unavailabileBlocks: [], refresh: () => { } });
+}>({ venue: null, unavailabileBlocks: [], refresh: () => {} });
 
 export const ScheduleQueryProvider = ({
   children,
@@ -42,7 +42,7 @@ export const ScheduleQueryProvider = ({
 }) => {
   const { venueId } = useParams();
   if (!venueId) {
-    return null
+    return null;
   }
 
   // Cache to avoid a flicker when the venue is loading

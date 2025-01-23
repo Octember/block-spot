@@ -65,15 +65,6 @@ export function OrganizationSection() {
   return (
     <div className="space-y-6">
       <div>
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-semibold">{organization.name}</h3>
-          <p className="text-gray-500 text-sm">
-            Created {new Date(organization.createdAt).toLocaleDateString()}
-          </p>
-        </div>
-      </div>
-
-      <div>
         <h3 className="text-xl font-bold mb-4">Members</h3>
         <div className="bg-white shadow rounded-lg overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">

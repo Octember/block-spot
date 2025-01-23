@@ -116,3 +116,27 @@ const { data: organizations } = useQuery(getUserOrganizations);
 - Steps: welcome → organization → spaces → invite → complete
 - Each step updates corresponding onboarding state flags
 - Users can't skip ahead to steps they haven't reached
+
+# Codebase Structure
+
+## Navigation
+
+- The app uses a sidebar layout with navigation managed by the `useAppNavigation` hook
+- Navigation items are defined in `src/client/hooks/use-app-navigation.ts`
+- Each navigation item has: name, route, icon, and optional count
+- Routes are defined in `main.wasp`
+
+## Layouts
+
+- Main layout component is `SidebarLayout` in `src/client/components/layouts/sidebar-layout.tsx`
+- SidebarLayout props:
+  - children: ReactNode
+  - header?: { title: string, description?: string, actions?: ReactNode }
+
+## Pages
+
+- Team page: `/team` - Manages team members and roles
+- Spaces: `/venues` - Manages venues and spaces
+- Account: `/account` - User account settings
+- Schedule: `/schedule/:venueId` - Calendar and scheduling
+- Venue: `/venues/:venueId` - Venue specific management
