@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE "Venue" ADD COLUMN     "organizationId" TEXT NOT NULL DEFAULT '5ad79a36-921f-42fa-b284-9812b9eab86b';
+ALTER TABLE "Venue" ADD COLUMN     "organizationId" TEXT NOT NULL;
 
 -- AddForeignKey
 ALTER TABLE "Venue" ADD CONSTRAINT 
