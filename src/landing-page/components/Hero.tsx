@@ -1,5 +1,4 @@
-import openSaasBannerWebp from "../../client/static/open-saas-banner.webp";
-import { DocsUrl } from "../../shared/common";
+import openSaasBannerWebp from "../../client/static/banner.webp";
 
 export default function Hero() {
   return (

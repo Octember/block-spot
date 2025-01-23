@@ -83,6 +83,9 @@ export const getVenueInfo: GetVenueInfo<
     include: {
       availabilityRules: true,
       spaces: {
+        orderBy: {
+          createdAt: "desc",
+        },
         include: {
           reservations: {
             where: {
