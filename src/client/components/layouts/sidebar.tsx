@@ -1,9 +1,6 @@
-import { UserCircleIcon } from "@heroicons/react/24/outline";
-import { useAuth } from "wasp/client/auth";
 import { Link as WaspRouterLink } from "wasp/client/router";
 import { cn } from "../../cn";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
-import logo from "../../static/logo.svg";
 
 export default function Sidebar() {
   const navItems = useAppNavigation();
@@ -20,7 +17,7 @@ export default function Sidebar() {
                     to={item.route as any}
                     className={cn(
                       item.current
-                        ? "bg-gray-50 text-dustyblue-dark"
+                        ? "bg-gray-50 text-sky-600"
                         : "text-gray-700 hover:bg-gray-50 hover:text-dustyblue-dark",
                       "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
                     )}
@@ -29,7 +26,7 @@ export default function Sidebar() {
                       aria-hidden="true"
                       className={cn(
                         item.current
-                          ? "text-dustyblue-dark"
+                          ? "text-sky-600"
                           : "text-gray-800 group-hover:text-dustyblue-dark",
                         "size-6 shrink-0",
                       )}

@@ -4,6 +4,7 @@ import { createInvitation } from "wasp/client/operations";
 import { Modal } from "../../client/components/modal";
 import { Button } from "../../client/components/button";
 import { useToast } from "../../client/toast";
+import { UserPlusIcon } from "@heroicons/react/24/outline";
 
 type InviteMemberFormInputs = {
   email: string;
@@ -20,7 +21,12 @@ export function InviteMemberButton({
 
   return (
     <>
-      <Button onClick={() => setIsModalOpen(true)} ariaLabel="Invite Member">
+      <Button
+        onClick={() => setIsModalOpen(true)}
+        ariaLabel="Invite Member"
+        variant="secondary"
+        icon={<UserPlusIcon className="size-4" />}
+      >
         Invite Member
       </Button>
       <Modal

@@ -62,7 +62,7 @@ export const ScheduleQueryProvider = ({
     : [];
 
   if (!venueToUse) {
-    return <div>Venue not found</div>;
+    return null;
   }
 
   return (

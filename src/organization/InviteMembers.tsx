@@ -3,6 +3,7 @@ import { createInvitation } from "wasp/client/operations";
 import { useToast } from "../client/toast";
 import { Button } from "../client/components/button";
 import { ArrowPathIcon, PlusIcon } from "@heroicons/react/20/solid";
+import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 
 type InviteMembersProps = {
   organizationId: string;
@@ -46,7 +47,8 @@ export function InviteMembers({ organizationId }: InviteMembersProps) {
         onClick={handleGenerateLink}
         disabled={isLoading}
         ariaLabel="Generate Invite Link"
-        icon={<PlusIcon className="size-4" />}
+        icon={<ArrowUpOnSquareIcon className="size-4" />}
+        variant="secondary"
       >
         Generate Invite Link
       </Button>
