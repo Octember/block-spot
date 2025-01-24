@@ -15,6 +15,7 @@ import { useScheduleContext } from "../providers/schedule-query-provider";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
 import { UpdateButton } from "./update-button";
 import { getRowIndex, getRowSpan } from "./utilities";
+import { isUserOwner } from "../../../client/hooks/permissions";
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -30,12 +31,19 @@ const GrayColorStyle =
 const BlueColorStyle =
   "bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500";
 
-function getColorStyles(
-  isDraft: boolean,
-  over: Over | null,
-  isDragging: boolean,
-  otherNodeDragging: boolean,
-) {
+function getColorStyles({
+  isDraft,
+  over,
+  isDragging,
+  otherNodeDragging,
+  isOwner
+}: {
+  isDraft: boolean;
+  over: Over | null;
+  isDragging: boolean;
+  otherNodeDragging: boolean;
+  isOwner: boolean;
+}) {
   const opacityStyle = isDragging ? "opacity-50" : "";
 
   if (isDragging && over && over.data.current?.occupied) {
@@ -49,13 +57,19 @@ function getColorStyles(
     return GrayColorStyle;
   }
 
-  return BlueColorStyle;
+  if (isOwner) {
+    return BlueColorStyle;
+  }
+
+  return GrayColorStyle;
 }
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
   const { venue, refresh } = useScheduleContext();
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
+  const isOwner = isUserOwner();
+
   const {
     attributes,
     listeners,
@@ -71,6 +85,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       startTime: reservation.startTime,
       endTime: reservation.endTime,
     },
+    disabled: !isDraft && !isOwner,
   });
 
   useEffect(() => {
@@ -83,7 +98,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = useMemo(
-    () => getColorStyles(isDraft, over, isDragging, Boolean(active)),
+    () => getColorStyles({ isDraft, over, isDragging, otherNodeDragging: Boolean(active), isOwner }),
     [isDraft, over, isDragging, active],
   );
 
@@ -109,7 +124,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
   return (
     <li
-      className="relative flex z-20"
+      className="relative flex z-20 select-none"
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,
@@ -124,6 +139,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       <a
         className={`relative group w-full my-1 mx-2 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
       >
+        {/* stubbed extending the start & end of the reservation */}
         {/* {isDraft &&
           <div className="absolute h-full w-full left-0 top-0 flex flex-col justify-between pointer-events-none">
             <div className="flex w-full justify-center pointer-events-auto cursor-row-resize h-3 ">
@@ -198,12 +214,14 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
               </p>
             )}
 
-            <ReservationMenu
-              onEdit={() => setIsEditing(true)}
-              onDelete={() =>
-                props.isDraft ? props.onDiscardDraft?.() : props.onDelete?.()
-              }
-            />
+            {isOwner && (
+              <ReservationMenu
+                onEdit={() => setIsEditing(true)}
+                onDelete={() =>
+                  props.isDraft ? props.onDiscardDraft?.() : props.onDelete?.()
+                }
+              />
+            )}
           </div>
 
           <div className="flex flex-row justify-between h-full">
