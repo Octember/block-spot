@@ -29,7 +29,7 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
       "1 venue location",
       "Basic email support",
       "Calendar sync",
-      "Customer self-booking"
+      "Customer self-booking",
     ],
   },
   [PaymentPlanId.Pro]: {
@@ -43,7 +43,7 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
       "Advanced availability rules",
       "Custom booking forms",
       "Staff management",
-      "Analytics & reporting"
+      "Analytics & reporting",
     ],
   },
   [PaymentPlanId.Credits10]: {
@@ -55,7 +55,7 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
       "No monthly commitment",
       "Basic features included",
       "Credits never expire",
-      "Upgrade anytime"
+      "Upgrade anytime",
     ],
   },
 };

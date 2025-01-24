@@ -97,7 +97,10 @@ export function UpdateVenueForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 bg-white p-4 rounded-md border border-gray-200 shadow-sm">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col gap-6 bg-white p-4 rounded-md border border-gray-200 shadow-sm"
+    >
       <div className="flex flex-row justify-between">
         <div className="w-1/2">
           <FormField
@@ -117,7 +120,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => { }}
+              onClick={() => {}}
             >
               View Schedule
             </Button>

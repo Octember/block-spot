@@ -210,7 +210,6 @@ action updateVenueAvailability {
 
 route ScheduleRoute { path: "/schedule/:venueId", to: SchedulePage }
 page SchedulePage {
-  authRequired: true,
   component: import SchedulePage from "@src/schedule/schedule-page",
 }
 
@@ -510,4 +509,9 @@ action createOrganization {
 action updateOnboardingState {
   fn: import { updateOnboardingState } from "@src/organization/operations.js",
   entities: [Organization, OrganizationUser, OnboardingState]
+}
+
+query getUserOrganizationRole {
+  fn: import { getUserOrganizationRole } from "@src/organization/operations.js",
+  entities: [OrganizationUser, User]
 }

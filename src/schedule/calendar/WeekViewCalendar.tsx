@@ -14,7 +14,7 @@ export interface WeekViewCalendarProps {
 export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
   return (
     <div className="flex h-full flex-col flex-1">
-      <CalendarHeader venue={venue} />
+      <CalendarHeader />
 
       <div className="isolate flex flex-auto flex-col overflow-x-auto bg-white">
         <div className="flex min-w-max w-full flex-none flex-col">

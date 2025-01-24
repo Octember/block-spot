@@ -1,5 +1,8 @@
+import { useAuth } from "wasp/client/auth";
+import { useQuery } from "wasp/client/operations";
 import { HttpError } from "wasp/server";
 import type { OnAfterSignupHook } from "wasp/server/auth";
+import { getUserOrganizationRole } from "wasp/client/operations";
 
 export const onAfterSignup: OnAfterSignupHook = async ({
   providerId,
@@ -71,3 +74,4 @@ export const onAfterSignup: OnAfterSignupHook = async ({
     });
   }
 };
+

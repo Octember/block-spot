@@ -68,9 +68,9 @@ export const getVenueInfo: GetVenueInfo<
     })
   | null
 > = async (args, context) => {
-  if (!context.user) {
-    throw new HttpError(401);
-  }
+  // if (!context.user) {
+  //   throw new HttpError(401);
+  // }
 
   const date = isValid(args.selectedDate)
     ? startOfDay(args.selectedDate)

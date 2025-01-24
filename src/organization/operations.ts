@@ -477,3 +477,24 @@ export const updateOnboardingState = async (
     data: args.updates,
   });
 };
+
+export const getUserOrganizationRole = async (
+  _args: void,
+  context: any,
+) => {
+  if (!context.user) {
+    throw new HttpError(403);
+  }
+
+  const organizationUser = await context.entities.OrganizationUser.findFirst({
+    where: {
+      userId: context.user.id,
+    },
+    select: {
+      role: true,
+      organizationId: true,
+    },
+  });
+
+  return organizationUser;
+};

@@ -13,25 +13,29 @@ export const landingPageNavigationItems: NavigationItem[] = [
 export const features = [
   {
     name: "Smart Scheduling",
-    description: "Effortlessly manage multiple spaces and time slots with our intuitive calendar interface.",
+    description:
+      "Effortlessly manage multiple spaces and time slots with our intuitive calendar interface.",
     icon: "📅",
     href: DocsUrl,
   },
   {
     name: "Customer Self-Service",
-    description: "Let customers book their own appointments 24/7, reducing phone calls and email back-and-forth.",
+    description:
+      "Let customers book their own appointments 24/7, reducing phone calls and email back-and-forth.",
     icon: "🤝",
     href: DocsUrl,
   },
   {
     name: "Business Hours & Availability",
-    description: "Set custom hours, block off times, and manage availability across different spaces and staff members.",
+    description:
+      "Set custom hours, block off times, and manage availability across different spaces and staff members.",
     icon: "⏰",
     href: DocsUrl,
   },
   {
     name: "Affordable Pricing",
-    description: "Pay only for what you need with flexible plans designed for small businesses.",
+    description:
+      "Pay only for what you need with flexible plans designed for small businesses.",
     icon: "💰",
     href: DocsUrl,
   },
@@ -64,23 +68,27 @@ export const faqs = [
   {
     id: 1,
     question: "How does the scheduling system work?",
-    answer: "Our platform lets you set up your available spaces, business hours, and booking rules. Customers can then book available slots through your personalized booking page.",
+    answer:
+      "Our platform lets you set up your available spaces, business hours, and booking rules. Customers can then book available slots through your personalized booking page.",
   },
   {
     id: 2,
     question: "Can I manage multiple locations or spaces?",
-    answer: "Yes! You can set up multiple venues and spaces, each with their own availability and booking rules.",
+    answer:
+      "Yes! You can set up multiple venues and spaces, each with their own availability and booking rules.",
   },
   {
     id: 3,
     question: "What size business is this suitable for?",
-    answer: "Our platform is perfect for small businesses - from solo practitioners to businesses with multiple staff and locations.",
+    answer:
+      "Our platform is perfect for small businesses - from solo practitioners to businesses with multiple staff and locations.",
   },
   {
     id: 4,
     question: "Do I need technical knowledge to use it?",
-    answer: "Not at all! Our interface is designed to be user-friendly and intuitive. You can be up and running in minutes.",
-  }
+    answer:
+      "Not at all! Our interface is designed to be user-friendly and intuitive. You can be up and running in minutes.",
+  },
 ];
 export const footerNavigation = {
   app: [

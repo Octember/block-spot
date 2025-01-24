@@ -1,17 +1,24 @@
-import { FC, useEffect, useMemo, useState } from "react";
-import { cn } from "../../client/cn";
-import { ButtonGroup } from "../../client/components/button-group";
-import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/20/solid";
-import { WeekViewCalendarProps } from "./WeekViewCalendar";
-import { useLocation, useSearchParams } from "react-router-dom";
-import { addDays, format, isValid, parseISO, startOfToday } from "date-fns";
-import { useSelectedDate } from "./providers/date-provider";
-import { getGridTemplateColumns } from "./reservations/constants";
+import {
+  ArrowLeftIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/20/solid";
+import { addDays, format } from "date-fns";
+import { FC } from "react";
+import { useNavigate } from "react-router-dom";
+import { routes } from "wasp/client/router";
 
-export const CalendarHeader: FC<{ venue: WeekViewCalendarProps["venue"] }> = ({
-  venue,
-}) => {
+import { cn } from "../../client/cn";
+import { Button } from "../../client/components/button";
+import { ButtonGroup } from "../../client/components/button-group";
+import { isUserOwner } from '../../client/hooks/permissions';
+import { useSelectedDate } from "./providers/date-provider";
+
+export const CalendarHeader: FC = () => {
   const { selectedDate, setSelectedDate } = useSelectedDate();
+  const navigate = useNavigate();
+
+  const isOwner = isUserOwner();
 
   return (
     <header
@@ -20,12 +27,16 @@ export const CalendarHeader: FC<{ venue: WeekViewCalendarProps["venue"] }> = ({
       )}
     >
       <div className="flex px-4 py-2 gap-2 items-center">
-        <ButtonGroup
-          items={[
-            { label: "Days", onClick: () => { } },
-            { label: "Months", onClick: () => { } },
-          ]}
-        />
+        {isOwner && (
+          <Button
+            icon={<ArrowLeftIcon className="size-5 my-[3px]" />}
+            ariaLabel="Calendar"
+            variant="secondary"
+            onClick={() => navigate(routes.AllVenuesPageRoute.build({}))}
+          >
+            Back to Dashboard
+          </Button>
+        )}
 
         <ButtonGroup
           items={[
