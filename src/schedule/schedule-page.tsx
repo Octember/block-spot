@@ -1,20 +1,16 @@
-import { createContext, FC, useContext, useEffect, useState } from "react";
-import { Outlet, useParams } from "react-router-dom";
+import { FC, useState } from "react";
 import {
   createReservation,
-  generateGptResponse,
-  getVenueInfo,
+  generateGptResponse
 } from "wasp/client/operations";
+import { TextInput } from "../client/components/form/text-input";
 import { useToast } from "../client/toast";
-import DateProvider, {
-  useSelectedDate,
-} from "./calendar/providers/date-provider";
-import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
+import DateProvider from "./calendar/providers/date-provider";
 import {
   ScheduleQueryProvider,
   useScheduleContext,
 } from "./calendar/providers/schedule-query-provider";
-import { TextInput } from "../client/components/form/text-input";
+import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
 
 const PageLoader = () => {
   const { venue } = useScheduleContext();

@@ -1,30 +1,26 @@
-import { Venue, AvailabilityRule, Space } from "wasp/entities";
-import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
+import { useEffect } from "react";
 import {
+  Controller,
   SubmitHandler,
   useFieldArray,
   useForm,
-  Controller,
 } from "react-hook-form";
+import { useParams } from "react-router-dom";
 import {
+  getVenueById,
   updateVenue,
   updateVenueAvailability,
-  getVenueById,
-  useQuery,
-  getVenueInfo,
+  useQuery
 } from "wasp/client/operations";
+import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
-import { TextInput } from "../../../client/components/form/text-input";
 import { FormField } from "../../../client/components/form/form-field";
-import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { Select } from "../../../client/components/form/select";
+import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
+import { useToast } from "../../../client/toast";
 import { timeLabels } from "../../calendar/constants";
 import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
-import { useEffect } from "react";
-import { useToast } from "../../../client/toast";
-import { useParams } from "react-router-dom";
-import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 
 function transformToFormInputs(
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] },
