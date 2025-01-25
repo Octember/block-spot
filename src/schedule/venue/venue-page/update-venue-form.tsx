@@ -1,33 +1,23 @@
 import {
-  ArrowUpRightIcon,
-  PlusIcon,
-  XMarkIcon,
+  ArrowUpRightIcon
 } from "@heroicons/react/20/solid";
+import { useEffect } from "react";
 import {
   SubmitHandler,
   useFieldArray,
-  useForm,
-  Controller,
-  Control,
+  useForm
 } from "react-hook-form";
 import {
-  getVenueById,
   updateVenue,
-  updateVenueAvailability,
-  useQuery,
+  updateVenueAvailability
 } from "wasp/client/operations";
+import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
-import { TextInput } from "../../../client/components/form/text-input";
 import { FormField } from "../../../client/components/form/form-field";
-import { Link as WaspRouterLink, routes } from "wasp/client/router";
+import { TextInput } from "../../../client/components/form/text-input";
 import { useToast } from "../../../client/toast";
-import { Select, MultiSelect } from "../../../client/components/form/select";
-import { timeLabels } from "../../calendar/constants";
-import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
-import { useScheduleContext } from "../../calendar/providers/schedule-query-provider";
-import { useEffect } from "react";
 
 function transformToFormInputs(
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] },
@@ -50,11 +40,9 @@ export function UpdateVenueForm({
 
   const {
     register,
-    control,
     handleSubmit,
     reset,
-    watch,
-    formState: { errors, isDirty },
+    formState: { isDirty },
   } = useForm<UpdateVenueFormInputs>({
     defaultValues: transformToFormInputs(venue),
   });
@@ -62,11 +50,6 @@ export function UpdateVenueForm({
   useEffect(() => {
     reset(transformToFormInputs(venue));
   }, [venue]);
-
-  const { fields, append, remove } = useFieldArray({
-    control: control,
-    name: "spaces",
-  });
 
   const onSubmit: SubmitHandler<UpdateVenueFormInputs> = async (data) => {
     try {
@@ -120,7 +103,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               View Schedule
             </Button>

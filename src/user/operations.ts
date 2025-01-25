@@ -79,7 +79,7 @@ export const getPaginatedUsers: GetPaginatedUsers<
   const hasNotSubscribed = allSubscriptionStatusOptions?.find(
     (status) => status === null,
   );
-  let subscriptionStatusStrings = allSubscriptionStatusOptions?.filter(
+  const subscriptionStatusStrings = allSubscriptionStatusOptions?.filter(
     (status) => status !== null,
   ) as string[] | undefined;
 

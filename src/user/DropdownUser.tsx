@@ -1,3 +1,4 @@
+import React from "react";
 import { type User } from "wasp/entities";
 import { useEffect, useRef, useState } from "react";
 import { CgProfile } from "react-icons/cg";
