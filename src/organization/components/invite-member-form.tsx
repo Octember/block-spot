@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { createInvitation } from "wasp/client/operations";
 import { Modal } from "../../client/components/modal";

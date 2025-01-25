@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuth } from "wasp/client/auth";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 

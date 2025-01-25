@@ -5,7 +5,7 @@ import {
   PlusCircleIcon,
   QueueListIcon,
 } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Modal } from "../../../client/components/modal";
 import { Button } from "../../../client/components/button";
 import { TextInput } from "../../../client/components/form/text-input";

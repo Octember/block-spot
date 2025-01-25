@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { createInvitation } from "wasp/client/operations";
 import { useToast } from "../client/toast";
 import { Button } from "../client/components/button";

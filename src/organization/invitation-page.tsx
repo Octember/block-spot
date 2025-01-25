@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "wasp/client/router";
 import { routes } from "wasp/client/router";
@@ -22,7 +22,7 @@ export function InvitationPage() {
     isLoading,
     error: queryError,
   } = useQuery(getInvitationDetails, { token: token || "" });
-  const [error, setError] = React.useState<string | null>(
+  const [error, setError] = useState<string | null>(
     queryError?.message || null,
   );
 

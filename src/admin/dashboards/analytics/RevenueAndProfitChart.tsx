@@ -1,5 +1,5 @@
 import { ApexOptions } from "apexcharts";
-import React, { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import { type DailyStatsProps } from "../../../analytics/stats";
 

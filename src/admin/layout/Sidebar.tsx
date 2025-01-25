@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import Logo from "../../client/static/logo.webp";
 import SidebarLinkGroup from "./SidebarLinkGroup";
@@ -304,7 +304,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               >
                 {(handleClick, open) => {
                   return (
-                    <React.Fragment>
+                    <Fragment>
                       <NavLink
                         to="#"
                         className={cn(
@@ -408,7 +408,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         </ul>
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
-                    </React.Fragment>
+                    </Fragment>
                   );
                 }}
               </SidebarLinkGroup>
@@ -451,7 +451,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               >
                 {(handleClick, open) => {
                   return (
-                    <React.Fragment>
+                    <Fragment>
                       <NavLink
                         to="#"
                         className={cn(
@@ -559,7 +559,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                         </ul>
                       </div>
                       {/* <!-- Dropdown Menu End --> */}
-                    </React.Fragment>
+                    </Fragment>
                   );
                 }}
               </SidebarLinkGroup>

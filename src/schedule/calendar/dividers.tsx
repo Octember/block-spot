@@ -1,5 +1,4 @@
-import React from "react";
-import { FC } from "react";
+import { Fragment, FC } from "react";
 import { useTimeLabels } from "./constants";
 import {
   MinutesPerSlot,
@@ -20,7 +19,7 @@ export const HorizontalDividers: FC = () => {
       <div className="border-b border-gray-400" />
 
       {timeLabels.map((label, index) => (
-        <React.Fragment key={index}>
+        <Fragment key={index}>
           {/* 15min line and label */}
           <div className={`row-span-1 border-b ${getBorderStyle(0)}`}>
             <div className="sticky left-0 z-99 -ml-14 w-14 pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none">
@@ -34,7 +33,7 @@ export const HorizontalDividers: FC = () => {
               className={`row-span-1 border-b ${getBorderStyle(index + 1)}`}
             ></div>
           ))}
-        </React.Fragment>
+        </Fragment>
       ))}
     </div>
   );

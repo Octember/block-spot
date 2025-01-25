@@ -1,4 +1,3 @@
-import React from "react";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { type User } from "wasp/entities";
 import { logout } from "wasp/client/auth";
