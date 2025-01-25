@@ -99,7 +99,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
   const colorStyles = useMemo(
     () => getColorStyles({ isDraft, over, isDragging, otherNodeDragging: Boolean(active), isOwner }),
-    [isDraft, over, isDragging, active],
+    [isDraft, over, isDragging, active, isOwner],
   );
 
   // Take into account the current drag position

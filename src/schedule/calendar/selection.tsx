@@ -8,6 +8,7 @@ import {
   getTimeFromRowIndex,
   getRowIndexFromMinutes,
 } from "./reservations/utilities";
+import { isUserOwner } from "../../client/hooks/permissions";
 
 function getStartEndTime(
   venue: Venue,
@@ -46,6 +47,7 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
   spaceCount,
   onSelectionComplete,
 }) => {
+  const isOwner = isUserOwner();
   const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
   const { venue, unavailabileBlocks } = useScheduleContext();
@@ -57,6 +59,10 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
   const [isSelecting, setIsSelecting] = useState(false);
 
   const isTimeAvailable = (row: number): boolean => {
+    if (isOwner) {
+      return true;
+    }
+
     const timeInMinutes =
       getTimeFromRowIndex(venue, row).getHours() * 60 +
       getTimeFromRowIndex(venue, row).getMinutes();

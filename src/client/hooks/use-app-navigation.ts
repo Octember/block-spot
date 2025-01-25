@@ -27,7 +27,7 @@ export function useAppNavigation(): NavigationItem[] {
   const { data: user } = useAuth();
   const location = useLocation();
 
-  const { data: venues } = useQuery(getAllVenues);
+  const { data: venues } = useQuery(getAllVenues, null, {staleTime: 3600000});
 
   const firstVenue = venues?.[0];
 
@@ -101,7 +101,7 @@ export function useAppNavigation(): NavigationItem[] {
           ]
         : []),
     ],
-    [user],
+    [user, firstVenue],
   );
 
   return navItems;
