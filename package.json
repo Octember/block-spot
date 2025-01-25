@@ -25,6 +25,7 @@
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "headlessui": "^0.0.0",
+    "ics": "^3.8.1",
     "logrocket": "^9.0.2",
     "node-fetch": "3.3.0",
     "openai": "^4.55.3",

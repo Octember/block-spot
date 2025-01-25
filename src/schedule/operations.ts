@@ -12,9 +12,9 @@ import {
   GetVenueById,
   GetVenueInfo,
   UpdateReservation,
-  UpdateVenue,
-  UpdateVenueAvailability,
   UpdateSpace,
+  UpdateVenue,
+  UpdateVenueAvailability
 } from "wasp/server/operations";
 
 type GetVenueInfoPayload = {

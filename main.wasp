@@ -206,6 +206,12 @@ action updateVenueAvailability {
   entities: [Venue, AvailabilityRule]
 }
 
+api exportCalendar {
+  fn: import { exportCalendar } from "@src/schedule/calendar/operations",
+  entities: [Venue, Space, Reservation],
+  httpRoute: (GET, "/calendar/export")
+}
+
 //#endregion
 
 route ScheduleRoute { path: "/schedule/:venueId", to: SchedulePage }
