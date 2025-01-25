@@ -227,7 +227,7 @@ const PricingPage = () => {
                   )}
                   disabled={isPaymentLoading}
                 >
-                  {!!user ? "Buy plan" : "Log in to buy plan"}
+                  {user ? "Buy plan" : "Log in to buy plan"}
                 </button>
               )}
             </div>

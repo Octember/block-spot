@@ -110,7 +110,7 @@ const UsersTable = () => {
                         prevValue?.includes(targetValue as SubscriptionStatus)
                       ) {
                         return prevValue?.filter((val) => val !== targetValue);
-                      } else if (!!prevValue) {
+                      } else if (prevValue) {
                         return [
                           ...prevValue,
                           targetValue as SubscriptionStatus,

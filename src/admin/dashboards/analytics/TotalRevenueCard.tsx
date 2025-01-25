@@ -64,8 +64,8 @@ const TotalRevenueCard = ({
         </div>
 
         <span className="flex items-center gap-1 text-sm font-medium text-meta-3">
-          {isLoading ? "..." : !!deltaPercentage ? deltaPercentage + "%" : "-"}
-          {!!deltaPercentage ? (
+          {isLoading ? "..." : deltaPercentage ? deltaPercentage + "%" : "-"}
+          {deltaPercentage ? (
             isDeltaPositive ? (
               <UpArrow />
             ) : (

@@ -167,7 +167,7 @@ function NewTaskForm({
 
       <div className="space-y-10 col-span-full">
         {isTasksLoading && <div>Loading...</div>}
-        {tasks!! && tasks.length > 0 ? (
+        {tasks! && tasks.length > 0 ? (
           <div className="space-y-4">
             {tasks.map((task: Task) => (
               <Todo
@@ -311,7 +311,7 @@ function TaskTable({ schedule }: { schedule: GeneratedSchedule }) {
   return (
     <div className="flex flex-col gap-6 py-6">
       <table className="table-auto w-full border-separate border border-spacing-2 rounded-md border-slate-200 shadow-sm">
-        {!!schedule.mainTasks ? (
+        {schedule.mainTasks ? (
           schedule.mainTasks
             .map((mainTask) => (
               <MainTaskTable
@@ -372,7 +372,7 @@ function MainTaskTable({
           </th>
         </tr>
       </thead>
-      {!!subtasks ? (
+      {subtasks ? (
         subtasks.map((subtask) => {
           if (subtask.mainTaskName === mainTask.name) {
             return (
