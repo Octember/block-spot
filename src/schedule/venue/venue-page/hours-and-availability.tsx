@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import {
   Controller,
   SubmitHandler,
-  useFieldArray,
-  useForm,
+  useForm
 } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import {
@@ -64,12 +63,10 @@ export function HoursAndAvailabilityForm({
   const toast = useToast();
 
   const {
-    register,
     control,
     handleSubmit,
     reset,
-    watch,
-    formState: { errors, isDirty },
+    formState: { isDirty },
   } = useForm<UpdateVenueFormInputs>({
     defaultValues: transformToFormInputs(venue),
   });
@@ -78,10 +75,6 @@ export function HoursAndAvailabilityForm({
     reset(transformToFormInputs(venue));
   }, [venue]);
 
-  const { fields, append, remove } = useFieldArray({
-    control: control,
-    name: "spaces",
-  });
 
   const onSubmit: SubmitHandler<UpdateVenueFormInputs> = async (data) => {
     try {
@@ -157,7 +150,7 @@ export function HoursAndAvailabilityForm({
         </FormField>
       </div>
 
-      <AvailabilityRuleForm venue={venue} control={control} />
+      <AvailabilityRuleForm control={control} />
 
       <div className="flex gap-4">
         <Button

@@ -1,19 +1,14 @@
-import { useFieldArray, Control, Controller } from "react-hook-form";
-import { AvailabilityRule, Space, Venue } from "wasp/entities";
+import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Control, Controller, useFieldArray } from "react-hook-form";
+import { Button } from "../../../client/components/button";
 import { FormField } from "../../../client/components/form/form-field";
 import { MultiSelect, Select } from "../../../client/components/form/select";
 import { timeLabels, timeLabelsLong } from "../../calendar/constants";
 import { UpdateVenueFormInputs } from "./types";
-import { Button } from "../../../client/components/button";
-import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 export const AvailabilityRuleForm = ({
-  venue,
   control,
 }: {
-  venue: Venue & { availabilityRules: AvailabilityRule[] } & {
-    spaces: Space[];
-  };
   control: Control<UpdateVenueFormInputs>;
 }) => {
   const { fields, append, remove } = useFieldArray({
@@ -31,10 +26,8 @@ export const AvailabilityRuleForm = ({
           {fields.map((rule, index) => (
             <AvailabilityRuleBlock
               key={rule.id}
-              venue={venue}
               control={control}
               index={index}
-              rule={rule}
               remove={() => remove(index)}
             />
           ))}
@@ -63,23 +56,12 @@ export const AvailabilityRuleForm = ({
 };
 
 export const AvailabilityRuleBlock = ({
-  venue,
   control,
   index,
-  rule,
   remove,
 }: {
-  venue: Venue & { availabilityRules: AvailabilityRule[] } & {
-    spaces: Space[];
-  };
   control: Control<UpdateVenueFormInputs>;
   index: number;
-  rule: {
-    spaceIds: string[];
-    days: string[];
-    startTimeMinutes: number;
-    endTimeMinutes: number;
-  };
   remove: () => void;
 }) => {
   return (

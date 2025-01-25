@@ -8,21 +8,15 @@ import { forwardRef, ReactNode, useState } from "react";
 import Sidebar from "./sidebar";
 
 import {
-  ChartPieIcon,
-  DocumentDuplicateIcon,
-  FolderIcon,
-  HomeIcon,
-  XMarkIcon,
+  XMarkIcon
 } from "@heroicons/react/20/solid";
 import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { cn } from "../../cn";
-import logo from "../../static/logo.svg";
-import { CardHeader } from "./page-card";
-import { PageHeader } from "./page-layout";
+import { useAuth } from "wasp/client/auth";
 import { Link as WaspRouterLink } from "wasp/client/router";
+import { cn } from "../../cn";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
 import { LogoComponent } from "../logo";
-import { useAuth } from "wasp/client/auth";
+import { PageHeader } from "./page-layout";
 
 type SidebarLayoutProps = {
   children: ReactNode;

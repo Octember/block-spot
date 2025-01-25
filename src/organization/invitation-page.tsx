@@ -7,13 +7,6 @@ import { acceptInvitation, getInvitationDetails } from "wasp/client/operations";
 import { SignupForm, FormInput } from "wasp/client/auth";
 import { useQuery } from "wasp/client/operations";
 
-type InvitationDetails = {
-  organizationName: string;
-  inviterName: string;
-  role: string;
-  email: string;
-};
-
 export function InvitationPage() {
   const { token } = useParams();
   const { data: user, isLoading: isAuthLoading } = useAuth();

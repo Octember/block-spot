@@ -7,7 +7,6 @@ import { Link, routes } from "wasp/client/router";
 import { Space, Venue } from "wasp/entities";
 import { Button } from "../../client/components/button";
 import { BulkSpaceCreator } from "./spaces/bulk-create-spaces";
-import { AddSpaceButton, SpaceCard } from "./spaces/space-card";
 import { SpaceList } from "./spaces/space-list";
 
 export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({
