@@ -1,4 +1,4 @@
-import { createEvents } from 'ics';
+import { createEvents, EventAttributes } from 'ics';
 import { Reservation, Space } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import { ExportCalendar } from 'wasp/server/api';
@@ -40,7 +40,7 @@ export const exportCalendar: ExportCalendar<ExportCalendarPayload, string> = asy
   }
 
   // Convert reservations to ICS events
-  const events = venue.spaces.flatMap((space: Space & { reservations: Reservation[] }) =>
+  const events: EventAttributes[] = venue.spaces.flatMap((space: Space & { reservations: Reservation[] }) =>
     space.reservations.map((reservation: Reservation) => ({
       start: [
         reservation.startTime.getFullYear(),
