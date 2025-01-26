@@ -1,19 +1,17 @@
-import { useMemo } from "react";
-import { routes } from "wasp/client/router";
-import { useAuth } from "wasp/client/auth";
 import {
-  BuildingLibraryIcon,
   BuildingOfficeIcon,
   CalendarIcon,
   ClockIcon,
   Cog8ToothIcon,
+  LinkIcon,
   Squares2X2Icon,
-  UserGroupIcon,
-  UsersIcon,
+  UsersIcon
 } from "@heroicons/react/24/outline";
-import { Route } from "wasp/client";
+import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "wasp/client/auth";
 import { getAllVenues, useQuery } from "wasp/client/operations";
+import { routes } from "wasp/client/router";
 
 type NavigationItem = {
   name: string;
@@ -61,7 +59,6 @@ export function useAppNavigation(): NavigationItem[] {
         icon: UsersIcon,
         current: location.pathname === routes.TeamRoute.build({}),
       },
-
       {
         name: "Availability",
         route: firstVenue
@@ -74,6 +71,21 @@ export function useAppNavigation(): NavigationItem[] {
           ? location.pathname ===
             routes.VenuePageRouteChildren.build({
               params: { venueId: firstVenue.id, "*": "availability" },
+            })
+          : false,
+      },
+      {
+        name: "Integrations",
+        route: firstVenue
+          ? routes.VenuePageRouteChildren.build({
+              params: { venueId: firstVenue.id, "*": "integrations" },
+            })
+          : routes.AllVenuesPageRoute.build({}),
+        icon: LinkIcon,
+        current: firstVenue
+          ? location.pathname ===
+            routes.VenuePageRouteChildren.build({
+              params: { venueId: firstVenue.id, "*": "integrations" },
             })
           : false,
       },
@@ -101,7 +113,7 @@ export function useAppNavigation(): NavigationItem[] {
           ]
         : []),
     ],
-    [user, firstVenue],
+    [user, firstVenue, location.pathname],
   );
 
   return navItems;

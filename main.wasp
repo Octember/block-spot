@@ -206,6 +206,11 @@ action updateVenueAvailability {
   entities: [Venue, AvailabilityRule]
 }
 
+apiNamespace fooBar {
+  middlewareConfigFn: import { corsMiddleware } from "@src/server/middleware",
+  path: "/calendar"
+}
+
 api exportCalendar {
   fn: import { exportCalendar } from "@src/schedule/calendar/operations",
   entities: [Venue, Space, Reservation],
@@ -229,6 +234,12 @@ page AllVenuesPage {
 
 route VenuePageRoute { path: "/venues/:venueId", to: VenuePage }
 route VenuePageRouteChildren { path: "/venues/:venueId/*", to: VenuePage }
+
+route VenueIntegrationsRoute { path: "/venues/:venueId/integrations", to: VenueIntegrationsPage }
+page VenueIntegrationsPage {
+  authRequired: true,
+  component: import VenueIntegrationsPage from "@src/schedule/venue/venue-page/integrations-page"
+}
 
 page VenuePage {
   authRequired: true,

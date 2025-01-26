@@ -1,10 +1,10 @@
 import { Route, Routes, useParams } from "react-router-dom";
 import { getVenueById, useQuery } from "wasp/client/operations";
-import { Venue } from "wasp/entities";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { BulkSpaceCreator } from "../spaces/bulk-create-spaces";
 import { SpaceList } from "../spaces/space-list";
 import { HoursAndAvailabilityPage } from "./hours-and-availability";
+import { VenueIntegrationsPage } from "./integrations-page";
 import { UpdateVenuePage } from "./update-venue-page";
 
 export default function VenuePage() {
@@ -13,6 +13,7 @@ export default function VenuePage() {
       <Route path="/" element={<UpdateVenuePage />} />
       <Route path="/spaces" element={<SpacesPage />} />
       <Route path="/availability" element={<HoursAndAvailabilityPage />} />
+      <Route path="/integrations" element={<VenueIntegrationsPage />} />
     </Routes>
   );
 }
@@ -40,8 +41,4 @@ const SpacesPage = () => {
       </li>
     </SidebarLayout>
   );
-};
-
-const AvailabilityPage = ({ venue }: { venue: Venue }) => {
-  return <div>Availability</div>;
 };
