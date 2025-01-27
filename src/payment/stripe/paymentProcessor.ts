@@ -1,15 +1,15 @@
-import type { PaymentPlanEffect } from "../plans";
+import { requireNodeEnvVar } from "../../server/utils";
 import type {
   CreateCheckoutSessionArgs,
   FetchCustomerPortalUrlArgs,
   PaymentProcessor,
 } from "../paymentProcessor";
+import type { PaymentPlanEffect } from "../plans";
 import {
-  fetchStripeCustomer,
   createStripeCheckoutSession,
+  fetchStripeCustomer,
 } from "./checkoutUtils";
-import { requireNodeEnvVar } from "../../server/utils";
-import { stripeWebhook, stripeMiddlewareConfigFn } from "./webhook";
+import { stripeMiddlewareConfigFn, stripeWebhook } from "./webhook";
 
 export type StripeMode = "subscription" | "payment";
 
@@ -21,6 +21,8 @@ export const stripePaymentProcessor: PaymentProcessor = {
     paymentPlan,
     prismaUserDelegate,
   }: CreateCheckoutSessionArgs) => {
+
+    console.log("priceId",  paymentPlan.getPaymentProcessorPlanId())
     const customer = await fetchStripeCustomer(userEmail);
     const stripeSession = await createStripeCheckoutSession({
       userId,

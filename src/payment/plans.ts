@@ -7,9 +7,8 @@ export type SubscriptionStatus =
   | "deleted";
 
 export enum PaymentPlanId {
-  Hobby = "hobby",
-  Pro = "pro",
-  Credits10 = "credits10",
+  Community = "community",
+  Business = "business",
 }
 
 export interface PaymentPlan {
@@ -24,28 +23,23 @@ export type PaymentPlanEffect =
   | { kind: "credits"; amount: number };
 
 export const paymentPlans: Record<PaymentPlanId, PaymentPlan> = {
-  [PaymentPlanId.Hobby]: {
+  [PaymentPlanId.Community]: {
     getPaymentProcessorPlanId: () =>
-      requireNodeEnvVar("PAYMENTS_HOBBY_SUBSCRIPTION_PLAN_ID"),
+      requireNodeEnvVar("PAYMENTS_COMMUNITY_SUBSCRIPTION_PLAN_ID"),
     effect: { kind: "subscription" },
   },
-  [PaymentPlanId.Pro]: {
+  [PaymentPlanId.Business]: {
     getPaymentProcessorPlanId: () =>
-      requireNodeEnvVar("PAYMENTS_PRO_SUBSCRIPTION_PLAN_ID"),
+      requireNodeEnvVar("PAYMENTS_BUSINESS_SUBSCRIPTION_PLAN_ID"),
     effect: { kind: "subscription" },
   },
-  [PaymentPlanId.Credits10]: {
-    getPaymentProcessorPlanId: () =>
-      requireNodeEnvVar("PAYMENTS_CREDITS_10_PLAN_ID"),
-    effect: { kind: "credits", amount: 10 },
-  },
+  
 };
 
 export function prettyPaymentPlanName(planId: PaymentPlanId): string {
   const planToName: Record<PaymentPlanId, string> = {
-    [PaymentPlanId.Hobby]: "Hobby",
-    [PaymentPlanId.Pro]: "Pro",
-    [PaymentPlanId.Credits10]: "10 Credits",
+    [PaymentPlanId.Community]: "Community",
+    [PaymentPlanId.Business]: "Business",
   };
   return planToName[planId];
 }
