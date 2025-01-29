@@ -6,12 +6,12 @@ import {
   QueueListIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { Modal } from "../../../client/components/modal";
-import { Button } from "../../../client/components/button";
-import { TextInput } from "../../../client/components/form/text-input";
-import { Select } from "../../../client/components/form/select";
-import { FormField } from "../../../client/components/form/form-field";
 import { createSpaces } from "wasp/client/operations";
+import { Button } from "../../../client/components/button";
+import { FormField } from "../../../client/components/form/form-field";
+import { Select } from "../../../client/components/form/select";
+import { TextInput } from "../../../client/components/form/text-input";
+import { Modal } from "../../../client/components/modal";
 import { useToast } from "../../../client/toast";
 
 export const BulkSpaceCreator = ({ venueId }: { venueId: string }) => {
@@ -84,7 +84,7 @@ const BulkSpaceCreatorModal = ({
   };
 
   const generateSpaceNames = () => {
-    const items = [];
+    const items: string[] = [];
     for (let i = 1; i <= formData.quantity; i++) {
       items.push(`${formData.baseName} ${i}`);
     }

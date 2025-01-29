@@ -1,9 +1,9 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { createContext, useContext, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getVenueInfo } from "wasp/client/operations";
-import { useSelectedDate } from "./date-provider";
-import { useQuery } from "@tanstack/react-query";
 import { getUnavailabilityBlocks } from "./availability-utils";
+import { useSelectedDate } from "./date-provider";
 
 const useScheduleQuery = (venueId: string) => {
   const { selectedDate } = useSelectedDate();
@@ -33,7 +33,12 @@ export const ScheduleQueryContext = createContext<{
     endTimeMinutes: number;
   }[];
   refresh: () => void;
-}>({ venue: null, unavailabileBlocks: [], refresh: () => {} });
+}>(
+  {
+    // @ts-expect-error idk
+    venue: null,
+    unavailabileBlocks: [], refresh: () => { }
+  });
 
 export const ScheduleQueryProvider = ({
   children,
