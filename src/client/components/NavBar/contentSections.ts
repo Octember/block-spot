@@ -1,10 +1,10 @@
-import type { NavigationItem } from "../NavBar/NavBar";
 import { routes } from "wasp/client/router";
-import { BlogUrl, DocsUrl } from "../../../shared/common";
+import { BlogUrl } from "../../../shared/common";
+import type { NavigationItem } from "../NavBar/NavBar";
 
 export const appNavigationItems: NavigationItem[] = [
+  { name: "About", to: routes.AboutRoute.to },
   { name: "Your Space", to: routes.AllVenuesPageRoute.to },
   { name: "Pricing", to: routes.PricingPageRoute.to },
-  { name: "Documentation", to: DocsUrl },
   { name: "Blog", to: BlogUrl },
 ];
