@@ -1,15 +1,15 @@
-import { type MiddlewareConfigFn, HttpError } from "wasp/server";
-import { type PaymentsWebhook } from "wasp/server/api";
 import { type PrismaClient } from "@prisma/client";
 import express from "express";
 import { Stripe } from "stripe";
-import { stripe } from "./stripeClient";
-import { paymentPlans, PaymentPlanId, SubscriptionStatus } from "../plans";
-import { updateUserStripePaymentDetails } from "./paymentDetails";
+import { type MiddlewareConfigFn, HttpError } from "wasp/server";
+import { type PaymentsWebhook } from "wasp/server/api";
 import { emailSender } from "wasp/server/email";
-import { assertUnreachable } from "../../shared/utils";
-import { requireNodeEnvVar } from "../../server/utils";
 import { z } from "zod";
+import { requireNodeEnvVar } from "../../server/utils";
+import { assertUnreachable } from "../../shared/utils";
+import { PaymentPlanId, paymentPlans, SubscriptionStatus } from "../plans";
+import { updateUserStripePaymentDetails } from "./paymentDetails";
+import { stripe } from "./stripeClient";
 
 export const stripeWebhook: PaymentsWebhook = async (
   request,
@@ -24,7 +24,7 @@ export const stripeWebhook: PaymentsWebhook = async (
   let event: Stripe.Event;
   try {
     event = stripe.webhooks.constructEvent(request.body, sig, secret);
-  } catch (err) {
+  } catch (_err) {
     throw new HttpError(400, "Error Constructing Stripe Webhook Event");
   }
   const prismaUserDelegate = context.entities.User;
@@ -96,6 +96,8 @@ export async function handleCheckoutSessionCompleted(
       break;
     case "credits":
       numOfCreditsPurchased = plan.effect.amount;
+      break;
+    case "free":
       break;
     default:
       assertUnreachable(plan.effect);

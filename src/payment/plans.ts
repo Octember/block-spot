@@ -20,13 +20,14 @@ export interface PaymentPlan {
 
 export type PaymentPlanEffect =
   | { kind: "subscription" }
-  | { kind: "credits"; amount: number };
+  | { kind: "credits"; amount: number }
+  | { kind: "free" };
 
 export const paymentPlans: Record<PaymentPlanId, PaymentPlan> = {
   [PaymentPlanId.Community]: {
     getPaymentProcessorPlanId: () =>
       requireNodeEnvVar("PAYMENTS_COMMUNITY_SUBSCRIPTION_PLAN_ID"),
-    effect: { kind: "subscription" },
+    effect: { kind: "free" },
   },
   [PaymentPlanId.Business]: {
     getPaymentProcessorPlanId: () =>

@@ -1,5 +1,5 @@
-import type { StripeMode } from "./paymentProcessor";
 import Stripe from "stripe";
+import type { StripeMode } from "./paymentProcessor";
 import { stripe } from "./stripeClient";
 
 // WASP_WEB_CLIENT_URL will be set up by Wasp when deploying to production: https://wasp-lang.dev/docs/deploying

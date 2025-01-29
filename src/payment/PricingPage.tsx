@@ -35,7 +35,7 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
   },
   [PaymentPlanId.Business]: {
     name: prettyPaymentPlanName(PaymentPlanId.Business),
-    price: "$19.99",
+    price: "$25",
     description: "For growing businesses with multiple venues",
     features: [
       "Everything in the Community plan",
@@ -43,7 +43,6 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
       "Multiple venues & spaces",
       "Priority support",
       "Advanced availability rules",
-      "Staff management",
       "Analytics & reporting",
     ],
   },
@@ -105,7 +104,7 @@ const PricingPage = () => {
   };
 
   return (
-    <div className="py-10 lg:mt-10">
+    <div className="py-10 ">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div id="pricing" className="mx-auto max-w-4xl text-center">
           <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
