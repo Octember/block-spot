@@ -7,8 +7,8 @@ import "./Main.css";
 import NavBar from "./components/NavBar/NavBar";
 import { appNavigationItems } from "./components/NavBar/contentSections";
 import CookieConsentBanner from "./components/cookie-consent/Banner";
-import { ToastProvider } from "./toast";
 import { useOnboardingRedirect } from "./hooks/useOnboardingRedirect";
+import { ToastProvider } from "./toast";
 
 import LogRocket from "logrocket";
 
@@ -72,8 +72,7 @@ export default function App() {
       <div
         className="min-h-screen h-full dark:text-white "
         style={{
-          backgroundImage:
-            "url(https://fly.io/phx/ui/images/app-shapes-e20dd6e0903d3a31595108e6e1052a1e.webp?vsn=d)",
+          background: 'linear-gradient(53deg, rgba(172,217,236,0.5340730042016807) 19%, rgba(252,217,224,0.4668461134453782) 67%, rgba(47,76,115,0.2567620798319328) 93%)',
         }}
       >
         <ToastProvider>
