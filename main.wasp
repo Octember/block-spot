@@ -317,19 +317,24 @@ page CheckoutPage {
   component: import Checkout from "@src/payment/CheckoutPage"
 }
 
+query getUserOrganization {
+  fn: import { getUserOrganization } from "@src/organization/operations",
+  entities: [User, Organization, OrganizationUser]
+}
+
 query getCustomerPortalUrl {
   fn: import { getCustomerPortalUrl } from  "@src/payment/operations",
-  entities: [User]
+  entities: [User, Organization]
 }
 
 action generateCheckoutSession {
   fn: import { generateCheckoutSession } from "@src/payment/operations",
-  entities: [User]
+  entities: [User, Organization]
 }
 
 api paymentsWebhook {
   fn: import { paymentsWebhook } from "@src/payment/webhook",
-  entities: [User],
+  entities: [User, Organization],
   middlewareConfigFn: import { paymentsMiddlewareConfigFn } from "@src/payment/webhook",
   httpRoute: (POST, "/payments-webhook")
 }
@@ -461,11 +466,6 @@ job sendNewsletter {
   entities: [User]
 }
 //#endregion
-
-query getUserOrganization {
-  fn: import { getUserOrganization } from "@src/organization/operations.js",
-  entities: [Organization, OrganizationUser, User]
-}
 
 query listInvitations {
   fn: import { listInvitations } from "@src/organization/operations.js",

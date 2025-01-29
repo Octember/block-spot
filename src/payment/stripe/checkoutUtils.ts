@@ -5,20 +5,38 @@ import { stripe } from "./stripeClient";
 // WASP_WEB_CLIENT_URL will be set up by Wasp when deploying to production: https://wasp-lang.dev/docs/deploying
 const DOMAIN = process.env.WASP_WEB_CLIENT_URL || "http://localhost:3000";
 
-export async function fetchStripeCustomer(customerEmail: string) {
+export async function fetchStripeCustomer(organizationId: string, organizationEmail: string) {
   let customer: Stripe.Customer;
   try {
-    const stripeCustomers = await stripe.customers.list({
-      email: customerEmail,
+    // First try to find by metadata.organizationId
+    const existingCustomers = await stripe.customers.search({
+      query: `metadata['organizationId']:'${organizationId}'`,
+      limit: 1
     });
-    if (!stripeCustomers.data.length) {
-      console.log("creating customer");
-      customer = await stripe.customers.create({
-        email: customerEmail,
-      });
+
+    if (existingCustomers.data.length) {
+      console.log("using existing customer by organizationId");
+      customer = existingCustomers.data[0];
     } else {
-      console.log("using existing customer");
-      customer = stripeCustomers.data[0];
+      // Fallback to email search for legacy customers
+      const stripeCustomers = await stripe.customers.list({
+        email: organizationEmail,
+      });
+      
+      if (stripeCustomers.data.length) {
+        console.log("using existing customer by email");
+        customer = stripeCustomers.data[0];
+        // Update customer with organizationId metadata
+        customer = await stripe.customers.update(customer.id, {
+          metadata: { organizationId }
+        });
+      } else {
+        console.log("creating new customer");
+        customer = await stripe.customers.create({
+          email: organizationEmail,
+          metadata: { organizationId }
+        });
+      }
     }
     return customer;
   } catch (error) {
@@ -28,12 +46,12 @@ export async function fetchStripeCustomer(customerEmail: string) {
 }
 
 export async function createStripeCheckoutSession({
-  userId,
+  organizationId,
   priceId,
   customerId,
   mode,
 }: {
-  userId: string;
+  organizationId: string;
   priceId: string;
   customerId: string;
   mode: StripeMode;
@@ -54,6 +72,10 @@ export async function createStripeCheckoutSession({
         address: "auto",
       },
       customer: customerId,
+      subscription_data: {
+        trial_period_days: 30,
+        metadata: { organizationId }
+      },
     });
   } catch (error) {
     console.error(error);

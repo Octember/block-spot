@@ -1,30 +1,30 @@
+import { PrismaClient } from "@prisma/client";
 import type { SubscriptionStatus } from "../plans";
 import { PaymentPlanId } from "../plans";
-import { PrismaClient } from "@prisma/client";
 
-export const updateUserStripePaymentDetails = (
+export const updateOrganizationStripePaymentDetails = (
   {
-    userStripeId,
+    stripeCustomerId,
     subscriptionPlan,
     subscriptionStatus,
     datePaid,
     numOfCreditsPurchased,
   }: {
-    userStripeId: string;
+    stripeCustomerId: string;
     subscriptionPlan?: PaymentPlanId;
     subscriptionStatus?: SubscriptionStatus;
     numOfCreditsPurchased?: number;
     datePaid?: Date;
   },
-  userDelegate: PrismaClient["user"],
+  organizationDelegate: PrismaClient["organization"],
 ) => {
-  return userDelegate.update({
+  return organizationDelegate.update({
     where: {
-      paymentProcessorUserId: userStripeId,
+      stripeCustomerId,
     },
     data: {
-      paymentProcessorUserId: userStripeId,
-      subscriptionPlan,
+      stripeCustomerId,
+      subscriptionPlanId: subscriptionPlan,
       subscriptionStatus,
       datePaid,
       credits:

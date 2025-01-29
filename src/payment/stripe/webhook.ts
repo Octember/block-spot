@@ -8,7 +8,7 @@ import { z } from "zod";
 import { requireNodeEnvVar } from "../../server/utils";
 import { assertUnreachable } from "../../shared/utils";
 import { PaymentPlanId, paymentPlans, SubscriptionStatus } from "../plans";
-import { updateUserStripePaymentDetails } from "./paymentDetails";
+import { updateOrganizationStripePaymentDetails } from "./paymentDetails";
 import { stripe } from "./stripeClient";
 
 export const stripeWebhook: PaymentsWebhook = async (
@@ -27,29 +27,49 @@ export const stripeWebhook: PaymentsWebhook = async (
   } catch (_err) {
     throw new HttpError(400, "Error Constructing Stripe Webhook Event");
   }
-  const prismaUserDelegate = context.entities.User;
+
+  // Extract session/subscription data before the switch to avoid lexical declarations in case blocks
+  const session = event.type === "checkout.session.completed" 
+    ? event.data.object as Stripe.Checkout.Session 
+    : null;
+  const invoice = event.type === "invoice.paid" 
+    ? event.data.object as Stripe.Invoice 
+    : null;
+  const updatedSubscription = event.type === "customer.subscription.updated" 
+    ? event.data.object as Stripe.Subscription 
+    : null;
+  const deletedSubscription = event.type === "customer.subscription.deleted" 
+    ? event.data.object as Stripe.Subscription 
+    : null;
+
+  const prismaOrganizationDelegate = context.entities.Organization;
+
   switch (event.type) {
     case "checkout.session.completed":
-      const session = event.data.object as Stripe.Checkout.Session;
-      await handleCheckoutSessionCompleted(session, prismaUserDelegate);
+      if (session) {
+        await handleCheckoutSessionCompleted(session, prismaOrganizationDelegate);
+      }
       break;
     case "invoice.paid":
-      const invoice = event.data.object as Stripe.Invoice;
-      await handleInvoicePaid(invoice, prismaUserDelegate);
+      if (invoice) {
+        await handleInvoicePaid(invoice, prismaOrganizationDelegate);
+      }
       break;
     case "customer.subscription.updated":
-      const updatedSubscription = event.data.object as Stripe.Subscription;
-      await handleCustomerSubscriptionUpdated(
-        updatedSubscription,
-        prismaUserDelegate,
-      );
+      if (updatedSubscription) {
+        await handleCustomerSubscriptionUpdated(
+          updatedSubscription,
+          prismaOrganizationDelegate,
+        );
+      }
       break;
     case "customer.subscription.deleted":
-      const deletedSubscription = event.data.object as Stripe.Subscription;
-      await handleCustomerSubscriptionDeleted(
-        deletedSubscription,
-        prismaUserDelegate,
-      );
+      if (deletedSubscription) {
+        await handleCustomerSubscriptionDeleted(
+          deletedSubscription,
+          prismaOrganizationDelegate,
+        );
+      }
       break;
     default:
       // If you'd like to handle more events, you can add more cases above.
@@ -76,9 +96,9 @@ export const stripeMiddlewareConfigFn: MiddlewareConfigFn = (
 
 export async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
-  prismaUserDelegate: PrismaClient["user"],
+  prismaOrganizationDelegate: PrismaClient["organization"],
 ) {
-  const userStripeId = validateUserStripeIdOrThrow(session.customer);
+  const stripeCustomerId = validateStripeCustomerIdOrThrow(session.customer);
   const { line_items } = await stripe.checkout.sessions.retrieve(session.id, {
     expand: ["line_items"],
   });
@@ -103,34 +123,58 @@ export async function handleCheckoutSessionCompleted(
       assertUnreachable(plan.effect);
   }
 
-  return updateUserStripePaymentDetails(
+  const organization = await updateOrganizationStripePaymentDetails(
     {
-      userStripeId,
+      stripeCustomerId,
       subscriptionPlan,
       numOfCreditsPurchased,
       datePaid: new Date(),
     },
-    prismaUserDelegate,
+    prismaOrganizationDelegate,
   );
+
+  // Send email to organization owner
+  const owner = await prismaOrganizationDelegate
+    .findUnique({
+      where: { id: organization.id },
+      include: {
+        users: {
+          where: { role: 'OWNER' },
+          include: { user: true }
+        }
+      }
+    })
+    .then(org => org?.users[0]?.user);
+
+  if (owner?.email) {
+    await emailSender.send({
+      to: owner.email,
+      subject: "Payment Successful!",
+      text: `Thank you for your payment. Your organization's subscription has been updated.`,
+      html: `Thank you for your payment. Your organization's subscription has been updated.`,
+    });
+  }
+
+  return organization;
 }
 
 export async function handleInvoicePaid(
   invoice: Stripe.Invoice,
-  prismaUserDelegate: PrismaClient["user"],
+  prismaOrganizationDelegate: PrismaClient["organization"],
 ) {
-  const userStripeId = validateUserStripeIdOrThrow(invoice.customer);
+  const stripeCustomerId = validateStripeCustomerIdOrThrow(invoice.customer);
   const datePaid = new Date(invoice.period_start * 1000);
-  return updateUserStripePaymentDetails(
-    { userStripeId, datePaid },
-    prismaUserDelegate,
+  return updateOrganizationStripePaymentDetails(
+    { stripeCustomerId, datePaid },
+    prismaOrganizationDelegate,
   );
 }
 
 export async function handleCustomerSubscriptionUpdated(
   subscription: Stripe.Subscription,
-  prismaUserDelegate: PrismaClient["user"],
+  prismaOrganizationDelegate: PrismaClient["organization"],
 ) {
-  const userStripeId = validateUserStripeIdOrThrow(subscription.customer);
+  const stripeCustomerId = validateStripeCustomerIdOrThrow(subscription.customer);
   let subscriptionStatus: SubscriptionStatus | undefined;
 
   const priceId = extractPriceId(subscription.items);
@@ -146,42 +190,56 @@ export async function handleCustomerSubscriptionUpdated(
     subscriptionStatus = "past_due";
   }
   if (subscriptionStatus) {
-    const user = await updateUserStripePaymentDetails(
-      { userStripeId, subscriptionPlan, subscriptionStatus },
-      prismaUserDelegate,
+    const organization = await updateOrganizationStripePaymentDetails(
+      { stripeCustomerId, subscriptionPlan, subscriptionStatus },
+      prismaOrganizationDelegate,
     );
+
     if (subscription.cancel_at_period_end) {
-      if (user.email) {
+      // Send email to organization owner
+      const owner = await prismaOrganizationDelegate
+        .findUnique({
+          where: { id: organization.id },
+          include: {
+            users: {
+              where: { role: 'OWNER' },
+              include: { user: true }
+            }
+          }
+        })
+        .then(org => org?.users[0]?.user);
+
+      if (owner?.email) {
         await emailSender.send({
-          to: user.email,
+          to: owner.email,
           subject: "We hate to see you go :(",
           text: "We hate to see you go. Here is a sweet offer...",
           html: "We hate to see you go. Here is a sweet offer...",
         });
       }
     }
-    return user;
+    return organization;
   }
 }
 
 export async function handleCustomerSubscriptionDeleted(
   subscription: Stripe.Subscription,
-  prismaUserDelegate: PrismaClient["user"],
+  prismaOrganizationDelegate: PrismaClient["organization"],
 ) {
-  const userStripeId = validateUserStripeIdOrThrow(subscription.customer);
-  return updateUserStripePaymentDetails(
-    { userStripeId, subscriptionStatus: "deleted" },
-    prismaUserDelegate,
+  const stripeCustomerId = validateStripeCustomerIdOrThrow(subscription.customer);
+  return updateOrganizationStripePaymentDetails(
+    { stripeCustomerId, subscriptionStatus: "deleted" },
+    prismaOrganizationDelegate,
   );
 }
 
-function validateUserStripeIdOrThrow(
-  userStripeId: Stripe.Checkout.Session["customer"],
+function validateStripeCustomerIdOrThrow(
+  stripeCustomerId: Stripe.Checkout.Session["customer"],
 ): string {
-  if (!userStripeId) throw new HttpError(400, "No customer id");
-  if (typeof userStripeId !== "string")
+  if (!stripeCustomerId) throw new HttpError(400, "No customer id");
+  if (typeof stripeCustomerId !== "string")
     throw new HttpError(400, "Customer id is not a string");
-  return userStripeId;
+  return stripeCustomerId;
 }
 
 const LineItemsPriceSchema = z.object({

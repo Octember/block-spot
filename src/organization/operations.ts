@@ -1,3 +1,5 @@
+import { addDays } from "date-fns";
+import { v4 as uuidv4 } from "uuid";
 import {
   Invitation,
   OnboardingState,
@@ -6,8 +8,7 @@ import {
   User,
 } from "wasp/entities";
 import { HttpError } from "wasp/server";
-import { v4 as uuidv4 } from "uuid";
-import { addDays } from "date-fns";
+import { type GetUserOrganization } from "wasp/server/operations";
 import { sendInvitationEmail } from "./email";
 
 type CreateInvitationInput = {
@@ -39,8 +40,8 @@ type GetUserOrganizationResponse = Organization & {
   users: (OrganizationUser & {
     user: User;
   })[];
-  onboardingState: OnboardingState;
-};
+  onboardingState: OnboardingState | null;
+ } | null;
 
 type GetInvitationDetailsInput = {
   token: string;
@@ -62,31 +63,37 @@ type UpdateOnboardingStateInput = {
   };
 };
 
-export const getUserOrganization = async (
-  _args: void,
-  context: any,
-): Promise<GetUserOrganizationResponse> => {
+export const getUserOrganization: GetUserOrganization<void, GetUserOrganizationResponse> = async (
+  _args,
+  context
+) => {
   if (!context.user) {
-    throw new HttpError(401, "Not authorized");
+    throw new HttpError(401);
   }
 
-  return context.entities.Organization.findFirst({
+  const organization = await context.entities.Organization.findFirst({
     where: {
       users: {
         some: {
-          userId: context.user.id,
-        },
-      },
+          userId: context.user.id
+        }
+      }
     },
     include: {
       users: {
         include: {
-          user: true,
-        },
+          user: true
+        }
       },
-      onboardingState: true,
-    },
+      onboardingState: true
+    }
   });
+
+  if (!organization) {
+    return null;
+  }
+
+  return organization;
 };
 
 export const createInvitation = async (

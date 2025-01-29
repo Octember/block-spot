@@ -16,35 +16,46 @@ export type StripeMode = "subscription" | "payment";
 export const stripePaymentProcessor: PaymentProcessor = {
   id: "stripe",
   createCheckoutSession: async ({
-    userId,
-    userEmail,
+    organizationId,
+    organizationEmail,
     paymentPlan,
-    prismaUserDelegate,
+    prismaOrganizationDelegate,
   }: CreateCheckoutSessionArgs) => {
+    try {
+      const priceId = paymentPlan.getPaymentProcessorPlanId();
+      if (!priceId) {
+        throw new Error("Invalid payment plan ID");
+      }
 
-    console.log("priceId",  paymentPlan.getPaymentProcessorPlanId())
-    const customer = await fetchStripeCustomer(userEmail);
-    const stripeSession = await createStripeCheckoutSession({
-      userId,
-      priceId: paymentPlan.getPaymentProcessorPlanId(),
-      customerId: customer.id,
-      mode: paymentPlanEffectToStripeMode(paymentPlan.effect),
-    });
-    await prismaUserDelegate.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        paymentProcessorUserId: customer.id,
-      },
-    });
-    if (!stripeSession.url)
-      throw new Error("Error creating Stripe Checkout Session");
-    const session = {
-      url: stripeSession.url,
-      id: stripeSession.id,
-    };
-    return { session };
+      console.log("Creating checkout session with price ID:", priceId);
+      const customer = await fetchStripeCustomer(organizationId, organizationEmail);
+      const stripeSession = await createStripeCheckoutSession({
+        organizationId,
+        priceId,
+        customerId: customer.id,
+        mode: paymentPlanEffectToStripeMode(paymentPlan.effect),
+      });
+
+      await prismaOrganizationDelegate.update({
+        where: {
+          id: organizationId,
+        },
+        data: {
+          stripeCustomerId: customer.id,
+        },
+      });
+
+      if (!stripeSession.url)
+        throw new Error("Error creating Stripe Checkout Session");
+      const session = {
+        url: stripeSession.url,
+        id: stripeSession.id,
+      };
+      return { session };
+    } catch (error) {
+      console.error("Error in createCheckoutSession:", error);
+      throw error;
+    }
   },
   fetchCustomerPortalUrl: async (_args: FetchCustomerPortalUrlArgs) =>
     requireNodeEnvVar("STRIPE_CUSTOMER_PORTAL_URL"),

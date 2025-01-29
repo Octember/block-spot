@@ -8,7 +8,8 @@ import {
   useQuery,
 } from "wasp/client/operations";
 import { cn } from "../client/cn";
-import { PaymentPlanId, paymentPlans, prettyPaymentPlanName } from "./plans";
+import { useOrganization } from "../organization/hooks/use-organization";
+import { PaymentPlanId, prettyPaymentPlanName } from "./plans";
 
 const bestDealPaymentPlanId: PaymentPlanId = PaymentPlanId.Business;
 
@@ -22,8 +23,8 @@ interface PaymentPlanCard {
 export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
   [PaymentPlanId.Community]: {
     name: prettyPaymentPlanName(PaymentPlanId.Community),
-    price: "Free Forever",
-    description: "Perfect for small businesses just getting started",
+    price: "$5",
+    description: "Perfect for small businesses and community centers",
     features: [
       "Unlimited bookings per month",
       "Drag-and-drop calendar",
@@ -52,28 +53,45 @@ const PricingPage = () => {
   const [isPaymentLoading, setIsPaymentLoading] = useState<boolean>(false);
 
   const { data: user } = useAuth();
-  const isUserSubscribed =
-    !!user &&
-    !!user.subscriptionStatus &&
-    user.subscriptionStatus !== "deleted";
+  const { organization } = useOrganization();
+
+  const isOrganizationSubscribed =
+    !!organization &&
+    !!organization.subscriptionStatus &&
+    organization.subscriptionStatus !== "deleted";
 
   const {
     data: customerPortalUrl,
     isLoading: isCustomerPortalUrlLoading,
     error: customerPortalUrlError,
-  } = useQuery(getCustomerPortalUrl, { enabled: isUserSubscribed });
+  } = useQuery(
+    getCustomerPortalUrl,
+    { organizationId: organization?.id ?? "" },
+    {
+      enabled: isOrganizationSubscribed && !!organization?.id,
+    }
+  );
 
   const navigate = useNavigate();
 
-  async function handleBuyNowClick(paymentPlanId: PaymentPlanId) {
+  async function handleBuyNowClick(planId: PaymentPlanId) {
     if (!user) {
       navigate("/login");
       return;
     }
+
+    if (!organization) {
+      navigate("/organization/new");
+      return;
+    }
+
     try {
       setIsPaymentLoading(true);
 
-      const checkoutResults = await generateCheckoutSession(paymentPlanId);
+      const checkoutResults = await generateCheckoutSession({
+        organizationId: organization.id,
+        planId,
+      });
 
       if (checkoutResults?.sessionUrl) {
         window.open(checkoutResults.sessionUrl, "_self");
@@ -82,7 +100,7 @@ const PricingPage = () => {
       }
     } catch (error) {
       console.error(error);
-      setIsPaymentLoading(false); // We only set this to false here and not in the try block because we redirect to the checkout url within the same window
+      setIsPaymentLoading(false);
     }
   }
 
@@ -92,141 +110,114 @@ const PricingPage = () => {
       return;
     }
 
+    if (!organization) {
+      throw new Error("Organization not found");
+    }
+
     if (customerPortalUrlError) {
       console.error("Error fetching customer portal url");
     }
 
     if (!customerPortalUrl) {
-      throw new Error(`Customer Portal does not exist for user ${user.id}`);
+      throw new Error(`Customer Portal does not exist for organization ${organization.id}`);
     }
 
     window.open(customerPortalUrl, "_blank");
   };
 
   return (
-    <div className="py-10 ">
+    <div className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div id="pricing" className="mx-auto max-w-4xl text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
-            Pick your <span className="text-sky-500">pricing</span>
-          </h2>
+        <div className="mx-auto max-w-4xl text-center">
+          <h1 className="text-base font-semibold leading-7 text-indigo-600">
+            Pricing
+          </h1>
+          <p className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
+            Pricing plans for teams of&nbsp;all&nbsp;sizes
+          </p>
         </div>
-
-        <p className="mt-6 mx-auto max-w-2xl text-lg leading-8 text-gray-600 dark:text-white prose hidden md:block">
-          We pride ourselves on offering a truly accessible free plan, perfect for
-          small businesses, community centers, and nonprofits just getting started.
-          For growing organizations, our feature-packed paid plan is just $25/month—delivering powerful tools at a fraction of what other platforms charge.
+        <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-8 text-gray-600">
+          Choose the plan that best fits your needs. All plans include a 30-day
+          free trial.
         </p>
-
-        <div className="isolate mx-auto mt-8 grid max-w-md grid-cols-1 gap-y-8 md:gap-x-8  md:mx-0 md:max-w-none md:grid-cols-2">
-          {Object.values(PaymentPlanId).map((planId) => (
+        <div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:gap-x-8 xl:gap-x-12">
+          {Object.entries(paymentPlanCards).map(([planId, card]) => (
             <div
               key={planId}
               className={cn(
-                "relative flex flex-col grow justify-between rounded-3xl ring-gray-900/10 dark:ring-gray-100/10 overflow-hidden p-8 xl:p-10",
-                {
-                  "ring-2": planId === bestDealPaymentPlanId,
-                  "ring-1": planId !== bestDealPaymentPlanId,
-                },
+                "ring-2 ring-indigo-600",
+                "rounded-3xl p-8 xl:p-10",
               )}
             >
-              {planId === bestDealPaymentPlanId && (
-                <div
-                  className="absolute top-0 right-0 -z-10 w-full h-full transform-gpu blur-3xl"
-                  aria-hidden="true"
+              <div className="flex items-center justify-between gap-x-4">
+                <h2
+                  id={`${card.name}-heading`}
+                  className="text-lg font-semibold leading-8 text-gray-900"
                 >
-                  <div
-                    className="absolute w-full h-full bg-gradient-to-br from-violet-400 to-sky-500 opacity-30 dark:opacity-50"
-                    style={{
-                      clipPath: "circle(670% at 50% 50%)",
-                    }}
-                  />
-                </div>
-              )}
-              <div className="mb-8">
-                <div className="flex items-center justify-between gap-x-4">
-                  <h3
-                    id={planId}
-                    className="text-gray-900 text-lg font-semibold leading-8 dark:text-white"
-                  >
-                    {paymentPlanCards[planId].name}
-                  </h3>
-                </div>
-                <p className="mt-4 text-sm leading-6 text-gray-600 dark:text-white">
-                  {paymentPlanCards[planId].description}
-                </p>
-                <p className="mt-6 flex items-baseline gap-x-1 dark:text-white">
-                  <span className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-                    {paymentPlanCards[planId].price}
-                  </span>
-                  <span className="text-sm font-semibold leading-6 text-gray-600 dark:text-white">
-                    {paymentPlans[planId].effect.kind === "subscription" &&
-                      "/month"}
-                  </span>
-                </p>
-                <ul
-                  role="list"
-                  className="mt-8 space-y-3 text-sm leading-6 text-gray-600 dark:text-white"
-                >
-                  {paymentPlanCards[planId].features.map((feature) => (
-                    <li key={feature} className="flex gap-x-3">
-                      <AiFillCheckCircle
-                        className="h-6 w-5 flex-none text-green-500"
-                        aria-hidden="true"
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
+                  {card.name}
+                </h2>
+                {planId === bestDealPaymentPlanId && (
+                  <p className="rounded-full bg-indigo-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-indigo-600">
+                    Most popular
+                  </p>
+                )}
               </div>
-              {isUserSubscribed ? (
+              <p className="mt-4 text-sm leading-6 text-gray-600">
+                {card.description}
+              </p>
+              <p className="mt-6 flex items-baseline gap-x-1">
+                <span className="text-4xl font-bold tracking-tight text-gray-900">
+                  {card.price}
+                </span>
+                <span className="text-sm font-semibold leading-6 text-gray-600">
+                  /month
+                </span>
+              </p>
+              {isOrganizationSubscribed ? (
                 <button
                   onClick={handleCustomerPortalClick}
                   disabled={isCustomerPortalUrlLoading}
-                  aria-describedby="manage-subscription"
+                  aria-label="Manage subscription"
                   className={cn(
-                    "mt-8 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400",
-                    {
-                      "bg-sky-500 text-white hover:text-white shadow-sm hover:bg-sky-400":
-                        planId === bestDealPaymentPlanId,
-                      "text-gray-600 ring-1 ring-inset ring-gray-200 hover:ring-gray-400":
-                        planId !== bestDealPaymentPlanId,
-                    },
+                    "mt-6 block w-full rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+                    planId === bestDealPaymentPlanId
+                      ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-indigo-600"
+                      : "bg-white text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
                   )}
                 >
-                  Manage Subscription
+                  {isCustomerPortalUrlLoading
+                    ? "Loading..."
+                    : "Manage Subscription"}
                 </button>
               ) : (
                 <button
-                  onClick={() => handleBuyNowClick(planId)}
-                  aria-describedby={planId}
-                  className={cn(
-                    {
-                      "bg-sky-500 text-white hover:text-white shadow-sm hover:bg-sky-400":
-                        planId === bestDealPaymentPlanId,
-                      "text-gray-600  ring-1 ring-inset ring-gray-200 hover:ring-gray-400 bg-white hover:bg-gray-50":
-                        planId !== bestDealPaymentPlanId,
-                    },
-                    {
-                      "opacity-50 cursor-wait": isPaymentLoading,
-                    },
-                    "mt-8 block rounded-md py-2 px-3 text-center text-sm dark:text-white font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400",
-                  )}
+                  onClick={() => handleBuyNowClick(planId as PaymentPlanId)}
                   disabled={isPaymentLoading}
+                  aria-label={`Buy ${card.name} plan`}
+                  className={cn(
+                    "mt-6 block w-full rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+                    planId === bestDealPaymentPlanId
+                      ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-indigo-600"
+                      : "bg-white text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
+                  )}
                 >
-                  {user ?
-                    (planId === PaymentPlanId.Community ?
-                      "Get started for free"
-                      :
-                      "Buy plan")
-                    :
-                    (planId === PaymentPlanId.Community ?
-                      "Log in to get started"
-                      :
-                      "Log in to buy plan")
-                  }
+                  {isPaymentLoading ? "Loading..." : "Buy plan"}
                 </button>
               )}
+              <ul
+                role="list"
+                className="mt-8 space-y-3 text-sm leading-6 text-gray-600"
+              >
+                {card.features.map((feature) => (
+                  <li key={feature} className="flex gap-x-3">
+                    <AiFillCheckCircle
+                      className="h-6 w-5 flex-none text-indigo-600"
+                      aria-hidden="true"
+                    />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>

@@ -27,7 +27,7 @@ export const paymentPlans: Record<PaymentPlanId, PaymentPlan> = {
   [PaymentPlanId.Community]: {
     getPaymentProcessorPlanId: () =>
       requireNodeEnvVar("PAYMENTS_COMMUNITY_SUBSCRIPTION_PLAN_ID"),
-    effect: { kind: "free" },
+    effect: { kind: "subscription" },
   },
   [PaymentPlanId.Business]: {
     getPaymentProcessorPlanId: () =>

@@ -1,38 +1,59 @@
+import { HttpError } from "wasp/server";
 import type {
   GenerateCheckoutSession,
   GetCustomerPortalUrl,
 } from "wasp/server/operations";
 import { PaymentPlanId, paymentPlans } from "../payment/plans";
 import { paymentProcessor } from "./paymentProcessor";
-import { HttpError } from "wasp/server";
 
 export type CheckoutSession = {
   sessionUrl: string | null;
   sessionId: string;
 };
 
+type GenerateCheckoutSessionArgs = {
+  organizationId: string;
+  planId: PaymentPlanId;
+};
+
 export const generateCheckoutSession: GenerateCheckoutSession<
-  PaymentPlanId,
+  GenerateCheckoutSessionArgs,
   CheckoutSession
-> = async (paymentPlanId, context) => {
+> = async ({ organizationId, planId }, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }
-  const userId = context.user.id;
-  const userEmail = context.user.email;
-  if (!userEmail) {
-    throw new HttpError(
-      403,
-      "User needs an email to make a payment. If using the usernameAndPassword Auth method, switch to an Auth method that provides an email.",
-    );
+
+  const organization = await context.entities.Organization.findFirst({
+    where: {
+      id: organizationId,
+      users: {
+        some: {
+          userId: context.user.id,
+          role: "OWNER"
+        }
+      }
+    }
+  });
+
+  if (!organization) {
+    throw new HttpError(403, "You must be an organization owner to make payments");
   }
 
-  const paymentPlan = paymentPlans[paymentPlanId];
+  if (!context.user.email) {
+    throw new HttpError(403, "User needs an email to make a payment");
+  }
+
+  const paymentPlan = paymentPlans[planId];
+  if (!paymentPlan) {
+    throw new HttpError(400, "Invalid payment plan");
+  }
+
   const { session } = await paymentProcessor.createCheckoutSession({
-    userId,
-    userEmail,
+    organizationId,
+    organizationEmail: context.user.email,
     paymentPlan,
-    prismaUserDelegate: context.entities.User,
+    prismaOrganizationDelegate: context.entities.Organization,
   });
 
   return {
@@ -41,15 +62,36 @@ export const generateCheckoutSession: GenerateCheckoutSession<
   };
 };
 
+type GetCustomerPortalUrlArgs = {
+  organizationId: string;
+};
+
 export const getCustomerPortalUrl: GetCustomerPortalUrl<
-  void,
+  GetCustomerPortalUrlArgs,
   string | null
-> = async (_args, context) => {
+> = async ({ organizationId }, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }
+
+  const organization = await context.entities.Organization.findFirst({
+    where: {
+      id: organizationId,
+      users: {
+        some: {
+          userId: context.user.id,
+          role: "OWNER"
+        }
+      }
+    }
+  });
+
+  if (!organization) {
+    throw new HttpError(403, "You must be an organization owner to access billing portal");
+  }
+
   return paymentProcessor.fetchCustomerPortalUrl({
-    userId: context.user.id,
-    prismaUserDelegate: context.entities.User,
+    organizationId,
+    prismaOrganizationDelegate: context.entities.Organization,
   });
 };

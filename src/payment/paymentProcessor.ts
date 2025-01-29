@@ -1,19 +1,19 @@
-import type { PaymentPlan } from "./plans";
-import type { PaymentsWebhook } from "wasp/server/api";
-import type { MiddlewareConfigFn } from "wasp/server";
 import { PrismaClient } from "@prisma/client";
+import type { MiddlewareConfigFn } from "wasp/server";
+import type { PaymentsWebhook } from "wasp/server/api";
+import type { PaymentPlan } from "./plans";
 import { stripePaymentProcessor } from "./stripe/paymentProcessor";
-import { lemonSqueezyPaymentProcessor } from "./lemonSqueezy/paymentProcessor";
 
 export interface CreateCheckoutSessionArgs {
-  userId: string;
-  userEmail: string;
+  organizationId: string;
+  organizationEmail: string;
   paymentPlan: PaymentPlan;
-  prismaUserDelegate: PrismaClient["user"];
+  prismaOrganizationDelegate: PrismaClient["organization"];
 }
+
 export interface FetchCustomerPortalUrlArgs {
-  userId: string;
-  prismaUserDelegate: PrismaClient["user"];
+  organizationId: string;
+  prismaOrganizationDelegate: PrismaClient["organization"];
 }
 
 export interface PaymentProcessor {
