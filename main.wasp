@@ -116,6 +116,11 @@ page TermsOfServicePage {
   component: import TermsOfService from "@src/client/components/TermsOfService"
 }
 
+route AboutRoute { path: "/about", to: AboutPage }
+page AboutPage {
+  component: import About from "@src/client/components/About"
+}
+
 //#region Auth Pages
 route LoginRoute { path: "/login", to: LoginPage }
 page LoginPage {

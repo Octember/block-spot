@@ -96,7 +96,7 @@ export const footerNavigation = {
     { name: "Blog", href: BlogUrl },
   ],
   company: [
-    { name: "About", href: "https://wasp-lang.dev" },
+    { name: "About", href: routes.AboutRoute.to },
     { name: "Privacy", href: routes.PrivacyPolicyRoute.to },
     { name: "Terms of Service", href: routes.TermsOfServiceRoute.to },
   ],
