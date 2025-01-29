@@ -1,11 +1,11 @@
+import { format, isValid, parseISO, startOfToday } from "date-fns";
 import { createContext, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
-import { parseISO, isValid, startOfToday, format } from "date-fns";
 
 const DateContext = createContext<{
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
-}>({ selectedDate: startOfToday(), setSelectedDate: () => {} });
+}>({ selectedDate: startOfToday(), setSelectedDate: () => { } });
 
 function getDateOrDefault(date: string | null) {
   if (!date) {

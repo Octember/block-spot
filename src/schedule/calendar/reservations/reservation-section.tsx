@@ -5,6 +5,7 @@ import { deleteReservation, updateReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { useToast } from "../../../client/toast";
 import { useTimeLabels } from "../constants";
+import { useSelectedDate } from "../providers/date-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { GridSelection } from "../selection";
 import { getSharedGridStyle, MinutesPerSlot, PixelsPerSlot } from "./constants";
@@ -17,9 +18,15 @@ export const ReservationsSection = () => {
   const { venue } = useScheduleContext();
   const { refresh } = useScheduleContext();
   const timeLabels = useTimeLabels();
+
   const [draftReservation, setDraftReservation] = useState<Reservation | null>(
     null,
   );
+  const { selectedDate } = useSelectedDate();
+  useEffect(() => {
+    setDraftReservation(null);
+  }, [selectedDate]);
+
   const [draggingReservationId, setDraggingReservationId] = useState<
     string | null
   >(null);
