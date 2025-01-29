@@ -8,12 +8,10 @@ export const updateOrganizationStripePaymentDetails = (
     subscriptionPlan,
     subscriptionStatus,
     datePaid,
-    numOfCreditsPurchased,
   }: {
     stripeCustomerId: string;
     subscriptionPlan?: PaymentPlanId;
     subscriptionStatus?: SubscriptionStatus;
-    numOfCreditsPurchased?: number;
     datePaid?: Date;
   },
   organizationDelegate: PrismaClient["organization"],
@@ -27,10 +25,6 @@ export const updateOrganizationStripePaymentDetails = (
       subscriptionPlanId: subscriptionPlan,
       subscriptionStatus,
       datePaid,
-      credits:
-        numOfCreditsPurchased !== undefined
-          ? { increment: numOfCreditsPurchased }
-          : undefined,
     },
   });
 };

@@ -109,13 +109,11 @@ export async function handleCheckoutSessionCompleted(
   const plan = paymentPlans[planId];
 
   let subscriptionPlan: PaymentPlanId | undefined;
-  let numOfCreditsPurchased: number | undefined;
   switch (plan.effect.kind) {
     case "subscription":
       subscriptionPlan = planId;
       break;
     case "credits":
-      numOfCreditsPurchased = plan.effect.amount;
       break;
     case "free":
       break;
@@ -127,7 +125,6 @@ export async function handleCheckoutSessionCompleted(
     {
       stripeCustomerId,
       subscriptionPlan,
-      numOfCreditsPurchased,
       datePaid: new Date(),
     },
     prismaOrganizationDelegate,
