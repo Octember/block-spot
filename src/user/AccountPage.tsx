@@ -1,3 +1,4 @@
+import { Cog8ToothIcon } from "@heroicons/react/24/outline";
 import { logout, useAuth } from "wasp/client/auth";
 import {
   getCustomerPortalUrl,
@@ -5,18 +6,19 @@ import {
   useQuery,
 } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
+import { Button } from "../client/components/button";
 import { SidebarLayout } from "../client/components/layouts/sidebar-layout";
 import {
   type SubscriptionStatus,
   parsePaymentPlanId,
   prettyPaymentPlanName,
 } from "../payment/plans";
-import { Button } from "../client/components/button";
-import { Cog8ToothIcon } from "@heroicons/react/24/outline";
 
 export default function AccountPage() {
   const { data: user } = useAuth();
   const { data: organization, isLoading } = useQuery(getUserOrganization);
+
+  console.log({ organization });
 
   if (!organization) return <div>No organization found.</div>;
 
@@ -88,11 +90,10 @@ export default function AccountPage() {
                 </dt>
                 <UserCurrentPaymentPlan
                   subscriptionStatus={
-                    user.subscriptionStatus as SubscriptionStatus
+                    organization.subscriptionStatus as SubscriptionStatus
                   }
-                  subscriptionPlan={user.subscriptionPlan}
-                  datePaid={user.datePaid}
-                  credits={user.credits}
+                  subscriptionPlan={organization.subscriptionPlanId}
+                  datePaid={organization.datePaid}
                 />
               </div>
             </dl>
@@ -127,15 +128,15 @@ type UserCurrentPaymentPlanProps = {
   subscriptionPlan: string | null;
   subscriptionStatus: SubscriptionStatus | null;
   datePaid: Date | null;
-  credits: number;
 };
 
 function UserCurrentPaymentPlan({
   subscriptionPlan,
   subscriptionStatus,
   datePaid,
-  credits,
 }: UserCurrentPaymentPlanProps) {
+
+  console.log({ subscriptionStatus, subscriptionPlan, datePaid });
   if (subscriptionStatus && subscriptionPlan && datePaid) {
     return (
       <>
@@ -146,20 +147,16 @@ function UserCurrentPaymentPlan({
             datePaid,
           })}
         </dd>
-        {subscriptionStatus !== "deleted" ? (
-          <CustomerPortalButton />
-        ) : (
-          <BuyMoreButton />
-        )}
+        <CustomerPortalButton />
       </>
     );
   }
 
   return (
     <>
-      <dd className="mt-1 text-sm text-gray-900 dark:text-gray-400 sm:col-span-1 sm:mt-0">
+      {/* <dd className="mt-1 text-sm text-gray-900 dark:text-gray-400 sm:col-span-1 sm:mt-0">
         Credits remaining: {credits}
-      </dd>
+      </dd> */}
       <BuyMoreButton />
     </>
   );

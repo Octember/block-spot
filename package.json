@@ -13,7 +13,6 @@
     "@google-analytics/data": "4.1.0",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
-    "@lemonsqueezy/lemonsqueezy.js": "^3.2.0",
     "@sentry/node": "^8.50.0",
     "@sentry/profiling-node": "^8.50.0",
     "@sentry/react": "^8.50.0",

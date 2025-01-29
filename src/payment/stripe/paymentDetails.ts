@@ -16,6 +16,13 @@ export const updateOrganizationStripePaymentDetails = (
   },
   organizationDelegate: PrismaClient["organization"],
 ) => {
+  console.log("updateOrganizationStripePaymentDetails", {
+    stripeCustomerId,
+    subscriptionPlan,
+    subscriptionStatus,
+    datePaid,
+  });
+  
   return organizationDelegate.update({
     where: {
       stripeCustomerId,

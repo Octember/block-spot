@@ -42,6 +42,9 @@ export const stripeWebhook: PaymentsWebhook = async (
     ? event.data.object as Stripe.Subscription 
     : null;
 
+
+  console.log("STRIPE WEBHOOK", { event });
+
   const prismaOrganizationDelegate = context.entities.Organization;
 
   switch (event.type) {
@@ -98,6 +101,7 @@ export async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
   prismaOrganizationDelegate: PrismaClient["organization"],
 ) {
+
   const stripeCustomerId = validateStripeCustomerIdOrThrow(session.customer);
   const { line_items } = await stripe.checkout.sessions.retrieve(session.id, {
     expand: ["line_items"],
@@ -115,16 +119,18 @@ export async function handleCheckoutSessionCompleted(
       break;
     case "credits":
       break;
-    case "free":
-      break;
     default:
       assertUnreachable(plan.effect);
   }
+
+  console.log("handleCheckoutSessionCompleted", { session, plan });
+
 
   const organization = await updateOrganizationStripePaymentDetails(
     {
       stripeCustomerId,
       subscriptionPlan,
+      subscriptionStatus: "active",
       datePaid: new Date(),
     },
     prismaOrganizationDelegate,

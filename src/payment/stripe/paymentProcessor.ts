@@ -67,7 +67,6 @@ function paymentPlanEffectToStripeMode(
   planEffect: PaymentPlanEffect,
 ): StripeMode {
   const effectToMode: Record<PaymentPlanEffect["kind"], StripeMode> = {
-    free: "subscription",
     subscription: "subscription",
     credits: "payment",
   };

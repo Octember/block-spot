@@ -1,6 +1,6 @@
-import { type User } from "wasp/entities";
 import { faker } from "@faker-js/faker";
 import type { PrismaClient } from "@prisma/client";
+import { type User } from "wasp/entities";
 import {
   getSubscriptionPaymentPlanIds,
   type SubscriptionStatus,
@@ -50,7 +50,6 @@ function generateMockUserData(): MockUserData {
     sendNewsletter: false,
     credits,
     subscriptionStatus,
-    lemonSqueezyCustomerPortalUrl: null,
     paymentProcessorUserId: hasUserPaidOnStripe
       ? `cus_test_${faker.string.uuid()}`
       : null,

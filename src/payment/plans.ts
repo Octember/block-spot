@@ -21,7 +21,6 @@ export interface PaymentPlan {
 export type PaymentPlanEffect =
   | { kind: "subscription" }
   | { kind: "credits"; amount: number }
-  | { kind: "free" };
 
 export const paymentPlans: Record<PaymentPlanId, PaymentPlan> = {
   [PaymentPlanId.Community]: {
