@@ -1,17 +1,17 @@
-import { Link as ReactRouterLink } from "react-router-dom";
-import { Link as WaspRouterLink, routes } from "wasp/client/router";
-import { useAuth } from "wasp/client/auth";
-import { useState, Dispatch, SetStateAction } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
-import { BiLogIn } from "react-icons/bi";
+import { Dispatch, SetStateAction, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
+import { BiLogIn } from "react-icons/bi";
 import { HiBars3 } from "react-icons/hi2";
-import logo from "../../static/logo.svg";
+import { Link as ReactRouterLink } from "react-router-dom";
+import { useAuth } from "wasp/client/auth";
+import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import DropdownUser from "../../../user/DropdownUser";
 import { UserMenuItems } from "../../../user/UserMenuItems";
-import DarkModeSwitcher from "../DarkModeSwitcher";
-import { useIsLandingPage } from "../../hooks/useIsLandingPage";
 import { cn } from "../../cn";
+import { useIsLandingPage } from "../../hooks/useIsLandingPage";
+import logo from "../../static/logo.svg";
+import DarkModeSwitcher from "../DarkModeSwitcher";
 
 export interface NavigationItem {
   name: string;
@@ -43,7 +43,7 @@ export default function AppNavBar({
         <div className="flex items-center lg:flex-1">
           <WaspRouterLink
             to={routes.LandingPageRoute.to}
-            className="flex items-center -m-1.5 p-1.5 text-gray-900 duration-300 ease-in-out hover:text-yellow-500 bg:hover-yellow-200"
+            className="flex items-center -m-1.5 p-1.5 text-gray-900 duration-300 ease-in-out hover:text-sky-500 bg:hover-yellow-200"
           >
             <NavLogo />
             {/* {isLandingPage && ( */}
