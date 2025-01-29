@@ -8,7 +8,6 @@ import {
   useQuery,
 } from "wasp/client/operations";
 import { routes } from "wasp/client/router";
-import type { OnboardingState, Organization } from "wasp/entities";
 import { useToast } from "../../client/toast";
 import {
   determineOnboardingStep,
@@ -24,10 +23,6 @@ import {
   WelcomeStep,
 } from "./onboarding-step";
 import { OnboardingProgress } from "./progress";
-
-export type OrganizationWithOnboarding = Organization & {
-  onboardingState: OnboardingState | null;
-};
 
 export function OrganizationOnboardingPage() {
   const navigate = useNavigate();

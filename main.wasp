@@ -72,7 +72,7 @@ app BlockSpot {
     },
     onAfterSignup: import { onAfterSignup } from "@src/auth/hooks",
     onAuthFailedRedirectTo: "/login",
-    onAuthSucceededRedirectTo: "/onboarding",
+    onAuthSucceededRedirectTo: "/venues",
   },
 
   db: {

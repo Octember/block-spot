@@ -95,7 +95,7 @@ export const determineOnboardingStep = (
   }
 
   if (onboardingState?.hasCompletedOnboarding) {
-    return { shouldRedirect: true, targetStep: "/" };
+    return { shouldRedirect: true, targetStep: "/venues" };
   }
 
   const targetStep = getTargetStep(onboardingState);
