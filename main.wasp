@@ -111,6 +111,11 @@ page PrivacyPolicyPage {
   component: import PrivacyPolicy from "@src/client/components/PrivacyPolicy"
 }
 
+route TermsOfServiceRoute { path: "/terms", to: TermsOfServicePage }
+page TermsOfServicePage {
+  component: import TermsOfService from "@src/client/components/TermsOfService"
+}
+
 //#region Auth Pages
 route LoginRoute { path: "/login", to: LoginPage }
 page LoginPage {
