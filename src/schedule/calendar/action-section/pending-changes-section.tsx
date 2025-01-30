@@ -23,6 +23,8 @@ function getChangeType(pendingChange: PendingChange | null) {
 export const PendingChangesSection = () => {
   const { pendingChange, cancelChange, applyChange } = usePendingChanges();
 
+  if (!pendingChange) return null;
+
   return (
     <>
       <Modal
@@ -59,7 +61,10 @@ export const PendingChangesSection = () => {
               <ArrowDownIcon className="h-4 w-4" />
             </>
           )}
-          <ReservationChangeDescription reservation={pendingChange?.newState} color={pendingChange?.type === 'UPDATE' ? 'blue' : 'red'} />
+          <ReservationChangeDescription
+            reservation={pendingChange.newState}
+            color={pendingChange?.type === "UPDATE" ? "blue" : "red"}
+          />
         </div>
       </Modal>
 
@@ -98,18 +103,18 @@ const formatTime = (date: Date) => format(date, "h:mm a");
 
 const ReservationChangeDescription: FC<{
   reservation: Reservation;
-  color: 'red' | 'blue' | 'gray';
+  color: "red" | "blue" | "gray";
 }> = ({ reservation, color }) => {
   const colorMap: Record<typeof color, string> = {
     red: "text-red-600",
     blue: "text-blue-600",
     gray: "text-gray-600",
-  }
+  };
 
   const colorClass = colorMap[color];
 
   return (
-    <div className={`flex items-center space-x-2 ${colorClass}`}>
+    <div className={`flex text-md items-center space-x-2 ${colorClass}`}>
       <CalendarIcon className="h-4 w-4" />
       <span>{format(reservation.startTime, "EEE, MMM d")}</span>
       <ClockIcon className="h-4 w-4 ml-2" />
@@ -136,7 +141,10 @@ export const ChangeDescription = () => {
           <ArrowRightIcon className="h-4 w-4" />
         </>
       )}
-      <ReservationChangeDescription reservation={pendingChange.newState} color={pendingChange?.type === 'UPDATE' ? 'blue' : 'red'} />
+      <ReservationChangeDescription
+        reservation={pendingChange.newState}
+        color={pendingChange?.type === "DELETE" ? "red" : "blue"}
+      />
     </div>
   );
 };
