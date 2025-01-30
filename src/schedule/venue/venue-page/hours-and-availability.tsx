@@ -107,7 +107,7 @@ export function HoursAndAvailabilityForm({
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-6 bg-white p-4 rounded-lg"
+      className="flex flex-col gap-6 bg-white p-4 rounded-lg border border-gray-200"
     >
       <div className="flex flex-col gap-2">
         <FormField
