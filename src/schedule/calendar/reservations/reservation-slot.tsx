@@ -10,12 +10,11 @@ import { addMinutes, format } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createReservation, updateReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
-import { TextInput } from "../../../client/components/form/text-input";
+import { isUserOwner } from "../../../client/hooks/permissions";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
 import { UpdateButton } from "./update-button";
 import { getRowIndex, getRowSpan } from "./utilities";
-import { isUserOwner } from "../../../client/hooks/permissions";
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -120,7 +119,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   }, [reservation, isDragging, transform]);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [description, setDescription] = useState(reservation.description);
+  // const [description, setDescription] = useState(reservation.description);
 
   return (
     <li
@@ -164,7 +163,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                       spaceId: reservation.spaceId,
                       startTime: reservation.startTime,
                       endTime: reservation.endTime,
-                      description: description,
+                      description: "test",
                     });
                     refresh();
 
@@ -172,14 +171,14 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                   } else {
                     await updateReservation({
                       id: reservation.id,
-                      description: description,
+                      // description: description,
                     });
                     refresh();
                   }
                   setIsEditing(false);
                 }}
               >
-                <TextInput
+                {/* <TextInput
                   autoFocus
                   ref={descriptionInputRef}
                   id="title"
@@ -191,7 +190,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                   onChange={(e) => {
                     setDescription(e.target.value);
                   }}
-                />
+                /> */}
                 {!isDraft && (
                   <button type="submit">
                     <CheckIcon className="size-5 bg-green-500 hover:bg-green-600 rounded p-0.5 text-white" />

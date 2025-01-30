@@ -140,3 +140,24 @@ const { data: organizations } = useQuery(getUserOrganizations);
 - Account: `/account` - User account settings
 - Schedule: `/schedule/:venueId` - Calendar and scheduling
 - Venue: `/venues/:venueId` - Venue specific management
+
+## Calendar System
+The calendar system is built around several key components:
+
+### Components
+- `WeekViewCalendar.tsx`: Main calendar component that orchestrates the display of reservations and spaces
+- `ReservationsSection.tsx`: Handles the display and interaction with reservations
+- `ReservationSlot.tsx`: Individual reservation display component
+
+### State Management
+- Draft reservations are managed through a context system in `providers/draft-reservation-provider.tsx`
+- The calendar uses multiple providers for different aspects of state:
+  - `DraftReservationProvider`: Manages draft reservation state
+  - `DateProvider`: Manages selected date state
+  - `ScheduleQueryProvider`: Manages venue and schedule data
+
+### Key Features
+- Drag and drop functionality for reservations
+- Draft reservations for new bookings
+- Collision detection for reservations
+- Grid-based layout for time slots and spaces
