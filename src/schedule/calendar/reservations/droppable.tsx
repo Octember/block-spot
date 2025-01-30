@@ -28,7 +28,7 @@ export const DroppableSpace = ({
       rowIndex,
       occupied,
     },
-    // disabled: occupied,
+    disabled: occupied,
   });
 
   return (

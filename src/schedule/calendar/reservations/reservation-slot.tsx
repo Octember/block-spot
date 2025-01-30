@@ -6,7 +6,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import { addMinutes, format } from "date-fns";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Reservation } from "wasp/entities";
 import { isUserOwner } from "../../../client/hooks/permissions";
 import { usePendingChanges } from "../providers/pending-changes-provider";
@@ -70,7 +70,9 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const { isSelecting } = useReservationSelection();
   const { pendingChange } = usePendingChanges();
 
-  const disabled = (!isDraft && !isOwner) || (pendingChange ? pendingChange.oldState?.id !== reservation.id : false);
+  const disabled =
+    (!isDraft && !isOwner) ||
+    (pendingChange ? pendingChange.oldState?.id !== reservation.id : false);
 
   const {
     attributes,
@@ -158,6 +160,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   );
 };
 
+import { usePopper } from "react-popper";
+
 const ReservationMenu = ({
   onEdit,
   onDelete,
@@ -165,16 +169,26 @@ const ReservationMenu = ({
   onEdit: () => void;
   onDelete?: () => void;
 }) => {
+  const [referenceElement, setReferenceElement] =
+    useState<HTMLButtonElement | null>(null);
+  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
+  const { styles, attributes } = usePopper(referenceElement, popperElement, { placement: 'bottom-end' });
+
   return (
-    <Popover className="relative">
-      <PopoverButton>
+    <Popover className="relative group">
+      <PopoverButton ref={setReferenceElement}>
         <EllipsisHorizontalIcon
           aria-hidden="true"
           className="size-5 text-gray-400 group-hover:text-gray-700"
         />
       </PopoverButton>
 
-      <PopoverPanel className="fixed bg-white z-99 w-30 rounded-md shadow-lg ring-1 ring-black/5">
+      <PopoverPanel
+        ref={setPopperElement}
+        style={styles.popper}
+        {...attributes.popper}
+        className="bg-white z-99 w-30 rounded-md shadow-lg ring-1 ring-black/5"
+      >
         <div className="py-1">
           <button
             onClick={onEdit}

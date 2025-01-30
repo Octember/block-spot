@@ -132,8 +132,10 @@ export const ReservationsSection = () => {
           {spaceIds.map((spaceId, columnIndex) =>
             Array.from({
               length: timeLabels.length * (60 / MinutesPerSlot),
-            }).map((_, rowIndex) => (
-              <DroppableSpace
+            }).map((_, rowIndex) => {
+              if (rowIndex === 0) return null;
+
+              return <DroppableSpace
                 key={`${spaceId}-${rowIndex}`}
                 spaceId={spaceId}
                 columnIndex={columnIndex}
@@ -151,7 +153,7 @@ export const ReservationsSection = () => {
                     ),
                 )}
               />
-            )),
+            }),
           )}
         </ol>
       )}

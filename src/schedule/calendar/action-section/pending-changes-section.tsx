@@ -30,23 +30,19 @@ export const PendingChangesSection = () => {
       <Modal
         className="flex lg:hidden"
         open={true}
-        onClose={() => { }}
+        onClose={() => {}}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
             <Button
               onClick={cancelChange}
-              ariaLabel="Cancel Change"
+              ariaLabel="Cancel"
               variant="secondary"
             >
               Cancel
             </Button>
-            <Button
-              onClick={applyChange}
-              ariaLabel="Apply Change"
-              variant="primary"
-            >
-              Apply Change
+            <Button onClick={applyChange} ariaLabel="Confirm" variant="primary">
+              Confirm
             </Button>
           </div>
         }
@@ -79,19 +75,11 @@ export const PendingChangesSection = () => {
           <ChangeDescription />
         </span>
         <div className="flex items-center space-x-3">
-          <Button
-            onClick={cancelChange}
-            ariaLabel="Cancel Change"
-            variant="secondary"
-          >
+          <Button onClick={cancelChange} ariaLabel="Cancel" variant="secondary">
             Cancel
           </Button>
-          <Button
-            onClick={applyChange}
-            ariaLabel="Apply Change"
-            variant="primary"
-          >
-            Apply Change
+          <Button onClick={applyChange} ariaLabel="Apply" variant="primary">
+            Apply
           </Button>
         </div>
       </div>
