@@ -2,19 +2,19 @@ import { addDays, isValid, startOfDay, startOfToday } from "date-fns";
 import { AvailabilityRule, Reservation, Space, Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
-  CreateReservation,
-  CreateSpace,
-  CreateSpaces,
-  CreateVenue,
-  DeleteReservation,
-  DeleteSpace,
-  GetAllVenues,
-  GetVenueById,
-  GetVenueInfo,
-  UpdateReservation,
-  UpdateSpace,
-  UpdateVenue,
-  UpdateVenueAvailability,
+    CreateReservation,
+    CreateSpace,
+    CreateSpaces,
+    CreateVenue,
+    DeleteReservation,
+    DeleteSpace,
+    GetAllVenues,
+    GetVenueById,
+    GetVenueInfo,
+    UpdateReservation,
+    UpdateSpace,
+    UpdateVenue,
+    UpdateVenueAvailability,
 } from "wasp/server/operations";
 
 type GetVenueInfoPayload = {
@@ -165,7 +165,7 @@ export const updateReservation: UpdateReservation<
   });
 };
 
-type CreateVenuePayload = Pick<Venue, "name">;
+type CreateVenuePayload = Pick<Venue, "name" | "announcements">;
 
 export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (
   args,
@@ -195,6 +195,7 @@ export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (
       organizationId,
       name: args.name,
       address: "",
+      announcements: args.announcements,
       availabilityRules: {
         create: [
           {
@@ -227,7 +228,7 @@ export const getVenueById: GetVenueById<
 
 type UpdateVenuePayload = Pick<
   Venue,
-  "id" | "name" | "displayStart" | "displayEnd"
+  "id" | "name" | "displayStart" | "displayEnd" | "announcements"
 > & { spaces: Pick<Space, "id" | "name">[] };
 
 export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
@@ -241,6 +242,7 @@ export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
       name: args.name,
       displayStart: Number(args.displayStart),
       displayEnd: Number(args.displayEnd),
+      announcements: args.announcements,
       spaces: {
         deleteMany: {
           NOT: args.spaces

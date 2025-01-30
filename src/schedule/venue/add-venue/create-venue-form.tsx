@@ -1,11 +1,12 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Button } from "../../../client/components/button";
 import { createVenue } from "wasp/client/operations";
-import { TextInput } from "../../../client/components/form/text-input";
+import { Button } from "../../../client/components/button";
 import { FormField } from "../../../client/components/form/form-field";
+import { TextInput } from "../../../client/components/form/text-input";
 
 type CreateVenueFormInputs = {
   venueName: string;
+  announcements: string;
 };
 
 export function CreateVenueForm({
@@ -18,9 +19,14 @@ export function CreateVenueForm({
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm<CreateVenueFormInputs>();
+  } = useForm<CreateVenueFormInputs>({
+    defaultValues: {
+      venueName: "",
+      announcements: "",
+    },
+  });
   const onSubmit: SubmitHandler<CreateVenueFormInputs> = async (data) => {
-    await createVenue({ name: data.venueName });
+    await createVenue({ name: data.venueName, announcements: data.announcements });
     onSuccess(data);
   };
 
@@ -35,6 +41,18 @@ export function CreateVenueForm({
         />
       </FormField>
       {errors.venueName && <span>This field is required</span>}
+
+      <FormField
+        label="Announcements"
+        description="Add any important announcements or notices for your venue"
+      >
+        <textarea
+          {...register("announcements")}
+          className="w-full rounded-lg border border-gray-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          rows={4}
+          placeholder="Enter any announcements or important notices for your venue..."
+        />
+      </FormField>
 
       <div className="flex justify-end">
         <Button type="submit" ariaLabel="Create Venue">

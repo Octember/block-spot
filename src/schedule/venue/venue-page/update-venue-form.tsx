@@ -1,6 +1,6 @@
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
 import { useEffect } from "react";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { updateVenue, updateVenueAvailability } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
@@ -18,6 +18,7 @@ function transformToFormInputs(
     spaces: venue.spaces,
     displayStart: venue.displayStart / 60,
     displayEnd: venue.displayEnd / 60,
+    announcements: venue.announcements,
     availabilityRules: venue.availabilityRules,
   };
 }
@@ -50,6 +51,7 @@ export function UpdateVenueForm({
         spaces: data.spaces,
         displayStart: data.displayStart * 60,
         displayEnd: data.displayEnd * 60,
+        announcements: data.announcements,
       });
 
       await updateVenueAvailability({
@@ -94,12 +96,26 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               View Schedule
             </Button>
           </WaspRouterLink>
         </div>
+      </div>
+
+      <div>
+        <FormField
+          label="Announcements"
+          description="Add any important announcements or notices for your venue"
+        >
+          <textarea
+            {...register("announcements")}
+            className="w-full rounded-lg border border-gray-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            rows={4}
+            placeholder="Enter any announcements or important notices for your venue..."
+          />
+        </FormField>
       </div>
 
       <div className="flex gap-4">

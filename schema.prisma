@@ -183,6 +183,7 @@ model Venue {
 
   name      String
   address   String
+  announcements String @default("")
   spaces    Space[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

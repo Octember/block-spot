@@ -25,6 +25,7 @@ function transformToFormInputs(
     spaces: venue.spaces,
     displayStart: venue.displayStart / 60,
     displayEnd: venue.displayEnd / 60,
+    announcements: "",
     availabilityRules: venue.availabilityRules,
   };
 }
@@ -79,6 +80,7 @@ export function HoursAndAvailabilityForm({
         spaces: data.spaces,
         displayStart: data.displayStart * 60,
         displayEnd: data.displayEnd * 60,
+        announcements: "",
       });
 
       await updateVenueAvailability({
@@ -156,15 +158,6 @@ export function HoursAndAvailabilityForm({
         >
           Update Venue
         </Button>
-        {/* <Button
-          disabled
-          type="button"
-          variant="danger"
-          onClick={() => { }}
-          ariaLabel="Delete Venue"
-        >
-          Delete Venue
-        </Button> */}
       </div>
     </form>
   );
