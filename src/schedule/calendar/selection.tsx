@@ -3,7 +3,7 @@ import { Venue } from "wasp/entities";
 import { isUserOwner } from "../../client/hooks/permissions";
 import { useTimeLabels } from "./constants";
 import { useSelectedDate } from "./providers/date-provider";
-import { useDraftReservation } from './providers/draft-reservation-provider';
+import { usePendingChanges } from "./providers/pending-changes-provider";
 import { useScheduleContext } from "./providers/schedule-query-provider";
 import { getSharedGridStyle } from "./reservations/constants";
 import {
@@ -151,7 +151,7 @@ export const useReservationSelection = () => {
 };
 
 export const GridSelection: React.FC = () => {
-  const { setDraftReservation } = useDraftReservation();
+  const { setPendingChange } = usePendingChanges()
   const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
   const { venue } = useScheduleContext();
@@ -183,16 +183,19 @@ export const GridSelection: React.FC = () => {
           current: selection.current,
         });
 
-        setDraftReservation({
-          id: "draft",
-          spaceId: venue.spaces[selection.start.col].id,
-          startTime: start,
-          endTime: end,
-          status: "PENDING",
-          userId: "1",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          description: "Draft reservation",
+        setPendingChange({
+          type: "CREATE",
+          newState: {
+            id: "draft",
+            spaceId: venue.spaces[selection.start.col].id,
+            startTime: start,
+            endTime: end,
+            status: "PENDING",
+            userId: "1",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            description: "Draft reservation",
+          }
         });
       }
     }

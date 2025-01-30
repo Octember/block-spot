@@ -1,9 +1,7 @@
 import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { addMinutes } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
-import { useToast } from "../../../client/toast";
 import { useTimeLabels } from "../constants";
-import { useDraftReservation } from "../providers/draft-reservation-provider";
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { getSharedGridStyle, MinutesPerSlot, PixelsPerSlot } from "./constants";
@@ -12,15 +10,12 @@ import { ReservationSlot } from "./reservation-slot";
 import { getRowSpan, isWithinReservation } from "./utilities";
 
 export const ReservationsSection = () => {
-  const setToast = useToast();
   const { venue } = useScheduleContext();
-  const { refresh } = useScheduleContext();
   const timeLabels = useTimeLabels();
-  const { setPendingChange } = usePendingChanges();
-
-  const { draftReservation, setDraftReservation } = useDraftReservation();
+  const { pendingChange, setPendingChange } = usePendingChanges();
 
   const [draggingReservationId, setDraggingReservationId] = useState<string | null>(null);
+
   const [reservations, setReservations] = useState(
     venue.spaces.flatMap((space) => space.reservations),
   );
@@ -43,9 +38,9 @@ export const ReservationsSection = () => {
       (reservation) => reservation.id === draggingReservationId,
     );
     if (match) return match;
-    if (draftReservation) return draftReservation;
+    if (pendingChange) return pendingChange.newState;
     return null;
-  }, [reservations, draggingReservationId, draftReservation]);
+  }, [reservations, draggingReservationId, pendingChange]);
 
   return (
     <DndContext
@@ -55,9 +50,10 @@ export const ReservationsSection = () => {
         setDraggingReservationId(reservationId);
       }}
       onDragEnd={async (e) => {
+        setDraggingReservationId(null);
         const delta = Math.round(e.delta.y / PixelsPerSlot);
         const newSpaceId =
-          e.over?.data.current?.spaceId || draftReservation?.spaceId;
+          e.over?.data.current?.spaceId || pendingChange?.newState?.spaceId;
 
         if (!draggingReservation) return;
 
@@ -83,17 +79,20 @@ export const ReservationsSection = () => {
         if (isCollision) return;
 
         if (draggingReservation.id === "draft") {
-          setDraftReservation({
-            ...draggingReservation,
-            startTime: addMinutes(
-              draggingReservation.startTime,
-              delta * MinutesPerSlot,
-            ),
-            endTime: addMinutes(
-              draggingReservation.endTime,
-              delta * MinutesPerSlot,
-            ),
-            spaceId: newSpaceId,
+          setPendingChange({
+            type: 'CREATE',
+            newState: {
+              ...draggingReservation,
+              startTime: addMinutes(
+                draggingReservation.startTime,
+                delta * MinutesPerSlot,
+              ),
+              endTime: addMinutes(
+                draggingReservation.endTime,
+                delta * MinutesPerSlot,
+              ),
+              spaceId: newSpaceId,
+            }
           });
         } else {
           const updatedReservation = {
@@ -122,6 +121,7 @@ export const ReservationsSection = () => {
             newState: updatedReservation,
           });
         }
+        setDraggingReservationId(null);
       }}
     >
       {/* Droppable spaces */}
@@ -172,21 +172,13 @@ export const ReservationsSection = () => {
             }}
           />
         ))}
-        {draftReservation && (
+        {pendingChange && (
           <ReservationSlot
-            reservation={draftReservation}
+            reservation={pendingChange.newState}
             gridIndex={spaceIds.findIndex(
-              (spaceId) => spaceId === draftReservation.spaceId,
+              (spaceId) => spaceId === pendingChange.newState.spaceId,
             )}
             isDraft
-            onCreate={async () => {
-              setPendingChange({
-                type: 'CREATE',
-                newState: draftReservation,
-              });
-              setDraftReservation(null);
-            }}
-            onDiscardDraft={() => setDraftReservation(null)}
           />
         )}
       </ol>

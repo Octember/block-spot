@@ -1,21 +1,18 @@
 import { Over, useDraggable } from "@dnd-kit/core";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import {
-  CheckIcon,
   EllipsisHorizontalIcon,
   PencilSquareIcon,
-  TrashIcon,
+  TrashIcon
 } from "@heroicons/react/20/solid";
 import { addMinutes, format } from "date-fns";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import { Reservation } from "wasp/entities";
 import { isUserOwner } from "../../../client/hooks/permissions";
-import { useDraftReservation } from "../providers/draft-reservation-provider";
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { useReservationSelection } from '../selection';
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
-import { UpdateButton } from "./update-button";
 import { getRowIndex, getRowSpan } from "./utilities";
 
 type ReservationSlotProps = {
@@ -66,14 +63,12 @@ function getColorStyles({
 }
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
-  const { venue, refresh } = useScheduleContext();
+  const { venue } = useScheduleContext();
   const { reservation, gridIndex, isDraft } = props;
-  const descriptionInputRef = useRef<HTMLInputElement>(null);
   const isOwner = isUserOwner();
-  const { setPendingChange } = usePendingChanges();
 
-  const { draftReservation } = useDraftReservation();
   const { isSelecting } = useReservationSelection();
+  const { pendingChange } = usePendingChanges();
 
   const {
     attributes,
@@ -93,18 +88,13 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     disabled: !isDraft && !isOwner,
   });
 
-  useEffect(() => {
-    if (isDraft && descriptionInputRef.current) {
-      descriptionInputRef.current.focus();
-    }
-  }, [isDraft]);
 
   const startRow = getRowIndex(venue, reservation.startTime);
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = useMemo(
-    () => getColorStyles({ isDraft, over, isDragging, otherNodeActive: Boolean(active || draftReservation || isSelecting), isOwner, }),
-    [isDraft, over, isDragging, active, draftReservation, isOwner, isSelecting],
+    () => getColorStyles({ isDraft, over, isDragging, otherNodeActive: Boolean(active || isSelecting || pendingChange), isOwner, }),
+    [isDraft, over, isDragging, active, isOwner, isSelecting, pendingChange],
   );
 
   // Take into account the current drag position
@@ -124,8 +114,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     };
   }, [reservation, isDragging, transform]);
 
-  const [isEditing, setIsEditing] = useState(false);
-
   return (
     <li
       className="relative flex z-20 select-none"
@@ -141,71 +129,28 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       {...listeners}
     >
       <a
-        className={`relative group w-full my-1 mx-2 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
+        className={`group w-full my-1 mx-2 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
       >
         <div className="flex flex-col flex-1">
           <div className="flex flex-row justify-between">
-            {isDraft || isEditing ? (
-              <form
-                className="flex flex-row gap-2 items-center"
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  if (isDraft) {
-                    setPendingChange({
-                      type: 'CREATE',
-                      newState: {
-                        ...reservation,
-                      },
-                    });
 
-                    props.onCreate?.();
-                  } else {
-                    setPendingChange({
-                      type: 'UPDATE',
-                      oldState: reservation,
-                      newState: {
-                        ...reservation,
-                      },
-                    });
-                    setIsEditing(false);
-                  }
-                }}
-              >
-                {!isDraft && (
-                  <button type="submit">
-                    <CheckIcon className="size-5 bg-green-500 hover:bg-green-600 rounded p-0.5 text-white" />
-                  </button>
-                )}
-                {isDraft && (
-                  <div className="flex flex-row justify-end gap-2">
-                    <UpdateButton type="submit" color="green" text="Create" />
-                    <UpdateButton
-                      color="red"
-                      onClick={() => props.onDiscardDraft?.()}
-                      text="Cancel"
-                    />
-                  </div>
-                )}
-              </form>
-            ) : (
-              <p className="font-semibold text-gray-700">
-                <time dateTime="2022-01-12T06:00">
-                  {format(newTimes.startTime, "h:mm a")} -{" "}
-                  {format(newTimes.endTime, "h:mm a")}
-                </time>
-              </p>
-            )}
+            <p className="font-semibold text-gray-700">
+              <time dateTime="2022-01-12T06:00">
+                {format(newTimes.startTime, "h:mm a")} -{" "}
+                {format(newTimes.endTime, "h:mm a")}
+              </time>
+            </p>
 
             {isOwner && (
               <ReservationMenu
-                onEdit={() => setIsEditing(true)}
+                onEdit={() => { }}
                 onDelete={props.onDelete}
               />
             )}
           </div>
         </div>
-      </a>
-    </li>
+      </a >
+    </li >
   );
 };
 
@@ -225,7 +170,7 @@ const ReservationMenu = ({
         />
       </PopoverButton>
 
-      <PopoverPanel className="fixed bg-white z-50 w-30 rounded-md shadow-lg ring-1 ring-black/5">
+      <PopoverPanel className="fixed bg-white z-99 w-30 rounded-md shadow-lg ring-1 ring-black/5">
         <div className="py-1">
           <button
             onClick={onEdit}
