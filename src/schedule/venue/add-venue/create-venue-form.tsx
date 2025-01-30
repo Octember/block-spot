@@ -26,7 +26,7 @@ export function CreateVenueForm({
     },
   });
   const onSubmit: SubmitHandler<CreateVenueFormInputs> = async (data) => {
-    await createVenue({ name: data.venueName, announcements: data.announcements });
+    await createVenue({ name: data.venueName, });
     onSuccess(data);
   };
 

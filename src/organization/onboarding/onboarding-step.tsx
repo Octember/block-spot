@@ -1,4 +1,4 @@
-import { PlusIcon, XMarkIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
+import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import { createVenue, updateVenue } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
@@ -145,6 +145,7 @@ export function SpacesStep({
           name: space.name,
           id: "", // Empty ID for new spaces
         })),
+        announcements: "",
       });
 
       // Only call onNext after both operations are complete
