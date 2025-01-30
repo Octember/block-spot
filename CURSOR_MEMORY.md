@@ -142,9 +142,11 @@ const { data: organizations } = useQuery(getUserOrganizations);
 - Venue: `/venues/:venueId` - Venue specific management
 
 ## Calendar System
+
 The calendar system is built around several key components:
 
 ### Components
+
 - `WeekViewCalendar.tsx`: Main calendar component that orchestrates the display of reservations and spaces
 - `ReservationsSection.tsx`: Handles the display and interaction with reservations
 - `ReservationSlot.tsx`: Individual reservation display component
@@ -156,7 +158,9 @@ The calendar system is built around several key components:
   - Uses consistent design language with the rest of the app
 
 ### State Management
+
 The calendar uses multiple providers for different aspects of state:
+
 - `PendingChangesProvider`: Manages a single pending change to reservations
   - Tracks one CREATE, UPDATE, or DELETE operation at a time
   - Maintains old and new state for the change
@@ -173,6 +177,7 @@ The calendar uses multiple providers for different aspects of state:
 - `ScheduleQueryProvider`: Manages venue and schedule data
 
 ### UI/UX Patterns
+
 - Consistent action patterns:
   - Primary actions use pink-600 background
   - Secondary actions use white background with border
@@ -189,6 +194,7 @@ The calendar uses multiple providers for different aspects of state:
   - Clear visual separation with border
 
 Each provider follows a consistent pattern:
+
 - Context creation with TypeScript interfaces
 - Provider component with state management
 - Custom hook for consuming components (e.g. `useReservationSelection`, `useDraftReservation`, `usePendingChanges`)
@@ -196,17 +202,21 @@ Each provider follows a consistent pattern:
 - Proper TypeScript typing for all interfaces and functions
 
 ### Provider Hierarchy
+
 The providers are nested in the following order:
+
 1. `PendingChangesProvider` (outermost)
 2. `DraftReservationProvider`
 3. `SelectionProvider` (innermost)
 
 This hierarchy ensures that:
+
 - Changes can be tracked and managed one at a time
 - Draft reservations can be converted to pending changes
 - Selection can create draft reservations
 
 ### Key Features
+
 - Drag and drop functionality for reservations
 - Draft reservations for new bookings
 - Grid-based selection system for creating reservations

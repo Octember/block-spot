@@ -7,9 +7,7 @@ import {
 import { forwardRef, ReactNode, useState } from "react";
 import Sidebar from "./sidebar";
 
-import {
-  XMarkIcon
-} from "@heroicons/react/20/solid";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "wasp/client/auth";
 import { Link as WaspRouterLink } from "wasp/client/router";

@@ -5,7 +5,7 @@ import {
   Cog8ToothIcon,
   LinkIcon,
   Squares2X2Icon,
-  UsersIcon
+  UsersIcon,
 } from "@heroicons/react/24/outline";
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
@@ -25,7 +25,7 @@ export function useAppNavigation(): NavigationItem[] {
   const { data: user } = useAuth();
   const location = useLocation();
 
-  const { data: venues } = useQuery(getAllVenues, null, {staleTime: 3600000});
+  const { data: venues } = useQuery(getAllVenues, null, { staleTime: 3600000 });
 
   const firstVenue = venues?.[0];
 

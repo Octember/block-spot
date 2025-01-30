@@ -5,13 +5,16 @@ import { stripe } from "./stripeClient";
 // WASP_WEB_CLIENT_URL will be set up by Wasp when deploying to production: https://wasp-lang.dev/docs/deploying
 const DOMAIN = process.env.WASP_WEB_CLIENT_URL || "http://localhost:3000";
 
-export async function fetchStripeCustomer(organizationId: string, organizationEmail: string) {
+export async function fetchStripeCustomer(
+  organizationId: string,
+  organizationEmail: string,
+) {
   let customer: Stripe.Customer;
   try {
     // First try to find by metadata.organizationId
     const existingCustomers = await stripe.customers.search({
       query: `metadata['organizationId']:'${organizationId}'`,
-      limit: 1
+      limit: 1,
     });
 
     if (existingCustomers.data.length) {
@@ -22,19 +25,19 @@ export async function fetchStripeCustomer(organizationId: string, organizationEm
       const stripeCustomers = await stripe.customers.list({
         email: organizationEmail,
       });
-      
+
       if (stripeCustomers.data.length) {
         console.log("using existing customer by email");
         customer = stripeCustomers.data[0];
         // Update customer with organizationId metadata
         customer = await stripe.customers.update(customer.id, {
-          metadata: { organizationId }
+          metadata: { organizationId },
         });
       } else {
         console.log("creating new customer");
         customer = await stripe.customers.create({
           email: organizationEmail,
-          metadata: { organizationId }
+          metadata: { organizationId },
         });
       }
     }
@@ -74,7 +77,7 @@ export async function createStripeCheckoutSession({
       customer: customerId,
       subscription_data: {
         trial_period_days: 30,
-        metadata: { organizationId }
+        metadata: { organizationId },
       },
     });
   } catch (error) {

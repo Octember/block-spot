@@ -33,12 +33,12 @@ export const ScheduleQueryContext = createContext<{
     endTimeMinutes: number;
   }[];
   refresh: () => void;
-}>(
-  {
-    // @ts-expect-error idk
-    venue: null,
-    unavailabileBlocks: [], refresh: () => { }
-  });
+}>({
+  // @ts-expect-error idk
+  venue: null,
+  unavailabileBlocks: [],
+  refresh: () => {},
+});
 
 export const ScheduleQueryProvider = ({
   children,

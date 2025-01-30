@@ -44,8 +44,7 @@ export const faqs = [
   {
     id: 1,
     question: "How does it work?",
-    answer:
-      `
+    answer: `
       Set your spaces, hours, and rules.
 
 Share your booking page.
@@ -62,14 +61,12 @@ Share your booking page.
   {
     id: 3,
     question: "Is this for solo entrepreneurs or teams?",
-    answer:
-      "Both. Scale from 1 user to 20+ without switching tools.",
+    answer: "Both. Scale from 1 user to 20+ without switching tools.",
   },
   {
     id: 4,
     question: "Will I need training?",
-    answer:
-      "Unlikely. Most users are up and running in 10 minutes.",
+    answer: "Unlikely. Most users are up and running in 10 minutes.",
   },
 ];
 export const footerNavigation = {

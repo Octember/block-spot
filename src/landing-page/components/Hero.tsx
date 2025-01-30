@@ -13,7 +13,8 @@ export default function Hero() {
               <span className="italic">Happier</span> Customers.
             </h1>
             <p className="mt-6 mx-auto max-w-2xl text-lg leading-8 text-gray-600 dark:text-white">
-              Save time, reduce chaos, and grow your business with an<br /> intuitive reservation tool designed for small teams.
+              Save time, reduce chaos, and grow your business with an
+              <br /> intuitive reservation tool designed for small teams.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
@@ -38,13 +39,15 @@ export default function Hero() {
             </div>
           </div>
 
-
           <div className="mx-auto  mt-14 max-w-2xl text-center">
             <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
-              Streamline Your <span className="text-teal-700">Reservations</span>
+              Streamline Your{" "}
+              <span className="text-teal-700">Reservations</span>
             </p>
             <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-white">
-              No clunky interfaces. No overpriced plans. Just a straightforward tool to manage your spaces, delight customers, and reclaim your day.
+              No clunky interfaces. No overpriced plans. Just a straightforward
+              tool to manage your spaces, delight customers, and reclaim your
+              day.
             </p>
           </div>
         </div>

@@ -15,6 +15,7 @@ export function Modal({
   size = "md",
   heading,
   footer,
+  className,
 }: {
   children: ReactNode;
   open: boolean;
@@ -22,6 +23,7 @@ export function Modal({
   size?: "sm" | "md" | "lg";
   heading?: ModalHeading;
   footer?: ReactNode;
+  className?: string;
 }) {
   const sizeClass =
     size === "sm"
@@ -31,7 +33,11 @@ export function Modal({
         : "sm:max-w-xl";
 
   return (
-    <Dialog open={open} onClose={onClose} className="relative z-9999">
+    <Dialog
+      open={open}
+      onClose={onClose}
+      className={`relative z-9999 ${className}`}
+    >
       <DialogBackdrop
         transition
         className="fixed inset-0 bg-gray-500/50 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"

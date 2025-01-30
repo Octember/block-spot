@@ -6,9 +6,7 @@ import { useSelectedDate } from "./providers/date-provider";
 import { usePendingChanges } from "./providers/pending-changes-provider";
 import { useScheduleContext } from "./providers/schedule-query-provider";
 import { getSharedGridStyle } from "./reservations/constants";
-import {
-  getTimeFromRowIndex
-} from "./reservations/utilities";
+import { getTimeFromRowIndex } from "./reservations/utilities";
 
 interface Selection {
   start: { row: number; col: number } | null;
@@ -25,7 +23,9 @@ interface SelectionContextType {
   getGridCell: (row: number, col: number) => string;
 }
 
-const SelectionContext = createContext<SelectionContextType | undefined>(undefined);
+const SelectionContext = createContext<SelectionContextType | undefined>(
+  undefined,
+);
 
 function getStartEndTime(
   venue: Venue,
@@ -59,13 +59,15 @@ interface SelectionProviderProps {
   children: React.ReactNode;
 }
 
-export const SelectionProvider: React.FC<SelectionProviderProps> = ({ children }) => {
+export const SelectionProvider: React.FC<SelectionProviderProps> = ({
+  children,
+}) => {
   const isOwner = isUserOwner();
   const { venue, unavailabileBlocks } = useScheduleContext();
 
   const [selection, setSelection] = useState<Selection>({
     start: null,
-    current: null
+    current: null,
   });
   const [isSelecting, setIsSelecting] = useState(false);
 
@@ -145,13 +147,15 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({ children }
 export const useReservationSelection = () => {
   const context = useContext(SelectionContext);
   if (!context) {
-    throw new Error('useReservationSelection must be used within a SelectionProvider');
+    throw new Error(
+      "useReservationSelection must be used within a SelectionProvider",
+    );
   }
   return context;
 };
 
 export const GridSelection: React.FC = () => {
-  const { setPendingChange } = usePendingChanges()
+  const { setPendingChange } = usePendingChanges();
   const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
   const { venue } = useScheduleContext();
@@ -162,7 +166,7 @@ export const GridSelection: React.FC = () => {
     selection,
     isSelecting,
     getGridCell,
-    isTimeAvailable
+    isTimeAvailable,
   } = useReservationSelection();
 
   const handleMouseUp = () => {
@@ -195,7 +199,7 @@ export const GridSelection: React.FC = () => {
             createdAt: new Date(),
             updatedAt: new Date(),
             description: "Draft reservation",
-          }
+          },
         });
       }
     }

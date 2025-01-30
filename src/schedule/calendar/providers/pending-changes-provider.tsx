@@ -1,11 +1,15 @@
-import { createContext, useContext, useState } from 'react';
-import { createReservation, deleteReservation, updateReservation } from 'wasp/client/operations';
-import { Reservation } from 'wasp/entities';
-import { useToast } from '../../../client/toast';
-import { useScheduleContext } from './schedule-query-provider';
+import { createContext, useContext, useState } from "react";
+import {
+  createReservation,
+  deleteReservation,
+  updateReservation,
+} from "wasp/client/operations";
+import { Reservation } from "wasp/entities";
+import { useToast } from "../../../client/toast";
+import { useScheduleContext } from "./schedule-query-provider";
 
-interface PendingChange {
-  type: 'CREATE' | 'UPDATE' | 'DELETE';
+export interface PendingChange {
+  type: "CREATE" | "UPDATE" | "DELETE";
   oldState?: Reservation;
   newState: Reservation;
 }
@@ -18,14 +22,20 @@ interface PendingChangesContextType {
   applyChange: () => Promise<void>;
 }
 
-const PendingChangesContext = createContext<PendingChangesContextType | undefined>(undefined);
+const PendingChangesContext = createContext<
+  PendingChangesContextType | undefined
+>(undefined);
 
 interface PendingChangesProviderProps {
   children: React.ReactNode;
 }
 
-export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({ children }) => {
-  const [pendingChange, setPendingChange] = useState<PendingChange | null>(null);
+export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({
+  children,
+}) => {
+  const [pendingChange, setPendingChange] = useState<PendingChange | null>(
+    null,
+  );
   const setToast = useToast();
   const { refresh } = useScheduleContext();
 
@@ -41,15 +51,15 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({ 
 
     try {
       switch (pendingChange.type) {
-        case 'DELETE':
+        case "DELETE":
           if (pendingChange.oldState) {
             await deleteReservation({ id: pendingChange.oldState.id });
           }
           break;
-        case 'UPDATE':
+        case "UPDATE":
           await updateReservation(pendingChange.newState);
           break;
-        case 'CREATE':
+        case "CREATE":
           // Note: This would need a createReservation operation
           await createReservation(pendingChange.newState);
           break;
@@ -62,7 +72,8 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({ 
       setToast({
         title: "Failed to apply change",
         type: "error",
-        description: error instanceof Error ? error.message : 'Unknown error occurred'
+        description:
+          error instanceof Error ? error.message : "Unknown error occurred",
       });
     }
   };
@@ -85,7 +96,9 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({ 
 export const usePendingChanges = () => {
   const context = useContext(PendingChangesContext);
   if (!context) {
-    throw new Error('usePendingChanges must be used within a PendingChangesProvider');
+    throw new Error(
+      "usePendingChanges must be used within a PendingChangesProvider",
+    );
   }
   return context;
-}; 
+};

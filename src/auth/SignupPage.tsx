@@ -11,9 +11,13 @@ const AuthLayoutV2: React.FC<{ children: React.ReactNode }> = ({
     <div className="flex min-h-full flex-col lg:flex-row pt-10 sm:px-6 lg:px-8 justify-center">
       <div className="flex flex-col gap-4 mt-12 md:max-w-lg mx-auto md:ml-auto mb-8">
         <h2 className="text-2xl font-bold">Welcome to BlockSpot! 🎉</h2>
-        <h4 className="text-lg font-bold">Streamline your venue management—finally.</h4>
+        <h4 className="text-lg font-bold">
+          Streamline your venue management—finally.
+        </h4>
         <p className="prose">
-          Get started in minutes and turn chaos into clarity. Book spaces, manage events, and optimize your venues with a tool designed for your hustle, not against it.
+          Get started in minutes and turn chaos into clarity. Book spaces,
+          manage events, and optimize your venues with a tool designed for your
+          hustle, not against it.
         </p>
         <p className="mt-4">
           <b>Join venue managers who rely on BlockSpot to:</b>
@@ -29,7 +33,7 @@ const AuthLayoutV2: React.FC<{ children: React.ReactNode }> = ({
           {children}
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 

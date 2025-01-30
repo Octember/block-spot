@@ -28,7 +28,10 @@ export const stripePaymentProcessor: PaymentProcessor = {
       }
 
       console.log("Creating checkout session with price ID:", priceId);
-      const customer = await fetchStripeCustomer(organizationId, organizationEmail);
+      const customer = await fetchStripeCustomer(
+        organizationId,
+        organizationEmail,
+      );
       const stripeSession = await createStripeCheckoutSession({
         organizationId,
         priceId,

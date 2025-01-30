@@ -11,7 +11,7 @@ import { routes } from "wasp/client/router";
 import { cn } from "../../client/cn";
 import { Button } from "../../client/components/button";
 import { ButtonGroup } from "../../client/components/button-group";
-import { isUserOwner } from '../../client/hooks/permissions';
+import { isUserOwner } from "../../client/hooks/permissions";
 import { useSelectedDate } from "./providers/date-provider";
 
 export const CalendarHeader: FC = () => {

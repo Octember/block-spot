@@ -14,7 +14,7 @@ import {
   UpdateReservation,
   UpdateSpace,
   UpdateVenue,
-  UpdateVenueAvailability
+  UpdateVenueAvailability,
 } from "wasp/server/operations";
 
 type GetVenueInfoPayload = {

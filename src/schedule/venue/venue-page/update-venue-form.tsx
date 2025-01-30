@@ -1,16 +1,7 @@
-import {
-  ArrowUpRightIcon
-} from "@heroicons/react/20/solid";
+import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
 import { useEffect } from "react";
-import {
-  SubmitHandler,
-  useFieldArray,
-  useForm
-} from "react-hook-form";
-import {
-  updateVenue,
-  updateVenueAvailability
-} from "wasp/client/operations";
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { updateVenue, updateVenueAvailability } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
@@ -103,7 +94,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => { }}
+              onClick={() => {}}
             >
               View Schedule
             </Button>

@@ -1,14 +1,16 @@
-import { createEvents, EventAttributes } from 'ics';
+import { createEvents, EventAttributes } from "ics";
 import { Reservation, Space } from "wasp/entities";
 import { HttpError } from "wasp/server";
-import { ExportCalendar } from 'wasp/server/api';
+import { ExportCalendar } from "wasp/server/api";
 
 type ExportCalendarPayload = {
   venueId: string;
 };
 
-
-export const exportCalendar: ExportCalendar<ExportCalendarPayload, string> = async (req, res, context) => {
+export const exportCalendar: ExportCalendar<
+  ExportCalendarPayload,
+  string
+> = async (req, res, context) => {
   // Get venue info
   const { venueId } = req.query as ExportCalendarPayload;
 
@@ -40,28 +42,29 @@ export const exportCalendar: ExportCalendar<ExportCalendarPayload, string> = asy
   }
 
   // Convert reservations to ICS events
-  const events: EventAttributes[] = venue.spaces.flatMap((space: Space & { reservations: Reservation[] }) =>
-    space.reservations.map((reservation: Reservation) => ({
-      start: [
-        reservation.startTime.getFullYear(),
-        reservation.startTime.getMonth() + 1,
-        reservation.startTime.getDate(),
-        reservation.startTime.getHours(),
-        reservation.startTime.getMinutes(),
-      ],
-      end: [
-        reservation.endTime.getFullYear(),
-        reservation.endTime.getMonth() + 1,
-        reservation.endTime.getDate(),
-        reservation.endTime.getHours(),
-        reservation.endTime.getMinutes(),
-      ],
-      title: `${space.name}: ${reservation.description || 'Reserved'}`,
-      description: `Reservation at ${venue.name} - ${space.name}`,
-      location: venue.address,
-      status: 'CONFIRMED',
-      busyStatus: 'BUSY',
-    }))
+  const events: EventAttributes[] = venue.spaces.flatMap(
+    (space: Space & { reservations: Reservation[] }) =>
+      space.reservations.map((reservation: Reservation) => ({
+        start: [
+          reservation.startTime.getFullYear(),
+          reservation.startTime.getMonth() + 1,
+          reservation.startTime.getDate(),
+          reservation.startTime.getHours(),
+          reservation.startTime.getMinutes(),
+        ],
+        end: [
+          reservation.endTime.getFullYear(),
+          reservation.endTime.getMonth() + 1,
+          reservation.endTime.getDate(),
+          reservation.endTime.getHours(),
+          reservation.endTime.getMinutes(),
+        ],
+        title: `${space.name}: ${reservation.description || "Reserved"}`,
+        description: `Reservation at ${venue.name} - ${space.name}`,
+        location: venue.address,
+        status: "CONFIRMED",
+        busyStatus: "BUSY",
+      })),
   );
 
   // Generate ICS file
@@ -72,9 +75,12 @@ export const exportCalendar: ExportCalendar<ExportCalendarPayload, string> = asy
   }
 
   // Set response headers for file download
-  res.setHeader('Content-Type', 'text/calendar');
-  res.setHeader('Content-Disposition', `attachment; filename="${venue.name}-calendar.ics"`);
-  
+  res.setHeader("Content-Type", "text/calendar");
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="${venue.name}-calendar.ics"`,
+  );
+
   // Send the ICS file
   res.send(value);
-}; 
+};

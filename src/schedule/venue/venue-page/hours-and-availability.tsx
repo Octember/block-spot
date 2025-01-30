@@ -1,15 +1,11 @@
 import { useEffect } from "react";
-import {
-  Controller,
-  SubmitHandler,
-  useForm
-} from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import {
   getVenueById,
   updateVenue,
   updateVenueAvailability,
-  useQuery
+  useQuery,
 } from "wasp/client/operations";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
@@ -74,7 +70,6 @@ export function HoursAndAvailabilityForm({
   useEffect(() => {
     reset(transformToFormInputs(venue));
   }, [venue]);
-
 
   const onSubmit: SubmitHandler<UpdateVenueFormInputs> = async (data) => {
     try {

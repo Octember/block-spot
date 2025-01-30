@@ -14,7 +14,9 @@ export const ReservationsSection = () => {
   const timeLabels = useTimeLabels();
   const { pendingChange, setPendingChange } = usePendingChanges();
 
-  const [draggingReservationId, setDraggingReservationId] = useState<string | null>(null);
+  const [draggingReservationId, setDraggingReservationId] = useState<
+    string | null
+  >(null);
 
   const [reservations, setReservations] = useState(
     venue.spaces.flatMap((space) => space.reservations),
@@ -80,7 +82,7 @@ export const ReservationsSection = () => {
 
         if (draggingReservation.id === "draft") {
           setPendingChange({
-            type: 'CREATE',
+            type: "CREATE",
             newState: {
               ...draggingReservation,
               startTime: addMinutes(
@@ -92,7 +94,7 @@ export const ReservationsSection = () => {
                 delta * MinutesPerSlot,
               ),
               spaceId: newSpaceId,
-            }
+            },
           });
         } else {
           const updatedReservation = {
@@ -116,7 +118,7 @@ export const ReservationsSection = () => {
 
           // Create pending change
           setPendingChange({
-            type: 'UPDATE',
+            type: "UPDATE",
             oldState: draggingReservation,
             newState: updatedReservation,
           });
@@ -156,7 +158,10 @@ export const ReservationsSection = () => {
 
       <ol {...getSharedGridStyle(timeLabels.length, spaceIds.length)}>
         {reservations
-          .filter(reservation => !pendingChange || pendingChange.oldState?.id !== reservation.id)
+          .filter(
+            (reservation) =>
+              !pendingChange || pendingChange.oldState?.id !== reservation.id,
+          )
           .map((reservation) => (
             <ReservationSlot
               key={reservation.id}
@@ -167,7 +172,7 @@ export const ReservationsSection = () => {
               )}
               onDelete={async () => {
                 setPendingChange({
-                  type: 'DELETE',
+                  type: "DELETE",
                   oldState: reservation,
                   newState: reservation,
                 });

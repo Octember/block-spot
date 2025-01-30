@@ -20,7 +20,7 @@ export interface PaymentPlan {
 
 export type PaymentPlanEffect =
   | { kind: "subscription" }
-  | { kind: "credits"; amount: number }
+  | { kind: "credits"; amount: number };
 
 export const paymentPlans: Record<PaymentPlanId, PaymentPlan> = {
   [PaymentPlanId.Community]: {
@@ -33,7 +33,6 @@ export const paymentPlans: Record<PaymentPlanId, PaymentPlan> = {
       requireNodeEnvVar("PAYMENTS_BUSINESS_SUBSCRIPTION_PLAN_ID"),
     effect: { kind: "subscription" },
   },
-  
 };
 
 export function prettyPaymentPlanName(planId: PaymentPlanId): string {

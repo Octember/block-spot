@@ -30,14 +30,17 @@ export const generateCheckoutSession: GenerateCheckoutSession<
       users: {
         some: {
           userId: context.user.id,
-          role: "OWNER"
-        }
-      }
-    }
+          role: "OWNER",
+        },
+      },
+    },
   });
 
   if (!organization) {
-    throw new HttpError(403, "You must be an organization owner to make payments");
+    throw new HttpError(
+      403,
+      "You must be an organization owner to make payments",
+    );
   }
 
   if (!context.user.email) {
@@ -80,14 +83,17 @@ export const getCustomerPortalUrl: GetCustomerPortalUrl<
       users: {
         some: {
           userId: context.user.id,
-          role: "OWNER"
-        }
-      }
-    }
+          role: "OWNER",
+        },
+      },
+    },
   });
 
   if (!organization) {
-    throw new HttpError(403, "You must be an organization owner to access billing portal");
+    throw new HttpError(
+      403,
+      "You must be an organization owner to access billing portal",
+    );
   }
 
   return paymentProcessor.fetchCustomerPortalUrl({

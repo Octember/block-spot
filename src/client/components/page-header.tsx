@@ -6,7 +6,11 @@ interface PageHeaderProps {
   actions?: ReactNode;
 }
 
-export const PageHeader: FC<PageHeaderProps> = ({ title, description, actions }) => {
+export const PageHeader: FC<PageHeaderProps> = ({
+  title,
+  description,
+  actions,
+}) => {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
@@ -22,4 +26,4 @@ export const PageHeader: FC<PageHeaderProps> = ({ title, description, actions })
       {actions && <div className="flex items-center gap-4">{actions}</div>}
     </div>
   );
-}; 
+};

@@ -69,7 +69,7 @@ const PricingPage = () => {
     { organizationId: organization?.id ?? "" },
     {
       enabled: isOrganizationSubscribed && !!organization?.id,
-    }
+    },
   );
 
   const navigate = useNavigate();
@@ -119,7 +119,9 @@ const PricingPage = () => {
     }
 
     if (!customerPortalUrl) {
-      throw new Error(`Customer Portal does not exist for organization ${organization.id}`);
+      throw new Error(
+        `Customer Portal does not exist for organization ${organization.id}`,
+      );
     }
 
     window.open(customerPortalUrl, "_blank");
@@ -143,9 +145,10 @@ const PricingPage = () => {
               key={planId}
               className={cn(
                 "rounded-3xl p-8 xl:p-10 bg-white",
-                { "ring-2 ring-gray-200 my-4": planId !== bestDealPaymentPlanId },
+                {
+                  "ring-2 ring-gray-200 my-4": planId !== bestDealPaymentPlanId,
+                },
                 { "ring-2 ring-indigo-600": planId === bestDealPaymentPlanId },
-
               )}
             >
               <div className="flex items-center justify-between gap-x-4">

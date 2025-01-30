@@ -74,4 +74,3 @@ export const onAfterSignup: OnAfterSignupHook = async ({
     });
   }
 };
-

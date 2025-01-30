@@ -3,7 +3,7 @@ import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import {
   EllipsisHorizontalIcon,
   PencilSquareIcon,
-  TrashIcon
+  TrashIcon,
 } from "@heroicons/react/20/solid";
 import { addMinutes, format } from "date-fns";
 import { useMemo } from "react";
@@ -11,7 +11,7 @@ import { Reservation } from "wasp/entities";
 import { isUserOwner } from "../../../client/hooks/permissions";
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
-import { useReservationSelection } from '../selection';
+import { useReservationSelection } from "../selection";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
 import { getRowIndex, getRowSpan } from "./utilities";
 
@@ -34,7 +34,7 @@ function getColorStyles({
   over,
   isDragging,
   otherNodeActive,
-  isOwner
+  isOwner,
 }: {
   isDraft: boolean;
   over: Over | null;
@@ -88,12 +88,18 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     disabled: !isDraft && !isOwner,
   });
 
-
   const startRow = getRowIndex(venue, reservation.startTime);
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = useMemo(
-    () => getColorStyles({ isDraft, over, isDragging, otherNodeActive: Boolean(active || isSelecting || pendingChange), isOwner, }),
+    () =>
+      getColorStyles({
+        isDraft,
+        over,
+        isDragging,
+        otherNodeActive: Boolean(active || isSelecting || pendingChange),
+        isOwner,
+      }),
     [isDraft, over, isDragging, active, isOwner, isSelecting, pendingChange],
   );
 
@@ -133,7 +139,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       >
         <div className="flex flex-col flex-1">
           <div className="flex flex-row justify-between">
-
             <p className="font-semibold text-gray-700">
               <time dateTime="2022-01-12T06:00">
                 {format(newTimes.startTime, "h:mm a")} -{" "}
@@ -142,15 +147,12 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             </p>
 
             {isOwner && (
-              <ReservationMenu
-                onEdit={() => { }}
-                onDelete={props.onDelete}
-              />
+              <ReservationMenu onEdit={() => {}} onDelete={props.onDelete} />
             )}
           </div>
         </div>
-      </a >
-    </li >
+      </a>
+    </li>
   );
 };
 

@@ -36,12 +36,14 @@ type ListInvitationsInput = {
   organizationId: string;
 };
 
-type GetUserOrganizationResponse = Organization & {
-  users: (OrganizationUser & {
-    user: User;
-  })[];
-  onboardingState: OnboardingState | null;
- } | null;
+type GetUserOrganizationResponse =
+  | (Organization & {
+      users: (OrganizationUser & {
+        user: User;
+      })[];
+      onboardingState: OnboardingState | null;
+    })
+  | null;
 
 type GetInvitationDetailsInput = {
   token: string;
@@ -63,10 +65,10 @@ type UpdateOnboardingStateInput = {
   };
 };
 
-export const getUserOrganization: GetUserOrganization<void, GetUserOrganizationResponse> = async (
-  _args,
-  context
-) => {
+export const getUserOrganization: GetUserOrganization<
+  void,
+  GetUserOrganizationResponse
+> = async (_args, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -75,18 +77,18 @@ export const getUserOrganization: GetUserOrganization<void, GetUserOrganizationR
     where: {
       users: {
         some: {
-          userId: context.user.id
-        }
-      }
+          userId: context.user.id,
+        },
+      },
     },
     include: {
       users: {
         include: {
-          user: true
-        }
+          user: true,
+        },
       },
-      onboardingState: true
-    }
+      onboardingState: true,
+    },
   });
 
   if (!organization) {
@@ -485,10 +487,7 @@ export const updateOnboardingState = async (
   });
 };
 
-export const getUserOrganizationRole = async (
-  _args: void,
-  context: any,
-) => {
+export const getUserOrganizationRole = async (_args: void, context: any) => {
   if (!context.user) {
     throw new HttpError(403);
   }

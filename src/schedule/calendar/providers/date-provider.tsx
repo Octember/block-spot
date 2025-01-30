@@ -5,7 +5,7 @@ import { useSearchParams } from "react-router-dom";
 const DateContext = createContext<{
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
-}>({ selectedDate: startOfToday(), setSelectedDate: () => { } });
+}>({ selectedDate: startOfToday(), setSelectedDate: () => {} });
 
 function getDateOrDefault(date: string | null) {
   if (!date) {

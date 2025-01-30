@@ -22,7 +22,7 @@ export const updateOrganizationStripePaymentDetails = (
     subscriptionStatus,
     datePaid,
   });
-  
+
   return organizationDelegate.update({
     where: {
       stripeCustomerId,

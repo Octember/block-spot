@@ -7,7 +7,6 @@ import { TextInput } from "../../../client/components/form/text-input";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { useToast } from "../../../client/toast";
 
-
 export const VenueIntegrationsPage: FC = () => {
   const toast = useToast();
   const { venueId } = useParams<{ venueId: string }>();
@@ -65,7 +64,8 @@ export const VenueIntegrationsPage: FC = () => {
               </button>
             </div>
             <p className="text-xs text-gray-500">
-              Use this link to sync with Google Calendar, Outlook, Apple Calendar or any other calendar app that supports iCal feeds
+              Use this link to sync with Google Calendar, Outlook, Apple
+              Calendar or any other calendar app that supports iCal feeds
             </p>
           </div>
         </div>

@@ -1,8 +1,5 @@
 import { FC, useState } from "react";
-import {
-  createReservation,
-  generateGptResponse
-} from "wasp/client/operations";
+import { createReservation, generateGptResponse } from "wasp/client/operations";
 import { TextInput } from "../client/components/form/text-input";
 import { useToast } from "../client/toast";
 import DateProvider from "./calendar/providers/date-provider";

@@ -135,7 +135,6 @@ function UserCurrentPaymentPlan({
   subscriptionStatus,
   datePaid,
 }: UserCurrentPaymentPlanProps) {
-
   console.log({ subscriptionStatus, subscriptionPlan, datePaid });
   if (subscriptionStatus && subscriptionPlan && datePaid) {
     return (

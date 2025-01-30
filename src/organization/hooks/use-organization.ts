@@ -14,12 +14,16 @@ export interface Organization {
 export function useOrganization() {
   const { data: user } = useAuth();
 
-  const { data: organization, isLoading } = useQuery(getUserOrganization, null, {
-    enabled: !!user
-  });
+  const { data: organization, isLoading } = useQuery(
+    getUserOrganization,
+    null,
+    {
+      enabled: !!user,
+    },
+  );
 
   return {
     organization,
     isLoading,
   };
-} 
+}
