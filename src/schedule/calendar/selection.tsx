@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { Venue } from "wasp/entities";
+import { isUserOwner } from "../../client/hooks/permissions";
 import { useTimeLabels } from "./constants";
 import { useSelectedDate } from "./providers/date-provider";
 import { useScheduleContext } from "./providers/schedule-query-provider";
 import { getSharedGridStyle } from "./reservations/constants";
 import {
-  getTimeFromRowIndex,
-  getRowIndexFromMinutes,
+  getTimeFromRowIndex
 } from "./reservations/utilities";
-import { isUserOwner } from "../../client/hooks/permissions";
+
+interface Selection {
+  start: { row: number; col: number } | null;
+  current: { row: number; col: number } | null;
+}
+
+interface SelectionContextType {
+  selection: Selection;
+  isSelecting: boolean;
+  isTimeAvailable: (row: number) => boolean;
+  handleMouseDown: (row: number, col: number) => void;
+  handleMouseMove: (row: number, col: number) => void;
+  handleMouseUp: () => void;
+  getGridCell: (row: number, col: number) => string;
+}
+
+const SelectionContext = createContext<SelectionContextType | undefined>(undefined);
 
 function getStartEndTime(
   venue: Venue,
@@ -38,24 +54,19 @@ const calculateTimeFromRow = (venue: Venue, date: Date, row: number): Date => {
   return result;
 };
 
-interface GridSelectionProps {
-  spaceCount: number;
-  onSelectionComplete?: (start: Date, end: Date, spaceIndex: number) => void;
+interface SelectionProviderProps {
+  children: React.ReactNode;
 }
 
-export const GridSelection: React.FC<GridSelectionProps> = ({
-  spaceCount,
-  onSelectionComplete,
-}) => {
+export const SelectionProvider: React.FC<SelectionProviderProps> = ({ children }) => {
   const isOwner = isUserOwner();
-  const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
   const { venue, unavailabileBlocks } = useScheduleContext();
 
-  const [selection, setSelection] = useState<{
-    start: { row: number; col: number } | null;
-    current: { row: number; col: number } | null;
-  }>({ start: null, current: null });
+  const [selection, setSelection] = useState<Selection>({
+    start: null,
+    current: null
+  });
   const [isSelecting, setIsSelecting] = useState(false);
 
   const isTimeAvailable = (row: number): boolean => {
@@ -96,26 +107,6 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
 
   const handleMouseUp = () => {
     setIsSelecting(false);
-
-    if (selection.start && selection.current) {
-      // Validate entire selection range
-      const minRow = Math.min(selection.start.row, selection.current.row);
-      const maxRow = Math.max(selection.start.row, selection.current.row);
-
-      // Check if any row in the selection is unavailable
-      const isSelectionValid = Array.from(
-        { length: maxRow - minRow + 1 },
-        (_, i) => minRow + i,
-      ).every((row) => isTimeAvailable(row));
-
-      if (isSelectionValid && onSelectionComplete) {
-        const { start, end } = getStartEndTime(venue, selectedDate, {
-          start: selection.start,
-          current: selection.current,
-        });
-        onSelectionComplete(start, end, selection.start.col);
-      }
-    }
     setSelection({ start: null, current: null });
   };
 
@@ -135,10 +126,80 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
   };
 
   return (
+    <SelectionContext.Provider
+      value={{
+        selection,
+        isSelecting,
+        isTimeAvailable,
+        handleMouseDown,
+        handleMouseMove,
+        handleMouseUp,
+        getGridCell,
+      }}
+    >
+      {children}
+    </SelectionContext.Provider>
+  );
+};
+
+export const useReservationSelection = () => {
+  const context = useContext(SelectionContext);
+  if (!context) {
+    throw new Error('useReservationSelection must be used within a SelectionProvider');
+  }
+  return context;
+};
+
+interface GridSelectionProps {
+  spaceCount: number;
+  onSelectionComplete?: (start: Date, end: Date, spaceIndex: number) => void;
+}
+
+export const GridSelection: React.FC<GridSelectionProps> = ({
+  spaceCount,
+  onSelectionComplete,
+}) => {
+  const timeLabels = useTimeLabels();
+  const { selectedDate } = useSelectedDate();
+  const { venue } = useScheduleContext();
+  const {
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp: onMouseUp,
+    selection,
+    isSelecting,
+    getGridCell,
+    isTimeAvailable
+  } = useReservationSelection();
+
+  const handleMouseUp = () => {
+    if (selection.start && selection.current && isSelecting) {
+      // Validate entire selection range
+      const minRow = Math.min(selection.start.row, selection.current.row);
+      const maxRow = Math.max(selection.start.row, selection.current.row);
+
+      // Check if any row in the selection is unavailable
+      const isSelectionValid = Array.from(
+        { length: maxRow - minRow + 1 },
+        (_, i) => minRow + i,
+      ).every((row) => isTimeAvailable(row));
+
+      if (isSelectionValid && onSelectionComplete) {
+        const { start, end } = getStartEndTime(venue, selectedDate, {
+          start: selection.start,
+          current: selection.current,
+        });
+        onSelectionComplete(start, end, selection.start.col);
+      }
+    }
+    onMouseUp();
+  };
+
+  return (
     <div
       {...getSharedGridStyle(timeLabels.length, spaceCount)}
       onMouseUp={handleMouseUp}
-      onMouseLeave={() => setIsSelecting(false)}
+      onMouseLeave={handleMouseUp}
     >
       {Array.from({ length: timeLabels.length * 12 }).map((_, row) =>
         Array.from({ length: spaceCount }).map((_, col) => (

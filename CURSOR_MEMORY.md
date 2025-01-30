@@ -148,16 +148,33 @@ The calendar system is built around several key components:
 - `WeekViewCalendar.tsx`: Main calendar component that orchestrates the display of reservations and spaces
 - `ReservationsSection.tsx`: Handles the display and interaction with reservations
 - `ReservationSlot.tsx`: Individual reservation display component
+- `GridSelection.tsx`: Handles the grid-based selection UI for creating new reservations
 
 ### State Management
-- Draft reservations are managed through a context system in `providers/draft-reservation-provider.tsx`
-- The calendar uses multiple providers for different aspects of state:
-  - `DraftReservationProvider`: Manages draft reservation state
-  - `DateProvider`: Manages selected date state
-  - `ScheduleQueryProvider`: Manages venue and schedule data
+The calendar uses multiple providers for different aspects of state:
+- `DraftReservationProvider`: Manages draft reservation state for new/edited reservations
+- `SelectionProvider`: Manages the grid selection state for creating new reservations
+  - Handles mouse interactions (down, move, up)
+  - Manages selection bounds and validation
+  - Provides time availability checking
+  - Handles selection completion callbacks
+- `DateProvider`: Manages selected date state
+- `ScheduleQueryProvider`: Manages venue and schedule data
+
+Each provider follows a consistent pattern:
+- Context creation with TypeScript interfaces
+- Provider component with state management
+- Custom hook for consuming components (e.g. `useReservationSelection`, `useDraftReservation`)
+- Clear error messages for usage outside provider
+- Proper TypeScript typing for all interfaces and functions
 
 ### Key Features
 - Drag and drop functionality for reservations
 - Draft reservations for new bookings
+- Grid-based selection system for creating reservations
+  - Mouse-based selection with visual feedback
+  - Time slot availability validation
+  - Selection bounds calculation
+  - Owner-specific availability rules
 - Collision detection for reservations
 - Grid-based layout for time slots and spaces
