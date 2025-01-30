@@ -26,6 +26,7 @@ export const DroppableSpace = ({
     data: {
       spaceId,
       rowIndex,
+      rowSpan,
       occupied,
     },
     disabled: occupied,

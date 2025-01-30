@@ -1,13 +1,12 @@
 import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
-import { addMinutes } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { useTimeLabels } from "../constants";
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
-import { getSharedGridStyle, MinutesPerSlot, PixelsPerSlot } from "./constants";
+import { getSharedGridStyle, MinutesPerSlot } from "./constants";
 import { DroppableSpace } from "./droppable";
 import { ReservationSlot } from "./reservation-slot";
-import { getRowSpan, isWithinReservation } from "./utilities";
+import { getRowSpan, getTimeFromRowIndex, isWithinReservation } from "./utilities";
 
 export const ReservationsSection = () => {
   const { venue } = useScheduleContext();
@@ -52,27 +51,27 @@ export const ReservationsSection = () => {
         setDraggingReservationId(reservationId);
       }}
       onDragEnd={async (e) => {
+        console.log("drag end", e);
         setDraggingReservationId(null);
-        const delta = Math.round(e.delta.y / PixelsPerSlot);
-        const newSpaceId =
-          e.over?.data.current?.spaceId || pendingChange?.newState?.spaceId;
+
+        const droppable = e.over?.data.current
 
         if (!draggingReservation) return;
+        if (!droppable) return;
 
-        const draftStartTime = addMinutes(
-          draggingReservation.startTime,
-          delta * MinutesPerSlot,
-        );
-        const draftEndTime = addMinutes(
-          draggingReservation.endTime,
-          delta * MinutesPerSlot,
-        );
+        // Not sure why +1 is needed here, but it works
+        const startTime = getTimeFromRowIndex(venue, droppable.rowIndex + 1)
+        const endTime = getTimeFromRowIndex(venue, droppable.rowIndex + droppable?.rowSpan + 1)
+
+        const newSpaceId = droppable.spaceId
+
+
         const isCollision = reservations.some((reservation) => {
           if (reservation.id === draggingReservation.id) return false;
           if (
             reservation.spaceId === newSpaceId &&
-            reservation.startTime < draftEndTime &&
-            reservation.endTime > draftStartTime
+            reservation.startTime < endTime &&
+            reservation.endTime > startTime
           ) {
             return true;
           }
@@ -85,28 +84,16 @@ export const ReservationsSection = () => {
             type: "CREATE",
             newState: {
               ...draggingReservation,
-              startTime: addMinutes(
-                draggingReservation.startTime,
-                delta * MinutesPerSlot,
-              ),
-              endTime: addMinutes(
-                draggingReservation.endTime,
-                delta * MinutesPerSlot,
-              ),
+              startTime,
+              endTime,
               spaceId: newSpaceId,
             },
           });
         } else {
           const updatedReservation = {
             ...draggingReservation,
-            startTime: addMinutes(
-              draggingReservation.startTime,
-              delta * MinutesPerSlot,
-            ),
-            endTime: addMinutes(
-              draggingReservation.endTime,
-              delta * MinutesPerSlot,
-            ),
+            startTime,
+            endTime,
             spaceId: newSpaceId,
           };
 

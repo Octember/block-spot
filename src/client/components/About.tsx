@@ -35,9 +35,9 @@ export default function About() {
 
         {/* Why Choose Us */}
         <section>
-          <h2 className="text-2xl font-bold mb-6">Why Choose BlockSpot?</h2>
-          <div className="grid gap-6">
-            <div className="bg-cyan-50 dark:bg-gray-800 px-6  rounded-lg">
+          <h2 className="text-2xl font-bold mb-6 ">Why Choose BlockSpot?</h2>
+          <ul className="gap-6 list-disc marker:text-gray-800 list-outside">
+            <li className="dark:bg-gray-800 rounded-lg items-center">
               <h3 className="text-xl font-semibold mb-2">
                 Premium Quality, Not Premium Prices
               </h3>
@@ -46,8 +46,8 @@ export default function About() {
                 engineered BlockSpot to deliver exceptional value without hidden
                 fees or tiers.
               </p>
-            </div>
-            <div className="bg-cyan-50 dark:bg-gray-800 px-6 rounded-lg">
+            </li>
+            <li className="dark:bg-gray-800 rounded-lg">
               <h3 className="text-xl font-semibold mb-2">
                 UX That Feels Effortless
               </h3>
@@ -55,8 +55,8 @@ export default function About() {
                 Every button, calendar view, and notification is crafted with
                 care. If it&apos;s not intuitive, it doesn&apos;t make the cut.
               </p>
-            </div>
-            <div className="bg-cyan-50 dark:bg-gray-800 px-6 rounded-lg">
+            </li>
+            <li className="dark:bg-gray-800 rounded-lg">
               <h3 className="text-xl font-semibold mb-2">
                 For Professionals, By Professionals
               </h3>
@@ -65,8 +65,8 @@ export default function About() {
                 and last-minute changes. We know what you need because
                 we&apos;ve needed it too.
               </p>
-            </div>
-          </div>
+            </li>
+          </ul>
         </section>
 
         {/* Less Frills, More Focus */}

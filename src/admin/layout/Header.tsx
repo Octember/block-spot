@@ -1,8 +1,7 @@
 import { type AuthUser } from "wasp/auth";
+import { cn } from "../../client/cn";
 import MessageButton from "../../messages/MessageButton";
 import DropdownUser from "../../user/DropdownUser";
-import { cn } from "../../client/cn";
-import DarkModeSwitcher from "../../client/components/DarkModeSwitcher";
 
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
@@ -76,7 +75,7 @@ const Header = (props: {
 
         <ul className="flex items-center gap-2 2xsm:gap-4">
           {/* <!-- Dark Mode Toggler --> */}
-          <DarkModeSwitcher />
+          {/* <DarkModeSwitcher /> */}
           {/* <!-- Dark Mode Toggler --> */}
 
           {/* <!-- Chat Notification Area --> */}

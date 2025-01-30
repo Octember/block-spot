@@ -11,7 +11,6 @@ import { UserMenuItems } from "../../../user/UserMenuItems";
 import { cn } from "../../cn";
 import { useIsLandingPage } from "../../hooks/useIsLandingPage";
 import logo from "../../static/logo.svg";
-import DarkModeSwitcher from "../DarkModeSwitcher";
 
 export interface NavigationItem {
   name: string;
@@ -67,9 +66,9 @@ export default function AppNavBar({
           {renderNavigationItems(navigationItems)}
         </div>
         <div className="hidden lg:flex lg:flex-1 gap-3 justify-end items-center">
-          <ul className="flex justify-center items-center gap-2 sm:gap-4">
+          {/* <ul className="flex justify-center items-center gap-2 sm:gap-4">
             <DarkModeSwitcher />
-          </ul>
+          </ul> */}
           {isUserLoading ? null : !user ? (
             <WaspRouterLink
               to={routes.LoginRoute.to}
@@ -130,9 +129,9 @@ export default function AppNavBar({
                   />
                 )}
               </div>
-              <div className="py-6">
+              {/* <div className="py-6">
                 <DarkModeSwitcher />
-              </div>
+              </div> */}
             </div>
           </div>
         </DialogPanel>

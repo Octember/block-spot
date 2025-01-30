@@ -148,7 +148,7 @@ const PricingPage = () => {
                 {
                   "ring-2 ring-gray-200 my-4": planId !== bestDealPaymentPlanId,
                 },
-                { "ring-2 ring-indigo-600": planId === bestDealPaymentPlanId },
+                { "ring-2 ring-teal-600": planId === bestDealPaymentPlanId },
               )}
             >
               <div className="flex items-center justify-between gap-x-4">
@@ -159,7 +159,7 @@ const PricingPage = () => {
                   {card.name}
                 </h2>
                 {planId === bestDealPaymentPlanId && (
-                  <p className="rounded-full bg-indigo-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-indigo-600">
+                  <p className="rounded-full bg-teal-600/10 px-2.5 py-1 text-xs font-semibold leading-5 text-teal-600">
                     Most popular
                   </p>
                 )}
@@ -183,8 +183,8 @@ const PricingPage = () => {
                   className={cn(
                     "mt-6 block w-full rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
                     planId === bestDealPaymentPlanId
-                      ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-indigo-600"
-                      : "bg-white text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
+                      ? "bg-teal-700 text-white shadow-sm hover:bg-teal-600 focus-visible:outline-teal-600"
+                      : "bg-white text-teal-800 ring-1 ring-inset ring-teal-500 hover:ring-teal-600",
                   )}
                 >
                   {isCustomerPortalUrlLoading
@@ -199,8 +199,8 @@ const PricingPage = () => {
                   className={cn(
                     "mt-6 block w-full rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
                     planId === bestDealPaymentPlanId
-                      ? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline-indigo-600"
-                      : "bg-white text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
+                      ? "bg-teal-700 text-white shadow-sm hover:bg-teal-600 focus-visible:outline-teal-600"
+                      : "bg-white text-teal-600 ring-1 ring-inset ring-teal-200 hover:ring-teal-300",
                   )}
                 >
                   {isPaymentLoading ? "Loading..." : "Buy plan"}
@@ -213,7 +213,7 @@ const PricingPage = () => {
                 {card.features.map((feature) => (
                   <li key={feature} className="flex gap-x-3">
                     <AiFillCheckCircle
-                      className="h-6 w-5 flex-none text-indigo-600"
+                      className="h-6 w-5 flex-none text-teal-600"
                       aria-hidden="true"
                     />
                     {feature}

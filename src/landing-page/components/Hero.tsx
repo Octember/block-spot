@@ -10,7 +10,7 @@ export default function Hero() {
               Simple Bookings.
             </h1>
             <h1 className="text-4xl mt-4 font-bold text-gray-900 sm:text-6xl dark:text-white">
-              <span className="italic">Happier</span> Customers.
+              <span className="italic">Happier</span> Clients.
             </h1>
             <p className="mt-6 mx-auto max-w-2xl text-lg leading-8 text-gray-600 dark:text-white">
               Save time, reduce chaos, and grow your business with an
