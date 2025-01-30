@@ -1,10 +1,10 @@
 import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { addMinutes } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
-import { deleteReservation, updateReservation } from "wasp/client/operations";
 import { useToast } from "../../../client/toast";
 import { useTimeLabels } from "../constants";
 import { useDraftReservation } from "../providers/draft-reservation-provider";
+import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { getSharedGridStyle, MinutesPerSlot, PixelsPerSlot } from "./constants";
 import { DroppableSpace } from "./droppable";
@@ -16,6 +16,7 @@ export const ReservationsSection = () => {
   const { venue } = useScheduleContext();
   const { refresh } = useScheduleContext();
   const timeLabels = useTimeLabels();
+  const { setPendingChange } = usePendingChanges();
 
   const { draftReservation, setDraftReservation } = useDraftReservation();
 
@@ -26,7 +27,7 @@ export const ReservationsSection = () => {
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
-      distance: 5, // needed to allow clicking on the reservation slot
+      distance: 5,
     },
   });
   const sensors = useSensors(mouseSensor);
@@ -70,7 +71,6 @@ export const ReservationsSection = () => {
         );
         const isCollision = reservations.some((reservation) => {
           if (reservation.id === draggingReservation.id) return false;
-          // Check if there's an overlap between the draftReservation and an existing reservation
           if (
             reservation.spaceId === newSpaceId &&
             reservation.startTime < draftEndTime &&
@@ -109,22 +109,18 @@ export const ReservationsSection = () => {
             spaceId: newSpaceId,
           };
 
-          // Hack to avoid flickering, state will be updated after the refetch below
+          // Update local state for immediate feedback
           setReservations([
             ...reservations.filter((r) => r.id !== draggingReservation.id),
             updatedReservation,
           ]);
-          try {
-            await updateReservation({
-              ...updatedReservation,
-            });
 
-            refresh();
-
-            setToast({ title: "Reservation updated" });
-          } catch (e) {
-            setToast({ title: "Something went wrong", type: "error" });
-          }
+          // Create pending change
+          setPendingChange({
+            type: 'UPDATE',
+            oldState: draggingReservation,
+            newState: updatedReservation,
+          });
         }
       }}
     >
@@ -168,9 +164,11 @@ export const ReservationsSection = () => {
               (spaceId) => spaceId === reservation.spaceId,
             )}
             onDelete={async () => {
-              await deleteReservation({ id: reservation.id });
-              setToast({ title: "Reservation deleted" });
-              refresh();
+              setPendingChange({
+                type: 'DELETE',
+                oldState: reservation,
+                newState: reservation,
+              });
             }}
           />
         ))}
@@ -182,6 +180,10 @@ export const ReservationsSection = () => {
             )}
             isDraft
             onCreate={async () => {
+              setPendingChange({
+                type: 'CREATE',
+                newState: draftReservation,
+              });
               setDraftReservation(null);
             }}
             onDiscardDraft={() => setDraftReservation(null)}

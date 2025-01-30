@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from 'react';
-import { deleteReservation, updateReservation } from 'wasp/client/operations';
+import { createReservation, deleteReservation, updateReservation } from 'wasp/client/operations';
 import { Reservation } from 'wasp/entities';
 import { useToast } from '../../../client/toast';
 import { useScheduleContext } from './schedule-query-provider';
@@ -33,6 +33,7 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({ 
 
   const cancelChange = () => {
     setPendingChange(null);
+    refresh();
   };
 
   const applyChange = async () => {
@@ -50,7 +51,7 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({ 
           break;
         case 'CREATE':
           // Note: This would need a createReservation operation
-          // await createReservation(pendingChange.newState);
+          await createReservation(pendingChange.newState);
           break;
       }
 

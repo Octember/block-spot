@@ -8,10 +8,10 @@ import {
 } from "@heroicons/react/20/solid";
 import { addMinutes, format } from "date-fns";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createReservation, updateReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { isUserOwner } from "../../../client/hooks/permissions";
 import { useDraftReservation } from "../providers/draft-reservation-provider";
+import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { useReservationSelection } from '../selection';
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
@@ -70,6 +70,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
   const isOwner = isUserOwner();
+  const { setPendingChange } = usePendingChanges();
 
   const { draftReservation } = useDraftReservation();
   const { isSelecting } = useReservationSelection();
@@ -124,7 +125,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   }, [reservation, isDragging, transform]);
 
   const [isEditing, setIsEditing] = useState(false);
-  // const [description, setDescription] = useState(reservation.description);
 
   return (
     <li
@@ -151,23 +151,24 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                 onSubmit={async (e) => {
                   e.preventDefault();
                   if (isDraft) {
-                    await createReservation({
-                      spaceId: reservation.spaceId,
-                      startTime: reservation.startTime,
-                      endTime: reservation.endTime,
-                      description: "test",
+                    setPendingChange({
+                      type: 'CREATE',
+                      newState: {
+                        ...reservation,
+                      },
                     });
-                    refresh();
 
                     props.onCreate?.();
                   } else {
-                    await updateReservation({
-                      id: reservation.id,
-                      // description: description,
+                    setPendingChange({
+                      type: 'UPDATE',
+                      oldState: reservation,
+                      newState: {
+                        ...reservation,
+                      },
                     });
-                    refresh();
+                    setIsEditing(false);
                   }
-                  setIsEditing(false);
                 }}
               >
                 {!isDraft && (
@@ -189,12 +190,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             ) : (
               <p className="font-semibold text-gray-700">
                 <time dateTime="2022-01-12T06:00">
-                  {/* {isDragging ? <span className="text-gray-500">Dragging</span> : */}
-                  <>
-                    {format(newTimes.startTime, "h:mm a")} -{" "}
-                    {format(newTimes.endTime, "h:mm a")}
-                  </>
-                  {/* } */}
+                  {format(newTimes.startTime, "h:mm a")} -{" "}
+                  {format(newTimes.endTime, "h:mm a")}
                 </time>
               </p>
             )}
@@ -202,23 +199,10 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             {isOwner && (
               <ReservationMenu
                 onEdit={() => setIsEditing(true)}
-                onDelete={() =>
-                  props.isDraft ? props.onDiscardDraft?.() : props.onDelete?.()
-                }
+                onDelete={props.onDelete}
               />
             )}
           </div>
-
-          {/* <div className="flex flex-row justify-between h-full">
-            <p className="text-gray-500 group-hover:text-gray-700">
-              <time dateTime="2022-01-12T06:00">
-                <>
-                  {format(newTimes.startTime, "h:mm a")} -{" "}
-                  {format(newTimes.endTime, "h:mm a")}
-                </>
-              </time>
-            </p>
-          </div> */}
         </div>
       </a>
     </li>
@@ -230,7 +214,7 @@ const ReservationMenu = ({
   onDelete,
 }: {
   onEdit: () => void;
-  onDelete: () => void;
+  onDelete?: () => void;
 }) => {
   return (
     <Popover className="relative">
@@ -247,20 +231,14 @@ const ReservationMenu = ({
             onClick={onEdit}
             className="group flex gap-2 items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
-            <PencilSquareIcon
-              aria-hidden="true"
-              className="size-3 group-data-[focus]:text-gray-500"
-            />
+            <PencilSquareIcon className="size-4 text-gray-400 group-hover:text-gray-700" />
             Edit
           </button>
           <button
             onClick={onDelete}
-            className="group flex gap-2 items-center px-4 w-full py-2 text-sm text-red-600 hover:bg-red-100"
+            className="group flex gap-2 items-center px-4 py-2 text-sm text-red-700 hover:bg-red-50"
           >
-            <TrashIcon
-              aria-hidden="true"
-              className="size-3 group-data-[focus]:text-gray-500"
-            />
+            <TrashIcon className="size-4 text-red-400 group-hover:text-red-700" />
             Delete
           </button>
         </div>
