@@ -155,23 +155,25 @@ export const ReservationsSection = () => {
       )}
 
       <ol {...getSharedGridStyle(timeLabels.length, spaceIds.length)}>
-        {reservations.map((reservation) => (
-          <ReservationSlot
-            key={reservation.id}
-            reservation={reservation}
-            isDraft={false}
-            gridIndex={spaceIds.findIndex(
-              (spaceId) => spaceId === reservation.spaceId,
-            )}
-            onDelete={async () => {
-              setPendingChange({
-                type: 'DELETE',
-                oldState: reservation,
-                newState: reservation,
-              });
-            }}
-          />
-        ))}
+        {reservations
+          .filter(reservation => !pendingChange || pendingChange.oldState?.id !== reservation.id)
+          .map((reservation) => (
+            <ReservationSlot
+              key={reservation.id}
+              reservation={reservation}
+              isDraft={false}
+              gridIndex={spaceIds.findIndex(
+                (spaceId) => spaceId === reservation.spaceId,
+              )}
+              onDelete={async () => {
+                setPendingChange({
+                  type: 'DELETE',
+                  oldState: reservation,
+                  newState: reservation,
+                });
+              }}
+            />
+          ))}
         {pendingChange && (
           <ReservationSlot
             reservation={pendingChange.newState}
