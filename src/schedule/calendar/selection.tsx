@@ -70,6 +70,7 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
     current: null,
   });
   const [isSelecting, setIsSelecting] = useState(false);
+  const { pendingChange } = usePendingChanges();
 
   const isTimeAvailable = (row: number): boolean => {
     if (isOwner) {
@@ -88,7 +89,7 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
   };
 
   const handleMouseDown = (row: number, col: number) => {
-    if (!isTimeAvailable(row)) {
+    if (!isTimeAvailable(row) || pendingChange) {
       return;
     }
 

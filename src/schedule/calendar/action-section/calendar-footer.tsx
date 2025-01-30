@@ -1,4 +1,5 @@
 import { usePendingChanges } from "../providers/pending-changes-provider";
+import { useScheduleContext } from "../providers/schedule-query-provider";
 import { PendingChangesSection } from "./pending-changes-section";
 
 export const CalendarFooter = () => {
@@ -12,9 +13,10 @@ export const CalendarFooter = () => {
 };
 
 export const AnnouncementSection = () => {
+  const { venue } = useScheduleContext();
   return (
     <div className="flex items-center justify-center h-full">
-      Announcements - studio will be closed on Monday
+      {venue.announcements}
     </div>
   );
 };

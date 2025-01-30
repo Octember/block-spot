@@ -70,6 +70,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const { isSelecting } = useReservationSelection();
   const { pendingChange } = usePendingChanges();
 
+  const disabled = (!isDraft && !isOwner) || (pendingChange ? pendingChange.oldState?.id !== reservation.id : false);
+
   const {
     attributes,
     listeners,
@@ -85,7 +87,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       startTime: reservation.startTime,
       endTime: reservation.endTime,
     },
-    disabled: !isDraft && !isOwner,
+    disabled,
   });
 
   const startRow = getRowIndex(venue, reservation.startTime);
@@ -147,7 +149,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             </p>
 
             {isOwner && (
-              <ReservationMenu onEdit={() => {}} onDelete={props.onDelete} />
+              <ReservationMenu onEdit={() => { }} onDelete={props.onDelete} />
             )}
           </div>
         </div>
