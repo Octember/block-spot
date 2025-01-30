@@ -142,8 +142,10 @@ const PricingPage = () => {
             <div
               key={planId}
               className={cn(
-                "ring-2 ring-indigo-600",
-                "rounded-3xl p-8 xl:p-10",
+                "rounded-3xl p-8 xl:p-10 bg-white",
+                { "ring-2 ring-gray-200 my-4": planId !== bestDealPaymentPlanId },
+                { "ring-2 ring-indigo-600": planId === bestDealPaymentPlanId },
+
               )}
             >
               <div className="flex items-center justify-between gap-x-4">

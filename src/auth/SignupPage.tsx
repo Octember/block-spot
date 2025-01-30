@@ -1,33 +1,35 @@
 import { CustomizationOptions, SignupForm, useAuth } from "wasp/client/auth";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 
-import "./overrides.css";
 import { Navigate } from "react-router-dom";
+import "./overrides.css";
 
 const AuthLayoutV2: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   return (
     <div className="flex min-h-full flex-col lg:flex-row pt-10 sm:px-6 lg:px-8 justify-center">
-      <div className="flex flex-col gap-4 mt-12 md:max-w-md mx-auto md:ml-auto mb-8">
-        <h2 className="text-2xl font-bold">Start scheduling today</h2>
-        <p>
-          Welcome to BlockSpot! We're excited to help you streamline your venue
-          scheduling and management. Create your account to start booking
-          spaces, managing events, and making the most of your venues.
+      <div className="flex flex-col gap-4 mt-12 md:max-w-lg mx-auto md:ml-auto mb-8">
+        <h2 className="text-2xl font-bold">Welcome to BlockSpot! 🎉</h2>
+        <h4 className="text-lg font-bold">Streamline your venue management—finally.</h4>
+        <p className="prose">
+          Get started in minutes and turn chaos into clarity. Book spaces, manage events, and optimize your venues with a tool designed for your hustle, not against it.
         </p>
         <p className="mt-4">
-          Join <span className="font-bold">BILLIONS</span> of venue managers who
-          trust BlockSpot to handle their scheduling needs efficiently and
-          professionally.
+          <b>Join venue managers who rely on BlockSpot to:</b>
         </p>
+        <ol className="list-disc list-inside">
+          <li>Save hours on double-bookings and manual updates.</li>
+          <li>Deliver seamless experiences for staff and clients.</li>
+          <li>Focus on growth, not scheduling headaches.</li>
+        </ol>
       </div>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 mb-10 px-4 shadow-xl ring-1 ring-gray-900/10 sm:rounded-lg sm:px-10 dark:bg-white dark:text-gray-900 signupForm">
           {children}
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
