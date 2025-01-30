@@ -149,9 +149,20 @@ The calendar system is built around several key components:
 - `ReservationsSection.tsx`: Handles the display and interaction with reservations
 - `ReservationSlot.tsx`: Individual reservation display component
 - `GridSelection.tsx`: Handles the grid-based selection UI for creating new reservations
+- `CalendarFooter.tsx`: Displays pending changes and provides action buttons
+  - Shows descriptive messages for different change types
+  - Provides apply and cancel actions
+  - Only visible when there are pending changes
+  - Uses consistent design language with the rest of the app
 
 ### State Management
 The calendar uses multiple providers for different aspects of state:
+- `PendingChangesProvider`: Manages a single pending change to reservations
+  - Tracks one CREATE, UPDATE, or DELETE operation at a time
+  - Maintains old and new state for the change
+  - Provides simple operations (apply, cancel)
+  - Handles error states with clear feedback
+  - Displays changes in the footer with clear descriptions
 - `DraftReservationProvider`: Manages draft reservation state for new/edited reservations
 - `SelectionProvider`: Manages the grid selection state for creating new reservations
   - Handles mouse interactions (down, move, up)
@@ -161,12 +172,39 @@ The calendar uses multiple providers for different aspects of state:
 - `DateProvider`: Manages selected date state
 - `ScheduleQueryProvider`: Manages venue and schedule data
 
+### UI/UX Patterns
+- Consistent action patterns:
+  - Primary actions use pink-600 background
+  - Secondary actions use white background with border
+  - All buttons have proper hover and focus states
+  - Clear visual hierarchy for actions
+- Status indicators:
+  - Yellow dot for pending changes
+  - Clear, human-readable descriptions
+  - Time ranges shown in 12-hour format
+- Responsive layout:
+  - Footer fixed to bottom of viewport
+  - Maximum width to match content
+  - Proper spacing and alignment
+  - Clear visual separation with border
+
 Each provider follows a consistent pattern:
 - Context creation with TypeScript interfaces
 - Provider component with state management
-- Custom hook for consuming components (e.g. `useReservationSelection`, `useDraftReservation`)
+- Custom hook for consuming components (e.g. `useReservationSelection`, `useDraftReservation`, `usePendingChanges`)
 - Clear error messages for usage outside provider
 - Proper TypeScript typing for all interfaces and functions
+
+### Provider Hierarchy
+The providers are nested in the following order:
+1. `PendingChangesProvider` (outermost)
+2. `DraftReservationProvider`
+3. `SelectionProvider` (innermost)
+
+This hierarchy ensures that:
+- Changes can be tracked and managed one at a time
+- Draft reservations can be converted to pending changes
+- Selection can create draft reservations
 
 ### Key Features
 - Drag and drop functionality for reservations
@@ -178,3 +216,8 @@ Each provider follows a consistent pattern:
   - Owner-specific availability rules
 - Collision detection for reservations
 - Grid-based layout for time slots and spaces
+- Single change management
+  - One change can be staged at a time
+  - Changes can be cancelled
+  - Changes are applied with proper error handling
+  - Clear user feedback on success/failure

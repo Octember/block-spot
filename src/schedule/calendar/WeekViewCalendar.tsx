@@ -1,10 +1,12 @@
 import { FC } from "react";
 import { Reservation, Space, Venue } from "wasp/entities";
 
+import { CalendarFooter } from './action-section/calendar-footer';
 import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { DraftReservationProvider } from "./providers/draft-reservation-provider";
+import { PendingChangesProvider } from "./providers/pending-changes-provider";
 import { getGridTemplateColumns } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from './selection';
@@ -50,6 +52,8 @@ const CalendarContent: FC<WeekViewCalendarProps> = ({ venue }) => {
           </div>
         </div>
       </div>
+
+      <CalendarFooter />
     </div>
   );
 };
@@ -60,10 +64,12 @@ export interface WeekViewCalendarProps {
 
 export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
   return (
-    <DraftReservationProvider>
-      <SelectionProvider>
-        <CalendarContent venue={venue} />
-      </SelectionProvider>
-    </DraftReservationProvider>
+    <PendingChangesProvider>
+      <DraftReservationProvider>
+        <SelectionProvider>
+          <CalendarContent venue={venue} />
+        </SelectionProvider>
+      </DraftReservationProvider>
+    </PendingChangesProvider>
   );
 };
