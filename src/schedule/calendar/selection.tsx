@@ -61,7 +61,6 @@ interface SelectionProviderProps {
 
 export const SelectionProvider: React.FC<SelectionProviderProps> = ({ children }) => {
   const isOwner = isUserOwner();
-  const { selectedDate } = useSelectedDate();
   const { venue, unavailabileBlocks } = useScheduleContext();
 
   const [selection, setSelection] = useState<Selection>({
@@ -150,8 +149,6 @@ export const useReservationSelection = () => {
   }
   return context;
 };
-
-
 
 export const GridSelection: React.FC = () => {
   const { setDraftReservation } = useDraftReservation();

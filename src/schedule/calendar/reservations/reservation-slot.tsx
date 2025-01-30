@@ -13,6 +13,7 @@ import { Reservation } from "wasp/entities";
 import { isUserOwner } from "../../../client/hooks/permissions";
 import { useDraftReservation } from "../providers/draft-reservation-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
+import { useReservationSelection } from '../selection';
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
 import { UpdateButton } from "./update-button";
 import { getRowIndex, getRowSpan } from "./utilities";
@@ -71,6 +72,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const isOwner = isUserOwner();
 
   const { draftReservation } = useDraftReservation();
+  const { isSelecting } = useReservationSelection();
 
   const {
     attributes,
@@ -100,8 +102,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = useMemo(
-    () => getColorStyles({ isDraft, over, isDragging, otherNodeActive: Boolean(active || draftReservation), isOwner }),
-    [isDraft, over, isDragging, active, draftReservation, isOwner],
+    () => getColorStyles({ isDraft, over, isDragging, otherNodeActive: Boolean(active || draftReservation || isSelecting), isOwner, }),
+    [isDraft, over, isDragging, active, draftReservation, isOwner, isSelecting],
   );
 
   // Take into account the current drag position
@@ -141,19 +143,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       <a
         className={`relative group w-full my-1 mx-2 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
       >
-        {/* stubbed extending the start & end of the reservation */}
-        {/* {isDraft &&
-          <div className="absolute h-full w-full left-0 top-0 flex flex-col justify-between pointer-events-none">
-            <div className="flex w-full justify-center pointer-events-auto cursor-row-resize h-3 ">
-              <ArrowUpIcon className="size-4" />
-            </div>
-
-            <div className="flex w-full justify-center pointer-events-auto cursor-row-resize h-3 ">
-              <ArrowDownIcon className="size-4" />
-            </div>
-          </div>
-        } */}
-
         <div className="flex flex-col flex-1">
           <div className="flex flex-row justify-between">
             {isDraft || isEditing ? (
@@ -181,19 +170,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                   setIsEditing(false);
                 }}
               >
-                {/* <TextInput
-                  autoFocus
-                  ref={descriptionInputRef}
-                  id="title"
-                  name="title"
-                  type="text"
-                  className="block text-xs font-medium py-0.5  rounded placeholder:text-gray-400 focus:outline-0"
-                  placeholder="Description"
-                  value={description || undefined}
-                  onChange={(e) => {
-                    setDescription(e.target.value);
-                  }}
-                /> */}
                 {!isDraft && (
                   <button type="submit">
                     <CheckIcon className="size-5 bg-green-500 hover:bg-green-600 rounded p-0.5 text-white" />
@@ -212,7 +188,14 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
               </form>
             ) : (
               <p className="font-semibold text-gray-700">
-                {reservation.description}
+                <time dateTime="2022-01-12T06:00">
+                  {/* {isDragging ? <span className="text-gray-500">Dragging</span> : */}
+                  <>
+                    {format(newTimes.startTime, "h:mm a")} -{" "}
+                    {format(newTimes.endTime, "h:mm a")}
+                  </>
+                  {/* } */}
+                </time>
               </p>
             )}
 
@@ -226,18 +209,16 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             )}
           </div>
 
-          <div className="flex flex-row justify-between h-full">
+          {/* <div className="flex flex-row justify-between h-full">
             <p className="text-gray-500 group-hover:text-gray-700">
               <time dateTime="2022-01-12T06:00">
-                {/* {isDragging ? <span className="text-gray-500">Dragging</span> : */}
                 <>
                   {format(newTimes.startTime, "h:mm a")} -{" "}
                   {format(newTimes.endTime, "h:mm a")}
                 </>
-                {/* } */}
               </time>
             </p>
-          </div>
+          </div> */}
         </div>
       </a>
     </li>
