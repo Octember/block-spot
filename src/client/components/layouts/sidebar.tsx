@@ -17,7 +17,7 @@ export default function Sidebar() {
                     to={item.route as any}
                     className={cn(
                       item.current
-                        ? "bg-gray-50 text-sky-600"
+                        ? "bg-gray-50 text-teal-600"
                         : "text-gray-700 hover:bg-gray-50 hover:text-dustyblue-dark",
                       "group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold",
                     )}
@@ -26,7 +26,7 @@ export default function Sidebar() {
                       aria-hidden="true"
                       className={cn(
                         item.current
-                          ? "text-sky-600"
+                          ? "text-teal-600"
                           : "text-gray-800 group-hover:text-dustyblue-dark",
                         "size-6 shrink-0",
                       )}

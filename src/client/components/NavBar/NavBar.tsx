@@ -43,7 +43,7 @@ export default function AppNavBar({
         <div className="flex items-center lg:flex-1">
           <WaspRouterLink
             to={routes.LandingPageRoute.to}
-            className="flex items-center -m-1.5 p-1.5 text-gray-900 duration-300 ease-in-out hover:text-sky-500 bg:hover-yellow-200"
+            className="flex items-center -m-1.5 p-1.5 text-gray-900 duration-300 ease-in-out hover:text-teal-600 bg:hover-yellow-200"
           >
             <NavLogo />
             {/* {isLandingPage && ( */}
@@ -148,7 +148,7 @@ function renderNavigationItems(
   const menuStyles = cn({
     "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-boxdark-2":
       !!setMobileMenuOpen,
-    "text-sm font-semibold leading-6 text-gray-900 duration-300 ease-in-out hover:text-sky-500 dark:text-white":
+    "text-sm font-semibold leading-6 text-gray-900 duration-300 ease-in-out hover:text-teal-600 dark:text-white":
       !setMobileMenuOpen,
   });
 

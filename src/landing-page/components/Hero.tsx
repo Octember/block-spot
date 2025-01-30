@@ -18,7 +18,7 @@ export default function Hero() {
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
                 href={"/signup"}
-                className="rounded-md px-3.5 py-2.5 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-200 bg-white hover:ring-2 hover:ring-sky-500 hover:bg-sky-50 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:text-white"
+                className="rounded-md px-3.5 py-2.5 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-200 bg-white hover:ring-2 hover:ring-teal-600 hover:bg-teal-50 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:text-white"
               >
                 Get Started in Minutes <span aria-hidden="true">→</span>
               </a>
@@ -41,7 +41,7 @@ export default function Hero() {
 
           <div className="mx-auto  mt-14 max-w-2xl text-center">
             <p className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
-              Streamline Your <span className="text-sky-700">Reservations</span>
+              Streamline Your <span className="text-teal-700">Reservations</span>
             </p>
             <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-white">
               No clunky interfaces. No overpriced plans. Just a straightforward tool to manage your spaces, delight customers, and reclaim your day.

@@ -58,7 +58,7 @@ export default function About() {
           <h2 className="text-2xl font-bold mb-6">Ready to focus on what matters?</h2>
           <WaspRouterLink
             to={routes.SignupRoute.to}
-            className="bg-sky-500 hover:bg-sky-400 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
+            className="bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 px-8 rounded-lg transition duration-300"
           >
             Let&apos;s Get Started
           </WaspRouterLink>

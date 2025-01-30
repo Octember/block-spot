@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createReservation, updateReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { isUserOwner } from "../../../client/hooks/permissions";
+import { useDraftReservation } from "../providers/draft-reservation-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
 import { UpdateButton } from "./update-button";
@@ -34,13 +35,13 @@ function getColorStyles({
   isDraft,
   over,
   isDragging,
-  otherNodeDragging,
+  otherNodeActive,
   isOwner
 }: {
   isDraft: boolean;
   over: Over | null;
   isDragging: boolean;
-  otherNodeDragging: boolean;
+  otherNodeActive: boolean;
   isOwner: boolean;
 }) {
   const opacityStyle = isDragging ? "opacity-50" : "";
@@ -52,7 +53,7 @@ function getColorStyles({
     return `${BlueColorStyle} ${opacityStyle}`;
   }
 
-  if (otherNodeDragging) {
+  if (otherNodeActive) {
     return GrayColorStyle;
   }
 
@@ -68,6 +69,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const { reservation, gridIndex, isDraft } = props;
   const descriptionInputRef = useRef<HTMLInputElement>(null);
   const isOwner = isUserOwner();
+
+  const { draftReservation } = useDraftReservation();
 
   const {
     attributes,
@@ -97,8 +100,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const rowSpan = getRowSpan(reservation);
 
   const colorStyles = useMemo(
-    () => getColorStyles({ isDraft, over, isDragging, otherNodeDragging: Boolean(active), isOwner }),
-    [isDraft, over, isDragging, active, isOwner],
+    () => getColorStyles({ isDraft, over, isDragging, otherNodeActive: Boolean(active || draftReservation), isOwner }),
+    [isDraft, over, isDragging, active, draftReservation, isOwner],
   );
 
   // Take into account the current drag position
