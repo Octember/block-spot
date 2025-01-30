@@ -7,8 +7,7 @@ import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { DraftReservationProvider } from "./providers/draft-reservation-provider";
 import { getGridTemplateColumns } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
-import { SelectionProvider } from "./selection";
-import { SelectionHandler } from "./selection/selection-handler";
+import { GridSelection, SelectionProvider } from './selection';
 
 const CalendarContent: FC<WeekViewCalendarProps> = ({ venue }) => {
   return (
@@ -46,7 +45,7 @@ const CalendarContent: FC<WeekViewCalendarProps> = ({ venue }) => {
               <HorizontalDividers />
               <AvailabilitySection />
               <ReservationsSection />
-              <SelectionHandler />
+              <GridSelection />
             </div>
           </div>
         </div>

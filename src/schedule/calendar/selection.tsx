@@ -3,6 +3,7 @@ import { Venue } from "wasp/entities";
 import { isUserOwner } from "../../client/hooks/permissions";
 import { useTimeLabels } from "./constants";
 import { useSelectedDate } from "./providers/date-provider";
+import { useDraftReservation } from './providers/draft-reservation-provider';
 import { useScheduleContext } from "./providers/schedule-query-provider";
 import { getSharedGridStyle } from "./reservations/constants";
 import {
@@ -150,15 +151,10 @@ export const useReservationSelection = () => {
   return context;
 };
 
-interface GridSelectionProps {
-  spaceCount: number;
-  onSelectionComplete?: (start: Date, end: Date, spaceIndex: number) => void;
-}
 
-export const GridSelection: React.FC<GridSelectionProps> = ({
-  spaceCount,
-  onSelectionComplete,
-}) => {
+
+export const GridSelection: React.FC = () => {
+  const { setDraftReservation } = useDraftReservation();
   const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
   const { venue } = useScheduleContext();
@@ -184,12 +180,23 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
         (_, i) => minRow + i,
       ).every((row) => isTimeAvailable(row));
 
-      if (isSelectionValid && onSelectionComplete) {
+      if (isSelectionValid) {
         const { start, end } = getStartEndTime(venue, selectedDate, {
           start: selection.start,
           current: selection.current,
         });
-        onSelectionComplete(start, end, selection.start.col);
+
+        setDraftReservation({
+          id: "draft",
+          spaceId: venue.spaces[selection.start.col].id,
+          startTime: start,
+          endTime: end,
+          status: "PENDING",
+          userId: "1",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          description: "Draft reservation",
+        });
       }
     }
     onMouseUp();
@@ -197,12 +204,12 @@ export const GridSelection: React.FC<GridSelectionProps> = ({
 
   return (
     <div
-      {...getSharedGridStyle(timeLabels.length, spaceCount)}
+      {...getSharedGridStyle(timeLabels.length, venue.spaces.length)}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
       {Array.from({ length: timeLabels.length * 12 }).map((_, row) =>
-        Array.from({ length: spaceCount }).map((_, col) => (
+        Array.from({ length: venue.spaces.length }).map((_, col) => (
           // Add ones to account for 1-based grid indexing
           <div
             key={`${row + 1}-${col}`}

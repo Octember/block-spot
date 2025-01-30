@@ -6,7 +6,6 @@ import { useToast } from "../../../client/toast";
 import { useTimeLabels } from "../constants";
 import { useDraftReservation } from "../providers/draft-reservation-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
-import { GridSelection } from "../selection";
 import { getSharedGridStyle, MinutesPerSlot, PixelsPerSlot } from "./constants";
 import { DroppableSpace } from "./droppable";
 import { ReservationSlot } from "./reservation-slot";
@@ -48,165 +47,147 @@ export const ReservationsSection = () => {
   }, [reservations, draggingReservationId, draftReservation]);
 
   return (
-    <>
-      <DndContext
-        sensors={sensors}
-        onDragStart={(event) => {
-          const reservationId = event.active.data.current?.reservationId;
-          setDraggingReservationId(reservationId);
-        }}
-        onDragEnd={async (e) => {
-          const delta = Math.round(e.delta.y / PixelsPerSlot);
-          const newSpaceId =
-            e.over?.data.current?.spaceId || draftReservation?.spaceId;
+    <DndContext
+      sensors={sensors}
+      onDragStart={(event) => {
+        const reservationId = event.active.data.current?.reservationId;
+        setDraggingReservationId(reservationId);
+      }}
+      onDragEnd={async (e) => {
+        const delta = Math.round(e.delta.y / PixelsPerSlot);
+        const newSpaceId =
+          e.over?.data.current?.spaceId || draftReservation?.spaceId;
 
-          if (!draggingReservation) return;
+        if (!draggingReservation) return;
 
-          const draftStartTime = addMinutes(
-            draggingReservation.startTime,
-            delta * MinutesPerSlot,
-          );
-          const draftEndTime = addMinutes(
-            draggingReservation.endTime,
-            delta * MinutesPerSlot,
-          );
-          const isCollision = reservations.some((reservation) => {
-            if (reservation.id === draggingReservation.id) return false;
-            // Check if there's an overlap between the draftReservation and an existing reservation
-            if (
-              reservation.spaceId === newSpaceId &&
-              reservation.startTime < draftEndTime &&
-              reservation.endTime > draftStartTime
-            ) {
-              return true;
-            }
-            return false;
-          });
-          if (isCollision) return;
-
-          if (draggingReservation.id === "draft") {
-            setDraftReservation({
-              ...draggingReservation,
-              startTime: addMinutes(
-                draggingReservation.startTime,
-                delta * MinutesPerSlot,
-              ),
-              endTime: addMinutes(
-                draggingReservation.endTime,
-                delta * MinutesPerSlot,
-              ),
-              spaceId: newSpaceId,
-            });
-          } else {
-            const updatedReservation = {
-              ...draggingReservation,
-              startTime: addMinutes(
-                draggingReservation.startTime,
-                delta * MinutesPerSlot,
-              ),
-              endTime: addMinutes(
-                draggingReservation.endTime,
-                delta * MinutesPerSlot,
-              ),
-              spaceId: newSpaceId,
-            };
-
-            // Hack to avoid flickering, state will be updated after the refetch below
-            setReservations([
-              ...reservations.filter((r) => r.id !== draggingReservation.id),
-              updatedReservation,
-            ]);
-            try {
-              await updateReservation({
-                ...updatedReservation,
-              });
-
-              refresh();
-
-              setToast({ title: "Reservation updated" });
-            } catch (e) {
-              setToast({ title: "Something went wrong", type: "error" });
-            }
+        const draftStartTime = addMinutes(
+          draggingReservation.startTime,
+          delta * MinutesPerSlot,
+        );
+        const draftEndTime = addMinutes(
+          draggingReservation.endTime,
+          delta * MinutesPerSlot,
+        );
+        const isCollision = reservations.some((reservation) => {
+          if (reservation.id === draggingReservation.id) return false;
+          // Check if there's an overlap between the draftReservation and an existing reservation
+          if (
+            reservation.spaceId === newSpaceId &&
+            reservation.startTime < draftEndTime &&
+            reservation.endTime > draftStartTime
+          ) {
+            return true;
           }
-        }}
-      >
-        {/* Droppable spaces */}
-        {draggingReservation && (
-          <ol {...getSharedGridStyle(timeLabels.length, spaceIds.length)}>
-            {spaceIds.map((spaceId, columnIndex) =>
-              Array.from({
-                length: timeLabels.length * (60 / MinutesPerSlot),
-              }).map((_, rowIndex) => (
-                <DroppableSpace
-                  key={`${spaceId}-${rowIndex}`}
-                  spaceId={spaceId}
-                  columnIndex={columnIndex}
-                  rowIndex={rowIndex}
-                  rowSpan={getRowSpan(draggingReservation)}
-                  occupied={reservations.some(
-                    (reservation) =>
-                      reservation.id !== draggingReservation.id &&
-                      reservation.spaceId === spaceId &&
-                      isWithinReservation(
-                        venue,
-                        rowIndex,
-                        getRowSpan(draggingReservation),
-                        reservation,
-                      ),
-                  )}
-                />
-              )),
-            )}
-          </ol>
-        )}
+          return false;
+        });
+        if (isCollision) return;
 
+        if (draggingReservation.id === "draft") {
+          setDraftReservation({
+            ...draggingReservation,
+            startTime: addMinutes(
+              draggingReservation.startTime,
+              delta * MinutesPerSlot,
+            ),
+            endTime: addMinutes(
+              draggingReservation.endTime,
+              delta * MinutesPerSlot,
+            ),
+            spaceId: newSpaceId,
+          });
+        } else {
+          const updatedReservation = {
+            ...draggingReservation,
+            startTime: addMinutes(
+              draggingReservation.startTime,
+              delta * MinutesPerSlot,
+            ),
+            endTime: addMinutes(
+              draggingReservation.endTime,
+              delta * MinutesPerSlot,
+            ),
+            spaceId: newSpaceId,
+          };
+
+          // Hack to avoid flickering, state will be updated after the refetch below
+          setReservations([
+            ...reservations.filter((r) => r.id !== draggingReservation.id),
+            updatedReservation,
+          ]);
+          try {
+            await updateReservation({
+              ...updatedReservation,
+            });
+
+            refresh();
+
+            setToast({ title: "Reservation updated" });
+          } catch (e) {
+            setToast({ title: "Something went wrong", type: "error" });
+          }
+        }
+      }}
+    >
+      {/* Droppable spaces */}
+      {draggingReservation && (
         <ol {...getSharedGridStyle(timeLabels.length, spaceIds.length)}>
-          {reservations.map((reservation) => (
-            <ReservationSlot
-              key={reservation.id}
-              reservation={reservation}
-              isDraft={false}
-              gridIndex={spaceIds.findIndex(
-                (spaceId) => spaceId === reservation.spaceId,
-              )}
-              onDelete={async () => {
-                await deleteReservation({ id: reservation.id });
-                setToast({ title: "Reservation deleted" });
-                refresh();
-              }}
-            />
-          ))}
-          {draftReservation && (
-            <ReservationSlot
-              reservation={draftReservation}
-              gridIndex={spaceIds.findIndex(
-                (spaceId) => spaceId === draftReservation.spaceId,
-              )}
-              isDraft
-              onCreate={async () => {
-                setDraftReservation(null);
-              }}
-              onDiscardDraft={() => setDraftReservation(null)}
-            />
+          {spaceIds.map((spaceId, columnIndex) =>
+            Array.from({
+              length: timeLabels.length * (60 / MinutesPerSlot),
+            }).map((_, rowIndex) => (
+              <DroppableSpace
+                key={`${spaceId}-${rowIndex}`}
+                spaceId={spaceId}
+                columnIndex={columnIndex}
+                rowIndex={rowIndex}
+                rowSpan={getRowSpan(draggingReservation)}
+                occupied={reservations.some(
+                  (reservation) =>
+                    reservation.id !== draggingReservation.id &&
+                    reservation.spaceId === spaceId &&
+                    isWithinReservation(
+                      venue,
+                      rowIndex,
+                      getRowSpan(draggingReservation),
+                      reservation,
+                    ),
+                )}
+              />
+            )),
           )}
         </ol>
-      </DndContext>
-      <GridSelection
-        spaceCount={venue.spaces.length}
-        onSelectionComplete={(start: Date, end: Date, spaceIndex: number) => {
-          setDraftReservation({
-            id: "draft",
-            spaceId: spaceIds[spaceIndex],
-            startTime: start,
-            endTime: end,
-            status: "PENDING",
-            userId: "1",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            description: "Draft reservation",
-          });
-        }}
-      />
-    </>
+      )}
+
+      <ol {...getSharedGridStyle(timeLabels.length, spaceIds.length)}>
+        {reservations.map((reservation) => (
+          <ReservationSlot
+            key={reservation.id}
+            reservation={reservation}
+            isDraft={false}
+            gridIndex={spaceIds.findIndex(
+              (spaceId) => spaceId === reservation.spaceId,
+            )}
+            onDelete={async () => {
+              await deleteReservation({ id: reservation.id });
+              setToast({ title: "Reservation deleted" });
+              refresh();
+            }}
+          />
+        ))}
+        {draftReservation && (
+          <ReservationSlot
+            reservation={draftReservation}
+            gridIndex={spaceIds.findIndex(
+              (spaceId) => spaceId === draftReservation.spaceId,
+            )}
+            isDraft
+            onCreate={async () => {
+              setDraftReservation(null);
+            }}
+            onDiscardDraft={() => setDraftReservation(null)}
+          />
+        )}
+      </ol>
+    </DndContext>
   );
 };
