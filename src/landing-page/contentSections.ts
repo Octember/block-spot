@@ -1,12 +1,12 @@
 import { routes } from "wasp/client/router";
 import type { NavigationItem } from "../client/components/NavBar/NavBar";
-import { BlogUrl, DocsUrl } from "../shared/common";
+import { DocsUrl } from "../shared/common";
 
 export const landingPageNavigationItems: NavigationItem[] = [
   { name: "Features", to: "#features" },
   { name: "Pricing", to: routes.PricingPageRoute.to },
   { name: "Documentation", to: DocsUrl },
-  { name: "Blog", to: BlogUrl },
+  // { name: "Blog", to: BlogUrl },
 ];
 
 export const features = [
@@ -75,7 +75,7 @@ Share your booking page.
 export const footerNavigation = {
   app: [
     { name: "Documentation", href: DocsUrl },
-    { name: "Blog", href: BlogUrl },
+    // { name: "Blog", href: BlogUrl },
   ],
   company: [
     { name: "About", href: routes.AboutRoute.to },

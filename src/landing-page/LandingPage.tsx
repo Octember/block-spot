@@ -10,7 +10,7 @@ import {
 
 export default function LandingPage() {
   return (
-    <div className="bg-white dark:text-white dark:bg-boxdark-2">
+    <div className="bg-white dark:text-white dark:bg-boxdark-2 app-background">
       <main className="isolate dark:bg-boxdark-2">
         <Hero />
         <Features features={features} />

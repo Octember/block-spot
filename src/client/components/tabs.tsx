@@ -1,6 +1,5 @@
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import { cn } from "../cn";
-import { XMarkIcon } from "@heroicons/react/20/solid";
 
 type Icon = React.ComponentType<React.ComponentProps<"svg">>;
 
