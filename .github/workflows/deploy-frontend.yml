@@ -23,7 +23,7 @@ jobs:
         run: curl -sSL https://get.wasp-lang.dev/installer.sh | sh -s -- -v 0.15.0 # Change to your Wasp version
 
       - name: Wasp Build
-        run: cd ./app && wasp build
+        run: wasp build
 
       - name: Install dependencies and build the client
         run: |
