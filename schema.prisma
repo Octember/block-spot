@@ -257,6 +257,7 @@ model OnboardingState {
   hasInvitedMembers     Boolean @default(false)
   hasCreatedFirstSpace  Boolean @default(false)
   hasCompletedOnboarding Boolean @default(false)
+  hasSelectedPlan       Boolean @default(false)
 
   currentStep     String  @default("Welcome")
   createdAt      DateTime @default(now())

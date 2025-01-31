@@ -53,13 +53,19 @@ export async function createStripeCheckoutSession({
   priceId,
   customerId,
   mode,
+  returnToOnboarding,
 }: {
   organizationId: string;
   priceId: string;
   customerId: string;
   mode: StripeMode;
+  returnToOnboarding?: boolean;
 }) {
   try {
+    const successUrl = returnToOnboarding 
+      ? `${DOMAIN}/onboarding/complete?success=true`
+      : `${DOMAIN}/checkout?success=true`;
+
     return await stripe.checkout.sessions.create({
       line_items: [
         {
@@ -68,7 +74,7 @@ export async function createStripeCheckoutSession({
         },
       ],
       mode: mode,
-      success_url: `${DOMAIN}/checkout?success=true`,
+      success_url: successUrl,
       cancel_url: `${DOMAIN}/checkout?canceled=true`,
       automatic_tax: { enabled: true },
       customer_update: {

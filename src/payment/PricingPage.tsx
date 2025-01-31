@@ -23,7 +23,7 @@ interface PaymentPlanCard {
 export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
   [PaymentPlanId.Community]: {
     name: prettyPaymentPlanName(PaymentPlanId.Community),
-    price: "$5",
+    price: "Free",
     description: "Perfect for small businesses and community centers",
     features: [
       "Unlimited bookings per month",

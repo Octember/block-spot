@@ -231,3 +231,59 @@ This hierarchy ensures that:
   - Changes can be cancelled
   - Changes are applied with proper error handling
   - Clear user feedback on success/failure
+
+## Pricing & Payment Structure
+
+### Plans
+- Two tier pricing structure:
+  1. Community Plan ($5/month)
+     - Perfect for small businesses and community centers
+     - Unlimited bookings per month
+     - One location
+     - One admin user
+     - Calendar sync
+     - Basic support
+  2. Business Plan ($25/month) - Most Popular
+     - Everything in Community plan
+     - Unlimited bookings
+     - Multiple venues & spaces
+     - Priority support
+     - Advanced availability rules
+     - Analytics & reporting
+
+### Payment Integration
+- Uses Stripe for payment processing
+- Plan IDs stored in environment variables:
+  - PAYMENTS_COMMUNITY_SUBSCRIPTION_PLAN_ID
+  - PAYMENTS_BUSINESS_SUBSCRIPTION_PLAN_ID
+- Subscription statuses: past_due, cancel_at_period_end, active, deleted
+- Customer portal available for subscription management
+- 30-day free trial for all plans
+
+### Code Structure
+- Plans defined in `src/payment/plans.ts`
+- UI components in `src/payment/PricingPage.tsx`
+- Uses PaymentPlanId enum for type safety
+- Stripe checkout session generation handled by backend
+- Organization model tracks subscription status and plan type
+
+### UI/UX Patterns
+- Teal color scheme for pricing elements
+- Most popular plan highlighted with teal ring
+- Consistent feature list with checkmark icons
+- Clear price display with /month indicator
+- Responsive grid layout for plan cards
+
+## Database Management
+
+### Rules & Best Practices
+
+1. Database Schema Changes
+   - ALWAYS use Prisma for database schema changes
+   - NEVER use direct SQL migrations
+   - Update schema.prisma file for any model changes
+   - Let Prisma handle the migration generation
+
+2. Schema Updates Process
+   - Modify schema.prisma file
+   - DB updates will happen automatically when you run `wasp db migrate-dev`

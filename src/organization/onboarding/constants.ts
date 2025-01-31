@@ -38,6 +38,13 @@ export const ONBOARDING_STEPS: Record<string, OnboardingStep> = {
     name: "Invite Team",
     title: "Invite Your Team",
     description: "Get your team onboard",
+    next: "pricing",
+  },
+  PRICING: {
+    id: "pricing",
+    name: "Select Plan",
+    title: "Choose Your Plan",
+    description: "Select the plan that best fits your needs",
     next: "complete",
   },
   COMPLETE: {
@@ -65,6 +72,9 @@ export const getOnboardingUpdates = (
     case "invite":
       updates.hasInvitedMembers = true;
       break;
+    case "pricing":
+      updates.hasSelectedPlan = true;
+      break;
     case "complete":
       updates.hasCompletedOnboarding = true;
       break;
@@ -75,7 +85,8 @@ export const getOnboardingUpdates = (
 export const getTargetStep = (onboardingState: OnboardingState | null) => {
   if (!onboardingState) return "welcome";
   if (onboardingState.hasCompletedOnboarding) return "complete";
-  if (onboardingState.hasInvitedMembers) return "complete";
+  if (onboardingState.hasSelectedPlan) return "complete";
+  if (onboardingState.hasInvitedMembers) return "pricing";
   if (onboardingState.hasCreatedFirstSpace) return "invite";
   if (onboardingState.hasCompletedProfile) return "spaces";
   return "organization";

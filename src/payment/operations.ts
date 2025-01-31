@@ -14,12 +14,13 @@ export type CheckoutSession = {
 type GenerateCheckoutSessionArgs = {
   organizationId: string;
   planId: PaymentPlanId;
+  returnToOnboarding?: boolean;
 };
 
 export const generateCheckoutSession: GenerateCheckoutSession<
   GenerateCheckoutSessionArgs,
   CheckoutSession
-> = async ({ organizationId, planId }, context) => {
+> = async ({ organizationId, planId, returnToOnboarding }, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -52,11 +53,29 @@ export const generateCheckoutSession: GenerateCheckoutSession<
     throw new HttpError(400, "Invalid payment plan");
   }
 
+  // Handle free community plan
+  if (planId === PaymentPlanId.Community) {
+    await context.entities.Organization.update({
+      where: { id: organizationId },
+      data: {
+        subscriptionPlanId: PaymentPlanId.Community,
+        subscriptionStatus: "active",
+        datePaid: new Date(),
+      },
+    });
+
+    return {
+      sessionUrl: returnToOnboarding ? "/onboarding/complete?success=true" : "/checkout?success=true",
+      sessionId: "free_plan",
+    };
+  }
+
   const { session } = await paymentProcessor.createCheckoutSession({
     organizationId,
     organizationEmail: context.user.email,
     paymentPlan,
     prismaOrganizationDelegate: context.entities.Organization,
+    returnToOnboarding,
   });
 
   return {

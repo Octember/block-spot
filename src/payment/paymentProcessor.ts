@@ -9,6 +9,7 @@ export interface CreateCheckoutSessionArgs {
   organizationEmail: string;
   paymentPlan: PaymentPlan;
   prismaOrganizationDelegate: PrismaClient["organization"];
+  returnToOnboarding?: boolean;
 }
 
 export interface FetchCustomerPortalUrlArgs {

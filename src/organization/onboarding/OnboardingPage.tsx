@@ -19,10 +19,16 @@ import {
   CompleteStep,
   InviteStep,
   OrganizationStep,
+  PricingStep,
   SpacesStep,
   WelcomeStep,
 } from "./onboarding-step";
 import { OnboardingProgress } from "./progress";
+
+interface ErrorResponse {
+  message?: string;
+  [key: string]: unknown;
+}
 
 export function OrganizationOnboardingPage() {
   const navigate = useNavigate();
@@ -64,8 +70,9 @@ export function OrganizationOnboardingPage() {
           updates,
         });
       }
-    } catch (error: any) {
-      console.error("Failed to update onboarding state:", error);
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
+      console.error("Failed to update onboarding state:", err);
     }
   };
 
@@ -78,11 +85,12 @@ export function OrganizationOnboardingPage() {
           teamSize: formData.teamSize,
         });
         await updateProgress(org.id, currentStep.id);
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const err = error as ErrorResponse;
         toast({
           type: "error",
           title: "Failed to create organization",
-          description: error.message || "Please try again",
+          description: err.message || "Please try again",
         });
         return;
       }
@@ -118,6 +126,13 @@ export function OrganizationOnboardingPage() {
         );
       case "invite":
         return <InviteStep onNext={handleNext} />;
+      case "pricing":
+        return organization ? (
+          <PricingStep
+            onNext={handleNext}
+            organizationId={organization.id}
+          />
+        ) : null;
       case "complete":
         return <CompleteStep onNext={handleNext} />;
       default:
