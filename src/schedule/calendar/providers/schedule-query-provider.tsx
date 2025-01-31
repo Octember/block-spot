@@ -37,7 +37,7 @@ export const ScheduleQueryContext = createContext<{
   // @ts-expect-error idk
   venue: null,
   unavailabileBlocks: [],
-  refresh: () => {},
+  refresh: () => { },
 });
 
 export const ScheduleQueryProvider = ({

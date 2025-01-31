@@ -2,12 +2,10 @@ import {
   addMinutes,
   differenceInMinutes,
   isAfter,
-  isBefore,
-  isWithinInterval,
+  isBefore
 } from "date-fns";
 import { Reservation, Venue } from "wasp/entities";
 import { MinutesPerSlot } from "./constants";
-import { useScheduleContext } from "../providers/schedule-query-provider";
 
 export function getRowSpan(reservation: Reservation) {
   const start = reservation.startTime;
@@ -66,11 +64,28 @@ export function isWithinReservation(
   rowSpan: number,
   target: Reservation,
 ) {
-  const startTime = getTimeFromRowIndex(venue, rowIndex);
-  const endTime = addMinutes(startTime, rowSpan * MinutesPerSlot);
+  const rawStartTime = getTimeFromRowIndex(venue, rowIndex + 1);
+  const rawEndTime = addMinutes(rawStartTime, rowSpan * MinutesPerSlot);
+
+  const { startTime, endTime } = setTimesOnDate(
+    rawStartTime,
+    rawEndTime,
+    target.startTime,
+  );
 
   const result =
     isAfter(endTime, target.startTime) && isBefore(startTime, target.endTime);
 
   return result;
+}
+
+export function setTimesOnDate(startTime: Date, endTime: Date, targetDate: Date): {
+  startTime: Date;
+  endTime: Date;
+} {
+  const result = new Date(targetDate);
+  return {
+    startTime: new Date(result.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0)),
+    endTime: new Date(result.setHours(endTime.getHours(), endTime.getMinutes(), 0, 0))
+  }
 }

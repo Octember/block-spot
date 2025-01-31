@@ -6,7 +6,7 @@ import { useScheduleContext } from "../providers/schedule-query-provider";
 import { getSharedGridStyle, MinutesPerSlot } from "./constants";
 import { DroppableSpace } from "./droppable";
 import { ReservationSlot } from "./reservation-slot";
-import { getRowSpan, getTimeFromRowIndex, isWithinReservation } from "./utilities";
+import { getRowSpan, getTimeFromRowIndex, isWithinReservation, setTimesOnDate } from "./utilities";
 
 export const ReservationsSection = () => {
   const { venue } = useScheduleContext();
@@ -58,9 +58,10 @@ export const ReservationsSection = () => {
         if (!draggingReservation) return;
         if (!droppable) return;
 
-        // Not sure why +1 is needed here, but it works
-        const startTime = getTimeFromRowIndex(venue, droppable.rowIndex + 1)
-        const endTime = getTimeFromRowIndex(venue, droppable.rowIndex + droppable?.rowSpan + 1)
+        // Get raw times from row indices and set them to the same day as dragging reservation
+        const rawStartTime = getTimeFromRowIndex(venue, droppable.rowIndex + 1)
+        const rawEndTime = getTimeFromRowIndex(venue, droppable.rowIndex + droppable?.rowSpan + 1)
+        const { startTime, endTime } = setTimesOnDate(rawStartTime, rawEndTime, draggingReservation.startTime)
 
         const newSpaceId = droppable.spaceId
 

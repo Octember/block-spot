@@ -44,6 +44,7 @@ function getColorStyles({
 }) {
   const opacityStyle = isDragging ? "opacity-50" : "";
 
+  console.log("over", over);
   if (isDragging && over && over.data.current?.occupied) {
     return `bg-red-50 hover:bg-red-100 border-red-500 ${opacityStyle}`;
   }
@@ -72,7 +73,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
   const disabled =
     (!isDraft && !isOwner) ||
-    (pendingChange ? pendingChange.oldState?.id !== reservation.id : false);
+    (pendingChange ? pendingChange.newState.id !== reservation.id : false);
 
   const {
     attributes,
@@ -127,7 +128,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
   return (
     <li
-      className="relative flex z-20 select-none"
+      className={`relative flex ${isDragging ? "z-50" : "z-20"} select-none`}
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,
