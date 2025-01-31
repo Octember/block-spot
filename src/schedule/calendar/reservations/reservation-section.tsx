@@ -51,7 +51,6 @@ export const ReservationsSection = () => {
         setDraggingReservationId(reservationId);
       }}
       onDragEnd={async (e) => {
-        console.log("drag end", e);
         setDraggingReservationId(null);
 
         const droppable = e.over?.data.current
@@ -64,7 +63,6 @@ export const ReservationsSection = () => {
         const endTime = getTimeFromRowIndex(venue, droppable.rowIndex + droppable?.rowSpan + 1)
 
         const newSpaceId = droppable.spaceId
-
 
         const isCollision = reservations.some((reservation) => {
           if (reservation.id === draggingReservation.id) return false;

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   createReservation,
   deleteReservation,
@@ -6,6 +6,7 @@ import {
 } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { useToast } from "../../../client/toast";
+import { useSelectedDate } from './date-provider';
 import { useScheduleContext } from "./schedule-query-provider";
 
 export interface PendingChange {
@@ -38,6 +39,11 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({
   );
   const setToast = useToast();
   const { refresh } = useScheduleContext();
+  const { selectedDate } = useSelectedDate();
+
+  useEffect(() => {
+    setPendingChange(null);
+  }, [selectedDate]);
 
   const hasPendingChange = pendingChange !== null;
 

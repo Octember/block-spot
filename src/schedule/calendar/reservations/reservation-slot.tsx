@@ -110,6 +110,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   // Take into account the current drag position
   const newTimes = useMemo(() => {
     if (isDragging && transform) {
+
       const delta = (transform.y / PixelsPerSlot) * MinutesPerSlot;
       const rounded = Math.round(delta / MinutesPerSlot) * MinutesPerSlot;
 
