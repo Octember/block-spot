@@ -44,7 +44,6 @@ function getColorStyles({
 }) {
   const opacityStyle = isDragging ? "opacity-50" : "";
 
-  console.log("over", over);
   if (isDragging && over && over.data.current?.occupied) {
     return `bg-red-50 hover:bg-red-100 border-red-500 ${opacityStyle}`;
   }

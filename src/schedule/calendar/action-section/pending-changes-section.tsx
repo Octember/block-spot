@@ -13,6 +13,7 @@ import {
   PendingChange,
   usePendingChanges,
 } from "../providers/pending-changes-provider";
+
 function getChangeType(pendingChange: PendingChange | null) {
   if (pendingChange?.type === "CREATE") return "New Reservation";
   if (pendingChange?.type === "UPDATE") return "Update Reservation";
@@ -30,7 +31,7 @@ export const PendingChangesSection = () => {
       <Modal
         className="flex lg:hidden"
         open={true}
-        onClose={() => {}}
+        onClose={() => { }}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
@@ -87,12 +88,14 @@ export const PendingChangesSection = () => {
   );
 };
 
-const formatTime = (date: Date) => format(date, "h:mm a");
 
 const ReservationChangeDescription: FC<{
   reservation: Reservation;
   color: "red" | "blue" | "gray";
-}> = ({ reservation, color }) => {
+  editable?: boolean;
+}> = ({ reservation, color, editable }) => {
+  const { pendingChange, setPendingChange } = usePendingChanges();
+
   const colorMap: Record<typeof color, string> = {
     red: "text-red-600",
     blue: "text-blue-600",
@@ -106,8 +109,41 @@ const ReservationChangeDescription: FC<{
       <CalendarIcon className="h-4 w-4" />
       <span>{format(reservation.startTime, "EEE, MMM d")}</span>
       <ClockIcon className="h-4 w-4 ml-2" />
-      <span>
-        {formatTime(reservation.startTime)} - {formatTime(reservation.endTime)}
+      <span className="flex items-center">
+        {editable ? (
+          <div className="flex items-center">
+            <TimeSelect
+              time={reservation.startTime}
+              onChange={(hour, minute) => {
+                if (!pendingChange) return;
+                setPendingChange({
+                  ...pendingChange,
+                  newState: {
+                    ...pendingChange.newState,
+                    startTime: new Date(reservation.startTime.setHours(hour, minute)),
+                  },
+                });
+              }}
+            />
+            -
+            <TimeSelect
+              time={reservation.endTime}
+              onChange={(hour, minute) => {
+                if (!pendingChange) return;
+                setPendingChange({
+                  ...pendingChange,
+                  newState: {
+                    ...pendingChange.newState,
+                    endTime: new Date(reservation.endTime.setHours(hour, minute)),
+                  },
+                });
+              }}
+            />
+
+          </div>
+        ) : (
+          formatTime(reservation.startTime) + " - " + formatTime(reservation.endTime)
+        )}
       </span>
     </div>
   );
@@ -126,13 +162,53 @@ export const ChangeDescription = () => {
             reservation={pendingChange.oldState}
             color="gray"
           />
-          <ArrowRightIcon className="h-4 w-4" />
+          <ArrowRightIcon className="size-5" />
         </>
       )}
-      <ReservationChangeDescription
-        reservation={pendingChange.newState}
-        color={pendingChange?.type === "DELETE" ? "red" : "blue"}
-      />
+      {pendingChange.type === "DELETE" && (
+        <ReservationChangeDescription
+          reservation={pendingChange.newState}
+          color="red"
+        />
+      )}
+      {(pendingChange.type === "CREATE" || pendingChange.type === "UPDATE") && (
+        <ReservationChangeDescription
+          reservation={pendingChange.newState}
+          color="blue"
+          editable
+        />
+      )}
     </div>
+  );
+};
+
+const formatTime = (date: Date) => format(date, "h:mm a");
+
+interface TimeSelectProps {
+  time: Date;
+  onChange: (hour: number, minute: number) => void;
+}
+
+const TimeSelect: FC<TimeSelectProps> = ({ time, onChange }) => {
+  return (
+    <select
+      className="bg-transparent rounded-lg focus:ring-0 cursor-pointer "
+      onChange={(e) => {
+        const [hour, minute] = e.target.value.split(":");
+        onChange(Number(hour), Number(minute));
+      }}
+      value={format(time, "HH:mm")}
+    >
+      {Array.from({ length: 24 * 4 }).map((_, i) => {
+        const hour = Math.floor(i / 4);
+        const minutes = (i % 4) * 15;
+        const time = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        return (
+          <option key={time} value={time}>
+            {format(new Date().setHours(hour, minutes), "h:mm a")}
+          </option>
+        );
+      })}
+    </select>
   );
 };
