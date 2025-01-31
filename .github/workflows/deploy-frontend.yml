@@ -1,0 +1,43 @@
+name: Deploy to Fly
+
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  deploy:
+    name: Deploy with Wasp
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        id: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wasp
+        run: curl -sSL https://get.wasp-lang.dev/installer.sh | sh -s -- -v 0.15.0 # Change to your Wasp version
+
+      - name: Wasp Build
+        run: cd ./app && wasp build
+
+      - name: Install dependencies and build the client
+        run: |
+          cd ./app/.wasp/build/web-app
+          npm install
+          REACT_APP_API_URL=${{ secrets.WASP_SERVER_URL }} npm run build
+
+      
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy ./app/.wasp/build/web-app/build --project-name=${{ env.CLIENT_CLOUDFLARE_APP_NAME }} --commit-dirty=true --branch=main
+
+    env:
+      CLIENT_CLOUDFLARE_APP_NAME: cloudflare-pages-app-name
