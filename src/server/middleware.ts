@@ -5,6 +5,7 @@ import { MiddlewareConfigFn } from "wasp/server";
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "https://block-spot.com",
+  "https://www.block-spot.com",
   "https://blockspot-client.pages.dev",
 ];
 

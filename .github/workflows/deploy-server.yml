@@ -9,7 +9,6 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    container: ghcr.io/railwayapp/cli:latest
     env:
       SVC_ID: server
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -31,5 +30,8 @@ jobs:
 
       - name: Change directory
         run: .wasp/build
+
+      - name: install railway
+        run: npm install -g railway
 
       - run: railway up --service=${{ env.SVC_ID }}
