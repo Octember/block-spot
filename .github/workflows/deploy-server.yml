@@ -28,10 +28,7 @@ jobs:
       - name: Wasp Build
         run: wasp build
 
-      - name: Change directory
-        run: cd .wasp/build
-
       - name: install railway
         run: npm install -g @railway/cli
 
-      - run: railway up --service=${{ env.SVC_ID }}
+      - run: railway up --service=${{ env.SVC_ID }} .wasp/build
