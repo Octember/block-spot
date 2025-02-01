@@ -12,8 +12,6 @@ export function useOnboardingRedirect() {
   const { data: organization } = useQuery(getUserOrganization);
 
   useEffect(() => {
-    console.log("organization", organization, location.pathname);
-
     if (!user || disallowedRedirectRoutes.find((route) => location.pathname.startsWith(route))) {
       return;
     }

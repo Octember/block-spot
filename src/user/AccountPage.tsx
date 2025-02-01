@@ -1,3 +1,4 @@
+import { BoltIcon } from "@heroicons/react/20/solid";
 import { Cog8ToothIcon } from "@heroicons/react/24/outline";
 import { logout, useAuth } from "wasp/client/auth";
 import {
@@ -135,17 +136,16 @@ function UserCurrentPaymentPlan({
   subscriptionStatus,
   datePaid,
 }: UserCurrentPaymentPlanProps) {
-  console.log({ subscriptionStatus, subscriptionPlan, datePaid });
+
   if (subscriptionStatus && subscriptionPlan && datePaid) {
     return (
       <>
-        <dd className="mt-1 text-sm text-gray-900 dark:text-gray-400 sm:col-span-1 sm:mt-0">
+        <div>
           {getUserSubscriptionStatusDescription({
             subscriptionPlan,
             subscriptionStatus,
             datePaid,
-          })}
-        </dd>
+          })}</div>
         <CustomerPortalButton />
       </>
     );
@@ -153,10 +153,9 @@ function UserCurrentPaymentPlan({
 
   return (
     <>
-      {/* <dd className="mt-1 text-sm text-gray-900 dark:text-gray-400 sm:col-span-1 sm:mt-0">
-        Credits remaining: {credits}
-      </dd> */}
-      <BuyMoreButton />
+      <div className="text-md prose">Community Tier</div>
+      <CustomerPortalButton />
+      {/* <BuyMoreButton /> */}
     </>
   );
 }
@@ -170,6 +169,11 @@ function getUserSubscriptionStatusDescription({
   subscriptionStatus: SubscriptionStatus;
   datePaid: Date;
 }) {
+  console.log({ subscriptionPlan, subscriptionStatus, datePaid });
+  if (!subscriptionPlan || !subscriptionStatus || !datePaid) {
+    return "Community Tier";
+  }
+
   const planName = prettyPaymentPlanName(parsePaymentPlanId(subscriptionPlan));
   const endOfBillingPeriod = prettyPrintEndOfBillingPeriod(datePaid);
   return prettyPrintStatus(planName, subscriptionStatus, endOfBillingPeriod);
@@ -201,14 +205,18 @@ function prettyPrintEndOfBillingPeriod(date: Date) {
 
 function BuyMoreButton() {
   return (
-    <div className="ml-4 flex-shrink-0 sm:col-span-1 sm:mt-0">
-      <WaspRouterLink
-        to={routes.PricingPageRoute.to}
-        className="font-medium text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500"
+    <WaspRouterLink
+      to={routes.PricingPageRoute.to}
+      className="font-medium text-sm text-teal-600 dark:text-teal-400 hover:text-teal-500"
+    >
+      <Button
+        variant="primary"
+        icon={<BoltIcon className="size-4" />}
+        ariaLabel="Upgrade to Business Tier"
       >
-        Buy More/Upgrade
-      </WaspRouterLink>
-    </div>
+        Upgrade to Business Tier
+      </Button>
+    </WaspRouterLink>
   );
 }
 
