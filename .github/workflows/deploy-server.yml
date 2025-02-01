@@ -8,6 +8,9 @@ jobs:
   deploy:
     name: Deploy with Wasp
     runs-on: ubuntu-latest
+    env:
+      SVC_ID: server
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
     
     steps:
       - name: Checkout Code
