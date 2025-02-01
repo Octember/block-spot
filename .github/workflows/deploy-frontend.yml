@@ -37,7 +37,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy ./build --project-name=${{ env.CLIENT_CLOUDFLARE_APP_NAME }} --commit-dirty=true --branch=main
+          command: pages deploy .wasp/build/web-app/build --project-name=${{ env.CLIENT_CLOUDFLARE_APP_NAME }} --commit-dirty=true --branch=main
 
     env:
       CLIENT_CLOUDFLARE_APP_NAME: blockspot-client
