@@ -7,6 +7,7 @@ app BlockSpot {
 
   server: {
     setupFn: import { setupServer } from "@src/server/setup",
+    middlewareConfigFn: import { corsMiddleware } from "@src/server/middleware",
   },
 
   head: [
@@ -219,11 +220,6 @@ action updateReservation {
 action updateVenueAvailability {
   fn: import { updateVenueAvailability } from "@src/schedule/operations",
   entities: [Venue, AvailabilityRule]
-}
-
-apiNamespace fooBar {
-  middlewareConfigFn: import { corsMiddleware } from "@src/server/middleware",
-  path: "/calendar"
 }
 
 api exportCalendar {
