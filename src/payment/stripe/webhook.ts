@@ -130,6 +130,17 @@ export async function handleCheckoutSessionCompleted(
 
   console.log("handleCheckoutSessionCompleted", { session, plan });
 
+  await prismaOrganizationDelegate.update({
+    where: { stripeCustomerId },
+    data: {
+      onboardingState: {
+        update: {
+          hasSelectedPlan: true,
+        },
+      },
+    },
+  });
+
   const organization = await updateOrganizationStripePaymentDetails(
     {
       stripeCustomerId,
