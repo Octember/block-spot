@@ -21,7 +21,7 @@ export default function CheckoutPage() {
         updateOnboardingState({
           organizationId: organization.id,
           updates: {
-            hasAddedPaymentMethod: true,
+            hasSelectedPlan: true,
           },
         });
       }
