@@ -13,7 +13,7 @@ export default function CheckoutPage() {
 
 
   useEffect(() => {
-    async function delayedRedirect() {
+    function delayedRedirect() {
       const latency = completedOnboarding ? 2000 : 4000;
       const route = completedOnboarding ? "/account" : "/onboarding";
 
