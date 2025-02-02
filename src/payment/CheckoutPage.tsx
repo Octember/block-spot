@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getUserOrganization, updateOnboardingState, useQuery } from 'wasp/client/operations';
 import { hasUserCompletedOnboarding } from '../client/hooks/permissions';
 
 export default function CheckoutPage() {
@@ -8,13 +9,26 @@ export default function CheckoutPage() {
   const completedOnboarding = hasUserCompletedOnboarding();
   const navigate = useNavigate();
   const location = useLocation();
+  const { data: organization } = useQuery(getUserOrganization);
+
 
   useEffect(() => {
-    function delayedRedirect() {
+    async function delayedRedirect() {
+      const latency = completedOnboarding ? 2000 : 4000;
+      const route = completedOnboarding ? "/account" : "/onboarding";
+
+      if (completedOnboarding && organization) {
+        updateOnboardingState({
+          organizationId: organization.id,
+          updates: {
+            hasAddedPaymentMethod: true,
+          },
+        });
+      }
+
       return setTimeout(() => {
-        const route = completedOnboarding ? "/account" : "/onboarding";
         navigate(route);
-      }, 4000);
+      }, latency);
     }
 
     const queryParams = new URLSearchParams(location.search);
@@ -47,7 +61,7 @@ export default function CheckoutPage() {
           </h1>
           {paymentStatus !== "loading" && (
             <span className="text-center">
-              You are being redirected to your account page... <br />
+              You are being redirected... <br />
             </span>
           )}
         </div>

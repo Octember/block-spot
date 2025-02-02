@@ -105,7 +105,8 @@ export function OrganizationStep({
         disabled={
           !formData.organizationName ||
           !formData.organizationType ||
-          !formData.teamSize
+          !formData.teamSize ||
+          loading
         }
         ariaLabel="Continue"
       >
@@ -269,15 +270,17 @@ export function SpacesStep({
 
       <div className="flex gap-4">
         <Button
+          icon={isCreating ? <BiLoaderCircle className="size-4 animate-spin" /> : <PlusIcon className="size-4" />}
           onClick={handleAddSpace}
           variant="secondary"
           ariaLabel="Add Another Space"
-          icon={<PlusIcon className="size-4" />}
+          disabled={isCreating}
         >
           Add Another Space
         </Button>
 
         <Button
+          icon={isCreating ? <BiLoaderCircle className="size-4 animate-spin" /> : <ArrowRightIcon className="size-4" />}
           onClick={handleCreateVenueAndSpaces}
           disabled={!isValid || isCreating}
           ariaLabel="Continue"
