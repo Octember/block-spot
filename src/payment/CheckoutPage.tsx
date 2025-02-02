@@ -17,7 +17,7 @@ export default function CheckoutPage() {
       const latency = completedOnboarding ? 2000 : 4000;
       const route = completedOnboarding ? "/account" : "/onboarding";
 
-      if (completedOnboarding && organization) {
+      if (!completedOnboarding && organization) {
         updateOnboardingState({
           organizationId: organization.id,
           updates: {
