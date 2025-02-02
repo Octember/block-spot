@@ -1,5 +1,6 @@
 import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
+import { BiLoaderCircle } from "react-icons/bi";
 import { createVenue, updateVenue } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
 import { useToast } from "../../client/toast";
@@ -25,6 +26,8 @@ export function OrganizationStep({
   setFormData: (data: FormData) => void;
   onNext: () => void;
 }) {
+  const [loading, setLoading] = useState(false);
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-6">
@@ -94,7 +97,11 @@ export function OrganizationStep({
       </div>
 
       <Button
-        onClick={onNext}
+        onClick={() => {
+          setLoading(true);
+          onNext();
+        }}
+        icon={loading ? <BiLoaderCircle className="size-4 animate-spin" /> : <ArrowRightIcon className="size-4" />}
         disabled={
           !formData.organizationName ||
           !formData.organizationType ||

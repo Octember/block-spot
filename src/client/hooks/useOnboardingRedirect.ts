@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "wasp/client/auth";
 import { getUserOrganization, useQuery } from "wasp/client/operations";
 
-const disallowedRedirectRoutes = ["/onboarding", "/pricing", "/about"];
+const disallowedRedirectRoutes = ["/onboarding", "/pricing", "/about", "/checkout"];
 
 export function useOnboardingRedirect() {
   const location = useLocation();

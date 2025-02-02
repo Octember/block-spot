@@ -7,9 +7,7 @@ import {
   useQuery,
 } from "wasp/client/operations";
 import { useToast } from "../client/toast";
-import { InviteMemberButton } from "./components/invite-member-form";
 import { RoleSelect } from "./components/role-select";
-import { InviteMembers } from "./InviteMembers";
 
 export function OrganizationSection() {
   const toast = useToast();

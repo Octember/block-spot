@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { hasUserCompletedOnboarding } from '../client/hooks/permissions';
 
 export default function CheckoutPage() {
   const [paymentStatus, setPaymentStatus] = useState("loading");
 
+  const completedOnboarding = hasUserCompletedOnboarding();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
     function delayedRedirect() {
       return setTimeout(() => {
-        navigate("/account");
+        const route = completedOnboarding ? "/account" : "/onboarding";
+        navigate(route);
       }, 4000);
     }
 
