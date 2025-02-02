@@ -16,8 +16,10 @@ export default function CheckoutPage() {
     function delayedRedirect() {
       const latency = completedOnboarding ? 2000 : 4000;
       const route = completedOnboarding ? "/account" : "/onboarding";
+      console.log("????", completedOnboarding, organization);
 
       if (!completedOnboarding && organization) {
+        console.log("updating onboarding state");
         updateOnboardingState({
           organizationId: organization.id,
           updates: {

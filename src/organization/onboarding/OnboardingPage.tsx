@@ -42,6 +42,7 @@ export function OrganizationOnboardingPage() {
     organizationType: "",
     teamSize: "",
   });
+  console.log(organization?.onboardingState)
 
   useEffect(() => {
     if (organization) {
