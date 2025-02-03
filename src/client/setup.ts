@@ -7,5 +7,4 @@ Sentry.init({
 
 export const setupClient = () => {
   // Client setup logic can be added here
-  console.log("Client initialized");
 };
