@@ -16,5 +16,15 @@ export function useOnboardingRedirect() {
       return;
     }
 
+    if (!organization) {
+      return navigate("/onboarding?redirect=true");
+    }
+
+    if ( organization) {
+      const onboardingState = organization.onboardingState;
+      if (!onboardingState?.hasCompletedOnboarding) {
+        navigate("/onboarding?redirect=true");
+      }
+    }
   }, [user, organization, location.pathname, navigate]);
 }

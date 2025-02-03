@@ -1,7 +1,6 @@
-import { CustomizationOptions, SignupForm, useAuth } from "wasp/client/auth";
+import { CustomizationOptions, SignupForm } from "wasp/client/auth";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 
-import { Navigate } from "react-router-dom";
 import "./overrides.css";
 
 const AuthLayoutV2: React.FC<{ children: React.ReactNode }> = ({
@@ -51,11 +50,6 @@ const customizationOptions: CustomizationOptions = {
 };
 
 export function Signup() {
-  const { data: user } = useAuth();
-
-  if (user) {
-    return <Navigate to={routes.AllVenuesPageRoute.to} />;
-  }
 
   return (
     <AuthLayoutV2>
