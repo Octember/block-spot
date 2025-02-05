@@ -14,6 +14,19 @@ import LogRocket from "logrocket";
 
 LogRocket.init("myj73s/blockspot");
 
+function useLogRocket() {
+  const { data: user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      LogRocket.identify(user.id, {
+        name: user.name || "",
+        email: user.email || "",
+      });
+    }
+  }, [user]);
+}
+
 /**
  * use this component to wrap all child components
  * this is useful for templates, themes, and context
@@ -21,8 +34,10 @@ LogRocket.init("myj73s/blockspot");
 export default function App() {
   const location = useLocation();
   const { data: user } = useAuth();
+
   const navigationItems = appNavigationItems;
 
+  useLogRocket();
   useOnboardingRedirect();
 
   const isSchedulePage = useMemo(
