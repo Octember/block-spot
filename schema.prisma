@@ -50,6 +50,7 @@ model OrganizationUser {
 model User {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
+  name      String?
 
   organizations   OrganizationUser[]
   sentInvitations Invitation[] @relation("SentInvitations")

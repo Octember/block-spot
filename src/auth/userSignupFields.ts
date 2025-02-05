@@ -1,5 +1,5 @@
-import { z } from "zod";
 import { defineUserSignupFields } from "wasp/auth/providers/types";
+import { z } from "zod";
 
 const adminEmails = process.env.ADMIN_EMAILS?.split(",") || [];
 
@@ -7,6 +7,7 @@ export const getEmailUserFields = defineUserSignupFields({
   username: (data: any) => data.email,
   isAdmin: (data: any) => adminEmails.includes(data.email),
   email: (data: any) => data.email,
+  name: (data: any) => data.name,
 });
 
 const githubDataSchema = z.object({
@@ -46,6 +47,7 @@ export function getGitHubAuthConfig() {
 const googleDataSchema = z.object({
   profile: z.object({
     email: z.string(),
+    name: z.string(),
   }),
 });
 
@@ -61,6 +63,10 @@ export const getGoogleUserFields = defineUserSignupFields({
   isAdmin: (data) => {
     const googleData = googleDataSchema.parse(data);
     return adminEmails.includes(googleData.profile.email);
+  },
+  name: (data) => {
+    const googleData = googleDataSchema.parse(data);
+    return googleData.profile.name;
   },
 });
 
