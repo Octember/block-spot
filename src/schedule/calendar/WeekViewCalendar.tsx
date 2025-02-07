@@ -17,7 +17,7 @@ const CalendarContent: FC<WeekViewCalendarProps> = ({ venue }) => {
 
       <div className="isolate flex flex-auto flex-col overflow-x-auto bg-white">
         <div className="flex min-w-max w-full flex-none flex-col">
-          <div className="z-30 flex-none bg-white shadow sm:pr-8">
+          <div className="z-30 flex-none bg-white shadow-4 sm:pr-8">
             <div
               className="-mr-px grid divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500"
               style={{
@@ -27,12 +27,12 @@ const CalendarContent: FC<WeekViewCalendarProps> = ({ venue }) => {
               }}
             >
               <div className="col-end-1 w-14" />
-              {venue.spaces.map((space, index) => (
+              {venue.spaces.map((space) => (
                 <div
                   key={space.id}
                   className="flex items-center justify-center py-2"
                 >
-                  <span className="flex items-baseline font-medium text-gray-900">
+                  <span className="flex items-baseline text-md font-semibold py-1 text-gray-900">
                     {space.name}
                   </span>
                 </div>
