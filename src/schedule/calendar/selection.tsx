@@ -73,22 +73,6 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
   const [isSelecting, setIsSelecting] = useState(false);
   const { pendingChange } = usePendingChanges();
 
-  // const isTimeAvailable = (row: number): boolean => {
-  //   if (isOwner) {
-  //     return true;
-  //   }
-
-  //   const timeInMinutes =
-  //     getTimeFromRowIndex(venue, row).getHours() * 60 +
-  //     getTimeFromRowIndex(venue, row).getMinutes();
-
-  //   return !unavailabileBlocks.some(
-  //     (block) =>
-  //       timeInMinutes >= block.startTimeMinutes &&
-  //       timeInMinutes < block.endTimeMinutes,
-  //   );
-  // };
-
   const handleMouseDown = (row: number, col: number) => {
     if (!isTimeAvailable(row, col) || pendingChange) {
       return;

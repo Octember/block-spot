@@ -34,7 +34,7 @@ export const PendingChangesSection = () => {
         className="flex" // lg:hidden"
         open={true}
         size="lg"
-        onClose={() => {}}
+        onClose={() => { }}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
@@ -64,6 +64,7 @@ export const PendingChangesSection = () => {
           <ReservationChangeDescription
             reservation={pendingChange.newState}
             color={pendingChange?.type === "DELETE" ? "red" : "blue"}
+            editable={pendingChange?.type === "UPDATE"}
           />
         </div>
       </Modal>
@@ -146,6 +147,8 @@ const ReservationChangeDescription: FC<{
               time={reservation.endTime}
               onChange={(hour, minute) => {
                 if (!pendingChange) return;
+                if (hour < reservation.startTime.getHours()) return;
+
                 setPendingChange({
                   ...pendingChange,
                   newState: {
