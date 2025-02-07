@@ -128,7 +128,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
   return (
     <li
-      className={`relative flex ${isDragging ? "z-50" : "z-20"} select-none bg-white my-1 mx-2`}
+      className={`relative flex ${isDragging ? "z-50" : "z-20"} select-none bg-white rounded-lg my-1 mx-2`}
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,

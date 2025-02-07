@@ -85,7 +85,7 @@ export default function App() {
   return (
     <>
       <div
-        className="min-h-screen h-full dark:text-white  app-background"
+        className="min-h-screen h-full dark:text-white  app-background  font-display"
         style={
           {
             // background: 'linear-gradient(53deg, rgba(172,217,236,0.5340730042016807) 19%, rgba(252,217,224,0.4668461134453782) 67%, rgba(47,76,115,0.2567620798319328) 93%)',

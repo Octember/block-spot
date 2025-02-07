@@ -23,7 +23,7 @@ export const CalendarHeader: FC = () => {
   return (
     <header
       className={cn(
-        "inset-x-0 top-0 z-50 bg-gray-100 dark:bg-boxdark-2 sticky flex flex-col",
+        "inset-x-0 top-0 z-50 bg-cyan-800/40 dark:bg-boxdark-2 sticky flex flex-col ",
       )}
     >
       <div className="flex px-4 py-2 gap-2 items-center">

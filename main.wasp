@@ -15,7 +15,7 @@ app BlockSpot {
     "<meta name='description' content='BlockSpot is a booking platform for small businesses.' />",
     "<meta name='author' content='BlockSpot' />",
     "<meta name='keywords' content='booking, platform, small business, booking, reservation, scheduling' />",
-    
+    "<link href='https://fonts.googleapis.com/css?family=Lato' rel='stylesheet'>",
     "<meta property='og:type' content='website' />",
     "<meta property='og:title' content='BlockSpot' />",
     "<meta property='og:site_name' content='BlockSpot' />",
