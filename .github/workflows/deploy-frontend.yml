@@ -41,7 +41,7 @@ jobs:
 
       - name: Slack notify
         run: |
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Frontend deployed to Cloudflare Pages"}' ${{ secrets.SLACK_WEBHOOK_URL }}
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Frontend deployed: ${{ github.event.head_commit.message }}"}' ${{ secrets.SLACK_WEBHOOK_URL }}
 
     env:
       CLIENT_CLOUDFLARE_APP_NAME: blockspot-client

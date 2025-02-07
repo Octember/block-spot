@@ -33,6 +33,7 @@ export const PendingChangesSection = () => {
       <Modal
         className="flex"// lg:hidden"
         open={true}
+        size="lg"
         onClose={() => { }}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
@@ -110,7 +111,7 @@ const ReservationChangeDescription: FC<{
   const colorClass = colorMap[color];
 
   return (
-    <div className={`flex text-md items-center space-x-2 ${colorClass}`}>
+    <div className={`flex text-md items-center space-x-2 text-nowrap ${colorClass}`}>
       <Squares2X2Icon className="h-4 w-4" />
 
       <span className="text-sm font-semibold">{space?.name}</span>
