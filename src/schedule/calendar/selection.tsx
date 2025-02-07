@@ -1,4 +1,5 @@
 import { createContext, useContext, useState } from "react";
+import { AuthUser } from "wasp/auth";
 import { Venue } from "wasp/entities";
 import { isUserOwner } from "../../client/hooks/permissions";
 import { useTimeLabels } from "./constants";
@@ -155,7 +156,7 @@ export const useReservationSelection = () => {
   return context;
 };
 
-export const GridSelection: React.FC = () => {
+export const GridSelection: React.FC<{ user: AuthUser }> = ({ user }) => {
   const { setPendingChange } = usePendingChanges();
   const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
@@ -188,6 +189,8 @@ export const GridSelection: React.FC = () => {
           current: selection.current,
         });
 
+        // BUG: Not checking for reservation conflicts
+
         setPendingChange({
           type: "CREATE",
           newState: {
@@ -217,15 +220,20 @@ export const GridSelection: React.FC = () => {
         Array.from({ length: venue.spaces.length }).map((_, col) => {
           if (row === 0) return <div key={`${row + 1}-${col}`} />;
 
-          return (
-            // Add ones to account for 1-based grid indexing
-            <div
-              key={`${row + 1}-${col}`}
-              className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1) ? "cursor-pointer" : ""}`}
-              onMouseDown={() => handleMouseDown(row + 1, col)}
-              onMouseMove={() => handleMouseMove(row + 1, col)}
-            />
-          );
+          if (user) {
+
+            return (
+              // Add ones to account for 1-based grid indexing
+              <div
+                key={`${row + 1}-${col}`}
+                className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1) ? "cursor-pointer" : ""}`}
+                onMouseDown={() => handleMouseDown(row + 1, col)}
+                onMouseMove={() => handleMouseMove(row + 1, col)}
+              />
+            );
+          }
+
+          return <div key={`${row + 1}-${col}`} className="cursor-pointer" onClick={() => { }} />;
         }),
       )}
     </div>

@@ -20,6 +20,7 @@ function transformToFormInputs(
     displayEnd: venue.displayEnd / 60,
     announcements: venue.announcements,
     availabilityRules: venue.availabilityRules,
+    contactEmail: venue.contactEmail,
   };
 }
 
@@ -52,6 +53,7 @@ export function UpdateVenueForm({
         displayStart: data.displayStart * 60,
         displayEnd: data.displayEnd * 60,
         announcements: data.announcements,
+        contactEmail: data.contactEmail,
       });
 
       await updateVenueAvailability({
@@ -96,12 +98,21 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               View Schedule
             </Button>
           </WaspRouterLink>
         </div>
+      </div>
+
+      <div>
+        <FormField
+          label="Contact Email"
+          description="The email address that customers will use to contact you"
+        >
+          <TextInput required {...register("contactEmail")} />
+        </FormField>
       </div>
 
       <div>

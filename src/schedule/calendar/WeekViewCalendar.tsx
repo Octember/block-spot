@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { Reservation, Space, Venue } from "wasp/entities";
 
+import { AuthUser } from "wasp/auth";
 import { PendingChangesSection } from './action-section/pending-changes-section';
 import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
@@ -10,7 +11,8 @@ import { getGridTemplateColumns } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
 
-const CalendarContent: FC<WeekViewCalendarProps> = ({ venue }) => {
+const CalendarContent: FC<WeekViewCalendarProps> = ({ venue, user }) => {
+
   return (
     <div className="flex h-full flex-col flex-1">
       <CalendarHeader />
@@ -46,7 +48,8 @@ const CalendarContent: FC<WeekViewCalendarProps> = ({ venue }) => {
               <HorizontalDividers />
               <AvailabilitySection />
               <ReservationsSection />
-              <GridSelection />
+
+              <GridSelection user={user} />
             </div>
           </div>
         </div>
@@ -59,13 +62,14 @@ const CalendarContent: FC<WeekViewCalendarProps> = ({ venue }) => {
 
 export interface WeekViewCalendarProps {
   venue: Venue & { spaces: (Space & { reservations: Reservation[] })[] };
+  user: AuthUser;
 }
 
-export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue }) => {
+export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue, user }) => {
   return (
     <PendingChangesProvider>
       <SelectionProvider>
-        <CalendarContent venue={venue} />
+        <CalendarContent venue={venue} user={user} />
       </SelectionProvider>
     </PendingChangesProvider>
   );

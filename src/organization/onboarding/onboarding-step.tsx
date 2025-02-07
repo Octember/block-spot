@@ -164,6 +164,7 @@ export function SpacesStep({
           id: "",
         })),
         announcements: "",
+        contactEmail: "",
       });
 
       await onNext();
@@ -281,7 +282,11 @@ export function SpacesStep({
 
         <Button
           icon={isCreating ? <BiLoaderCircle className="size-4 animate-spin" /> : <ArrowRightIcon className="size-4" />}
-          onClick={handleCreateVenueAndSpaces}
+          onClick={() => {
+            setIsCreating(true);
+            // TODO: handle contact email
+            handleCreateVenueAndSpaces();
+          }}
           disabled={!isValid || isCreating}
           ariaLabel="Continue"
         >

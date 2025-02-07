@@ -227,7 +227,7 @@ export const getVenueById: GetVenueById<
 
 type UpdateVenuePayload = Pick<
   Venue,
-  "id" | "name" | "displayStart" | "displayEnd" | "announcements"
+  "id" | "name" | "displayStart" | "displayEnd" | "announcements" | "contactEmail"
 > & { spaces: Pick<Space, "id" | "name">[] };
 
 export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
@@ -241,6 +241,7 @@ export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
       displayStart: Number(args.displayStart),
       displayEnd: Number(args.displayEnd),
       announcements: args.announcements,
+      contactEmail: args.contactEmail,
       spaces: {
         deleteMany: {
           NOT: args.spaces

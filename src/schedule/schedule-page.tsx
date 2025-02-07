@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+import { AuthUser } from "wasp/auth";
 import { createReservation, generateGptResponse } from "wasp/client/operations";
 import { TextInput } from "../client/components/form/text-input";
 import { useToast } from "../client/toast";
@@ -9,22 +10,22 @@ import {
 } from "./calendar/providers/schedule-query-provider";
 import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
 
-const PageLoader = () => {
+const PageLoader: FC<{ user: AuthUser }> = ({ user }) => {
   const { venue } = useScheduleContext();
 
   return (
     <div className="flex flex-col h-full min-h-screen">
-      <WeekViewCalendar venue={venue} />
+      <WeekViewCalendar venue={venue} user={user} />
       {/* {venue.spaces.length > 0 && <GptSection spaceId={venue.spaces[0].id} />} */}
     </div>
   );
 };
 
-const SchedulePage: FC = () => {
+const SchedulePage: FC<{ user: AuthUser }> = ({ user }) => {
   return (
     <DateProvider>
       <ScheduleQueryProvider>
-        <PageLoader />
+        <PageLoader user={user} />
       </ScheduleQueryProvider>
     </DateProvider>
   );

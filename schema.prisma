@@ -183,6 +183,7 @@ model Venue {
   organization Organization @relation(fields: [organizationId], references: [id])
 
   name      String
+  contactEmail String @default("")
   address   String
   announcements String @default("")
   spaces    Space[]

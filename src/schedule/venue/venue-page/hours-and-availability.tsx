@@ -27,6 +27,7 @@ function transformToFormInputs(
     displayEnd: venue.displayEnd / 60,
     announcements: "",
     availabilityRules: venue.availabilityRules,
+    contactEmail: venue.contactEmail,
   };
 }
 
@@ -80,7 +81,8 @@ export function HoursAndAvailabilityForm({
         spaces: data.spaces,
         displayStart: data.displayStart * 60,
         displayEnd: data.displayEnd * 60,
-        announcements: "",
+        announcements: data.announcements,
+        contactEmail: data.contactEmail,
       });
 
       await updateVenueAvailability({
