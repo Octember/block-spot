@@ -214,15 +214,19 @@ export const GridSelection: React.FC = () => {
       onMouseLeave={handleMouseUp}
     >
       {Array.from({ length: timeLabels.length * 12 }).map((_, row) =>
-        Array.from({ length: venue.spaces.length }).map((_, col) => (
-          // Add ones to account for 1-based grid indexing
-          <div
-            key={`${row + 1}-${col}`}
-            className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1) ? "cursor-pointer" : ""}`}
-            onMouseDown={() => handleMouseDown(row + 1, col)}
-            onMouseMove={() => handleMouseMove(row + 1, col)}
-          />
-        )),
+        Array.from({ length: venue.spaces.length }).map((_, col) => {
+          if (row === 0) return <div key={`${row + 1}-${col}`} />;
+
+          return (
+            // Add ones to account for 1-based grid indexing
+            <div
+              key={`${row + 1}-${col}`}
+              className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1) ? "cursor-pointer" : ""}`}
+              onMouseDown={() => handleMouseDown(row + 1, col)}
+              onMouseMove={() => handleMouseMove(row + 1, col)}
+            />
+          );
+        }),
       )}
     </div>
   );
