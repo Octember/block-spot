@@ -25,7 +25,8 @@ type ReservationSlotProps = {
 };
 
 const GrayColorStyle =
-  "bg-gradient-to-br from-gray-200 hover:from-gray-50 to-gray-50 hover:to-gray-300 border-gray-400 hover:border-gray-500";
+  "bg-gradient-to-br   from-emerald-800/10 to-emerald-800/20  hover:from-emerald-800/20 hover:to-emerald-800/10  border-emerald-800 hover:border-emerald-700";
+// "bg-emerald-800/10  hover:from-gray-50 hover:to-gray-300 border-emerald-800 hover:border-emerald-700";
 const BlueColorStyle =
   "bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500";
 
@@ -59,7 +60,7 @@ function getColorStyles({
     return BlueColorStyle;
   }
 
-  return GrayColorStyle;
+  return `${GrayColorStyle} cursor-not-allowed`;
 }
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
@@ -127,7 +128,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
   return (
     <li
-      className={`relative flex ${isDragging ? "z-50" : "z-20"} select-none`}
+      className={`relative flex ${isDragging ? "z-50" : "z-20"} select-none bg-white my-1 mx-2`}
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,
@@ -140,7 +141,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       {...listeners}
     >
       <a
-        className={`group w-full my-1 mx-2 flex flex-col justify-between rounded-lg p-2 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
+        className={`group w-full  flex flex-col justify-between rounded-lg p-2 text-xs/5 border-t-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
       >
         <div className="flex flex-col flex-1">
           <div className="flex flex-row justify-between">
