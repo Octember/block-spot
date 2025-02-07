@@ -73,7 +73,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const isOwner = isUserOwner();
 
   const { isSelecting } = useReservationSelection();
-  const { pendingChange } = usePendingChanges();
+  const { pendingChange, setPendingChange } = usePendingChanges();
 
   const disabled =
     (!isDraft && !isOwner) ||
@@ -157,7 +157,11 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             </p>
 
             {isOwner && (
-              <ReservationMenu onEdit={() => { }} onDelete={props.onDelete} />
+              <ReservationMenu onEdit={() => setPendingChange({
+                type: "UPDATE",
+                newState: reservation,
+                oldState: reservation,
+              })} onDelete={props.onDelete} />
             )}
           </div>
         </div>

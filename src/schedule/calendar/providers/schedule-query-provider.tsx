@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { createContext, useContext, useRef } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getVenueInfo } from "wasp/client/operations";
+import { Space } from "wasp/entities";
 import { getUnavailabilityBlocks } from "./availability-utils";
 import { useSelectedDate } from "./date-provider";
 
@@ -33,11 +34,13 @@ export const ScheduleQueryContext = createContext<{
     endTimeMinutes: number;
   }[];
   refresh: () => void;
+  getSpaceById: (spaceId: string) => Space | undefined;
 }>({
   // @ts-expect-error idk
   venue: null,
   unavailabileBlocks: [],
   refresh: () => { },
+  getSpaceById: () => undefined,
 });
 
 export const ScheduleQueryProvider = ({
@@ -62,9 +65,13 @@ export const ScheduleQueryProvider = ({
 
   const venueToUse = lastVenue.current || venue;
 
-  const unavailabileBlocks = venueToUse
+  const unavailabileBlocks = useMemo(() => venueToUse
     ? getUnavailabilityBlocks(venueToUse)
-    : [];
+    : [], [venueToUse]);
+
+  const getSpaceById = useCallback((spaceId: string) => {
+    return venueToUse?.spaces.find((space) => space.id === spaceId);
+  }, [venueToUse]);
 
   if (!venueToUse) {
     return null;
@@ -72,7 +79,7 @@ export const ScheduleQueryProvider = ({
 
   return (
     <ScheduleQueryContext.Provider
-      value={{ venue: venueToUse, unavailabileBlocks, refresh }}
+      value={{ venue: venueToUse, unavailabileBlocks, refresh, getSpaceById }}
     >
       {children}
     </ScheduleQueryContext.Provider>

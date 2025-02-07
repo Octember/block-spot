@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Reservation, Space, Venue } from "wasp/entities";
 
-import { CalendarFooter } from "./action-section/calendar-footer";
+import { PendingChangesSection } from './action-section/pending-changes-section';
 import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
@@ -52,7 +52,7 @@ const CalendarContent: FC<WeekViewCalendarProps> = ({ venue }) => {
         </div>
       </div>
 
-      <CalendarFooter />
+      <PendingChangesSection />
     </div>
   );
 };

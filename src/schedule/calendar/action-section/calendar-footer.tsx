@@ -6,9 +6,10 @@ export const CalendarFooter = () => {
   const { pendingChange } = usePendingChanges();
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t h-16 border-gray-200 p-4">
-      {pendingChange ? <PendingChangesSection /> : <AnnouncementSection />}
-    </div>
+    <PendingChangesSection />
+    // <div className="fixed bottom-0 left-0 right-0 bg-white border-t h-16 border-gray-200 p-4">
+    //   {pendingChange ? <PendingChangesSection /> : <AnnouncementSection />}
+    // </div>
   );
 };
 

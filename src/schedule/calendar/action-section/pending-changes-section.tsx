@@ -3,9 +3,10 @@ import {
   ArrowRightIcon,
   CalendarIcon,
   ClockIcon,
+  Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { Reservation } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { Modal } from "../../../client/components/modal";
@@ -13,6 +14,7 @@ import {
   PendingChange,
   usePendingChanges,
 } from "../providers/pending-changes-provider";
+import { useScheduleContext } from "../providers/schedule-query-provider";
 
 function getChangeType(pendingChange: PendingChange | null) {
   if (pendingChange?.type === "CREATE") return "New Reservation";
@@ -29,7 +31,7 @@ export const PendingChangesSection = () => {
   return (
     <>
       <Modal
-        className="flex lg:hidden"
+        className="flex"// lg:hidden"
         open={true}
         onClose={() => { }}
         heading={{ title: getChangeType(pendingChange) }}
@@ -60,12 +62,12 @@ export const PendingChangesSection = () => {
           )}
           <ReservationChangeDescription
             reservation={pendingChange.newState}
-            color={pendingChange?.type === "UPDATE" ? "blue" : "red"}
+            color={pendingChange?.type === "CREATE" ? "blue" : "red"}
           />
         </div>
       </Modal>
 
-      <div className="hidden lg:flex max-w-5xl mx-auto gap-3 items-center justify-between whitespace-nowrap">
+      <div className="hidden max-w-5xl mx-auto gap-3 items-center justify-between whitespace-nowrap">
         <div className="flex items-center">
           <div className="h-2 w-2 rounded-full bg-yellow-400 mr-2" />
           <span className="text-xl font-medium text-gray-900">
@@ -94,6 +96,9 @@ const ReservationChangeDescription: FC<{
   color: "red" | "blue" | "gray";
   editable?: boolean;
 }> = ({ reservation, color, editable }) => {
+  const { getSpaceById } = useScheduleContext();
+  const space = useMemo(() => getSpaceById(reservation.spaceId), [reservation.spaceId, getSpaceById]);
+
   const { pendingChange, setPendingChange } = usePendingChanges();
 
   const colorMap: Record<typeof color, string> = {
@@ -106,6 +111,10 @@ const ReservationChangeDescription: FC<{
 
   return (
     <div className={`flex text-md items-center space-x-2 ${colorClass}`}>
+      <Squares2X2Icon className="h-4 w-4" />
+
+      <span className="text-sm font-semibold">{space?.name}</span>
+
       <CalendarIcon className="h-4 w-4" />
       <span>{format(reservation.startTime, "EEE, MMM d")}</span>
       <ClockIcon className="h-4 w-4 ml-2" />
