@@ -24,11 +24,15 @@ type ReservationSlotProps = {
   onDelete?: () => void;
 };
 
+
 const GrayColorStyle =
-  "bg-gradient-to-br   from-emerald-800/10 to-emerald-800/20  hover:from-emerald-800/20 hover:to-emerald-800/10  border-emerald-800 hover:border-emerald-700";
+  // "bg-violet-200/20 border-violet-400 hover:border-violet-400";
+  "bg-[#F7F4F3] border-[#B69A91]"
+// "bg-gradient-to-br from-emerald-600/10 to-emerald-600/20  hover:from-emerald-600/20 hover:to-emerald-600/10  border-emerald-800 hover:border-emerald-700";
+// "bg-gradient-to-br from-emerald-600/10 to-emerald-600/20  hover:from-emerald-600/20 hover:to-emerald-600/10  border-emerald-800 hover:border-emerald-700";
 // "bg-emerald-800/10  hover:from-gray-50 hover:to-gray-300 border-emerald-800 hover:border-emerald-700";
 const BlueColorStyle =
-  "bg-gradient-to-br from-blue-50 hover:from-blue-100 to-blue-200 hover:to-blue-200 border-blue-400 hover:border-blue-500";
+  "bg-gradient-to-br from-cyan-500/20 to-cyan-500/10 hover:from-cyan-500/10 hover:to-cyan-500/20 border-cyan-800 hover:border-cyan-600";
 
 function getColorStyles({
   isDraft,

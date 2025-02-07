@@ -2,7 +2,7 @@ import { useDroppable } from "@dnd-kit/core";
 
 function getColor(isOver: boolean, occupied: boolean) {
   if (isOver) {
-    return "bg-violet-200 bg-opacity-50";
+    return "bg-cyan-600/20 animate-pulse";
   }
 
   return "";
