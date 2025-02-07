@@ -18,7 +18,6 @@ interface Selection {
 interface SelectionContextType {
   selection: Selection;
   isSelecting: boolean;
-  isTimeAvailable: (row: number) => boolean;
   handleMouseDown: (row: number, col: number) => void;
   handleMouseMove: (row: number, col: number) => void;
   handleMouseUp: () => void;
@@ -65,7 +64,7 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
   children,
 }) => {
   const isOwner = isUserOwner();
-  const { venue, unavailabileBlocks } = useScheduleContext();
+  const { venue, unavailabileBlocks, isTimeAvailable } = useScheduleContext();
 
   const [selection, setSelection] = useState<Selection>({
     start: null,
@@ -74,24 +73,24 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
   const [isSelecting, setIsSelecting] = useState(false);
   const { pendingChange } = usePendingChanges();
 
-  const isTimeAvailable = (row: number): boolean => {
-    if (isOwner) {
-      return true;
-    }
+  // const isTimeAvailable = (row: number): boolean => {
+  //   if (isOwner) {
+  //     return true;
+  //   }
 
-    const timeInMinutes =
-      getTimeFromRowIndex(venue, row).getHours() * 60 +
-      getTimeFromRowIndex(venue, row).getMinutes();
+  //   const timeInMinutes =
+  //     getTimeFromRowIndex(venue, row).getHours() * 60 +
+  //     getTimeFromRowIndex(venue, row).getMinutes();
 
-    return !unavailabileBlocks.some(
-      (block) =>
-        timeInMinutes >= block.startTimeMinutes &&
-        timeInMinutes < block.endTimeMinutes,
-    );
-  };
+  //   return !unavailabileBlocks.some(
+  //     (block) =>
+  //       timeInMinutes >= block.startTimeMinutes &&
+  //       timeInMinutes < block.endTimeMinutes,
+  //   );
+  // };
 
   const handleMouseDown = (row: number, col: number) => {
-    if (!isTimeAvailable(row) || pendingChange) {
+    if (!isTimeAvailable(row, col) || pendingChange) {
       return;
     }
 
@@ -100,7 +99,7 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
   };
 
   const handleMouseMove = (row: number, col: number) => {
-    if (!isTimeAvailable(row)) {
+    if (!isTimeAvailable(row, col)) {
       handleMouseUp();
       return;
     }
@@ -117,7 +116,7 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
 
   const getGridCell = (row: number, col: number) => {
     if (!selection.start || !selection.current || !isSelecting) return "";
-    if (!isTimeAvailable(row)) return "";
+    if (!isTimeAvailable(row, col)) return "";
 
     const minRow = Math.min(selection.start.row, selection.current.row);
     const maxRow = Math.max(selection.start.row, selection.current.row);
@@ -135,7 +134,6 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
       value={{
         selection,
         isSelecting,
-        isTimeAvailable,
         handleMouseDown,
         handleMouseMove,
         handleMouseUp,
@@ -162,7 +160,7 @@ export const GridSelection: React.FC = () => {
   const [anonUserWarningOpen, setAnonUserWarningOpen] = useState(false);
   const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
-  const { venue } = useScheduleContext();
+  const { venue, isTimeAvailable } = useScheduleContext();
   const { data: user } = useAuth();
 
   const {
@@ -172,7 +170,6 @@ export const GridSelection: React.FC = () => {
     selection,
     isSelecting,
     getGridCell,
-    isTimeAvailable,
   } = useReservationSelection();
 
   const handleMouseUp = () => {
@@ -185,15 +182,13 @@ export const GridSelection: React.FC = () => {
       const isSelectionValid = Array.from(
         { length: maxRow - minRow + 1 },
         (_, i) => minRow + i,
-      ).every((row) => isTimeAvailable(row));
+      ).every((row) => isTimeAvailable(row, selection.start?.col || 0));
 
       if (isSelectionValid) {
         const { start, end } = getStartEndTime(venue, selectedDate, {
           start: selection.start,
           current: selection.current,
         });
-
-        // BUG: Not checking for reservation conflicts
 
         setPendingChange({
           type: "CREATE",
@@ -229,7 +224,7 @@ export const GridSelection: React.FC = () => {
               // Add ones to account for 1-based grid indexing
               <div
                 key={`${row + 1}-${col}`}
-                className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1) ? "cursor-pointer" : ""}`}
+                className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1, col) ? "cursor-pointer" : ""}`}
                 onMouseDown={() => handleMouseDown(row + 1, col)}
                 onMouseMove={() => handleMouseMove(row + 1, col)}
               />
