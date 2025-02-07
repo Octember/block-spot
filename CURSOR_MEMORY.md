@@ -235,6 +235,7 @@ This hierarchy ensures that:
 ## Pricing & Payment Structure
 
 ### Plans
+
 - Two tier pricing structure:
   1. Community Plan ($5/month)
      - Perfect for small businesses and community centers
@@ -252,6 +253,7 @@ This hierarchy ensures that:
      - Analytics & reporting
 
 ### Payment Integration
+
 - Uses Stripe for payment processing
 - Plan IDs stored in environment variables:
   - PAYMENTS_COMMUNITY_SUBSCRIPTION_PLAN_ID
@@ -261,6 +263,7 @@ This hierarchy ensures that:
 - 30-day free trial for all plans
 
 ### Code Structure
+
 - Plans defined in `src/payment/plans.ts`
 - UI components in `src/payment/PricingPage.tsx`
 - Uses PaymentPlanId enum for type safety
@@ -268,6 +271,7 @@ This hierarchy ensures that:
 - Organization model tracks subscription status and plan type
 
 ### UI/UX Patterns
+
 - Teal color scheme for pricing elements
 - Most popular plan highlighted with teal ring
 - Consistent feature list with checkmark icons
@@ -279,6 +283,7 @@ This hierarchy ensures that:
 ### Rules & Best Practices
 
 1. Database Schema Changes
+
    - ALWAYS use Prisma for database schema changes
    - NEVER use direct SQL migrations
    - Update schema.prisma file for any model changes

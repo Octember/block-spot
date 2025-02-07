@@ -6,7 +6,7 @@ import {
 } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { useToast } from "../../../client/toast";
-import { useSelectedDate } from './date-provider';
+import { useSelectedDate } from "./date-provider";
 import { useScheduleContext } from "./schedule-query-provider";
 
 export interface PendingChange {

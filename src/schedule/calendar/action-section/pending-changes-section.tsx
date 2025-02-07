@@ -31,10 +31,10 @@ export const PendingChangesSection = () => {
   return (
     <>
       <Modal
-        className="flex"// lg:hidden"
+        className="flex" // lg:hidden"
         open={true}
         size="lg"
-        onClose={() => { }}
+        onClose={() => {}}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
@@ -63,7 +63,7 @@ export const PendingChangesSection = () => {
           )}
           <ReservationChangeDescription
             reservation={pendingChange.newState}
-            color={pendingChange?.type === "CREATE" ? "blue" : "red"}
+            color={pendingChange?.type === "DELETE" ? "red" : "blue"}
           />
         </div>
       </Modal>
@@ -91,14 +91,16 @@ export const PendingChangesSection = () => {
   );
 };
 
-
 const ReservationChangeDescription: FC<{
   reservation: Reservation;
   color: "red" | "blue" | "gray";
   editable?: boolean;
 }> = ({ reservation, color, editable }) => {
   const { getSpaceById } = useScheduleContext();
-  const space = useMemo(() => getSpaceById(reservation.spaceId), [reservation.spaceId, getSpaceById]);
+  const space = useMemo(
+    () => getSpaceById(reservation.spaceId),
+    [reservation.spaceId, getSpaceById],
+  );
 
   const { pendingChange, setPendingChange } = usePendingChanges();
 
@@ -111,7 +113,9 @@ const ReservationChangeDescription: FC<{
   const colorClass = colorMap[color];
 
   return (
-    <div className={`flex text-md items-center space-x-2 text-nowrap ${colorClass}`}>
+    <div
+      className={`flex text-md items-center space-x-2 text-nowrap ${colorClass}`}
+    >
       <Squares2X2Icon className="h-4 w-4" />
 
       <span className="text-sm font-semibold">{space?.name}</span>
@@ -130,7 +134,9 @@ const ReservationChangeDescription: FC<{
                   ...pendingChange,
                   newState: {
                     ...pendingChange.newState,
-                    startTime: new Date(reservation.startTime.setHours(hour, minute)),
+                    startTime: new Date(
+                      reservation.startTime.setHours(hour, minute),
+                    ),
                   },
                 });
               }}
@@ -144,15 +150,18 @@ const ReservationChangeDescription: FC<{
                   ...pendingChange,
                   newState: {
                     ...pendingChange.newState,
-                    endTime: new Date(reservation.endTime.setHours(hour, minute)),
+                    endTime: new Date(
+                      reservation.endTime.setHours(hour, minute),
+                    ),
                   },
                 });
               }}
             />
-
           </div>
         ) : (
-          formatTime(reservation.startTime) + " - " + formatTime(reservation.endTime)
+          formatTime(reservation.startTime) +
+          " - " +
+          formatTime(reservation.endTime)
         )}
       </span>
     </div>
@@ -212,7 +221,7 @@ const TimeSelect: FC<TimeSelectProps> = ({ time, onChange }) => {
       {Array.from({ length: 24 * 4 }).map((_, i) => {
         const hour = Math.floor(i / 4);
         const minutes = (i % 4) * 15;
-        const time = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+        const time = `${hour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
         return (
           <option key={time} value={time}>
             {format(new Date().setHours(hour, minutes), "h:mm a")}

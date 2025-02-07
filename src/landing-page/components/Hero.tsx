@@ -21,10 +21,10 @@ export default function Hero() {
               <br /> intuitive reservation tool designed for small teams.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <WaspRouterLink to={user ? routes.AllVenuesPageRoute.to : routes.SignupRoute.to}>
-                <div
-                  className="rounded-md px-3.5 py-2.5 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-200 bg-white hover:ring-2 hover:ring-teal-600 hover:bg-teal-50 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:text-white"
-                >
+              <WaspRouterLink
+                to={user ? routes.AllVenuesPageRoute.to : routes.SignupRoute.to}
+              >
+                <div className="rounded-md px-3.5 py-2.5 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-200 bg-white hover:ring-2 hover:ring-teal-600 hover:bg-teal-50 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:text-white">
                   Get Started in Minutes <span aria-hidden="true">→</span>
                 </div>
               </WaspRouterLink>

@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Reservation, Space, Venue } from "wasp/entities";
 
 import { AuthUser } from "wasp/auth";
-import { PendingChangesSection } from './action-section/pending-changes-section';
+import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
@@ -12,7 +12,6 @@ import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
 
 const CalendarContent: FC<WeekViewCalendarProps> = ({ venue, user }) => {
-
   return (
     <div className="flex h-full flex-col flex-1">
       <CalendarHeader />
@@ -49,7 +48,7 @@ const CalendarContent: FC<WeekViewCalendarProps> = ({ venue, user }) => {
               <AvailabilitySection />
               <ReservationsSection />
 
-              <GridSelection user={user} />
+              <GridSelection />
             </div>
           </div>
         </div>
@@ -65,7 +64,10 @@ export interface WeekViewCalendarProps {
   user: AuthUser;
 }
 
-export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({ venue, user }) => {
+export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({
+  venue,
+  user,
+}) => {
   return (
     <PendingChangesProvider>
       <SelectionProvider>

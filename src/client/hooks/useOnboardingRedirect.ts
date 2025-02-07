@@ -3,7 +3,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "wasp/client/auth";
 import { getUserOrganization, useQuery } from "wasp/client/operations";
 
-const disallowedRedirectRoutes = ["/onboarding", "/pricing", "/about", "/checkout"];
+const disallowedRedirectRoutes = [
+  "/onboarding",
+  "/pricing",
+  "/about",
+  "/checkout",
+];
 
 export function useOnboardingRedirect() {
   const location = useLocation();
@@ -12,7 +17,13 @@ export function useOnboardingRedirect() {
   const { data: organization } = useQuery(getUserOrganization);
 
   useEffect(() => {
-    if (!user || location.pathname === '/' || disallowedRedirectRoutes.find((route) => location.pathname.startsWith(route))) {
+    if (
+      !user ||
+      location.pathname === "/" ||
+      disallowedRedirectRoutes.find((route) =>
+        location.pathname.startsWith(route),
+      )
+    ) {
       return;
     }
 
@@ -20,7 +31,7 @@ export function useOnboardingRedirect() {
       return navigate("/onboarding?redirect=true");
     }
 
-    if ( organization) {
+    if (organization) {
       const onboardingState = organization.onboardingState;
       if (!onboardingState?.hasCompletedOnboarding) {
         navigate("/onboarding?redirect=true");

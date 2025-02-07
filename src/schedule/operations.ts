@@ -227,7 +227,12 @@ export const getVenueById: GetVenueById<
 
 type UpdateVenuePayload = Pick<
   Venue,
-  "id" | "name" | "displayStart" | "displayEnd" | "announcements" | "contactEmail"
+  | "id"
+  | "name"
+  | "displayStart"
+  | "displayEnd"
+  | "announcements"
+  | "contactEmail"
 > & { spaces: Pick<Space, "id" | "name">[] };
 
 export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (

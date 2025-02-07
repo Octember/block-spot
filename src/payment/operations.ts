@@ -65,7 +65,9 @@ export const generateCheckoutSession: GenerateCheckoutSession<
     });
 
     return {
-      sessionUrl: returnToOnboarding ? "/onboarding/complete?success=true" : "/checkout?success=true",
+      sessionUrl: returnToOnboarding
+        ? "/onboarding/complete?success=true"
+        : "/checkout?success=true",
       sessionId: "free_plan",
     };
   }

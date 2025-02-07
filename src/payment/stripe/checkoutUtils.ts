@@ -62,7 +62,7 @@ export async function createStripeCheckoutSession({
   returnToOnboarding?: boolean;
 }) {
   try {
-    const successUrl = returnToOnboarding 
+    const successUrl = returnToOnboarding
       ? `${DOMAIN}/onboarding/complete?success=true`
       : `${DOMAIN}/checkout?success=true`;
 

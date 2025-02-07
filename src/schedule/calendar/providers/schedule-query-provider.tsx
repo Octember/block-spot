@@ -39,7 +39,7 @@ export const ScheduleQueryContext = createContext<{
   // @ts-expect-error idk
   venue: null,
   unavailabileBlocks: [],
-  refresh: () => { },
+  refresh: () => {},
   getSpaceById: () => undefined,
 });
 
@@ -65,13 +65,17 @@ export const ScheduleQueryProvider = ({
 
   const venueToUse = lastVenue.current || venue;
 
-  const unavailabileBlocks = useMemo(() => venueToUse
-    ? getUnavailabilityBlocks(venueToUse)
-    : [], [venueToUse]);
+  const unavailabileBlocks = useMemo(
+    () => (venueToUse ? getUnavailabilityBlocks(venueToUse) : []),
+    [venueToUse],
+  );
 
-  const getSpaceById = useCallback((spaceId: string) => {
-    return venueToUse?.spaces.find((space) => space.id === spaceId);
-  }, [venueToUse]);
+  const getSpaceById = useCallback(
+    (spaceId: string) => {
+      return venueToUse?.spaces.find((space) => space.id === spaceId);
+    },
+    [venueToUse],
+  );
 
   if (!venueToUse) {
     return null;

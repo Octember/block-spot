@@ -98,7 +98,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => { }}
+              onClick={() => {}}
             >
               View Schedule
             </Button>
@@ -111,7 +111,7 @@ export function UpdateVenueForm({
           label="Contact Email"
           description="The email address that customers will use to contact you"
         >
-          <TextInput required {...register("contactEmail")} />
+          <TextInput type="email" required {...register("contactEmail")} />
         </FormField>
       </div>
 

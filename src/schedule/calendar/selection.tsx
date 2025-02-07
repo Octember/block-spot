@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { AuthUser } from "wasp/auth";
+import { useAuth } from "wasp/client/auth";
 import { Venue } from "wasp/entities";
 import { isUserOwner } from "../../client/hooks/permissions";
 import { useTimeLabels } from "./constants";
@@ -8,6 +8,7 @@ import { usePendingChanges } from "./providers/pending-changes-provider";
 import { useScheduleContext } from "./providers/schedule-query-provider";
 import { getSharedGridStyle } from "./reservations/constants";
 import { getTimeFromRowIndex } from "./reservations/utilities";
+import { AnonymousUserWarning } from "./user/anonymous-user-warning";
 
 interface Selection {
   start: { row: number; col: number } | null;
@@ -124,7 +125,7 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
     const maxCol = Math.max(selection.start.col, selection.current.col);
 
     if (row >= minRow && row <= maxRow && col >= minCol && col <= maxCol) {
-      return "bg-pink-200 opacity-50";
+      return "bg-cyan-600/20";
     }
     return "";
   };
@@ -156,11 +157,14 @@ export const useReservationSelection = () => {
   return context;
 };
 
-export const GridSelection: React.FC<{ user: AuthUser }> = ({ user }) => {
+export const GridSelection: React.FC = () => {
   const { setPendingChange } = usePendingChanges();
+  const [anonUserWarningOpen, setAnonUserWarningOpen] = useState(false);
   const timeLabels = useTimeLabels();
   const { selectedDate } = useSelectedDate();
   const { venue } = useScheduleContext();
+  const { data: user } = useAuth();
+
   const {
     handleMouseDown,
     handleMouseMove,
@@ -221,7 +225,6 @@ export const GridSelection: React.FC<{ user: AuthUser }> = ({ user }) => {
           if (row === 0) return <div key={`${row + 1}-${col}`} />;
 
           if (user) {
-
             return (
               // Add ones to account for 1-based grid indexing
               <div
@@ -233,9 +236,19 @@ export const GridSelection: React.FC<{ user: AuthUser }> = ({ user }) => {
             );
           }
 
-          return <div key={`${row + 1}-${col}`} className="cursor-pointer" onClick={() => { }} />;
+          return (
+            <div
+              key={`${row + 1}-${col}`}
+              className="cursor-pointer"
+              onClick={() => setAnonUserWarningOpen(true)}
+            />
+          );
         }),
       )}
+      <AnonymousUserWarning
+        isOpen={anonUserWarningOpen}
+        onClose={() => setAnonUserWarningOpen(false)}
+      />
     </div>
   );
 };

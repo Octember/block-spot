@@ -24,10 +24,9 @@ type ReservationSlotProps = {
   onDelete?: () => void;
 };
 
-
 const GrayColorStyle =
   // "bg-violet-200/20 border-violet-400 hover:border-violet-400";
-  "bg-[#F7F4F3] border-[#B69A91]"
+  "bg-[#F7F4F3] border-[#B69A91]";
 // "bg-gradient-to-br from-emerald-600/10 to-emerald-600/20  hover:from-emerald-600/20 hover:to-emerald-600/10  border-emerald-800 hover:border-emerald-700";
 // "bg-gradient-to-br from-emerald-600/10 to-emerald-600/20  hover:from-emerald-600/20 hover:to-emerald-600/10  border-emerald-800 hover:border-emerald-700";
 // "bg-emerald-800/10  hover:from-gray-50 hover:to-gray-300 border-emerald-800 hover:border-emerald-700";
@@ -115,7 +114,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   // Take into account the current drag position
   const newTimes = useMemo(() => {
     if (isDragging && transform) {
-
       const delta = (transform.y / PixelsPerSlot) * MinutesPerSlot;
       const rounded = Math.round(delta / MinutesPerSlot) * MinutesPerSlot;
 
@@ -157,11 +155,16 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
             </p>
 
             {isOwner && (
-              <ReservationMenu onEdit={() => setPendingChange({
-                type: "UPDATE",
-                newState: reservation,
-                oldState: reservation,
-              })} onDelete={props.onDelete} />
+              <ReservationMenu
+                onEdit={() =>
+                  setPendingChange({
+                    type: "UPDATE",
+                    newState: reservation,
+                    oldState: reservation,
+                  })
+                }
+                onDelete={props.onDelete}
+              />
             )}
           </div>
         </div>
@@ -182,7 +185,9 @@ const ReservationMenu = ({
   const [referenceElement, setReferenceElement] =
     useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
-  const { styles, attributes } = usePopper(referenceElement, popperElement, { placement: 'bottom-end' });
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: "bottom-end",
+  });
 
   return (
     <Popover className="relative group">

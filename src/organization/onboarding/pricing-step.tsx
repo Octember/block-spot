@@ -13,7 +13,7 @@ interface ErrorResponse {
 
 export function PricingStep({
   onNext,
-  organizationId
+  organizationId,
 }: {
   onNext: () => void;
   organizationId: string;
@@ -58,7 +58,8 @@ export function PricingStep({
     <div className="space-y-6">
       <div className="prose">
         <p>
-          Choose the plan that best fits your needs. All paid plans include a 30-day free trial.
+          Choose the plan that best fits your needs. All paid plans include a
+          30-day free trial.
         </p>
       </div>
 

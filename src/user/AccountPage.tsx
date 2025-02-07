@@ -136,7 +136,6 @@ function UserCurrentPaymentPlan({
   subscriptionStatus,
   datePaid,
 }: UserCurrentPaymentPlanProps) {
-
   if (subscriptionStatus && subscriptionPlan && datePaid) {
     return (
       <>
@@ -145,7 +144,8 @@ function UserCurrentPaymentPlan({
             subscriptionPlan,
             subscriptionStatus,
             datePaid,
-          })}</div>
+          })}
+        </div>
         <CustomerPortalButton />
       </>
     );

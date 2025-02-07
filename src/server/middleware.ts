@@ -1,7 +1,6 @@
 import cors from "cors";
 import { MiddlewareConfigFn } from "wasp/server";
 
-
 const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "https://block-spot.com",
@@ -10,7 +9,6 @@ const ALLOWED_ORIGINS = [
 ];
 
 export const corsMiddleware: MiddlewareConfigFn = (config) => {
-
   const isDevelopment = process.env.NODE_ENV === "development";
   const clientUrl = process.env.WASP_WEB_CLIENT_URL ?? "http://localhost:3000";
 
@@ -23,7 +21,7 @@ export const corsMiddleware: MiddlewareConfigFn = (config) => {
     "cors",
     cors({
       origin,
-    })
+    }),
   );
 
   return config;

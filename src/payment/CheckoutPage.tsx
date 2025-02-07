@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getUserOrganization, updateOnboardingState, useQuery } from 'wasp/client/operations';
-import { hasUserCompletedOnboarding } from '../client/hooks/permissions';
+import {
+  getUserOrganization,
+  updateOnboardingState,
+  useQuery,
+} from "wasp/client/operations";
+import { hasUserCompletedOnboarding } from "../client/hooks/permissions";
 
 export default function CheckoutPage() {
   const [paymentStatus, setPaymentStatus] = useState("loading");
@@ -10,7 +14,6 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: organization } = useQuery(getUserOrganization);
-
 
   useEffect(() => {
     function delayedRedirect() {

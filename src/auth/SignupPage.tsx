@@ -50,7 +50,6 @@ const customizationOptions: CustomizationOptions = {
 };
 
 export function Signup() {
-
   return (
     <AuthLayoutV2>
       <SignupForm

@@ -226,15 +226,12 @@ const PricingPage = () => {
       </div>
     </div>
   );
-
 };
 
 function getButtonText(planId: PaymentPlanId, isLoading: boolean) {
-
   if (isLoading) {
     return "Loading...";
   }
-
 
   if (planId === bestDealPaymentPlanId) {
     return "Manage Subscription";

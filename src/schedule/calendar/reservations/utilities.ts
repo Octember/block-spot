@@ -1,9 +1,4 @@
-import {
-  addMinutes,
-  differenceInMinutes,
-  isAfter,
-  isBefore
-} from "date-fns";
+import { addMinutes, differenceInMinutes, isAfter, isBefore } from "date-fns";
 import { Reservation, Venue } from "wasp/entities";
 import { MinutesPerSlot } from "./constants";
 
@@ -79,13 +74,21 @@ export function isWithinReservation(
   return result;
 }
 
-export function setTimesOnDate(startTime: Date, endTime: Date, targetDate: Date): {
+export function setTimesOnDate(
+  startTime: Date,
+  endTime: Date,
+  targetDate: Date,
+): {
   startTime: Date;
   endTime: Date;
 } {
   const result = new Date(targetDate);
   return {
-    startTime: new Date(result.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0)),
-    endTime: new Date(result.setHours(endTime.getHours(), endTime.getMinutes(), 0, 0))
-  }
+    startTime: new Date(
+      result.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0),
+    ),
+    endTime: new Date(
+      result.setHours(endTime.getHours(), endTime.getMinutes(), 0, 0),
+    ),
+  };
 }

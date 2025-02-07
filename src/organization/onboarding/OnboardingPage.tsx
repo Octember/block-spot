@@ -42,7 +42,7 @@ export function OrganizationOnboardingPage() {
     organizationType: "",
     teamSize: "",
   });
-  console.log(organization?.onboardingState)
+  console.log(organization?.onboardingState);
 
   useEffect(() => {
     if (organization) {
@@ -129,10 +129,7 @@ export function OrganizationOnboardingPage() {
         return <InviteStep onNext={handleNext} />;
       case "pricing":
         return organization ? (
-          <PricingStep
-            onNext={handleNext}
-            organizationId={organization.id}
-          />
+          <PricingStep onNext={handleNext} organizationId={organization.id} />
         ) : null;
       case "complete":
         return <CompleteStep onNext={handleNext} />;

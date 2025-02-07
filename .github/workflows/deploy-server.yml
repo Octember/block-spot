@@ -11,7 +11,7 @@ jobs:
     env:
       SVC_ID: server
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-    
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -20,7 +20,7 @@ jobs:
         id: setup-node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install Wasp
         run: curl -sSL https://get.wasp-lang.dev/installer.sh | sh -s -- -v 0.16.0 # Change to your Wasp version

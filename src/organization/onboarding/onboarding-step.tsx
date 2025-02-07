@@ -101,7 +101,13 @@ export function OrganizationStep({
           setLoading(true);
           onNext();
         }}
-        icon={loading ? <BiLoaderCircle className="size-4 animate-spin" /> : <ArrowRightIcon className="size-4" />}
+        icon={
+          loading ? (
+            <BiLoaderCircle className="size-4 animate-spin" />
+          ) : (
+            <ArrowRightIcon className="size-4" />
+          )
+        }
         disabled={
           !formData.organizationName ||
           !formData.organizationType ||
@@ -271,7 +277,13 @@ export function SpacesStep({
 
       <div className="flex gap-4">
         <Button
-          icon={isCreating ? <BiLoaderCircle className="size-4 animate-spin" /> : <PlusIcon className="size-4" />}
+          icon={
+            isCreating ? (
+              <BiLoaderCircle className="size-4 animate-spin" />
+            ) : (
+              <PlusIcon className="size-4" />
+            )
+          }
           onClick={handleAddSpace}
           variant="secondary"
           ariaLabel="Add Another Space"
@@ -281,7 +293,13 @@ export function SpacesStep({
         </Button>
 
         <Button
-          icon={isCreating ? <BiLoaderCircle className="size-4 animate-spin" /> : <ArrowRightIcon className="size-4" />}
+          icon={
+            isCreating ? (
+              <BiLoaderCircle className="size-4 animate-spin" />
+            ) : (
+              <ArrowRightIcon className="size-4" />
+            )
+          }
           onClick={() => {
             setIsCreating(true);
             // TODO: handle contact email
@@ -342,8 +360,9 @@ export function WelcomeStep({ onNext }: { onNext: () => void }) {
     <div className="space-y-6">
       <div className="prose">
         <p>
-          We&apos;re excited to help your team manage your schedule more effectively.
-          Let&apos;s get your organization set up in just a few steps.
+          We&apos;re excited to help your team manage your schedule more
+          effectively. Let&apos;s get your organization set up in just a few
+          steps.
         </p>
       </div>
       <Button

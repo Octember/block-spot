@@ -6,7 +6,12 @@ import { useScheduleContext } from "../providers/schedule-query-provider";
 import { getSharedGridStyle, MinutesPerSlot } from "./constants";
 import { DroppableSpace } from "./droppable";
 import { ReservationSlot } from "./reservation-slot";
-import { getRowSpan, getTimeFromRowIndex, isWithinReservation, setTimesOnDate } from "./utilities";
+import {
+  getRowSpan,
+  getTimeFromRowIndex,
+  isWithinReservation,
+  setTimesOnDate,
+} from "./utilities";
 
 export const ReservationsSection = () => {
   const { venue } = useScheduleContext();
@@ -53,17 +58,24 @@ export const ReservationsSection = () => {
       onDragEnd={async (e) => {
         setDraggingReservationId(null);
 
-        const droppable = e.over?.data.current
+        const droppable = e.over?.data.current;
 
         if (!draggingReservation) return;
         if (!droppable) return;
 
         // Get raw times from row indices and set them to the same day as dragging reservation
-        const rawStartTime = getTimeFromRowIndex(venue, droppable.rowIndex + 1)
-        const rawEndTime = getTimeFromRowIndex(venue, droppable.rowIndex + droppable?.rowSpan + 1)
-        const { startTime, endTime } = setTimesOnDate(rawStartTime, rawEndTime, draggingReservation.startTime)
+        const rawStartTime = getTimeFromRowIndex(venue, droppable.rowIndex + 1);
+        const rawEndTime = getTimeFromRowIndex(
+          venue,
+          droppable.rowIndex + droppable?.rowSpan + 1,
+        );
+        const { startTime, endTime } = setTimesOnDate(
+          rawStartTime,
+          rawEndTime,
+          draggingReservation.startTime,
+        );
 
-        const newSpaceId = droppable.spaceId
+        const newSpaceId = droppable.spaceId;
 
         const isCollision = reservations.some((reservation) => {
           if (reservation.id === draggingReservation.id) return false;
@@ -121,24 +133,26 @@ export const ReservationsSection = () => {
             }).map((_, rowIndex) => {
               if (rowIndex === 0) return null;
 
-              return <DroppableSpace
-                key={`${spaceId}-${rowIndex}`}
-                spaceId={spaceId}
-                columnIndex={columnIndex}
-                rowIndex={rowIndex}
-                rowSpan={getRowSpan(draggingReservation)}
-                occupied={reservations.some(
-                  (reservation) =>
-                    reservation.id !== draggingReservation.id &&
-                    reservation.spaceId === spaceId &&
-                    isWithinReservation(
-                      venue,
-                      rowIndex,
-                      getRowSpan(draggingReservation),
-                      reservation,
-                    ),
-                )}
-              />
+              return (
+                <DroppableSpace
+                  key={`${spaceId}-${rowIndex}`}
+                  spaceId={spaceId}
+                  columnIndex={columnIndex}
+                  rowIndex={rowIndex}
+                  rowSpan={getRowSpan(draggingReservation)}
+                  occupied={reservations.some(
+                    (reservation) =>
+                      reservation.id !== draggingReservation.id &&
+                      reservation.spaceId === spaceId &&
+                      isWithinReservation(
+                        venue,
+                        rowIndex,
+                        getRowSpan(draggingReservation),
+                        reservation,
+                      ),
+                  )}
+                />
+              );
             }),
           )}
         </ol>

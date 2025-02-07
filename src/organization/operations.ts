@@ -57,7 +57,15 @@ type CreateOrganizationInput = {
 
 type UpdateOnboardingStateInput = {
   organizationId: string;
-  updates: Partial<Pick<OnboardingState, "hasCompletedProfile" | "hasSelectedPlan" | "hasInvitedMembers" | "hasCompletedOnboarding">>;
+  updates: Partial<
+    Pick<
+      OnboardingState,
+      | "hasCompletedProfile"
+      | "hasSelectedPlan"
+      | "hasInvitedMembers"
+      | "hasCompletedOnboarding"
+    >
+  >;
 };
 
 export const getUserOrganization: GetUserOrganization<
