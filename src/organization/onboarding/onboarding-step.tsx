@@ -1,8 +1,11 @@
 import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
+import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
 import { BiLoaderCircle } from "react-icons/bi";
 import { createVenue, updateVenue } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
+import { FormField } from '../../client/components/form/form-field';
+import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
 import { PricingStep } from "./pricing-step";
 
@@ -129,31 +132,34 @@ export function SpacesStep({
   organizationName: string;
   onNext: () => Promise<void>;
 }) {
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<{
+    spaces: { name: string; type: string; capacity: number }[];
+    contactEmail: string;
+  }>({
+    defaultValues: {
+      spaces: [{ name: "", type: "Conference Room", capacity: 1 }],
+      contactEmail: "",
+    },
+  });
+
   const toast = useToast();
   const [isCreating, setIsCreating] = useState(false);
-  const [spaces, setSpaces] = useState<
-    { name: string; type: string; capacity: number }[]
-  >([{ name: "", type: "Conference Room", capacity: 1 }]);
 
-  const handleAddSpace = () => {
-    setSpaces([...spaces, { name: "", type: "Conference Room", capacity: 1 }]);
-  };
+  const { fields: spaces, append, remove } = useFieldArray({
+    control: control,
+    name: "spaces",
+  });
 
-  const handleRemoveSpace = (index: number) => {
-    setSpaces(spaces.filter((_, i) => i !== index));
-  };
-
-  const handleSpaceChange = (
-    index: number,
-    field: string,
-    value: string | number,
-  ) => {
-    const newSpaces = [...spaces];
-    newSpaces[index] = { ...newSpaces[index], [field]: value };
-    setSpaces(newSpaces);
-  };
-
-  const handleCreateVenueAndSpaces = async () => {
+  const handleCreateVenueAndSpaces: SubmitHandler<{
+    contactEmail: string;
+    spaces: { name: string; type: string; capacity: number }[];
+  }> = async (formData) => {
     setIsCreating(true);
     try {
       const venue = await createVenue({
@@ -170,7 +176,7 @@ export function SpacesStep({
           id: "",
         })),
         announcements: "",
-        contactEmail: "",
+        contactEmail: formData.contactEmail,
       });
 
       await onNext();
@@ -186,15 +192,33 @@ export function SpacesStep({
     }
   };
 
-  const isValid = spaces.every(
-    (space) =>
-      space.name.trim() !== "" &&
-      space.type.trim() !== "" &&
-      space.capacity > 0,
-  );
-
   return (
-    <div className="space-y-6">
+    <form className="space-y-6"
+      onSubmit={handleSubmit(handleCreateVenueAndSpaces)}
+    >
+
+      <div className="">
+        <h2 className="text-2xl font-bold pb-2">Venue Details</h2>
+        <FormField
+          label="Contact Email"
+          description="The email address that customers will use to contact you"
+        >
+          <TextInput
+            type="email"
+            placeholder="Contact Email"
+            required
+            {...register("contactEmail", {
+              required: "Email is required",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Invalid email address"
+              }
+            })}
+          />
+          {errors.contactEmail && <p className="text-red-500">{errors.contactEmail.message}</p>}
+        </FormField>
+      </div>
+
       <div className="prose">
         <h2>Setup Spaces</h2>
         <p>
@@ -213,10 +237,7 @@ export function SpacesStep({
                 </label>
                 <input
                   type="text"
-                  value={space.name}
-                  onChange={(e) =>
-                    handleSpaceChange(index, "name", e.target.value)
-                  }
+                  {...register(`spaces.${index}.name`)}
                   placeholder="e.g., Main Conference Room"
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                 />
@@ -228,10 +249,7 @@ export function SpacesStep({
                     Type
                   </label>
                   <select
-                    value={space.type}
-                    onChange={(e) =>
-                      handleSpaceChange(index, "type", e.target.value)
-                    }
+                    {...register(`spaces.${index}.type`)}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                   >
                     <option value="Conference Room">Conference Room</option>
@@ -249,14 +267,7 @@ export function SpacesStep({
                   <input
                     type="number"
                     min="1"
-                    value={space.capacity}
-                    onChange={(e) =>
-                      handleSpaceChange(
-                        index,
-                        "capacity",
-                        parseInt(e.target.value) || 1,
-                      )
-                    }
+                    {...register(`spaces.${index}.capacity`)}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                   />
                 </div>
@@ -265,7 +276,7 @@ export function SpacesStep({
 
             {spaces.length > 1 && (
               <button
-                onClick={() => handleRemoveSpace(index)}
+                onClick={() => remove(index)}
                 className="mt-8 text-gray-400 hover:text-gray-500"
               >
                 <XMarkIcon className="h-5 w-5" />
@@ -284,7 +295,7 @@ export function SpacesStep({
               <PlusIcon className="size-4" />
             )
           }
-          onClick={handleAddSpace}
+          onClick={() => append({ name: "", type: "Conference Room", capacity: 1 })}
           variant="secondary"
           ariaLabel="Add Another Space"
           disabled={isCreating}
@@ -300,18 +311,14 @@ export function SpacesStep({
               <ArrowRightIcon className="size-4" />
             )
           }
-          onClick={() => {
-            setIsCreating(true);
-            // TODO: handle contact email
-            handleCreateVenueAndSpaces();
-          }}
-          disabled={!isValid || isCreating}
+          type="submit"
+          disabled={isCreating}
           ariaLabel="Continue"
         >
           {isCreating ? "Creating..." : "Continue"}
         </Button>
       </div>
-    </div>
+    </form>
   );
 }
 

@@ -1,9 +1,8 @@
-import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { PendingChangesSection } from "./pending-changes-section";
 
 export const CalendarFooter = () => {
-  const { pendingChange } = usePendingChanges();
+  // const { pendingChange } = usePendingChanges();
 
   return (
     <PendingChangesSection />

@@ -113,7 +113,7 @@ export function PricingStep({
                 "mt-6 block w-full rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
                 planId === bestDealPaymentPlanId
                   ? "bg-teal-700 text-white shadow-sm hover:bg-teal-600 focus-visible:outline-teal-600"
-                  : "bg-white text-teal-600 ring-1 ring-inset ring-teal-200 hover:ring-teal-300",
+                  : "bg-white text-teal-600 ring-1 ring-inset ring-teal-500 hover:ring-teal-600",
               )}
             >
               {getButtonText(planId as PaymentPlanId, isPaymentLoading)}
