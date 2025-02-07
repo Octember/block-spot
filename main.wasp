@@ -349,6 +349,16 @@ api paymentsWebhook {
   middlewareConfigFn: import { paymentsMiddlewareConfigFn } from "@src/payment/webhook",
   httpRoute: (POST, "/payments-webhook")
 }
+
+action createStripeAccountLink {
+  fn: import { createStripeAccountLink } from "@src/payment/stripe/operations",
+  entities: [User, Organization],
+}
+
+action createStripeAccount {
+  fn: import { createStripeAccount } from "@src/payment/stripe/operations",
+  entities: [User, Organization],
+}
 //#endregion
 
 //#region File Upload

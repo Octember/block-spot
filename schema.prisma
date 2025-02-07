@@ -18,6 +18,7 @@ model Organization {
 
   // Billing and subscription fields
   stripeCustomerId       String?   @unique
+  stripeAccountId        String?   @unique
   subscriptionStatus     String?   // 'active', 'trialing', 'past_due', 'canceled'
   subscriptionPlanId     String?
   trialEndsAt           DateTime?

@@ -1,10 +1,10 @@
 import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
-import { SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
+import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { BiLoaderCircle } from "react-icons/bi";
 import { createVenue, updateVenue } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
-import { FormField } from '../../client/components/form/form-field';
+import { FormField } from "../../client/components/form/form-field";
 import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
 import { PricingStep } from "./pricing-step";
@@ -132,7 +132,6 @@ export function SpacesStep({
   organizationName: string;
   onNext: () => Promise<void>;
 }) {
-
   const {
     register,
     handleSubmit,
@@ -151,7 +150,11 @@ export function SpacesStep({
   const toast = useToast();
   const [isCreating, setIsCreating] = useState(false);
 
-  const { fields: spaces, append, remove } = useFieldArray({
+  const {
+    fields: spaces,
+    append,
+    remove,
+  } = useFieldArray({
     control: control,
     name: "spaces",
   });
@@ -193,10 +196,10 @@ export function SpacesStep({
   };
 
   return (
-    <form className="space-y-6"
+    <form
+      className="space-y-6"
       onSubmit={handleSubmit(handleCreateVenueAndSpaces)}
     >
-
       <div className="">
         <h2 className="text-2xl font-bold pb-2">Venue Details</h2>
         <FormField
@@ -211,11 +214,13 @@ export function SpacesStep({
               required: "Email is required",
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Invalid email address"
-              }
+                message: "Invalid email address",
+              },
             })}
           />
-          {errors.contactEmail && <p className="text-red-500">{errors.contactEmail.message}</p>}
+          {errors.contactEmail && (
+            <p className="text-red-500">{errors.contactEmail.message}</p>
+          )}
         </FormField>
       </div>
 
@@ -295,7 +300,9 @@ export function SpacesStep({
               <PlusIcon className="size-4" />
             )
           }
-          onClick={() => append({ name: "", type: "Conference Room", capacity: 1 })}
+          onClick={() =>
+            append({ name: "", type: "Conference Room", capacity: 1 })
+          }
           variant="secondary"
           ariaLabel="Add Another Space"
           disabled={isCreating}

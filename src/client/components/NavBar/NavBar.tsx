@@ -46,7 +46,7 @@ export default function AppNavBar({
           >
             <NavLogo />
             {/* {isLandingPage && ( */}
-            <span className="ml-2 text-sm font-semibold leading-6 dark:text-white">
+            <span className="ml-2 text-md font-semibold leading-6 dark:text-white">
               blockspot
             </span>
             {/* )} */}
@@ -145,9 +145,9 @@ function renderNavigationItems(
   setMobileMenuOpen?: Dispatch<SetStateAction<boolean>>,
 ) {
   const menuStyles = cn({
-    "-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-boxdark-2":
+    "-mx-3 block rounded-lg px-3 py-2 text-md font-semibold leading-7 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-boxdark-2":
       !!setMobileMenuOpen,
-    "text-sm font-semibold leading-6 text-gray-900 duration-300 ease-in-out hover:text-teal-600 dark:text-white":
+    "text-md font-semibold leading-6 text-gray-900 duration-300 ease-in-out hover:text-teal-600 dark:text-white":
       !setMobileMenuOpen,
   });
 

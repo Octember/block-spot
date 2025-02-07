@@ -103,7 +103,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => { }}
+              onClick={() => {}}
             >
               View Schedule
             </Button>
@@ -137,7 +137,11 @@ export function UpdateVenueForm({
       <div className="flex gap-4">
         <Button
           disabled={!isDirty || isSubmitting}
-          icon={isSubmitting ? <BiLoaderCircle className="size-4 animate-spin" /> : undefined}
+          icon={
+            isSubmitting ? (
+              <BiLoaderCircle className="size-4 animate-spin" />
+            ) : undefined
+          }
           type="submit"
           ariaLabel="Update Venue"
         >

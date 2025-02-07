@@ -40,7 +40,7 @@ export const ScheduleQueryContext = createContext<{
   // @ts-expect-error idk
   venue: null,
   unavailabileBlocks: [],
-  refresh: () => { },
+  refresh: () => {},
   getSpaceById: () => undefined,
   isTimeAvailable: () => false,
 });
@@ -82,19 +82,24 @@ export const ScheduleQueryProvider = ({
   );
 
   const isTimeAvailable = useCallback(
-    (rowIndex: number, columnIndex: number,) => {
+    (rowIndex: number, columnIndex: number) => {
       if (!venueToUse) return false;
 
       // Convert row index to minutes since midnight
       const timeInMinutes = (rowIndex - 2) * 15 + venueToUse.displayStart;
       const timeDate = new Date(selectedDate);
-      timeDate.setHours(Math.floor(timeInMinutes / 60), timeInMinutes % 60, 0, 0);
+      timeDate.setHours(
+        Math.floor(timeInMinutes / 60),
+        timeInMinutes % 60,
+        0,
+        0,
+      );
 
       // Check if time falls within any unavailability block
       const isInUnavailableBlock = unavailabileBlocks.some(
-        block =>
+        (block) =>
           timeInMinutes >= block.startTimeMinutes &&
-          timeInMinutes < block.endTimeMinutes
+          timeInMinutes < block.endTimeMinutes,
       );
 
       if (isInUnavailableBlock) return false;
@@ -103,15 +108,17 @@ export const ScheduleQueryProvider = ({
       const space = venueToUse.spaces[columnIndex];
       if (!space) return false;
 
-      const hasOverlappingReservation = space.reservations.some(reservation => {
-        const startTime = new Date(reservation.startTime);
-        const endTime = new Date(reservation.endTime);
-        return timeDate >= startTime && timeDate < endTime;
-      });
+      const hasOverlappingReservation = space.reservations.some(
+        (reservation) => {
+          const startTime = new Date(reservation.startTime);
+          const endTime = new Date(reservation.endTime);
+          return timeDate >= startTime && timeDate < endTime;
+        },
+      );
 
       return !hasOverlappingReservation;
     },
-    [venueToUse, unavailabileBlocks, selectedDate]
+    [venueToUse, unavailabileBlocks, selectedDate],
   );
 
   if (!venueToUse) {
@@ -120,7 +127,13 @@ export const ScheduleQueryProvider = ({
 
   return (
     <ScheduleQueryContext.Provider
-      value={{ venue: venueToUse, unavailabileBlocks, refresh, getSpaceById, isTimeAvailable }}
+      value={{
+        venue: venueToUse,
+        unavailabileBlocks,
+        refresh,
+        getSpaceById,
+        isTimeAvailable,
+      }}
     >
       {children}
     </ScheduleQueryContext.Provider>
