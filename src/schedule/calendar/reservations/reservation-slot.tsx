@@ -5,7 +5,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/20/solid";
-import { addMinutes, differenceInMinutes, format } from "date-fns";
+import { addMinutes, format } from "date-fns";
 import { useMemo, useState } from "react";
 import { Reservation } from "wasp/entities";
 import { isUserOwner } from "../../../client/hooks/permissions";
@@ -128,8 +128,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     };
   }, [reservation, isDragging, transform]);
 
-  const isShort = differenceInMinutes(newTimes.endTime, newTimes.startTime) <= MinutesPerSlot * 2;
-
   return (
     <li
       className={`relative flex ${isDragging ? "z-50" : "z-20"} select-none bg-white rounded-lg my-1 mx-2`}
@@ -145,7 +143,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       {...listeners}
     >
       <a
-        className={`group w-full flex flex-col justify-between rounded-lg ${isShort ? "px-2" : "p-2"} text-xs/5 border-t-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
+        className={`group w-full flex flex-col justify-between rounded-lg p-2 text-xs/5 border-t-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
       >
         <div className="flex flex-col flex-1">
           <div className="flex flex-row justify-between">
@@ -204,7 +202,7 @@ const ReservationMenu = ({
         ref={setPopperElement}
         style={styles.popper}
         {...attributes.popper}
-        className="bg-white z-99 w-30 rounded-md shadow-lg ring-1 ring-black/5"
+        className="bg-white z-999 w-30 rounded-md shadow-lg ring-1 ring-black/5"
       >
         <div className="py-1">
           <button

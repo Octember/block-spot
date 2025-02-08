@@ -65,6 +65,11 @@
   font-display: swap;
 }
 
+.card {
+  @apply border border-gray-900/10 shadow-lg sm:rounded-lg mb-4 dark:border-gray-100/10 bg-white
+}
+
+
 /* third-party libraries CSS */
 
 .tableCheckbox:checked ~ div span {

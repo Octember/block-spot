@@ -8,6 +8,7 @@ import {
 } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { Button } from "../client/components/button";
+import { Card } from '../client/components/card';
 import { SidebarLayout } from "../client/components/layouts/sidebar-layout";
 import {
   type SubscriptionStatus,
@@ -57,13 +58,8 @@ export default function AccountPage() {
       }}
     >
       <div className="">
-        <div className="overflow-hidden border border-gray-900/10 shadow-lg sm:rounded-lg mb-4 dark:border-gray-100/10 bg-white">
-          <div className="px-4 py-5 sm:px-6 lg:px-8">
-            <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-              Account Information
-            </h3>
-          </div>
-          <div className="border-t border-gray-900/10 dark:border-gray-100/10 px-4 py-5 sm:p-0">
+        <Card className="overflow-hidden" heading={{ title: "Account Information" }}>
+          <div>
             <dl className="sm:divide-y sm:divide-gray-900/10 sm:dark:divide-gray-100/10">
               {!!user?.email && (
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
@@ -99,15 +95,11 @@ export default function AccountPage() {
               </div>
             </dl>
           </div>
-        </div>
+        </Card>
       </div>
 
       {/* Organizations */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-medium text-gray-900">
-          Your Organizations
-        </h2>
-
+      <Card heading={{ title: "Your Organization" }}>
         <div key={organization?.id} className="bg-white shadow rounded-lg p-6">
           <div className="flex justify-between items-start">
             <div>
@@ -120,8 +112,8 @@ export default function AccountPage() {
             </div>
           </div>
         </div>
-      </div>
-    </SidebarLayout>
+      </Card>
+    </SidebarLayout >
   );
 }
 

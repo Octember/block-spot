@@ -1,7 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { useAuth } from "wasp/client/auth";
 import { Venue } from "wasp/entities";
-import { isUserOwner } from "../../client/hooks/permissions";
 import { useTimeLabels } from "./constants";
 import { useSelectedDate } from "./providers/date-provider";
 import { usePendingChanges } from "./providers/pending-changes-provider";
@@ -28,6 +27,35 @@ const SelectionContext = createContext<SelectionContextType | undefined>(
   undefined,
 );
 
+function getStartEndRows(
+  selection: {
+    start: { row: number; col: number };
+    current: { row: number; col: number };
+  },
+): { start: number; end: number } {
+  if (selection.start.row > selection.current.row) {
+    return { start: selection.current.row, end: selection.start.row + 1 };
+  }
+
+  return { start: selection.start.row, end: selection.current.row + 1 };
+}
+
+function getStartEndRowsValidated(
+  selection: {
+    start: { row: number; col: number };
+    current: { row: number; col: number };
+  },
+): { start: number; end: number } {
+  const { start, end } = getStartEndRows(selection);
+
+  if (end - start <= 3) {
+    // TODO: use venue default time minimum
+    return { start, end: start + 3 };
+  }
+
+  return { start, end };
+}
+
 function getStartEndTime(
   venue: Venue,
   date: Date,
@@ -36,14 +64,10 @@ function getStartEndTime(
     current: { row: number; col: number };
   },
 ): { start: Date; end: Date } {
-  if (selection.start.row > selection.current.row) {
-    const startTime = calculateTimeFromRow(venue, date, selection.current.row);
-    const endTime = calculateTimeFromRow(venue, date, selection.start.row + 1);
-    return { start: startTime, end: endTime };
-  }
+  const { start, end } = getStartEndRowsValidated(selection);
 
-  const startTime = calculateTimeFromRow(venue, date, selection.start.row);
-  const endTime = calculateTimeFromRow(venue, date, selection.current.row + 1);
+  const startTime = calculateTimeFromRow(venue, date, start);
+  const endTime = calculateTimeFromRow(venue, date, end);
   return { start: startTime, end: endTime };
 }
 
@@ -63,8 +87,7 @@ interface SelectionProviderProps {
 export const SelectionProvider: React.FC<SelectionProviderProps> = ({
   children,
 }) => {
-  const isOwner = isUserOwner();
-  const { venue, unavailabileBlocks, isTimeAvailable } = useScheduleContext();
+  const { isTimeAvailable } = useScheduleContext();
 
   const [selection, setSelection] = useState<Selection>({
     start: null,
