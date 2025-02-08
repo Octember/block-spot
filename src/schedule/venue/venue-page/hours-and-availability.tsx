@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import { useAuth } from "wasp/client/auth";
 import {
   getVenueById,
   updateVenue,
@@ -9,10 +10,12 @@ import {
 } from "wasp/client/operations";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
+import { Card } from "../../../client/components/card";
 import { FormField } from "../../../client/components/form/form-field";
 import { Select } from "../../../client/components/form/select";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { useToast } from "../../../client/toast";
+import { PaymentsForm } from "../../../payment/payments-form/payments-form";
 import { timeLabels } from "../../calendar/constants";
 import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
@@ -38,6 +41,8 @@ export function HoursAndAvailabilityPage() {
     venueId: venueId || "",
   });
 
+  const { data: user } = useAuth();
+
   if (isLoading) return null;
 
   if (!venueId || !venue) return null;
@@ -48,7 +53,18 @@ export function HoursAndAvailabilityPage() {
         description: "Manage your venue availability",
       }}
     >
-      {venue && <HoursAndAvailabilityForm venue={venue} />}
+      <Card>{venue && <HoursAndAvailabilityForm venue={venue} />}</Card>
+
+      {user?.isAdmin &&
+        <Card
+          heading={{
+            title: "Payments",
+            description: "Require payment for bookings",
+          }}
+        >
+          <PaymentsForm venue={venue} />
+        </Card>
+      }
     </SidebarLayout>
   );
 }
@@ -104,10 +120,7 @@ export function HoursAndAvailabilityForm({
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-6 bg-white p-4 rounded-lg border border-gray-200"
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <FormField
           label="Display Hours"

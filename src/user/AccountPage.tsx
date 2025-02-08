@@ -8,7 +8,7 @@ import {
 } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { Button } from "../client/components/button";
-import { Card } from '../client/components/card';
+import { Card } from "../client/components/card";
 import { SidebarLayout } from "../client/components/layouts/sidebar-layout";
 import {
   type SubscriptionStatus,
@@ -58,7 +58,10 @@ export default function AccountPage() {
       }}
     >
       <div className="">
-        <Card className="overflow-hidden" heading={{ title: "Account Information" }}>
+        <Card
+          className="overflow-hidden"
+          heading={{ title: "Account Information" }}
+        >
           <div>
             <dl className="sm:divide-y sm:divide-gray-900/10 sm:dark:divide-gray-100/10">
               {!!user?.email && (
@@ -113,7 +116,7 @@ export default function AccountPage() {
           </div>
         </div>
       </Card>
-    </SidebarLayout >
+    </SidebarLayout>
   );
 }
 

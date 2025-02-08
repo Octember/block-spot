@@ -27,12 +27,10 @@ const SelectionContext = createContext<SelectionContextType | undefined>(
   undefined,
 );
 
-function getStartEndRows(
-  selection: {
-    start: { row: number; col: number };
-    current: { row: number; col: number };
-  },
-): { start: number; end: number } {
+function getStartEndRows(selection: {
+  start: { row: number; col: number };
+  current: { row: number; col: number };
+}): { start: number; end: number } {
   if (selection.start.row > selection.current.row) {
     return { start: selection.current.row, end: selection.start.row + 1 };
   }
@@ -40,12 +38,10 @@ function getStartEndRows(
   return { start: selection.start.row, end: selection.current.row + 1 };
 }
 
-function getStartEndRowsValidated(
-  selection: {
-    start: { row: number; col: number };
-    current: { row: number; col: number };
-  },
-): { start: number; end: number } {
+function getStartEndRowsValidated(selection: {
+  start: { row: number; col: number };
+  current: { row: number; col: number };
+}): { start: number; end: number } {
   const { start, end } = getStartEndRows(selection);
 
   if (end - start <= 3) {

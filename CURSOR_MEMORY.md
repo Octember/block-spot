@@ -292,3 +292,35 @@ This hierarchy ensures that:
 2. Schema Updates Process
    - Modify schema.prisma file
    - DB updates will happen automatically when you run `wasp db migrate-dev`
+
+# Codebase Memory
+
+## Stripe Integration
+- The application uses Stripe Connect for payment processing
+- Stripe account creation and linking is handled in `src/payment/stripe/operations.ts`
+- Two pages handle Stripe Connect flow:
+  1. `src/payment/stripe/pages/stripe-return.tsx`: Handles successful account setup
+     - Route: `/stripe-return/:accountId`
+     - Requires authentication
+     - Verifies account ID matches organization
+  2. `src/payment/stripe/pages/stripe-refresh.tsx`: Handles account setup refresh
+     - Route: `/stripe-refresh/:accountId`
+     - Requires authentication
+     - Creates new account link and redirects to Stripe
+
+### Organization Structure
+- Organizations can have Stripe accounts associated with them
+- Organization data is accessed through `useOrganization` hook in `src/organization/hooks/use-organization.ts`
+- Organization data includes:
+  - `stripeCustomerId`
+  - `subscriptionStatus`
+  - `subscriptionPlanId`
+  - `datePaid`
+  - `credits`
+
+### UI Components
+- Uses Tailwind CSS for styling
+- Common components:
+  - `PageLayout`: Main layout component with header support
+  - `Card`: Container component for content
+  - Uses teal-600 as primary color for buttons and accents

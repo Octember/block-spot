@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { Organization, User } from "wasp/entities";
 import { HttpError } from "wasp/server";
-import { stripe } from '../stripeClient';
+import { stripe } from "../stripeClient";
 
 export async function getUserOrganization(
   userId: string,
@@ -32,7 +32,10 @@ export async function getUserOrganization(
   };
 }
 
-export async function createStripeAccountApiCall(user: User, organization: Organization): Promise<string> {
+export async function createStripeAccountApiCall(
+  user: User,
+  organization: Organization,
+): Promise<string> {
   try {
     const account = await stripe.accounts.create({
       email: user.email || undefined,
@@ -46,8 +49,11 @@ export async function createStripeAccountApiCall(user: User, organization: Organ
   } catch (error) {
     console.error(
       "An error occurred when calling the Stripe API to create an account",
-      error
+      error,
     );
-    throw new HttpError(500, "An error occurred when calling the Stripe API to create an account");
+    throw new HttpError(
+      500,
+      "An error occurred when calling the Stripe API to create an account",
+    );
   }
 }

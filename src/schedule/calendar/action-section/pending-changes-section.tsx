@@ -7,14 +7,17 @@ import {
 } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
 import { FC, useMemo } from "react";
+import { useAuth } from "wasp/client/auth";
 import { Reservation } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { Modal } from "../../../client/components/modal";
+import { TimeSelect } from '../../../client/components/time-select';
 import {
   PendingChange,
   usePendingChanges,
 } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
+import { CreateReservationModal } from './create-reservation-modal';
 
 function getChangeType(pendingChange: PendingChange | null) {
   if (pendingChange?.type === "CREATE") return "New Reservation";
@@ -25,8 +28,13 @@ function getChangeType(pendingChange: PendingChange | null) {
 
 export const PendingChangesSection = () => {
   const { pendingChange, cancelChange, applyChange } = usePendingChanges();
+  const { data: user } = useAuth();
 
   if (!pendingChange) return null;
+
+  if (pendingChange.type === "CREATE" && user?.isAdmin) {
+    return <CreateReservationModal />
+  }
 
   return (
     <>
@@ -34,7 +42,7 @@ export const PendingChangesSection = () => {
         className="flex" // lg:hidden"
         open={true}
         size="lg"
-        onClose={() => {}}
+        onClose={() => { }}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
@@ -206,31 +214,3 @@ export const ChangeDescription = () => {
 
 const formatTime = (date: Date) => format(date, "h:mm a");
 
-interface TimeSelectProps {
-  time: Date;
-  onChange: (hour: number, minute: number) => void;
-}
-
-const TimeSelect: FC<TimeSelectProps> = ({ time, onChange }) => {
-  return (
-    <select
-      className="bg-transparent rounded-lg focus:ring-0 cursor-pointer "
-      onChange={(e) => {
-        const [hour, minute] = e.target.value.split(":");
-        onChange(Number(hour), Number(minute));
-      }}
-      value={format(time, "HH:mm")}
-    >
-      {Array.from({ length: 24 * 4 }).map((_, i) => {
-        const hour = Math.floor(i / 4);
-        const minutes = (i % 4) * 15;
-        const time = `${hour.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-        return (
-          <option key={time} value={time}>
-            {format(new Date().setHours(hour, minutes), "h:mm a")}
-          </option>
-        );
-      })}
-    </select>
-  );
-};

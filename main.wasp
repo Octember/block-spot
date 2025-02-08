@@ -252,6 +252,19 @@ page VenueIntegrationsPage {
   component: import VenueIntegrationsPage from "@src/schedule/venue/venue-page/integrations-page"
 }
 
+// Stripe Connect Routes
+route StripeReturnRoute { path: "/stripe-return/:accountId", to: StripeReturnPage }
+page StripeReturnPage {
+  authRequired: true,
+  component: import StripeReturnPage from "@src/payment/stripe/pages/stripe-return"
+}
+
+route StripeRefreshRoute { path: "/stripe-refresh/:accountId", to: StripeRefreshPage }
+page StripeRefreshPage {
+  authRequired: true,
+  component: import StripeRefreshPage from "@src/payment/stripe/pages/stripe-refresh"
+}
+
 page VenuePage {
   authRequired: true,
   component: import VenuePage from "@src/schedule/venue/venue-page/venue-page"
