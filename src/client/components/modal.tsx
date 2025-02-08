@@ -48,7 +48,7 @@ export function Modal({
           <DialogPanel
             transition
             className={`
-            relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl 
+            relative transform rounded-lg bg-white text-left shadow-xl 
             transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 
             data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 w-full ${sizeClass}
              data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95

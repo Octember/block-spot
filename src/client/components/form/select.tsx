@@ -1,15 +1,15 @@
 "use client";
 
-import { forwardRef, useEffect, useState } from "react";
 import {
-  Label,
   Listbox,
   ListboxButton,
   ListboxOption,
-  ListboxOptions,
+  ListboxOptions
 } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/16/solid";
 import { CheckIcon } from "@heroicons/react/20/solid";
+import { forwardRef, useEffect, useState } from "react";
+import { cn } from "../../cn";
 
 interface SelectOption {
   label: string;
@@ -50,6 +50,7 @@ export const Select = forwardRef<
 
     useEffect(() => {
       if (selectedRef) {
+        console.log("selectedRef scrolled", selectedRef);
         selectedRef.scrollIntoView({ block: "center" });
       }
     }, [selectedRef]);
@@ -91,6 +92,7 @@ export const Select = forwardRef<
                 key={option.value}
                 option={option}
                 ref={option.value === value.value ? setSelectedRef : null}
+                selected={option.value === value.value}
               />
             ))}
           </ListboxOptions>
@@ -162,16 +164,16 @@ export const MultiSelect = forwardRef<
   },
 );
 
-const SelectOption = forwardRef<HTMLDivElement, { option: SelectOption }>(
-  ({ option }, ref) => {
+const SelectOption = forwardRef<HTMLDivElement, { option: SelectOption; selected?: boolean }>(
+  ({ option, selected }, ref) => {
     return (
       <ListboxOption
         key={option.value}
         value={option}
         ref={ref}
-        className="group relative cursor-pointer select-none min-w-60 py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white data-[focus]:outline-none"
+        className={cn("group relative cursor-pointer select-none min-w-60 py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white data-[focus]:outline-none", selected && "bg-indigo-600 text-white")}
       >
-        <span className="block truncate font-normal group-data-[selected]:font-semibold">
+        <span className={cn("block truncate font-normal group-data-[selected]:font-semibold", selected && "text-white font-semibold")}  >
           {option.label}
         </span>
 
@@ -182,3 +184,7 @@ const SelectOption = forwardRef<HTMLDivElement, { option: SelectOption }>(
     );
   },
 );
+
+Select.displayName = "Select";
+MultiSelect.displayName = "MultiSelect";
+SelectOption.displayName = "SelectOption";
