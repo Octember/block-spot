@@ -1,6 +1,8 @@
 import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { isSameDay } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { useTimeLabels } from "../constants";
+import { useSelectedDate } from '../providers/date-provider';
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { getSharedGridStyle, MinutesPerSlot } from "./constants";
@@ -17,6 +19,7 @@ export const ReservationsSection = () => {
   const { venue } = useScheduleContext();
   const timeLabels = useTimeLabels();
   const { pendingChange, setPendingChange } = usePendingChanges();
+  const { selectedDate } = useSelectedDate();
 
   const [draggingReservationId, setDraggingReservationId] = useState<
     string | null
@@ -181,7 +184,7 @@ export const ReservationsSection = () => {
               }}
             />
           ))}
-        {pendingChange && (
+        {pendingChange && isSameDay(pendingChange.newState.startTime, selectedDate) && (
           <ReservationSlot
             reservation={pendingChange.newState}
             gridIndex={spaceIds.findIndex(

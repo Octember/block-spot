@@ -1,5 +1,5 @@
-import { format } from 'date-fns';
-import { forwardRef } from 'react';
+import { format } from "date-fns";
+import { forwardRef } from "react";
 
 interface TimeSelectProps {
   value: Date;
@@ -30,7 +30,7 @@ export const TimeSelect = forwardRef<HTMLSelectElement, TimeSelectProps>(
         })}
       </select>
     );
-  }
+  },
 );
 
-TimeSelect.displayName = 'TimeSelect';
+TimeSelect.displayName = "TimeSelect";

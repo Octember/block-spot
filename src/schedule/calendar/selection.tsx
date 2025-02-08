@@ -201,10 +201,10 @@ export const GridSelection: React.FC = () => {
             startTime: start,
             endTime: end,
             status: "PENDING",
-            userId: "1",
+            userId: "", // its set on backend
             createdAt: new Date(),
             updatedAt: new Date(),
-            description: "Draft reservation",
+            description: null,
           },
         });
       }

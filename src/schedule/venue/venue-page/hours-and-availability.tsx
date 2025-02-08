@@ -55,7 +55,7 @@ export function HoursAndAvailabilityPage() {
     >
       <Card>{venue && <HoursAndAvailabilityForm venue={venue} />}</Card>
 
-      {user?.isAdmin &&
+      {user?.isAdmin && (
         <Card
           heading={{
             title: "Payments",
@@ -64,7 +64,7 @@ export function HoursAndAvailabilityPage() {
         >
           <PaymentsForm venue={venue} />
         </Card>
-      }
+      )}
     </SidebarLayout>
   );
 }

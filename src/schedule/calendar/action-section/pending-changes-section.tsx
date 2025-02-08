@@ -11,13 +11,13 @@ import { useAuth } from "wasp/client/auth";
 import { Reservation } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { Modal } from "../../../client/components/modal";
-import { TimeSelect } from '../../../client/components/time-select';
+import { TimeSelect } from "../../../client/components/time-select";
 import {
   PendingChange,
   usePendingChanges,
 } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
-import { CreateReservationModal } from './create-reservation-modal';
+import { CreateReservationModal } from "./create-reservation-modal";
 
 function getChangeType(pendingChange: PendingChange | null) {
   if (pendingChange?.type === "CREATE") return "New Reservation";
@@ -33,7 +33,7 @@ export const PendingChangesSection = () => {
   if (!pendingChange) return null;
 
   if (pendingChange.type === "CREATE" && user?.isAdmin) {
-    return <CreateReservationModal />
+    return <CreateReservationModal />;
   }
 
   return (
@@ -42,7 +42,7 @@ export const PendingChangesSection = () => {
         className="flex" // lg:hidden"
         open={true}
         size="lg"
-        onClose={() => { }}
+        onClose={() => {}}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
@@ -213,4 +213,3 @@ export const ChangeDescription = () => {
 };
 
 const formatTime = (date: Date) => format(date, "h:mm a");
-

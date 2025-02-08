@@ -20,8 +20,6 @@ export default function AccountPage() {
   const { data: user } = useAuth();
   const { data: organization, isLoading } = useQuery(getUserOrganization);
 
-  console.log({ organization });
-
   if (!organization) return <div>No organization found.</div>;
 
   if (isLoading || !user) return <div>Loading...</div>;
@@ -164,7 +162,6 @@ function getUserSubscriptionStatusDescription({
   subscriptionStatus: SubscriptionStatus;
   datePaid: Date;
 }) {
-  console.log({ subscriptionPlan, subscriptionStatus, datePaid });
   if (!subscriptionPlan || !subscriptionStatus || !datePaid) {
     return "Community Tier";
   }

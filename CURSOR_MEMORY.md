@@ -296,6 +296,7 @@ This hierarchy ensures that:
 # Codebase Memory
 
 ## Stripe Integration
+
 - The application uses Stripe Connect for payment processing
 - Stripe account creation and linking is handled in `src/payment/stripe/operations.ts`
 - Two pages handle Stripe Connect flow:
@@ -309,6 +310,7 @@ This hierarchy ensures that:
      - Creates new account link and redirects to Stripe
 
 ### Organization Structure
+
 - Organizations can have Stripe accounts associated with them
 - Organization data is accessed through `useOrganization` hook in `src/organization/hooks/use-organization.ts`
 - Organization data includes:
@@ -319,6 +321,7 @@ This hierarchy ensures that:
   - `credits`
 
 ### UI Components
+
 - Uses Tailwind CSS for styling
 - Common components:
   - `PageLayout`: Main layout component with header support

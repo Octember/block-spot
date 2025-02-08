@@ -6,9 +6,7 @@ import {
   createStripeAccountLink,
 } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
-import {
-  useOrganization
-} from "../../organization/hooks/use-organization";
+import { useOrganization } from "../../organization/hooks/use-organization";
 
 export const PaymentsForm = ({ venue }: { venue: Venue }) => {
   const { isLoading: isOrganizationLoading, organization } = useOrganization();

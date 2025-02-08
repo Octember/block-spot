@@ -40,9 +40,9 @@ export const createStripeAccount: CreateStripeAccount = async (
 };
 
 function getFrontendUrl() {
-  const env = process.env.NODE_ENV || 'development';
-  if (env === 'development') {
-    return 'http://localhost:3000';
+  const env = process.env.NODE_ENV || "development";
+  if (env === "development") {
+    return "http://localhost:3000";
   }
   return config.frontendUrl;
 }
