@@ -204,7 +204,7 @@ const ReservationMenu = ({
         {...attributes.popper}
         className="bg-white z-999 w-30 rounded-md shadow-lg ring-1 ring-black/5"
       >
-        <div className="py-1">
+        <div className="py-1 flex flex-col items-stretch">
           <button
             onClick={onEdit}
             className="group flex gap-2 items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

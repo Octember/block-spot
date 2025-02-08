@@ -40,6 +40,9 @@ export const CreateReservationModal = () => {
     },
   });
 
+  const startTimeMinutes = watch("startTimeMinutes");
+  const endTimeMinutes = watch("endTimeMinutes");
+
   console.log(watch())
 
   function onSubmit(data: CreateReservationFormInputs) {
@@ -82,10 +85,9 @@ export const CreateReservationModal = () => {
                   name={`startTimeMinutes`}
                   control={control}
                   render={({ field: { onChange, value } }) => {
-                    console.log("value", value);
                     return (
                       <Select
-                        options={timeLabelsLong15Minutes.map((time, index) => ({
+                        options={timeLabelsLong15Minutes.slice(0, endTimeMinutes / 15).map((time, index) => ({
                           label: time,
                           value: String(index * 15),
                         }))}
@@ -105,9 +107,9 @@ export const CreateReservationModal = () => {
                   control={control}
                   render={({ field: { onChange, value } }) => (
                     <Select
-                      options={timeLabelsLong15Minutes.map((time, index) => ({
+                      options={timeLabelsLong15Minutes.slice(startTimeMinutes / 15).map((time, index) => ({
                         label: time,
-                        value: String(index * 15),
+                        value: String(startTimeMinutes + (index * 15)),
                       }))}
                       onChange={(value) => onChange(Number(value.value))}
                       value={{ label: timeLabelsLong15Minutes[value / 15], value: String(value) }}
