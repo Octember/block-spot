@@ -101,13 +101,7 @@ export default function App() {
                 <NavBar navigationItems={navigationItems} />
               )}
 
-              {!isSchedulePage ? (
-                // <div className="mx-auto max-w-full overflow-y-auto h-full">
-                <Outlet />
-              ) : (
-                // </div>
-                <Outlet />
-              )}
+              <Outlet />
             </>
           )}
         </ToastProvider>
