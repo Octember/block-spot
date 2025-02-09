@@ -13,7 +13,7 @@ export const Switch = forwardRef<
       onChange={onChange}
       className={`group relative inline-flex h-6 w-11 shrink-0 cursor-pointer data-[disabled]:cursor-not-allowed rounded-full border-2 
         border-transparent bg-gray-200 transition-colors duration-200 ease-in-out focus:outline-none
-        focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 data-[checked]:bg-indigo-600 data-[disabled]:bg-indigo-400`}
+        focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 data-[checked]:bg-teal-600 data-[disabled]:bg-teal-500`}
     >
       <span className="sr-only">Use setting</span>
       <span

@@ -3,8 +3,8 @@ import { PaymentRule } from 'wasp/entities';
 
 
 export const RULE_TYPES = [
-  { label: "Base rate", value: "BASE_RATE" },
-  { label: "Flat fee", value: "FLAT_FEE" },
+  { label: "per hour", value: "BASE_RATE" },
+  { label: "fixed rate", value: "FLAT_FEE" },
 ]
 
 export function defaultPaymentRule(venueId: string): PaymentRule {

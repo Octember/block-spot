@@ -70,7 +70,7 @@ export const Select = forwardRef<
           <ListboxButton
             className={`grid w-full ${cursorClass} grid-cols-1 rounded-md bg-white py-0.5 pl-3 pr-2
                text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 
-               focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-md
+               focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-teal-600 sm:text-md
                h-8 items-center
               `}
           >
@@ -174,8 +174,8 @@ const SelectOption = forwardRef<
       value={option}
       ref={ref}
       className={cn(
-        "group relative cursor-pointer select-none min-w-60 py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-indigo-600 data-[focus]:text-white data-[focus]:outline-none",
-        selected && "bg-indigo-600 text-white",
+        "group relative cursor-pointer select-none min-w-60 py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-teal-500 data-[focus]:text-white data-[focus]:outline-none",
+        selected && "bg-teal-600 data-[focus]:bg-teal-600 text-white",
       )}
     >
       <span
@@ -187,7 +187,7 @@ const SelectOption = forwardRef<
         {option.label}
       </span>
 
-      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600 group-[&:not([data-selected])]:hidden group-data-[focus]:text-white">
+      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-teal-600 group-[&:not([data-selected])]:hidden group-data-[focus]:text-white">
         <CheckIcon aria-hidden="true" className="size-5" />
       </span>
     </ListboxOption>

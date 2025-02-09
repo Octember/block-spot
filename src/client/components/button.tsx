@@ -25,7 +25,7 @@ export const Button = ({
   size = "md",
 }: ButtonProps) => {
   const variantClasses = {
-    primary: "bg-blue-500 hover:bg-blue-600 text-white",
+    primary: "bg-teal-600 hover:bg-teal-700 text-white",
     secondary:
       "bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 hover:border-gray-400",
     tertiary: "bg-white hover:bg-gray-50 text-gray-800",
