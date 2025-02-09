@@ -204,6 +204,7 @@ model PaymentRule {
   
   // Pricing
   pricePerPeriod Decimal?  // Price for a specific time period (e.g., $10 for 30 minutes)
+  periodMinutes Int? // e.g., 30 for 30-minute pricing
   multiplier    Decimal?  // Multiplier for peak hours, weekends, etc.
   discountRate  Decimal?  // Used if ruleType == DISCOUNT
 
@@ -214,6 +215,9 @@ model PaymentRule {
 
   // Booking Conditions
   requiredTags      String[] // Example: "the holder's set of tags"
+  // TODO: This should be a  Condition type
+  minMinutes  Int? // Example: "if its duration is >= 4h"
+  maxMinutes   Int? // Example: "if its duration is < 4h"
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt

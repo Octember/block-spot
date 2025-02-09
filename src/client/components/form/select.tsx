@@ -50,7 +50,6 @@ export const Select = forwardRef<
 
     useEffect(() => {
       if (selectedRef) {
-        console.log("selectedRef scrolled", selectedRef);
         selectedRef.scrollIntoView({ block: "center" });
       }
     }, [selectedRef]);

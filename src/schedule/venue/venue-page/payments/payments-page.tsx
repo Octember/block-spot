@@ -10,8 +10,8 @@ export const PaymentsPage = () => {
   return (
     <SidebarLayout
       header={{
-        title: "Restrictions",
-        description: "Manage your venue restrictions",
+        title: "Payments",
+        description: "Manage your venue payments",
       }}
     >
       {!organization ? (

@@ -372,6 +372,17 @@ action createStripeAccount {
   fn: import { createStripeAccount } from "@src/payment/stripe/operations",
   entities: [User, Organization],
 }
+
+// Payment rule operations
+action updatePaymentRules {
+  fn: import { updatePaymentRules } from "@src/payment/payment-rules/operations.js",
+  entities: [PaymentRule, Venue]
+}
+
+query getVenuePaymentRules {
+  fn: import { getVenuePaymentRules } from "@src/payment/payment-rules/operations.js",
+  entities: [PaymentRule, Venue]
+}
 //#endregion
 
 //#region File Upload

@@ -1,10 +1,9 @@
 import { addDays, isValid, startOfDay, startOfToday } from "date-fns";
 import {
   AvailabilityRule,
-  PaymentRule,
   Reservation,
   Space,
-  Venue,
+  Venue
 } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
@@ -218,21 +217,11 @@ type GetVenueByIdPayload = {
   venueId: string;
 };
 
-type WireSafePaymentRule = Omit<
-  PaymentRule,
-  "pricePerPeriod" | "multiplier" | "discountRate"
-> & {
-  pricePerPeriod: string | null;
-  multiplier: string | null;
-  discountRate: string | null;
-};
-
 export const getVenueById: GetVenueById<
   GetVenueByIdPayload,
   | (Venue & {
       spaces: Space[];
       availabilityRules: AvailabilityRule[];
-      paymentRules: WireSafePaymentRule[];
     })
   | null
 > = async (args, context) => {
@@ -241,27 +230,8 @@ export const getVenueById: GetVenueById<
     include: {
       spaces: true,
       availabilityRules: true,
-      paymentRules: {
-        orderBy: {
-          priority: "asc",
-        }
-      },
     },
   });
-
-  if (venue) {
-    return {
-      ...venue,
-      paymentRules: venue.paymentRules.map((rule) => ({
-        ...rule,
-        pricePerPeriod: rule.pricePerPeriod
-          ? rule.pricePerPeriod.toString()
-          : null,
-        multiplier: rule.multiplier ? rule.multiplier.toString() : null,
-        discountRate: rule.discountRate ? rule.discountRate.toString() : null,
-      })),
-    };
-  }
 
   return venue;
 };
