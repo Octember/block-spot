@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { useAuth } from "wasp/client/auth";
 import {
   getVenueById,
   updateVenue,
@@ -15,7 +14,6 @@ import { FormField } from "../../../client/components/form/form-field";
 import { Select } from "../../../client/components/form/select";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { useToast } from "../../../client/toast";
-import { PaymentsForm } from "../../../payment/payments-form/payments-form";
 import { timeLabels } from "../../calendar/constants";
 import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
@@ -41,8 +39,6 @@ export function HoursAndAvailabilityPage() {
     venueId: venueId || "",
   });
 
-  const { data: user } = useAuth();
-
   if (isLoading) return null;
 
   if (!venueId || !venue) return null;
@@ -54,17 +50,6 @@ export function HoursAndAvailabilityPage() {
       }}
     >
       <Card>{venue && <HoursAndAvailabilityForm venue={venue} />}</Card>
-
-      {user?.isAdmin && (
-        <Card
-          heading={{
-            title: "Payments",
-            description: "Require payment for bookings",
-          }}
-        >
-          <PaymentsForm venue={venue} />
-        </Card>
-      )}
     </SidebarLayout>
   );
 }

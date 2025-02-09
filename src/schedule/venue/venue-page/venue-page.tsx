@@ -5,6 +5,7 @@ import { BulkSpaceCreator } from "../spaces/bulk-create-spaces";
 import { SpaceList } from "../spaces/space-list";
 import { HoursAndAvailabilityPage } from "./hours-and-availability";
 import { VenueIntegrationsPage } from "./integrations-page";
+import { PaymentsPage } from "./payments/payments-page";
 import { UpdateVenuePage } from "./update-venue-page";
 
 export default function VenuePage() {
@@ -14,6 +15,7 @@ export default function VenuePage() {
       <Route path="/spaces" element={<SpacesPage />} />
       <Route path="/availability" element={<HoursAndAvailabilityPage />} />
       <Route path="/integrations" element={<VenueIntegrationsPage />} />
+      <Route path="/payments" element={<PaymentsPage />} />
     </Routes>
   );
 }

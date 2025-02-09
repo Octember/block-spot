@@ -1,38 +1,37 @@
-import { Venue } from "@prisma/client";
 import { useState } from "react";
 import { BiLoaderCircle } from "react-icons/bi";
 import {
   createStripeAccount,
   createStripeAccountLink,
 } from "wasp/client/operations";
+import { Organization } from "wasp/entities";
 import { Button } from "../../client/components/button";
-import { useOrganization } from "../../organization/hooks/use-organization";
+import { Switch } from "../../client/components/switch";
 
-export const PaymentsForm = ({ venue }: { venue: Venue }) => {
-  const { isLoading: isOrganizationLoading, organization } = useOrganization();
-
+export const PaymentsForm = ({
+  organization,
+}: {
+  organization: Organization;
+}) => {
   async function handleEnablePayment() {
-    const result = await createStripeAccount();
+    await createStripeAccount();
   }
 
   return (
-    <div>
-      <div className="flex items-center gap-2">
+    <div className="prose">
+      <p className="flex items-center gap-2">
         <label>Enable payment for bookings</label>
+        <Switch
+          disabled={Boolean(organization?.stripeAccountId)}
+          value={Boolean(organization?.stripeAccountId)}
+          onChange={handleEnablePayment}
+        />
+      </p>
 
-        {!organization?.stripeAccountId && (
-          <button onClick={handleEnablePayment}>Enable</button>
-        )}
-
-        <p>Stripe account id: {organization?.stripeAccountId}</p>
-      </div>
-
-      {organization && (
-        <div>
-          <p>Stripe account id: {organization?.stripeAccountId}</p>
-          <StripeConnectButton />
-        </div>
-      )}
+      <p className="flex flex-row items-center gap-2">
+        <label>View your stripe dashboard</label>
+        <StripeConnectButton />
+      </p>
     </div>
   );
 };

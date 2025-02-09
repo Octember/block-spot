@@ -169,6 +169,21 @@ model Reservation {
   spaceId     String
   space       Space             @relation(fields: [spaceId], references: [id], onDelete: Cascade)
   description String?
+  
+  // Relation to payment
+  payment     Payment?
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  // Reservation relation
+  reservationId String        @unique  // one-to-one relation
+  reservation   Reservation   @relation(fields: [reservationId], references: [id])
+  
+  stripeCheckoutSessionId String?
 }
 
 enum ReservationStatus {
@@ -177,6 +192,39 @@ enum ReservationStatus {
   CANCELLED
 }
 
+model PaymentRule {
+  id          String    @id @default(uuid())
+  venueId     String    
+  venue       Venue     @relation(fields: [venueId], references: [id], onDelete: Cascade)
+  spaceIds    String[]  @default([]) // Applies to specific spaces or all if empty
+
+  // Rule Ordering
+  priority    Int       // Determines stacking order, lower = applied first
+  ruleType    RuleType  // BASE_RATE, MULTIPLIER, DISCOUNT, FLAT_FEE
+  
+  // Pricing
+  pricePerPeriod Decimal?  // Price for a specific time period (e.g., $10 for 30 minutes)
+  multiplier    Decimal?  // Multiplier for peak hours, weekends, etc.
+  discountRate  Decimal?  // Used if ruleType == DISCOUNT
+
+  // Time-based Conditions
+  startTime   Int? // Minutes from midnight (e.g., 0 for 12:00 AM)
+  endTime     Int? // Minutes from midnight (e.g., 1439 for 11:59 PM)
+  daysOfWeek  Int[] // Array of 0-6 (Sunday = 0, Monday = 1, ..., Saturday = 6)
+
+  // Booking Conditions
+  requiredTags      String[] // Example: "the holder's set of tags"
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum RuleType {
+  BASE_RATE      
+  MULTIPLIER     
+  DISCOUNT       
+  FLAT_FEE       
+}
 // venue and space
 model Venue {
   id        String   @id @default(uuid())
@@ -195,6 +243,7 @@ model Venue {
   displayEnd   Int @default(1080)
 
   availabilityRules AvailabilityRule[] // Venue-level availability rules
+  paymentRules      PaymentRule[] // Add payment rules relation
 }
 
 model Space {

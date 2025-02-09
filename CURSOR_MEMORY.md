@@ -327,3 +327,343 @@ This hierarchy ensures that:
   - `PageLayout`: Main layout component with header support
   - `Card`: Container component for content
   - Uses teal-600 as primary color for buttons and accents
+
+## Payment Rules Implementation
+
+### Current Structure
+
+- Organization model tracks Stripe integration via:
+  - `stripeCustomerId`
+  - `stripeAccountId`
+  - `subscriptionStatus`
+  - `subscriptionPlanId`
+- Venues and Spaces have no direct payment fields yet
+- Reservations track status but no payment information
+
+### Recommended Payment Rules Schema Updates
+
+Add the following models to schema.prisma:
+
+```prisma
+model PaymentRule {
+  id          String    @id @default(uuid())
+  venueId     String
+  venue       Venue     @relation(fields: [venueId], references: [id])
+  spaceIds    String[]  @default([]) // Optional: specific spaces this rule applies to
+
+  // Pricing
+  minimumHours Int      @default(1)
+  currency     String   @default("USD")
+
+  // Booking Rules
+  requireUpfrontPayment Boolean @default(true)
+  cancellationPolicy    CancellationPolicy @default(FLEXIBLE)
+  depositAmount         Decimal? // Optional security deposit
+
+  // Time-based variations
+  weekendPriceMultiplier Decimal? // e.g. 1.5x for weekends
+  peakHourStart         Int? // minutes from midnight
+  peakHourEnd           Int? // minutes from midnight
+  peakHourMultiplier    Decimal? // e.g. 1.25x for peak hours
+
+  // Discounts
+  hourlyDiscountThreshold Int? // hours after which discount applies
+  hourlyDiscountRate     Decimal? // e.g. 0.1 for 10% off
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum CancellationPolicy {
+  FLEXIBLE    // Full refund 24h prior
+  MODERATE    // Full refund 5 days prior
+  STRICT      // 50% refund until 7 days prior
+}
+
+// Add to Reservation model:
+model Reservation {
+  // ... existing fields ...
+  paymentStatus PaymentStatus
+  paymentAmount Decimal
+  paymentId     String?    // Stripe payment intent ID
+  refundStatus  RefundStatus?
+  refundAmount  Decimal?
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum RefundStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+```
+
+### Implementation Recommendations
+
+1. Payment Rule Management
+
+   - Create PaymentRulesPage component under venue settings
+   - Allow setting default rules at venue level
+   - Support space-specific rule overrides
+   - Implement rule conflict resolution logic
+
+2. Pricing Calculation Service
+
+   ```typescript
+   interface PricingDetails {
+     basePrice: number;
+     peakMultiplier: number;
+     weekendMultiplier: number;
+     discounts: Array<{ type: string; amount: number }>;
+     finalPrice: number;
+   }
+
+   function calculateReservationPrice(
+     startTime: Date,
+     endTime: Date,
+     spaceId: string,
+     venueId: string,
+   ): PricingDetails;
+   ```
+
+3. Reservation Flow Updates
+
+   - Add payment step to reservation creation
+   - Implement hold/temporary reservation during checkout
+   - Add payment status tracking
+   - Implement cancellation and refund workflows
+
+4. UI Components Needed
+
+   - PaymentRuleForm for rule creation/editing
+   - PricingDisplay for showing breakdown
+   - PaymentSummary for checkout
+   - RefundRequestForm for cancellations
+
+5. Stripe Integration Extensions
+   - Add webhook handlers for payment events
+   - Implement refund processing
+   - Add payment reporting dashboard
+   - Handle failed payment scenarios
+
+### Security Considerations
+
+1. Payment Data
+
+   - Never store raw payment details
+   - Use Stripe Elements for payment forms
+   - Implement proper error handling
+   - Log payment-related events
+
+2. Access Control
+   - Only venue owners can modify payment rules
+   - Validate all pricing calculations server-side
+   - Implement rate limiting on payment endpoints
+   - Add audit logging for payment changes
+
+### Testing Strategy
+
+1. Unit Tests
+
+   - Price calculation logic
+   - Rule validation
+   - Conflict resolution
+
+2. Integration Tests
+
+   - Payment processing flow
+   - Refund processing
+   - Webhook handling
+
+3. E2E Tests
+   - Complete reservation with payment
+   - Cancellation and refund flow
+   - Payment rule updates
+
+## Payment System Design
+
+### Core Models
+
+1. **Reservation**
+
+   - Purely handles booking details (time, space, user)
+   - Links to payment via one-to-one relation
+   - Keeps payment concerns separate from booking logic
+
+2. **Payment**
+
+   - Minimal design focused on Stripe integration
+   - Tracks `stripeCheckoutSessionId`
+   - One-to-one relationship with Reservation
+   - Separation of concerns: handles only payment processing state
+
+3. **PaymentRule**
+   - Flexible rule system for price calculations
+   - Rules can be stacked and combined
+   - Supports venue-wide and space-specific rules
+
+### Payment Rules System
+
+#### Rule Types (`RuleType` enum)
+
+- `BASE_RATE`: Establishes the foundational price per hour
+- `MULTIPLIER`: Percentage-based modifications (e.g., peak hours = 1.5x)
+- `DISCOUNT`: Rate reductions (e.g., bulk booking discounts)
+- `FLAT_FEE`: Fixed charges (e.g., cleaning fee, setup fee)
+
+#### Rule Application
+
+1. **Priority-Based Stacking**
+
+   - Rules are applied in priority order (lower numbers first)
+   - Allows for predictable calculation of final price
+   - Multiple rules can affect the same booking
+
+2. **Time-Based Conditions**
+
+   - `startTime`/`endTime`: Minutes from midnight for precise timing
+   - `daysOfWeek`: Integer array (0-6) for day-specific rules
+   - Supports:
+     - Peak hour pricing
+     - Weekend rates
+     - Holiday pricing
+     - Seasonal variations
+
+3. **Booking Conditions**
+   - `minHoursRequired`: Minimum duration for rule application
+   - `maxHoursAllowed`: Maximum duration for rule application
+   - `requiredTags`: Conditional application based on tags
+
+#### Space Targeting
+
+- Rules can target:
+  1. All spaces in a venue (empty `spaceIds`)
+  2. Specific spaces (`spaceIds` array)
+- Enables:
+  - Venue-wide pricing policies
+  - Space-specific rates
+  - Equipment or feature-based pricing
+
+### Price Calculation Flow
+
+1. **Rule Collection**
+
+   ```typescript
+   // Pseudocode for rule application
+   const rules = await collectApplicableRules({
+     venueId,
+     spaceId,
+     startTime,
+     endTime,
+     tags,
+   });
+
+   // Sort by priority
+   rules.sort((a, b) => a.priority - b.priority);
+   ```
+
+2. **Rule Application**
+
+   ```typescript
+   let finalPrice = 0;
+
+   // Apply BASE_RATE first
+   const baseRate = rules.find((r) => r.ruleType === "BASE_RATE");
+   if (baseRate) {
+     finalPrice = calculateBasePrice(baseRate, hours);
+   }
+
+   // Apply modifiers in priority order
+   for (const rule of rules) {
+     switch (rule.ruleType) {
+       case "MULTIPLIER":
+         finalPrice *= rule.multiplier;
+         break;
+       case "DISCOUNT":
+         finalPrice *= 1 - rule.discountRate;
+         break;
+       case "FLAT_FEE":
+         finalPrice += rule.amount;
+         break;
+     }
+   }
+   ```
+
+### Example Scenarios
+
+1. **Peak Hour Pricing**
+
+   ```prisma
+   {
+     ruleType: MULTIPLIER
+     priority: 1
+     multiplier: 1.5
+     startTime: 540  // 9:00 AM
+     endTime: 1020   // 5:00 PM
+     daysOfWeek: [1,2,3,4,5]  // Weekdays only
+   }
+   ```
+
+2. **Weekend Rates**
+
+   ```prisma
+   {
+     ruleType: MULTIPLIER
+     priority: 1
+     multiplier: 2.0
+     daysOfWeek: [0,6]  // Saturday and Sunday
+   }
+   ```
+
+3. **Bulk Booking Discount**
+
+   ```prisma
+   {
+     ruleType: DISCOUNT
+     priority: 2
+     discountRate: 0.15  // 15% off
+     minHoursRequired: 4  // For bookings 4+ hours
+   }
+   ```
+
+4. **Cleaning Fee**
+   ```prisma
+   {
+     ruleType: FLAT_FEE
+     priority: 3
+     amount: 50
+   }
+   ```
+
+### Best Practices
+
+1. **Rule Priority**
+
+   - Keep BASE_RATE rules at highest priority (lowest number)
+   - Apply multipliers before discounts
+   - Add flat fees last
+   - Use consistent priority ranges for rule types
+
+2. **Time Conditions**
+
+   - Use minutes from midnight for precise timing
+   - Consider timezone implications
+   - Account for overnight bookings
+
+3. **Rule Management**
+
+   - Validate rule conflicts
+   - Ensure at least one BASE_RATE rule exists
+   - Document rule combinations
+   - Test edge cases
+
+4. **Performance**
+   - Index frequently queried fields
+   - Cache common rule combinations
+   - Optimize rule collection queries

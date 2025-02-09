@@ -2,7 +2,7 @@ import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { isSameDay } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { useTimeLabels } from "../constants";
-import { useSelectedDate } from '../providers/date-provider';
+import { useSelectedDate } from "../providers/date-provider";
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-query-provider";
 import { getSharedGridStyle, MinutesPerSlot } from "./constants";
@@ -184,15 +184,16 @@ export const ReservationsSection = () => {
               }}
             />
           ))}
-        {pendingChange && isSameDay(pendingChange.newState.startTime, selectedDate) && (
-          <ReservationSlot
-            reservation={pendingChange.newState}
-            gridIndex={spaceIds.findIndex(
-              (spaceId) => spaceId === pendingChange.newState.spaceId,
-            )}
-            isDraft
-          />
-        )}
+        {pendingChange &&
+          isSameDay(pendingChange.newState.startTime, selectedDate) && (
+            <ReservationSlot
+              reservation={pendingChange.newState}
+              gridIndex={spaceIds.findIndex(
+                (spaceId) => spaceId === pendingChange.newState.spaceId,
+              )}
+              isDraft
+            />
+          )}
       </ol>
     </DndContext>
   );

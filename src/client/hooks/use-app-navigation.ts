@@ -1,4 +1,5 @@
 import {
+  BanknotesIcon,
   BuildingOfficeIcon,
   CalendarIcon,
   ClockIcon,
@@ -74,6 +75,25 @@ export function useAppNavigation(): NavigationItem[] {
             })
           : false,
       },
+      ...(user?.isAdmin
+        ? [
+            {
+              name: "Payments",
+              route: firstVenue
+                ? routes.VenuePageRouteChildren.build({
+                    params: { venueId: firstVenue.id, "*": "payments" },
+                  })
+                : routes.AllVenuesPageRoute.build({}),
+              icon: BanknotesIcon,
+              current: firstVenue
+                ? location.pathname ===
+                  routes.VenuePageRouteChildren.build({
+                    params: { venueId: firstVenue.id, "*": "payments" },
+                  })
+                : false,
+            },
+          ]
+        : []),
       {
         name: "Integrations",
         route: firstVenue

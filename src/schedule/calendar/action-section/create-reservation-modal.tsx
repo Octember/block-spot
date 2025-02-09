@@ -79,11 +79,16 @@ export const CreateReservationModal = () => {
       className="flex"
       open={true}
       size="lg"
-      onClose={() => { }}
+      onClose={() => {}}
       heading={{ title: "New Reservation" }}
       footer={
         <div className="flex items-center justify-end space-x-3 m-2">
-          <Button onClick={cancelChange} ariaLabel="Cancel" variant="secondary" size="lg">
+          <Button
+            onClick={cancelChange}
+            ariaLabel="Cancel"
+            variant="secondary"
+            size="lg"
+          >
             Cancel
           </Button>
           <Button
@@ -92,7 +97,9 @@ export const CreateReservationModal = () => {
             icon={
               isSubmitting ? (
                 <BiLoaderCircle className="animate-spin" />
-              ) : <ArrowRightCircleIcon className="w-6 h-6" />
+              ) : (
+                <ArrowRightCircleIcon className="w-6 h-6" />
+              )
             }
             ariaLabel="Confirm"
             variant="primary"
@@ -112,9 +119,23 @@ export const CreateReservationModal = () => {
               <input
                 type="date"
                 onChange={(e) => {
-                  const date = parse(e.target.value, 'yyyy-MM-dd', new Date());
-                  const newStart = new Date(date.setHours(startTimeMinutes / 60, startTimeMinutes % 60, 0, 0));
-                  const newEnd = new Date(date.setHours(endTimeMinutes / 60, endTimeMinutes % 60, 0, 0));
+                  const date = parse(e.target.value, "yyyy-MM-dd", new Date());
+                  const newStart = new Date(
+                    date.setHours(
+                      startTimeMinutes / 60,
+                      startTimeMinutes % 60,
+                      0,
+                      0,
+                    ),
+                  );
+                  const newEnd = new Date(
+                    date.setHours(
+                      endTimeMinutes / 60,
+                      endTimeMinutes % 60,
+                      0,
+                      0,
+                    ),
+                  );
 
                   setPendingChange({
                     ...pendingChange,
@@ -127,7 +148,7 @@ export const CreateReservationModal = () => {
 
                   onChange(date);
                 }}
-                value={value.toISOString().split('T')[0]}
+                value={value.toISOString().split("T")[0]}
                 className="px-2 py-1 border border-gray-300 rounded-md"
               />
             )}
