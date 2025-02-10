@@ -1,10 +1,5 @@
 import { addDays, isValid, startOfDay, startOfToday } from "date-fns";
-import {
-  AvailabilityRule,
-  Reservation,
-  Space,
-  Venue
-} from "wasp/entities";
+import { AvailabilityRule, Reservation, Space, Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
   CreateReservation,

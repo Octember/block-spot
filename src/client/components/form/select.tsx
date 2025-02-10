@@ -127,10 +127,22 @@ export const MultiSelect = forwardRef<
     const sizeClass = sizeClasses[size];
     const cursorClass = disabled ? "cursor-not-allowed" : "cursor-pointer";
 
+    function toggleOption(options: SelectOption[]) {
+      const lastSelected = options[options.length - 1]; // Get the last selected item
+
+      if (value.includes(lastSelected)) {
+        // If it's already selected, remove it
+        onChange(value.filter(item => item !== lastSelected));
+      } else {
+        // Otherwise, add it
+        onChange(options);
+      }
+    }
+
     return (
       <Listbox
         defaultValue={value}
-        onChange={onChange}
+        onChange={toggleOption}
         ref={ref}
         {...props}
         multiple
@@ -154,7 +166,11 @@ export const MultiSelect = forwardRef<
             className="absolute z-10 mt-1 max-h-60 min-w-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none data-[closed]:data-[leave]:opacity-0 data-[leave]:transition data-[leave]:duration-100 data-[leave]:ease-in sm:text-sm"
           >
             {options.map((option) => (
-              <SelectOption key={option.value} option={option} />
+              <SelectOption
+                key={option.value}
+                option={option}
+                selected={value.some((v) => v.value === option.value)}
+              />
             ))}
           </ListboxOptions>
         </div>
@@ -174,7 +190,7 @@ const SelectOption = forwardRef<
       ref={ref}
       className={cn(
         "group relative cursor-pointer select-none min-w-60 py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-teal-500 data-[focus]:text-white data-[focus]:outline-none",
-        selected && "bg-teal-600 data-[focus]:bg-teal-600 text-white",
+        selected && "bg-teal-600  hover:bg-teal-500 text-white",
       )}
     >
       <span
@@ -184,10 +200,6 @@ const SelectOption = forwardRef<
         )}
       >
         {option.label}
-      </span>
-
-      <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-teal-600 group-[&:not([data-selected])]:hidden group-data-[focus]:text-white">
-        <CheckIcon aria-hidden="true" className="size-5" />
       </span>
     </ListboxOption>
   );

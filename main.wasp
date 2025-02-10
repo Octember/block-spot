@@ -171,6 +171,35 @@ action updateUserById {
   entities: [User]
 }
 
+query getOrganizationTags {
+  fn: import { getOrganizationTags } from "@src/user/tags-operations",
+  entities: [OrganizationTag, OrganizationUser]
+}
+
+query getUserTags {
+  fn: import { getUserTags } from "@src/user/tags-operations",
+  entities: [OrganizationTag, OrganizationUser, OrganizationUserTag]
+}
+
+action updateUserTags {
+  fn: import { updateUserTags } from "@src/user/tags-operations",
+  entities: [OrganizationTag, OrganizationUser, OrganizationUserTag]
+}
+
+action createTag {
+  fn: import { createTag } from "@src/user/tags-operations",
+  entities: [OrganizationTag, OrganizationUser]
+}
+
+action updateTag {
+  fn: import { updateTag } from "@src/user/tags-operations",
+  entities: [OrganizationTag, OrganizationUser]
+}
+
+action deleteTag {
+  fn: import { deleteTag } from "@src/user/tags-operations",
+  entities: [OrganizationTag, OrganizationUser, OrganizationUserTag]
+}
 
 action createVenue {
   fn: import { createVenue } from "@src/schedule/operations",

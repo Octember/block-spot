@@ -1,6 +1,6 @@
 import { useState } from "react";
 import * as React from "react";
-import { useToast } from "../../client/toast";
+import { useToast } from "../client/toast";
 
 type RoleSelectProps = {
   currentRole: "OWNER" | "MEMBER";

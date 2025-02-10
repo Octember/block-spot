@@ -5,7 +5,7 @@ import type {
   GetVenuePaymentRules,
   UpdatePaymentRules,
 } from "wasp/server/operations";
-import {PriceConditionFormInput} from '../payments-form/types';
+import { PriceConditionFormInput } from "../payments-form/types";
 
 export type WireSafePaymentRule = Omit<
   PaymentRule,
@@ -31,7 +31,7 @@ export type PaymentRuleInput = {
     startTime?: number;
     endTime?: number;
     userTags?: string[];
-  }[]
+  }[];
 };
 
 type UpdatePaymentRulesArgs = {
@@ -77,7 +77,7 @@ const validatePaymentRules = (rules: PaymentRuleInput[]) => {
       //   if (rule.discountRate <= 0 || rule.discountRate >= 1) {
       //     throw new Error("Discount rate must be between 0 and 1");
       //   }
-        // break;
+      // break;
     }
 
     // Validate time ranges if specified
@@ -180,8 +180,8 @@ export const updatePaymentRules: UpdatePaymentRules<
           endTime: rule.endTime,
           daysOfWeek: rule.daysOfWeek,
           conditions: {
-            deleteMany: {},  // Delete all existing conditions
-            create: rule.conditions.map(condition => ({
+            deleteMany: {}, // Delete all existing conditions
+            create: rule.conditions.map((condition) => ({
               startTime: condition.startTime,
               endTime: condition.endTime,
               userTags: condition.userTags || [],
@@ -205,7 +205,7 @@ export const updatePaymentRules: UpdatePaymentRules<
           endTime: rule.endTime,
           daysOfWeek: rule.daysOfWeek,
           conditions: {
-            create: rule.conditions.map(condition => ({
+            create: rule.conditions.map((condition) => ({
               startTime: condition.startTime,
               endTime: condition.endTime,
               userTags: condition.userTags || [],
@@ -266,5 +266,3 @@ export const getVenuePaymentRules: GetVenuePaymentRules<
     discountRate: rule.discountRate ? rule.discountRate.toString() : null,
   }));
 };
-
-

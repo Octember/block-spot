@@ -1,21 +1,30 @@
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import {
   cancelInvitation,
+  getOrganizationTags,
   getUserOrganization,
   listInvitations,
   updateMemberRole,
+  updateUserTags,
   useQuery,
 } from "wasp/client/operations";
 import { useToast } from "../client/toast";
-import { RoleSelect } from "./components/role-select";
+import { RoleSelect } from "./role-select";
+import { MultiSelect } from "../client/components/form/select";
+import { useMemo } from "react";
+import { Card } from "../client/components/card";
 
-export function OrganizationSection() {
+export function MembersSection() {
   const toast = useToast();
   const {
     data: organization,
     isLoading,
     error,
   } = useQuery(getUserOrganization);
+  const { data: tags } = useQuery(getOrganizationTags, {
+    organizationId: organization?.id ?? "",
+  });
+
   const { data: invitations } = useQuery(listInvitations, {
     organizationId: organization?.id ?? "",
   });
@@ -23,6 +32,15 @@ export function OrganizationSection() {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
   if (!organization) return <div>No organization found.</div>;
+
+  const tagOptions = useMemo(
+    () =>
+      tags?.map((tag) => ({
+        label: tag.name,
+        value: tag.id,
+      })) || [],
+    [tags],
+  );
 
   const isOwner = organization.users.some(
     (member) =>
@@ -64,7 +82,7 @@ export function OrganizationSection() {
     <div className="space-y-6">
       <div>
         <h3 className="text-xl font-bold mb-4">Members</h3>
-        <div className="bg-white shadow rounded-lg overflow-hidden">
+        <Card>
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -73,6 +91,9 @@ export function OrganizationSection() {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Role
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tags
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Joined
@@ -106,6 +127,30 @@ export function OrganizationSection() {
                       } // Can't change own role
                     />
                   </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {(!tags || tags?.length === 0) && <span>No tags set</span>}
+                    {tags && tags?.length > 0 && (
+                      <MultiSelect
+                        options={tagOptions}
+                        value={tagOptions.filter((tag) =>
+                          member.tags.some(
+                            (t) => t.organizationTag.id === tag.value,
+                          ),
+                        )}
+                        onChange={(value) => {
+                          updateUserTags({
+                            userId: member.user.id,
+                            tagIds: [
+                              ...new Set(
+                                value.map((tag) => tag.value as string),
+                              ),
+                            ],
+                          });
+                        }}
+                      />
+                    )}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(member.user.createdAt).toLocaleDateString()}
                   </td>
@@ -113,7 +158,7 @@ export function OrganizationSection() {
               ))}
             </tbody>
           </table>
-        </div>
+        </Card>
       </div>
 
       {invitations && invitations.length > 0 && (

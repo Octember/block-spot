@@ -32,6 +32,29 @@ model Organization {
   venues        Venue[]
 }
 
+model OrganizationTag {
+  id             String   @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  
+  name           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relation back to users assigned this tag
+  organizationUserTags OrganizationUserTag[]
+}
+
+model OrganizationUserTag {
+  id                   String           @id @default(uuid())
+  organizationUserId   String
+  organizationUser     OrganizationUser @relation(fields: [organizationUserId], references: [id])
+  organizationTagId    String
+  organizationTag      OrganizationTag  @relation(fields: [organizationTagId], references: [id])
+
+  @@unique([organizationUserId, organizationTagId])
+}
+
 enum OrganizationUserRole {
   OWNER
   MEMBER
@@ -46,6 +69,9 @@ model OrganizationUser {
   user   User @relation(fields: [userId], references: [id])
 
   role OrganizationUserRole @default(MEMBER)
+
+  // Use join table to attach tags
+  tags            OrganizationUserTag[]
 }
 
 model User {

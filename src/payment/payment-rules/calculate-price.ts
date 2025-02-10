@@ -26,7 +26,7 @@ const calculatePriceFromRules = (
   startTime: Date,
   endTime: Date,
   rules: WireSafePaymentRule[],
-  tags: string[] = []
+  tags: string[] = [],
 ): PriceBreakdownResponse => {
   const breakdown: PriceBreakdownResponse = {
     basePrice: 0,
@@ -40,7 +40,8 @@ const calculatePriceFromRules = (
 
   const durationMinutes = differenceInMinutes(endTime, startTime);
   const dayOfWeek = startTime.getDay(); // 0-6, where 0 is Sunday
-  const minutesFromMidnight = startTime.getHours() * 60 + startTime.getMinutes();
+  const minutesFromMidnight =
+    startTime.getHours() * 60 + startTime.getMinutes();
 
   let currentPrice = 0;
 
@@ -100,7 +101,10 @@ const calculatePriceFromRules = (
   return breakdown;
 };
 
-export const getReservationPrice: GetReservationPrice< { reservationId: string }, GetReservationPriceResponse> = async ({reservationId}, context) => {
+export const getReservationPrice: GetReservationPrice<
+  { reservationId: string },
+  GetReservationPriceResponse
+> = async ({ reservationId }, context) => {
   if (!context.user) {
     throw new HttpError(401, "Not authenticated");
   }
@@ -145,10 +149,10 @@ export const getReservationPrice: GetReservationPrice< { reservationId: string }
     pricePerPeriod: rule.pricePerPeriod?.toString() || null,
     multiplier: rule.multiplier?.toString() || null,
     discountRate: rule.discountRate?.toString() || null,
-    conditions: rule.conditions.map(condition => ({
+    conditions: rule.conditions.map((condition) => ({
       ...condition,
       startTime: condition.startTime || null,
-      endTime: condition.endTime|| null,
+      endTime: condition.endTime || null,
       userTags: condition.userTags || [],
     })),
   }));
@@ -157,11 +161,14 @@ export const getReservationPrice: GetReservationPrice< { reservationId: string }
   const priceBreakdown = calculatePriceFromRules(
     reservation.startTime,
     reservation.endTime,
-    wireSafeRules
+    wireSafeRules,
   );
 
   if (priceBreakdown.finalPrice <= 0) {
-    throw new HttpError(400, "Could not calculate a valid price for reservation");
+    throw new HttpError(
+      400,
+      "Could not calculate a valid price for reservation",
+    );
   }
 
   // Create Stripe checkout session
@@ -196,4 +203,4 @@ export const getReservationPrice: GetReservationPrice< { reservationId: string }
     priceBreakdown,
     checkoutUrl: session.url,
   };
-}; 
+};

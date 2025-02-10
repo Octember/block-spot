@@ -1,6 +1,9 @@
 import Decimal from "decimal.js";
-import {PaymentRoleFormInput} from './types';
-import {WireSafePaymentRule, PaymentRuleInput} from '../payment-rules/operations';
+import { PaymentRoleFormInput } from "./types";
+import {
+  WireSafePaymentRule,
+  PaymentRuleInput,
+} from "../payment-rules/operations";
 import { assertUnreachable } from "../../shared/utils";
 
 export const RULE_TYPES = [
@@ -12,7 +15,6 @@ export const CONDITION_FILTER_OPTIONS = [
   { label: "The booking's duration is", value: "duration" },
   // { label: "The user's tags are", value: "userTags" },
 ];
-
 
 export const DURATION_FILTER_OPTIONS = [
   { label: "at least", value: "startTime" },
@@ -30,15 +32,17 @@ export function defaultPaymentRule(priority?: number): PaymentRoleFormInput {
     daysOfWeek: [],
     conditions: [
       {
-        type: 'duration',
-        durationFilter: 'startTime',
+        type: "duration",
+        durationFilter: "startTime",
         durationValue: 60,
       },
     ],
   };
 }
 
-export function toFormInput(paymentRule: WireSafePaymentRule): PaymentRoleFormInput {
+export function toFormInput(
+  paymentRule: WireSafePaymentRule,
+): PaymentRoleFormInput {
   return {
     priority: paymentRule.priority,
     ruleType: paymentRule.ruleType,
@@ -47,60 +51,60 @@ export function toFormInput(paymentRule: WireSafePaymentRule): PaymentRoleFormIn
     startTime: paymentRule.startTime,
     endTime: paymentRule.endTime,
     daysOfWeek: paymentRule.daysOfWeek,
-    conditions: (paymentRule.conditions || []).map(condition => {
+    conditions: (paymentRule.conditions || []).map((condition) => {
       if (condition.startTime) {
         return {
-          type: 'duration',
-          durationFilter: 'startTime',
+          type: "duration",
+          durationFilter: "startTime",
           durationValue: condition.startTime,
-        }
+        };
       } else if (condition.endTime) {
         return {
-          type: 'duration',
-          durationFilter: 'endTime',
+          type: "duration",
+          durationFilter: "endTime",
           durationValue: condition.endTime,
-        }
+        };
       } else if (condition.userTags) {
         return {
-          type: 'userTags',
+          type: "userTags",
           userTags: condition.userTags,
-        }
+        };
       }
 
       throw new Error(`Unknown condition type: ${condition}`);
-    })
+    }),
   };
 }
 
 export function toApiInput(rule: PaymentRoleFormInput): PaymentRuleInput {
   return {
-      ...rule,
-      periodMinutes: Number(rule.periodMinutes) || 0,
-      pricePerPeriod: rule.pricePerPeriod?.toString() || undefined,
-      startTime: rule.startTime || undefined,
-      endTime: rule.endTime || undefined,
-      daysOfWeek: rule.daysOfWeek || [],
-      spaceIds: [],
-      conditions: rule.conditions.map((condition) => {
-        switch (condition.type) {
-          case 'duration':
-            if (condition.durationFilter === 'startTime') {
-              return {
-                startTime: Number(condition.durationValue) || 0,
-            }
+    ...rule,
+    periodMinutes: Number(rule.periodMinutes) || 0,
+    pricePerPeriod: rule.pricePerPeriod?.toString() || undefined,
+    startTime: rule.startTime || undefined,
+    endTime: rule.endTime || undefined,
+    daysOfWeek: rule.daysOfWeek || [],
+    spaceIds: [],
+    conditions: rule.conditions.map((condition) => {
+      switch (condition.type) {
+        case "duration":
+          if (condition.durationFilter === "startTime") {
+            return {
+              startTime: Number(condition.durationValue) || 0,
+            };
           } else {
             return {
               endTime: Number(condition.durationValue) || 0,
-            }
+            };
           }
-          case 'userTags':
-            return {
-              userTags: condition.userTags || [],
-            }
-          default:
-            assertUnreachable(condition);
-        }
-      })
+        case "userTags":
+          return {
+            userTags: condition.userTags || [],
+          };
+        default:
+          assertUnreachable(condition);
+      }
+    }),
   };
 }
 

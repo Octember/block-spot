@@ -2,7 +2,6 @@ import { useState } from "react";
 import { createInvitation } from "wasp/client/operations";
 import { useToast } from "../client/toast";
 import { Button } from "../client/components/button";
-import { ArrowPathIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 
 type InviteMembersProps = {

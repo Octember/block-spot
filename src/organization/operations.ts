@@ -4,11 +4,16 @@ import {
   Invitation,
   OnboardingState,
   Organization,
+  OrganizationTag,
   OrganizationUser,
+  OrganizationUserTag,
   User,
 } from "wasp/entities";
 import { HttpError } from "wasp/server";
-import { type GetUserOrganization } from "wasp/server/operations";
+import {
+  UpdateOnboardingState,
+  type GetUserOrganization,
+} from "wasp/server/operations";
 import { sendInvitationEmail } from "./email";
 
 type CreateInvitationInput = {
@@ -40,6 +45,9 @@ type GetUserOrganizationResponse =
   | (Organization & {
       users: (OrganizationUser & {
         user: User;
+        tags: (OrganizationUserTag & {
+          organizationTag: OrganizationTag;
+        })[];
       })[];
       onboardingState: OnboardingState | null;
     })
@@ -88,6 +96,11 @@ export const getUserOrganization: GetUserOrganization<
       users: {
         include: {
           user: true,
+          tags: {
+            include: {
+              organizationTag: true,
+            },
+          },
         },
       },
       onboardingState: true,
@@ -258,7 +271,7 @@ export const acceptInvitation = async (
 
 export const listInvitations = async (
   args: ListInvitationsInput,
-  context: any,
+  context,
 ): Promise<Invitation[]> => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
@@ -291,7 +304,7 @@ export const listInvitations = async (
 
 export const cancelInvitation = async (
   args: CancelInvitationInput,
-  context: any,
+  context,
 ) => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
@@ -329,7 +342,7 @@ export const cancelInvitation = async (
 
 export const updateMemberRole = async (
   args: UpdateMemberRoleInput,
-  context: any,
+  context,
 ) => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
@@ -387,7 +400,7 @@ export const updateMemberRole = async (
 
 export const getInvitationDetails = async (
   args: GetInvitationDetailsInput,
-  context: any,
+  context,
 ) => {
   const invitation = await context.entities.Invitation.findUnique({
     where: { token: args.token },
@@ -423,7 +436,7 @@ export const getInvitationDetails = async (
 
 export const createOrganization = async (
   args: CreateOrganizationInput,
-  context: any,
+  context,
 ) => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
@@ -447,10 +460,10 @@ export const createOrganization = async (
   return organization;
 };
 
-export const updateOnboardingState = async (
-  args: UpdateOnboardingStateInput,
-  context: any,
-) => {
+export const updateOnboardingState: UpdateOnboardingState<
+  UpdateOnboardingStateInput,
+  OnboardingState
+> = async (args, context) => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
   }
