@@ -1,4 +1,4 @@
-import { PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { CheckCircleIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { FC, useEffect, useState } from "react";
 import {
   Controller,
@@ -10,14 +10,14 @@ import {
 import { BiLoaderCircle } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import { getVenuePaymentRules, updatePaymentRules, useQuery } from "wasp/client/operations";
-import { PaymentRule, PriceCondition } from "wasp/entities";
 import { Button } from "../../client/components/button";
 import { Card } from "../../client/components/card";
 import { Select } from "../../client/components/form/select";
 import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
-import { defaultPaymentRule, DURATION_FILTER_OPTIONS, PeriodOptions, RULE_TYPES, CONDITION_FILTER_OPTIONS, toFormInput, toApiInput } from './constants';
+import { CONDITION_FILTER_OPTIONS, defaultPaymentRule, DURATION_FILTER_OPTIONS, PeriodOptions, RULE_TYPES, toApiInput, toFormInput } from './constants';
 import { PaymentRoleFormInput } from './types';
+import { CheckBadgeIcon } from "@heroicons/react/20/solid";
 
 type PaymentRuleForm = {
   paymentRules: PaymentRoleFormInput[];
@@ -37,10 +37,8 @@ export const PaymentRules = () => {
   const {
     control,
     handleSubmit,
-    formState: { isDirty, isSubmitting, dirtyFields },
+    formState: { isDirty, isSubmitting },
   } = form;
-
-  console.log(dirtyFields, isDirty);
 
   const { data: paymentRules, isLoading } = useQuery(getVenuePaymentRules, {
     venueId: venueId!,
@@ -65,6 +63,7 @@ export const PaymentRules = () => {
 
   async function onSubmit(data: PaymentRuleForm) {
     try {
+      console.log("data", data);
       await updatePaymentRules({
         venueId: venueId!,
         rules: data.paymentRules.map(toApiInput),
@@ -140,7 +139,8 @@ const PaymentRuleComponent: FC<{
   ruleIndex: number;
 }> = ({ ruleIndex }) => {
 
-  const { control, setValue, getValues } = useFormContext<PaymentRuleForm>();
+  const { control } = useFormContext<PaymentRuleForm>();
+  const [isEditingPrice, setIsEditingPrice] = useState(false);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -156,11 +156,19 @@ const PaymentRuleComponent: FC<{
           control={control}
           name={`paymentRules.${ruleIndex}.pricePerPeriod`}
           render={({ field: { value, onChange } }) => (
-            <TextInput
-              type="number"
-              value={value?.toString()}
-              onChange={(e) => onChange(e.target.value)}
-            />
+            isEditingPrice ?
+              <div className="flex flex-row gap-2 items-center">
+                $
+                <TextInput
+                  className="max-w-20"
+                  type="number"
+                  value={value?.toString()}
+                  onChange={(e) => onChange(e.target.value)}
+                />
+                <button onClick={() => setIsEditingPrice(false)}><CheckCircleIcon className="size-6 text-teal-700" /></button>
+              </div>
+              :
+              <button className="font-bold text-teal-700" onClick={() => setIsEditingPrice(true)}>${value?.toString()}</button>
           )}
         />
 
@@ -241,7 +249,6 @@ const PaymentRuleComponent: FC<{
                   />
 
                   {value.type === 'duration' && (
-
                     <>
                       <Select
                         options={DURATION_FILTER_OPTIONS}
@@ -249,10 +256,12 @@ const PaymentRuleComponent: FC<{
                           DURATION_FILTER_OPTIONS.find((option) => option.value === value.durationFilter) ||
                           DURATION_FILTER_OPTIONS[0]
                         }
-                        onChange={(option) => onChange({
-                          ...value,
-                          durationFilter: option.value,
-                        })}
+                        onChange={(option) => {
+                          onChange({
+                            ...value,
+                            durationFilter: option.value,
+                          });
+                        }}
                       />
 
                       <Select

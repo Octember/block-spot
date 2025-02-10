@@ -170,3 +170,5 @@ const CloseSidebarButton = forwardRef<
     </div>
   );
 });
+
+CloseSidebarButton.displayName = "CloseSidebarButton";

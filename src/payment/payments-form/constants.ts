@@ -15,8 +15,8 @@ export const CONDITION_FILTER_OPTIONS = [
 
 
 export const DURATION_FILTER_OPTIONS = [
-  { label: "at least", value: "minMinutes" },
-  { label: "at most", value: "maxMinutes" },
+  { label: "at least", value: "startTime" },
+  { label: "at most", value: "endTime" },
 ];
 
 export function defaultPaymentRule(priority?: number): PaymentRoleFormInput {
