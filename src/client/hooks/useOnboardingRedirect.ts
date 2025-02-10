@@ -14,7 +14,7 @@ export function useOnboardingRedirect() {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: user } = useAuth();
-  const { data: organization } = useQuery(getUserOrganization);
+  const { data: organization, isLoading } = useQuery(getUserOrganization);
 
   useEffect(() => {
     if (
@@ -27,11 +27,11 @@ export function useOnboardingRedirect() {
       return;
     }
 
-    if (!organization) {
-      return navigate("/onboarding?redirect=true");
+    if (!isLoading && !organization) {
+      navigate("/onboarding?redirect=true");
     }
 
-    if (organization) {
+    if (organization && !isLoading) {
       const onboardingState = organization.onboardingState;
       if (!onboardingState?.hasCompletedOnboarding) {
         navigate("/onboarding?redirect=true");
