@@ -8,7 +8,7 @@ import {
 } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/16/solid";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 import { cn } from "../../cn";
 
 interface SelectOption {
@@ -46,11 +46,11 @@ export const Select = forwardRef<
     },
     ref,
   ) => {
-    const [selectedRef, setSelectedRef] = useState<HTMLElement | null>(null);
+    const selectedRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
-      if (selectedRef) {
-        selectedRef.scrollIntoView({ block: "center" });
+      if (selectedRef.current) {
+        selectedRef.current.scrollIntoView({ block: "center" });
       }
     }, [selectedRef]);
 
@@ -90,7 +90,7 @@ export const Select = forwardRef<
               <SelectOption
                 key={option.value}
                 option={option}
-                ref={option.value === value.value ? setSelectedRef : null}
+                ref={option.value === value.value ? selectedRef : null}
                 selected={option.value === value.value}
               />
             ))}

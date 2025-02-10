@@ -303,68 +303,6 @@ const PaymentRuleComponent: FC<{
             </Button>
           </div>
         )}
-        {/* 
-        <Select
-          options={DURATION_FILTER_OPTIONS}
-          value={
-            durationFilter
-              ? DURATION_FILTER_OPTIONS.find(
-                (option) => option.value === durationFilter,
-              )!
-              : DURATION_FILTER_OPTIONS[0]
-          }
-          onChange={(option) => {
-            const newDurationFilter = option.value as
-              | "minMinutes"
-              | "maxMinutes";
-            setDurationFilter(newDurationFilter);
-
-            // console.log(newDurationFilter, paymentRule[oldDurationFilter]);
-
-
-            // setValue(`paymentRules.${index}`,
-            //   {
-            //     ...paymentRule,
-            //     [newDurationFilter]: paymentRule[oldDurationFilter],
-            //     [oldDurationFilter]: null,
-            //   }, {
-            //   shouldDirty: true,
-            // });
-          }}
-        />
-
-
-        {durationFilter === "minMinutes" && (
-          <Controller
-            control={control}
-            name={`paymentRules.${index}.minMinutes`}
-            render={({ field: { value, onChange } }) => (
-              <Select
-                options={PeriodOptions}
-                value={
-                  PeriodOptions.find((option) => option.value === value) ||
-                  PeriodOptions[0]
-                }
-                onChange={(option) => onChange(option.value)}
-              />
-            )}
-          />
-        )}
-
-        <Controller
-          control={control}
-          name={`paymentRules.${index}.maxMinutes`}
-          render={({ field: { value, onChange } }) => (
-            <Select
-              options={PeriodOptions}
-              value={
-                PeriodOptions.find((option) => option.value === value) ||
-                PeriodOptions[0]
-              }
-              onChange={(option) => onChange(option.value)}
-            />
-          )}
-        /> */}
       </div>
 
     </div >
