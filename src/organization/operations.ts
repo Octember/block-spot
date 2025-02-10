@@ -305,10 +305,10 @@ export const listInvitations = async (
   });
 };
 
-export const cancelInvitation: CancelInvitation<CancelInvitationInput, Invitation> = async (
-  args,
-  context,
-) => {
+export const cancelInvitation: CancelInvitation<
+  CancelInvitationInput,
+  Invitation
+> = async (args, context) => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
   }

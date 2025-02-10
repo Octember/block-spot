@@ -25,6 +25,20 @@ export const features = [
     href: DocsUrl,
   },
   {
+    name: "Hosted Payments, Zero Hassle",
+    description:
+      "Secure, PCI-compliant checkout flows. Accept cards, digital wallets, and save payment methods for faster bookings.",
+    icon: "💳",
+    href: DocsUrl,
+  },
+  {
+    name: "Flexible Pricing & Discounts",
+    description:
+      "Set dynamic rates, offer coupons, or adjust pricing based on demand. Seasonal promotions handled effortlessly.",
+    icon: "🎯",
+    href: DocsUrl,
+  },
+  {
     name: "Business Hours & Availability",
     description:
       "Set custom hours, block off holidays, or sync with staff schedules. Changes take seconds, not hours.",

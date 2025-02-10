@@ -318,7 +318,9 @@ const PaymentRuleComponent: FC<{
                     <Controller
                       control={control}
                       name={`paymentRules.${ruleIndex}.conditions.${conditionIndex}.userTags`}
-                      render={({ field: { value: selectedTags, onChange } }) => (
+                      render={({
+                        field: { value: selectedTags, onChange },
+                      }) => (
                         <MultiSelect
                           options={tagOptions}
                           value={tagOptions.filter((tag) =>
@@ -326,7 +328,9 @@ const PaymentRuleComponent: FC<{
                               (selectedTag) => tag.value === selectedTag,
                             ),
                           )}
-                          onChange={(tags) => onChange(tags.map((tag) => tag.value))}
+                          onChange={(tags) =>
+                            onChange(tags.map((tag) => tag.value))
+                          }
                         />
                       )}
                     />
