@@ -1,10 +1,11 @@
 import { RuleType } from "@prisma/client";
-import { PaymentRule } from "wasp/entities";
+import { PaymentRule, PriceCondition } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import type {
   GetVenuePaymentRules,
   UpdatePaymentRules,
 } from "wasp/server/operations";
+import {PriceConditionFormInput} from '../payments-form/types';
 
 export type WireSafePaymentRule = Omit<
   PaymentRule,
@@ -13,23 +14,24 @@ export type WireSafePaymentRule = Omit<
   pricePerPeriod: string | null;
   multiplier: string | null;
   discountRate: string | null;
+  conditions: Pick<PriceCondition, "startTime" | "endTime" | "userTags">[];
 };
 
-type PaymentRuleInput = {
+export type PaymentRuleInput = {
   id?: string;
   spaceIds: string[];
   priority: number;
   ruleType: RuleType;
-  pricePerPeriod?: number;
+  pricePerPeriod?: string;
   periodMinutes?: number;
-  multiplier?: number;
-  discountRate?: number;
   startTime?: number;
   endTime?: number;
   daysOfWeek: number[];
-  requiredTags: string[];
-  minMinutes?: number;
-  maxMinutes?: number;
+  conditions: {
+    startTime?: number;
+    endTime?: number;
+    userTags?: string[];
+  }[]
 };
 
 type UpdatePaymentRulesArgs = {
@@ -63,19 +65,19 @@ const validatePaymentRules = (rules: PaymentRuleInput[]) => {
           );
         }
         break;
-      case "MULTIPLIER":
-        if (!rule.multiplier) {
-          throw new Error("MULTIPLIER rules require a multiplier value");
-        }
-        break;
-      case "DISCOUNT":
-        if (!rule.discountRate) {
-          throw new Error("DISCOUNT rules require a discountRate");
-        }
-        if (rule.discountRate <= 0 || rule.discountRate >= 1) {
-          throw new Error("Discount rate must be between 0 and 1");
-        }
-        break;
+      // case "MULTIPLIER":
+      //   if (!rule.multiplier) {
+      //     throw new Error("MULTIPLIER rules require a multiplier value");
+      //   }
+      //   break;
+      // case "DISCOUNT":
+      //   if (!rule.discountRate) {
+      //     throw new Error("DISCOUNT rules require a discountRate");
+      //   }
+      //   if (rule.discountRate <= 0 || rule.discountRate >= 1) {
+      //     throw new Error("Discount rate must be between 0 and 1");
+      //   }
+        // break;
     }
 
     // Validate time ranges if specified
@@ -174,14 +176,17 @@ export const updatePaymentRules: UpdatePaymentRules<
           ruleType: rule.ruleType,
           pricePerPeriod: rule.pricePerPeriod,
           periodMinutes: rule.periodMinutes,
-          multiplier: rule.multiplier,
-          discountRate: rule.discountRate,
           startTime: rule.startTime,
           endTime: rule.endTime,
           daysOfWeek: rule.daysOfWeek,
-          requiredTags: rule.requiredTags,
-          minMinutes: rule.minMinutes,
-          maxMinutes: rule.maxMinutes,
+          conditions: {
+            deleteMany: {},  // Delete all existing conditions
+            create: rule.conditions.map(condition => ({
+              startTime: condition.startTime,
+              endTime: condition.endTime,
+              userTags: condition.userTags || [],
+            })),
+          },
         },
       });
     }
@@ -196,14 +201,16 @@ export const updatePaymentRules: UpdatePaymentRules<
           ruleType: rule.ruleType,
           pricePerPeriod: rule.pricePerPeriod,
           periodMinutes: rule.periodMinutes,
-          multiplier: rule.multiplier,
-          discountRate: rule.discountRate,
           startTime: rule.startTime,
           endTime: rule.endTime,
           daysOfWeek: rule.daysOfWeek,
-          requiredTags: rule.requiredTags,
-          minMinutes: rule.minMinutes,
-          maxMinutes: rule.maxMinutes,
+          conditions: {
+            create: rule.conditions.map(condition => ({
+              startTime: condition.startTime,
+              endTime: condition.endTime,
+              userTags: condition.userTags || [],
+            })),
+          },
         },
       });
     }
@@ -246,6 +253,9 @@ export const getVenuePaymentRules: GetVenuePaymentRules<
 
   const paymentRules = await context.entities.PaymentRule.findMany({
     where: { venueId },
+    include: {
+      conditions: true,
+    },
     orderBy: { priority: "asc" },
   });
 
@@ -256,3 +266,5 @@ export const getVenuePaymentRules: GetVenuePaymentRules<
     discountRate: rule.discountRate ? rule.discountRate.toString() : null,
   }));
 };
+
+

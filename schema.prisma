@@ -213,14 +213,23 @@ model PaymentRule {
   endTime     Int? // Minutes from midnight (e.g., 1439 for 11:59 PM)
   daysOfWeek  Int[] // Array of 0-6 (Sunday = 0, Monday = 1, ..., Saturday = 6)
 
-  // Booking Conditions
-  requiredTags      String[] // Example: "the holder's set of tags"
-  // TODO: This should be a  Condition type
-  minMinutes  Int? // Example: "if its duration is >= 4h"
-  maxMinutes   Int? // Example: "if its duration is < 4h"
-
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  conditions PriceCondition[]
+}
+
+model PriceCondition {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  paymentRuleId String
+  paymentRule PaymentRule @relation(fields: [paymentRuleId], references: [id], onDelete: Cascade)
+
+  startTime   Int? // Minutes from midnight (e.g., 0 for 12:00 AM)
+  endTime     Int? // Minutes from midnight (e.g., 1439 for 11:59 PM)
+  userTags    String[] // Example: "the holder's set of tags"
 }
 
 enum RuleType {

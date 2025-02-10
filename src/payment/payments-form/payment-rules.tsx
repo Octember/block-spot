@@ -10,22 +10,19 @@ import {
 import { BiLoaderCircle } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import { getVenuePaymentRules, updatePaymentRules, useQuery } from "wasp/client/operations";
-import { PaymentRule } from "wasp/entities";
+import { PaymentRule, PriceCondition } from "wasp/entities";
 import { Button } from "../../client/components/button";
 import { Card } from "../../client/components/card";
 import { Select } from "../../client/components/form/select";
 import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
-import {
-  defaultPaymentRule,
-  DURATION_FILTER_OPTIONS,
-  PeriodOptions,
-  RULE_TYPES,
-} from "./constants";
+import { defaultPaymentRule, DURATION_FILTER_OPTIONS, PeriodOptions, RULE_TYPES, CONDITION_FILTER_OPTIONS, toFormInput, toApiInput } from './constants';
+import { PaymentRoleFormInput } from './types';
 
 type PaymentRuleForm = {
-  paymentRules: PaymentRule[];
+  paymentRules: PaymentRoleFormInput[];
 };
+
 
 export const PaymentRules = () => {
   const toast = useToast();
@@ -33,25 +30,29 @@ export const PaymentRules = () => {
 
   const form = useForm<PaymentRuleForm>({
     defaultValues: {
-      paymentRules: [defaultPaymentRule(venueId!)],
+      paymentRules: [defaultPaymentRule()],
     },
   });
 
   const {
     control,
     handleSubmit,
-    formState: { isDirty, isSubmitting },
+    formState: { isDirty, isSubmitting, dirtyFields },
   } = form;
+
+  console.log(dirtyFields, isDirty);
 
   const { data: paymentRules, isLoading } = useQuery(getVenuePaymentRules, {
     venueId: venueId!,
-  }, {
-    onSuccess: (data) => {
+  });
+
+  useEffect(() => {
+    if (paymentRules) {
       form.reset({
-        paymentRules: data,
+        paymentRules: paymentRules.map(toFormInput),
       });
     }
-  });
+  }, [paymentRules]);
 
   const { fields, append, remove, update } = useFieldArray({
     control,
@@ -66,20 +67,7 @@ export const PaymentRules = () => {
     try {
       await updatePaymentRules({
         venueId: venueId!,
-        // @ts-expect-error ????
-        rules: data.paymentRules.map((rule) => ({
-          ...rule,
-          periodMinutes: rule.periodMinutes || 0,
-          pricePerPeriod: rule.pricePerPeriod?.toString() || 0,
-          multiplier: rule.multiplier?.toString() || 0,
-          discountRate: rule.discountRate?.toString() || 0,
-          startTime: rule.startTime || undefined,
-          endTime: rule.endTime || undefined,
-          daysOfWeek: rule.daysOfWeek || [],
-          requiredTags: rule.requiredTags || [],
-          minMinutes: rule.minMinutes || 0,
-          maxMinutes: rule.maxMinutes || 0,
-        })),
+        rules: data.paymentRules.map(toApiInput),
       });
       toast({
         title: "Payment rules updated",
@@ -99,27 +87,24 @@ export const PaymentRules = () => {
     <Card
       heading={{
         title: "Payment rules",
-        description: "Manage your venue's payment rules",
+        description: "Manage your venue's payment rules. Rules are applied in order of priority, from highest to lowest.",
       }}
     >
       <FormProvider {...form}>
         <form className="flex flex-col gap-4 -mx-4">
-          {fields.map((rule, index) => (
-            <div key={index} className="flex flex-row gap-2 items-center">
-              <div className="text-sm text-gray-500">{index + 1}</div>
+          {fields.map((rule, ruleIndex) => (
+            <div key={ruleIndex} className="flex flex-row gap-2 items-center">
+
+              <div className="text-sm text-gray-500">{rule.priority + 1}</div>
               <PaymentRuleComponent
-                index={index}
+                ruleIndex={ruleIndex}
               />
               <Button
                 variant="tertiary"
                 icon={<XMarkIcon className="w-4 h-4" />}
-                onClick={() => remove(index)}
+                onClick={() => remove(ruleIndex)}
                 ariaLabel="Remove rule"
               />
-
-              <div>
-                {JSON.stringify(rule, null, 2)}
-              </div>
             </div>
           ))}
 
@@ -127,7 +112,7 @@ export const PaymentRules = () => {
             <Button
               variant="secondary"
               icon={<PlusIcon className="w-4 h-4" />}
-              onClick={() => append(defaultPaymentRule(venueId!, fields.length))}
+              onClick={() => append(defaultPaymentRule(fields.length))}
               ariaLabel="Add rule"
             >
               Add rule
@@ -152,30 +137,15 @@ export const PaymentRules = () => {
 };
 
 const PaymentRuleComponent: FC<{
-  index: number;
-}> = ({ index }) => {
+  ruleIndex: number;
+}> = ({ ruleIndex }) => {
 
-  const { control, setValue, getValues } = useFormContext();
+  const { control, setValue, getValues } = useFormContext<PaymentRuleForm>();
 
-  // TODO we shouldnt store any state like this, needs to be loaded from API
-  const [durationFilter, setDurationFilter] = useState<
-    "minMinutes" | "maxMinutes"
-  >("minMinutes");
-
-
-  useEffect(() => {
-    const oldDurationFilter = durationFilter === "minMinutes" ? "maxMinutes" : "minMinutes";
-    const oldValue = getValues(`paymentRules.${index}.${oldDurationFilter}`);
-
-    setValue(`paymentRules.${index}.${oldDurationFilter}`, null, {
-      shouldDirty: true,
-    });
-
-    setValue(`paymentRules.${index}.${durationFilter}`, oldValue, {
-      shouldDirty: true,
-    });
-  }, [durationFilter]);
-
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: `paymentRules.${ruleIndex}.conditions`,
+  });
 
   return (
     <div className="flex-1 flex flex-col gap-2 p-4 border border-gray-200 rounded-md">
@@ -184,7 +154,7 @@ const PaymentRuleComponent: FC<{
         <div>all spaces are priced at</div>
         <Controller
           control={control}
-          name={`paymentRules.${index}.pricePerPeriod`}
+          name={`paymentRules.${ruleIndex}.pricePerPeriod`}
           render={({ field: { value, onChange } }) => (
             <TextInput
               type="number"
@@ -196,7 +166,7 @@ const PaymentRuleComponent: FC<{
 
         <Controller
           control={control}
-          name={`paymentRules.${index}.ruleType`}
+          name={`paymentRules.${ruleIndex}.ruleType`}
           render={({ field: { value, onChange } }) => (
             <>
               <Select
@@ -216,7 +186,7 @@ const PaymentRuleComponent: FC<{
                   <span>of</span>
                   <Controller
                     control={control}
-                    name={`paymentRules.${index}.periodMinutes`}
+                    name={`paymentRules.${ruleIndex}.periodMinutes`}
                     render={({ field: { value, onChange } }) => (
                       <Select
                         options={PeriodOptions}
@@ -233,13 +203,98 @@ const PaymentRuleComponent: FC<{
             </>
           )}
         />
-
-        <span>for a booking if:</span>
+        <span>for a booking</span>
       </div>
 
-      <div className="flex flex-row gap-2 items-center text-md">
-        <span>The booking&apos;s duration is</span>
+      <div className="flex flex-col gap-2 text-md">
+        {fields.map((condition, conditionIndex) => (
+          <Controller
+            key={conditionIndex}
+            control={control}
+            name={`paymentRules.${ruleIndex}.conditions.${conditionIndex}`}
+            render={({ field: { value, onChange } }) => {
+              return (
+                <div className="flex flex-row gap-2 items-center">
 
+                  <span className="font-bold">If:</span>
+
+                  <Select
+                    options={CONDITION_FILTER_OPTIONS}
+                    value={
+                      CONDITION_FILTER_OPTIONS.find((option) => option.value === value.type) ||
+                      CONDITION_FILTER_OPTIONS[0]
+                    }
+                    onChange={(option) => {
+                      if (option.value === 'duration') {
+                        onChange({
+                          type: 'duration',
+                          durationFilter: 'startTime',
+                          durationValue: 60,
+                        });
+                      } else {
+                        onChange({
+                          type: 'userTags',
+                          userTags: [],
+                        });
+                      }
+                    }}
+                  />
+
+                  {value.type === 'duration' && (
+
+                    <>
+                      <Select
+                        options={DURATION_FILTER_OPTIONS}
+                        value={
+                          DURATION_FILTER_OPTIONS.find((option) => option.value === value.durationFilter) ||
+                          DURATION_FILTER_OPTIONS[0]
+                        }
+                        onChange={(option) => onChange({
+                          ...value,
+                          durationFilter: option.value,
+                        })}
+                      />
+
+                      <Select
+                        options={PeriodOptions}
+                        value={
+                          PeriodOptions.find((option) => option.value === value.durationValue) ||
+                          PeriodOptions[0]
+                        }
+                        onChange={(option) => onChange({
+                          ...value,
+                          durationValue: option.value,
+                        })}
+                      />
+                    </>
+                  )}
+
+                  <button onClick={() => remove(conditionIndex)}><XMarkIcon className="w-4 h-4" /></button>
+
+                  {/* {JSON.stringify(value)} */}
+                </div>
+              )
+            }}
+          />
+        ))}
+
+        {fields.length < 1 && (
+          <div>
+            <Button
+              variant="secondary"
+              icon={<PlusIcon className="w-4 h-4" />}
+              onClick={() => append({
+                type: 'duration',
+                durationFilter: 'startTime',
+                durationValue: 60,
+              })}
+              ariaLabel="Add condition"
+            >
+              Add condition
+            </Button>
+          </div>
+        )}
+        {/* 
         <Select
           options={DURATION_FILTER_OPTIONS}
           value={
@@ -300,7 +355,7 @@ const PaymentRuleComponent: FC<{
               onChange={(option) => onChange(option.value)}
             />
           )}
-        />
+        /> */}
       </div>
 
     </div >
