@@ -40,7 +40,7 @@ export const getOrganizationTags: GetOrganizationTags<
       organizationId: organizationUser.organizationId,
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: "asc",
     },
   });
 };

@@ -11,6 +11,9 @@ import {
 } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
+  CancelInvitation,
+  CreateOrganization,
+  UpdateMemberRole,
   UpdateOnboardingState,
   type GetUserOrganization,
 } from "wasp/server/operations";
@@ -302,8 +305,8 @@ export const listInvitations = async (
   });
 };
 
-export const cancelInvitation = async (
-  args: CancelInvitationInput,
+export const cancelInvitation: CancelInvitation<CancelInvitationInput, Invitation> = async (
+  args,
   context,
 ) => {
   if (!context.user) {
@@ -340,7 +343,7 @@ export const cancelInvitation = async (
   });
 };
 
-export const updateMemberRole = async (
+export const updateMemberRole: UpdateMemberRole = async (
   args: UpdateMemberRoleInput,
   context,
 ) => {
@@ -400,7 +403,7 @@ export const updateMemberRole = async (
 
 export const getInvitationDetails = async (
   args: GetInvitationDetailsInput,
-  context,
+  context: any,
 ) => {
   const invitation = await context.entities.Invitation.findUnique({
     where: { token: args.token },
@@ -434,10 +437,10 @@ export const getInvitationDetails = async (
   };
 };
 
-export const createOrganization = async (
-  args: CreateOrganizationInput,
-  context,
-) => {
+export const createOrganization: CreateOrganization<
+  CreateOrganizationInput,
+  Organization
+> = async (args, context) => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
   }
