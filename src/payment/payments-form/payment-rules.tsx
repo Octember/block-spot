@@ -3,7 +3,7 @@ import {
   PlusIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import {
   Controller,
   FormProvider,
@@ -14,13 +14,14 @@ import {
 import { BiLoaderCircle } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import {
+  getOrganizationTags,
   getVenuePaymentRules,
   updatePaymentRules,
   useQuery,
 } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
 import { Card } from "../../client/components/card";
-import { Select } from "../../client/components/form/select";
+import { MultiSelect, Select } from "../../client/components/form/select";
 import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
 import {
@@ -155,6 +156,7 @@ export const PaymentRules = () => {
 const PaymentRuleComponent: FC<{
   ruleIndex: number;
 }> = ({ ruleIndex }) => {
+  const { data: tags } = useQuery(getOrganizationTags);
   const { control } = useFormContext<PaymentRuleForm>();
   const [isEditingPrice, setIsEditingPrice] = useState(false);
 
@@ -162,6 +164,11 @@ const PaymentRuleComponent: FC<{
     control,
     name: `paymentRules.${ruleIndex}.conditions`,
   });
+
+  const tagOptions = useMemo(
+    () => tags?.map((tag) => ({ label: tag.name, value: tag.id })) || [],
+    [tags],
+  );
 
   return (
     <div className="flex-1 flex flex-col gap-2 p-4 border border-gray-200 rounded-md">
@@ -305,6 +312,24 @@ const PaymentRuleComponent: FC<{
                         }
                       />
                     </>
+                  )}
+
+                  {value.type === "userTags" && (
+                    <Controller
+                      control={control}
+                      name={`paymentRules.${ruleIndex}.conditions.${conditionIndex}.userTags`}
+                      render={({ field: { value: selectedTags, onChange } }) => (
+                        <MultiSelect
+                          options={tagOptions}
+                          value={tagOptions.filter((tag) =>
+                            selectedTags.some(
+                              (selectedTag) => tag.value === selectedTag,
+                            ),
+                          )}
+                          onChange={(tags) => onChange(tags.map((tag) => tag.value))}
+                        />
+                      )}
+                    />
                   )}
 
                   <button onClick={() => remove(conditionIndex)}>

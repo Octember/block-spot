@@ -13,7 +13,7 @@ export const RULE_TYPES = [
 
 export const CONDITION_FILTER_OPTIONS = [
   { label: "The booking's duration is", value: "duration" },
-  // { label: "The user's tags are", value: "userTags" },
+  { label: "The user's tags are", value: "userTags" },
 ];
 
 export const DURATION_FILTER_OPTIONS = [

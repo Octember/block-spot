@@ -127,22 +127,10 @@ export const MultiSelect = forwardRef<
     const sizeClass = sizeClasses[size];
     const cursorClass = disabled ? "cursor-not-allowed" : "cursor-pointer";
 
-    function toggleOption(options: SelectOption[]) {
-      const lastSelected = options[options.length - 1]; // Get the last selected item
-
-      if (value.includes(lastSelected)) {
-        // If it's already selected, remove it
-        onChange(value.filter(item => item !== lastSelected));
-      } else {
-        // Otherwise, add it
-        onChange(options);
-      }
-    }
-
     return (
       <Listbox
-        defaultValue={value}
-        onChange={toggleOption}
+        value={value}
+        onChange={onChange}
         ref={ref}
         {...props}
         multiple
