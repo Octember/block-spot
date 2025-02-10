@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, SetStateAction, Dispatch, useContext, useEffect, useState } from "react";
 import {
   createReservation,
   deleteReservation,
@@ -18,7 +18,7 @@ export interface PendingChange {
 interface PendingChangesContextType {
   pendingChange: PendingChange | null;
   hasPendingChange: boolean;
-  setPendingChange: (change: PendingChange | null) => void;
+  setPendingChange: Dispatch<SetStateAction<PendingChange | null>>;
   cancelChange: () => void;
   applyChange: () => Promise<void>;
 }

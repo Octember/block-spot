@@ -22,11 +22,62 @@ type GetReservationPriceResponse = {
   checkoutUrl: string;
 };
 
+const doesRuleMatch = (
+  rule: WireSafePaymentRule,
+  startTime: Date,
+  endTime: Date,
+  userTags: string[] = []
+): boolean => {
+  const durationMinutes = differenceInMinutes(endTime, startTime);
+  const dayOfWeek = startTime.getDay();
+  const minutesFromMidnight = startTime.getHours() * 60 + startTime.getMinutes();
+
+  // Check day of week if specified
+  if (rule.daysOfWeek.length > 0 && !rule.daysOfWeek.includes(dayOfWeek)) {
+    return false;
+  }
+
+  // Check time of day if specified
+  if (rule.startTime != null && rule.endTime != null) {
+    if (minutesFromMidnight < rule.startTime || minutesFromMidnight >= rule.endTime) {
+      return false;
+    }
+  }
+
+  // Check all conditions - ALL must match for the rule to apply
+  for (const condition of rule.conditions) {
+    // Duration-based conditions
+    if (condition.startTime) {
+      // Minimum duration check
+      if (durationMinutes < condition.startTime) {
+        return false;
+      }
+    }
+    if (condition.endTime) {
+      // Maximum duration check
+      if (durationMinutes > condition.endTime) {
+        return false;
+      }
+    }
+
+    // User tag conditions
+    if (condition.userTags && condition.userTags.length > 0) {
+      // Check if user has ANY of the required tags
+      const hasMatchingTag = condition.userTags.some(tag => userTags.includes(tag));
+      if (!hasMatchingTag) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+};
+
 const calculatePriceFromRules = (
   startTime: Date,
   endTime: Date,
   rules: WireSafePaymentRule[],
-  tags: string[] = [],
+  userTags: string[] = []
 ): PriceBreakdownResponse => {
   const breakdown: PriceBreakdownResponse = {
     basePrice: 0,
@@ -38,100 +89,92 @@ const calculatePriceFromRules = (
   // Sort rules by priority (lower numbers first)
   const sortedRules = [...rules].sort((a, b) => a.priority - b.priority);
 
-  const durationMinutes = differenceInMinutes(endTime, startTime);
-  const dayOfWeek = startTime.getDay(); // 0-6, where 0 is Sunday
-  const minutesFromMidnight =
-    startTime.getHours() * 60 + startTime.getMinutes();
+  const matchedRule = sortedRules.find(rule => 
+    doesRuleMatch(rule, startTime, endTime, userTags)
+  );
 
-  let currentPrice = 0;
-
-  for (const rule of sortedRules) {
-    // Skip rules that don't apply to the time period
-    if (rule.startTime && rule.endTime) {
-      if (
-        minutesFromMidnight < rule.startTime ||
-        minutesFromMidnight >= rule.endTime
-      ) {
-        continue;
-      }
-    }
-
-    // Skip rules that don't apply to the day of week
-    if (rule.daysOfWeek.length > 0 && !rule.daysOfWeek.includes(dayOfWeek)) {
-      continue;
-    }
-
-    // Apply rule based on type
-    switch (rule.ruleType) {
-      case RuleType.BASE_RATE:
-        if (rule.pricePerPeriod && rule.periodMinutes) {
-          const periods = Math.ceil(durationMinutes / rule.periodMinutes);
-          const price = periods * parseFloat(rule.pricePerPeriod);
-          currentPrice = price;
-          breakdown.basePrice = price;
-        }
-        break;
-
-      case RuleType.MULTIPLIER:
-        if (rule.multiplier) {
-          const multiplier = parseFloat(rule.multiplier);
-          currentPrice *= multiplier;
-          breakdown.multipliers.push({
-            reason: `Time period multiplier (${rule.startTime}-${rule.endTime})`,
-            value: multiplier,
-          });
-        }
-        break;
-
-      case RuleType.DISCOUNT:
-        if (rule.discountRate) {
-          const discount = parseFloat(rule.discountRate);
-          const discountAmount = currentPrice * discount;
-          currentPrice -= discountAmount;
-          breakdown.discounts.push({
-            reason: "Duration discount",
-            value: discount,
-          });
-        }
-        break;
-    }
+  if (!matchedRule || !matchedRule.pricePerPeriod) {
+    return breakdown;
   }
 
-  breakdown.finalPrice = currentPrice;
+  const durationMinutes = differenceInMinutes(endTime, startTime);
+  const price = parseFloat(matchedRule.pricePerPeriod);
+
+  if (matchedRule.periodMinutes) {
+    // Hourly/period-based pricing
+    const periods = Math.ceil(durationMinutes / matchedRule.periodMinutes);
+    breakdown.basePrice = periods * price;
+  } else {
+    // Flat fee pricing
+    breakdown.basePrice = price;
+  }
+
+  breakdown.finalPrice = breakdown.basePrice;
   return breakdown;
 };
 
 export const getReservationPrice: GetReservationPrice<
-  { reservationId: string },
+  {
+    spaceId: string;
+    venueId: string;
+    startTime: Date;
+    endTime: Date;
+  },
   GetReservationPriceResponse
-> = async ({ reservationId }, context) => {
+> = async ({ spaceId, venueId, startTime, endTime }, context) => {
   if (!context.user) {
     throw new HttpError(401, "Not authenticated");
   }
 
-  // Get reservation details
-  const reservation = await context.entities.Reservation.findUnique({
-    where: { id: reservationId },
+  // Get space and venue details
+  const space = await context.entities.Space.findUnique({
+    where: { id: spaceId },
     include: {
-      space: {
+      venue: {
         include: {
-          venue: true,
-        },
+          organization: {
+            include: {
+              users: {
+                where: {
+                  userId: context.user.id
+                },
+                include: {
+                  tags: {
+                    include: {
+                      organizationTag: true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
     },
   });
 
-  if (!reservation) {
-    throw new HttpError(404, "Reservation not found");
+  if (!space) {
+    throw new HttpError(404, "Space not found");
   }
+
+  if (space.venue.id !== venueId) {
+    throw new HttpError(400, "Space does not belong to specified venue");
+  }
+
+  // Get user's tags from the organization
+  const orgUser = space.venue.organization.users[0];
+  if (!orgUser) {
+    throw new HttpError(403, "User is not a member of this organization");
+  }
+  const userTags = orgUser.tags.map(tag => tag.organizationTag.name);
 
   // Get venue payment rules
   const paymentRules = await context.entities.PaymentRule.findMany({
     where: {
-      venueId: reservation.space.venue.id,
+      venueId: venueId,
       OR: [
         { spaceIds: { isEmpty: true } }, // Venue-wide rules
-        { spaceIds: { has: reservation.space.id } }, // Space-specific rules
+        { spaceIds: { has: spaceId } }, // Space-specific rules
       ],
     },
     include: {
@@ -159,9 +202,10 @@ export const getReservationPrice: GetReservationPrice<
 
   // Calculate price
   const priceBreakdown = calculatePriceFromRules(
-    reservation.startTime,
-    reservation.endTime,
+    startTime,
+    endTime,
     wireSafeRules,
+    userTags
   );
 
   if (priceBreakdown.finalPrice <= 0) {
@@ -180,7 +224,7 @@ export const getReservationPrice: GetReservationPrice<
           currency: "usd",
           product_data: {
             name: "Space Reservation",
-            description: `Reservation from ${reservation.startTime.toLocaleString()} to ${reservation.endTime.toLocaleString()}`,
+            description: `Reservation from ${startTime.toLocaleString()} to ${endTime.toLocaleString()}`,
           },
           unit_amount: Math.round(priceBreakdown.finalPrice * 100), // Convert to cents
         },
@@ -189,7 +233,10 @@ export const getReservationPrice: GetReservationPrice<
     ],
     mode: "payment",
     metadata: {
-      reservationId: reservation.id,
+      spaceId,
+      venueId,
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
     },
     success_url: `${process.env.DOMAIN}/reservations/success?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.DOMAIN}/reservations/cancel`,

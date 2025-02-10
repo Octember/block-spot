@@ -1,6 +1,6 @@
 app BlockSpot {
   wasp: {
-    version: "^0.16.0"
+    version: "^0.16.1"
   },
 
   title: "BlockSpot - Booking & Reservations",

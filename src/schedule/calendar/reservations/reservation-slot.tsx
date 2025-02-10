@@ -14,6 +14,7 @@ import { useScheduleContext } from "../providers/schedule-query-provider";
 import { useReservationSelection } from "../selection";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
 import { getRowIndex, getRowSpan } from "./utilities";
+import { formatTimeWithZone } from "../date-utils";
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -148,9 +149,9 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
         <div className="flex flex-col flex-1">
           <div className="flex flex-row justify-between">
             <p className={`font-semibold text-gray-700`}>
-              <time dateTime="2022-01-12T06:00">
-                {format(newTimes.startTime, "h:mm a")} -{" "}
-                {format(newTimes.endTime, "h:mm a")}
+              <time dateTime={reservation.startTime.toISOString()}>
+                {formatTimeWithZone(newTimes.startTime)} -{" "}
+                {formatTimeWithZone(newTimes.endTime)}
               </time>
             </p>
 

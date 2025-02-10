@@ -1,23 +1,24 @@
-import { format, isValid, parseISO, startOfToday } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { createContext, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
+import { getStartOfDay, localToUTC } from "../date-utils";
 
 const DateContext = createContext<{
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
-}>({ selectedDate: startOfToday(), setSelectedDate: () => {} });
+}>({ selectedDate: getStartOfDay(new Date()), setSelectedDate: () => { } });
 
 function getDateOrDefault(date: string | null) {
   if (!date) {
-    return startOfToday();
+    return getStartOfDay(new Date());
   }
 
   const parsedDate = parseISO(date);
   if (!isValid(parsedDate)) {
-    return startOfToday();
+    return getStartOfDay(new Date());
   }
 
-  return parsedDate;
+  return getStartOfDay(parsedDate);
 }
 
 const DateProvider = ({ children }: { children: React.ReactNode }) => {
@@ -29,8 +30,9 @@ const DateProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         selectedDate: currentDate,
         setSelectedDate: (date: Date) => {
+          const utcDate = localToUTC(date);
           setSearchParams((prev) => {
-            prev.set("selected_date", format(date, "yyyy-MM-dd"));
+            prev.set("selected_date", format(utcDate, "yyyy-MM-dd"));
             return prev;
           });
         },

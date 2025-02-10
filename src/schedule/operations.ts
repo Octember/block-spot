@@ -16,6 +16,7 @@ import {
   UpdateVenue,
   UpdateVenueAvailability,
 } from "wasp/server/operations";
+import { getStartOfDay, localToUTC } from "./calendar/date-utils";
 
 type GetVenueInfoPayload = {
   venueId: string;
@@ -68,13 +69,9 @@ export const getVenueInfo: GetVenueInfo<
     })
   | null
 > = async (args, context) => {
-  // if (!context.user) {
-  //   throw new HttpError(401);
-  // }
-
   const date = isValid(args.selectedDate)
-    ? startOfDay(args.selectedDate)
-    : startOfToday();
+    ? getStartOfDay(args.selectedDate)
+    : getStartOfDay(new Date());
 
   return context.entities.Venue.findFirst({
     where: {
@@ -117,9 +114,10 @@ export const createReservation: CreateReservation<
     throw new HttpError(401);
   }
 
-  const endTime = new Date(args.endTime);
+  // Convert times to UTC for storage
+  const endTime = localToUTC(new Date(args.endTime));
   endTime.setSeconds(0, 0);
-  const startTime = new Date(args.startTime);
+  const startTime = localToUTC(new Date(args.startTime));
   startTime.setSeconds(0, 0);
 
   return context.entities.Reservation.create({
@@ -154,14 +152,25 @@ export const updateReservation: UpdateReservation<
   UpdateReservationPayload,
   Reservation
 > = async (args, context) => {
+  // Convert times to UTC for storage if they are provided
+  const updates: Partial<Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">> = {
+    description: args.description,
+    spaceId: args.spaceId,
+  };
+  
+  if (args.startTime) {
+    updates.startTime = localToUTC(new Date(args.startTime));
+    updates.startTime.setSeconds(0, 0);
+  }
+  
+  if (args.endTime) {
+    updates.endTime = localToUTC(new Date(args.endTime));
+    updates.endTime.setSeconds(0, 0);
+  }
+
   return context.entities.Reservation.update({
     where: { id: args.id },
-    data: {
-      description: args.description,
-      startTime: args.startTime,
-      endTime: args.endTime,
-      spaceId: args.spaceId,
-    },
+    data: updates,
   });
 };
 

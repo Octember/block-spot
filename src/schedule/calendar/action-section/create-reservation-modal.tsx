@@ -13,6 +13,8 @@ import { TextInput } from "../../../client/components/form/text-input";
 import { useToast } from "../../../client/toast";
 import { timeLabelsLong15Minutes } from "../constants";
 import { useScheduleContext } from "../providers/schedule-query-provider";
+import { Reservation } from "wasp/entities";
+import { FC } from "react";
 
 type CreateReservationFormInputs = {
   date: Date;
@@ -32,12 +34,12 @@ function minutesToTime(date: Date, minutes: number) {
   return newDate;
 }
 
-export const CreateReservationModal = () => {
-  const { pendingChange, cancelChange, setPendingChange } = usePendingChanges();
+export const CreateReservationModal: FC<{
+  reservation: Reservation;
+}> = ({ reservation }) => {
+  const { cancelChange, setPendingChange } = usePendingChanges();
   const { venue, getSpaceById } = useScheduleContext();
   const toast = useToast();
-
-  if (!pendingChange) return null;
 
   const {
     register,
@@ -47,11 +49,11 @@ export const CreateReservationModal = () => {
     formState: { isSubmitting },
   } = useForm<CreateReservationFormInputs>({
     defaultValues: {
-      date: pendingChange.newState.startTime,
-      startTimeMinutes: timeToMinutes(pendingChange.newState.startTime),
-      endTimeMinutes: timeToMinutes(pendingChange.newState.endTime),
-      title: pendingChange.newState.description ?? "",
-      spaceId: pendingChange.newState.spaceId,
+      date: reservation.startTime,
+      startTimeMinutes: timeToMinutes(reservation.startTime),
+      endTimeMinutes: timeToMinutes(reservation.endTime),
+      title: reservation.description ?? "",
+      spaceId: reservation.spaceId,
     },
   });
 
@@ -79,7 +81,7 @@ export const CreateReservationModal = () => {
       className="flex"
       open={true}
       size="lg"
-      onClose={() => {}}
+      onClose={() => { }}
       heading={{ title: "New Reservation" }}
       footer={
         <div className="flex items-center justify-end space-x-3 m-2">
@@ -138,9 +140,9 @@ export const CreateReservationModal = () => {
                   );
 
                   setPendingChange({
-                    ...pendingChange,
+                    type: "CREATE",
                     newState: {
-                      ...pendingChange.newState,
+                      ...reservation,
                       startTime: newStart,
                       endTime: newEnd,
                     },
