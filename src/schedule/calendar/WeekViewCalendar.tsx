@@ -8,9 +8,9 @@ import { getGridTemplateColumns } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
 import { useVenueContext } from "./providers/venue-provider";
+import { ScheduleProvider } from "./providers/schedule-context-provider";
 
-const CalendarContent: FC = () => {
-
+export const WeekViewCalendar: FC = () => {
   return (
     <div className="flex h-full flex-col flex-1">
       <CalendarHeader />
@@ -21,18 +21,27 @@ const CalendarContent: FC = () => {
           <div className="flex flex-auto">
             <div className="sticky left-0 z-99 w-14 flex-none bg-white ring-1 ring-gray-100" />
             <div className="grid flex-auto grid-cols-1 grid-rows-1 ">
-              <VerticalDividers />
-              <HorizontalDividers />
-              <AvailabilitySection />
-              <ReservationsSection />
 
-              <GridSelection />
+              <ScheduleProvider>
+                <PendingChangesProvider>
+                  <SelectionProvider>
+                    <VerticalDividers />
+                    <HorizontalDividers />
+                    <AvailabilitySection />
+                    <ReservationsSection />
+
+                    <GridSelection />
+                    <PendingChangesSection />
+
+                  </SelectionProvider>
+                </PendingChangesProvider>
+              </ScheduleProvider>
+
             </div>
           </div>
         </div>
       </div>
 
-      <PendingChangesSection />
     </div >
   );
 };
@@ -63,15 +72,5 @@ const SpacesNamesSection: FC = () => {
         ))}
       </div>
     </div>
-  );
-};
-
-export const WeekViewCalendar: FC = () => {
-  return (
-    <PendingChangesProvider>
-      <SelectionProvider>
-        <CalendarContent />
-      </SelectionProvider>
-    </PendingChangesProvider>
   );
 };

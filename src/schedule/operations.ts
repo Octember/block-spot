@@ -11,12 +11,42 @@ import {
   GetAllVenues,
   GetVenueById,
   GetVenueInfo,
+  GetVenueSchedule,
   UpdateReservation,
   UpdateSpace,
   UpdateVenue,
   UpdateVenueAvailability,
 } from "wasp/server/operations";
 import { getStartOfDay, localToUTC } from "./calendar/date-utils";
+
+type GetVenueSchedulePayload = {
+  venueId: string;
+  selectedDate: Date;
+};
+
+export const getVenueSchedule: GetVenueSchedule<
+  GetVenueSchedulePayload,
+  (Space & { reservations: Reservation[] })[] 
+> = async (args, context) => {
+
+
+  return context.entities.Space.findMany({
+    where: {
+      venueId: args.venueId,
+    },
+    include: {
+      reservations: {
+        where: {
+          startTime: {
+            gte: args.selectedDate,
+            lt: addDays(args.selectedDate, 1),
+          },
+        },
+      },
+    },
+  });
+};
+
 
 type GetVenueInfoPayload = {
   venueId: string;

@@ -1,20 +1,15 @@
-import { format, isValid, parseISO } from "date-fns";
-import { createContext, useContext, useMemo, useCallback, useEffect, useRef, useState } from 'react';
+import { isValid, parseISO } from "date-fns";
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useSearchParams } from "react-router-dom";
-import { Space, Venue } from "wasp/entities";
-import { getStartOfDay, localToUTC } from "../date-utils";
-import { useQuery } from "wasp/client/operations";
-import { getVenueInfo } from "wasp/client/operations";
-import React from 'react';
-import { getUnavailabilityBlocks } from './availability-utils';
+import { getVenueSchedule, useQuery } from "wasp/client/operations";
+import { Venue } from "wasp/entities";
+import { getStartOfDay } from "../date-utils";
 import { useVenueContext } from "./venue-provider";
 
 
 interface ScheduleContextValue {
-
-  // Venue-related
   refresh: () => void;
-  venue: NonNullable<Awaited<ReturnType<typeof getVenueInfo>>>;
+  spaces: NonNullable<Awaited<ReturnType<typeof getVenueSchedule>>>;
   isLoading: boolean;
   isTimeAvailable: (rowIndex: number, columnIndex: number) => boolean;
 }
@@ -36,12 +31,11 @@ function getDateOrDefault(date: string | null, venue: Venue) {
 
 interface ScheduleProviderProps {
   children: React.ReactNode;
-  venueId: string;
 }
 
-export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
+export function ScheduleProvider({ children }: ScheduleProviderProps) {
   const [searchParams] = useSearchParams();
-  const { unavailabileBlocks } = useVenueContext();
+  const { unavailabileBlocks, venue } = useVenueContext();
 
   // Get the current date from URL params
   const urlDate = searchParams.get("selected_date");
@@ -50,8 +44,8 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
   // Keep track of current query parameters
   const [selectedDate, setSelectedDate] = useState(initialDate);
 
-  const { data: venue, refetch, isLoading } = useQuery(getVenueInfo, {
-    venueId,
+  const { data: spaces, refetch, isLoading } = useQuery(getVenueSchedule, {
+    venueId: venue.id,
     selectedDate
   });
 
@@ -65,16 +59,11 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
     }
   }, [urlDate]);
 
-  // Effect to refetch when selectedDate changes
-  useEffect(() => {
-    refetch();
-  }, [selectedDate]);
-
-  const currentDate = venue ? getDateOrDefault(urlDate, venue) : initialDate;
+  const currentDate = getDateOrDefault(urlDate, venue);
 
   const isTimeAvailable = useCallback(
     (rowIndex: number, columnIndex: number) => {
-      if (!venue) return false;
+      if (!venue || !spaces) return false;
 
       // Convert row index to minutes since midnight
       const timeInMinutes = (rowIndex - 2) * 15 + venue.displayStart;
@@ -96,7 +85,7 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
       if (isInUnavailableBlock) return false;
 
       // Check if there are any reservations at this time
-      const space = venue.spaces[columnIndex];
+      const space = spaces[columnIndex];
       if (!space) return false;
 
       const hasOverlappingReservation = space.reservations.some(
@@ -117,7 +106,7 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
   }
 
   const value: ScheduleContextValue = {
-    venue,
+    spaces: spaces ?? [],
     refresh: () => {
       refetch();
     },

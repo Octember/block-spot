@@ -317,13 +317,18 @@ query getVenueById {
   entities: [Venue, Space]
 }
 
-query getVenueInfo {
-  fn: import { getVenueInfo } from "@src/schedule/operations",
-  entities: [User, Venue, Space]
+query getVenueSchedule {
+  fn: import { getVenueSchedule } from "@src/schedule/operations",
+  entities: [User, Space]
 }
 
 query getVenueDetails {
   fn: import { getVenueDetails } from "@src/schedule/venue/venue-operations",
+  entities: [User, Venue, Space]
+}
+
+query getVenueInfo {
+  fn: import { getVenueInfo } from "@src/schedule/operations",
   entities: [User, Venue, Space]
 }
 

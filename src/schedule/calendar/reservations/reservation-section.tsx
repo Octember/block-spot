@@ -17,8 +17,8 @@ import {
 import { useVenueContext } from "../providers/venue-provider";
 
 export const ReservationsSection = () => {
-  const { selectedDate } = useVenueContext()
-  const { venue } = useScheduleContext();
+  const { selectedDate, venue } = useVenueContext()
+  const { spaces } = useScheduleContext();
   const timeLabels = useTimeLabels();
   const { pendingChange, setPendingChange } = usePendingChanges();
 
@@ -27,7 +27,7 @@ export const ReservationsSection = () => {
   >(null);
 
   const [reservations, setReservations] = useState(
-    venue.spaces.flatMap((space) => space.reservations),
+    spaces.flatMap((space) => space.reservations),
   );
 
   const mouseSensor = useSensor(MouseSensor, {
@@ -38,10 +38,10 @@ export const ReservationsSection = () => {
   const sensors = useSensors(mouseSensor);
 
   useEffect(() => {
-    setReservations(venue.spaces.flatMap((space) => space.reservations));
-  }, [venue]);
+    setReservations(spaces.flatMap((space) => space.reservations));
+  }, [spaces]);
 
-  const spaceIds = venue.spaces.map((space) => space.id);
+  const spaceIds = spaces.map((space) => space.id);
 
   const draggingReservation = useMemo(() => {
     const match = reservations.find(
@@ -190,8 +190,6 @@ export const ReservationsSection = () => {
           // Convert both dates to venue's timezone before comparing
           const pendingDate = UTCToLocal(pendingChange.newState.startTime, venue);
           const selectedLocalDate = UTCToLocal(selectedDate, venue);
-
-          console.log({ startTime: pendingChange.newState.startTime, pendingDate, selectedLocalDate });
           return isSameDay(pendingDate, selectedLocalDate);
         })() && (
             <ReservationSlot

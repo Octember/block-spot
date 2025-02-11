@@ -12,9 +12,7 @@ export default function SchedulePage() {
 
   return (
     <VenueProvider venueId={venueId}>
-      <ScheduleProvider venueId={venueId}>
-        <WeekViewCalendar />
-      </ScheduleProvider>
+      <WeekViewCalendar />
     </VenueProvider>
   );
 }
