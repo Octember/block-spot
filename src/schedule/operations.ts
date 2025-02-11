@@ -284,6 +284,7 @@ type UpdateVenuePayload = Pick<
   | "displayEnd"
   | "announcements"
   | "contactEmail"
+  | "timeZoneId"
 > & { spaces: Pick<Space, "id" | "name">[] };
 
 export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
@@ -298,6 +299,7 @@ export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
       displayEnd: Number(args.displayEnd),
       announcements: args.announcements,
       contactEmail: args.contactEmail,
+      timeZoneId: args.timeZoneId,
       spaces: {
         deleteMany: {
           NOT: args.spaces

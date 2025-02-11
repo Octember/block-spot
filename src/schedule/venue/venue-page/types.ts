@@ -14,4 +14,5 @@ export type UpdateVenueFormInputs = {
     startTimeMinutes: number;
     endTimeMinutes: number;
   }[];
+  timeZoneId: string;
 };

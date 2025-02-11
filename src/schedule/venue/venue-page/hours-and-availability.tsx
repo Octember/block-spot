@@ -29,6 +29,7 @@ function transformToFormInputs(
     announcements: "",
     availabilityRules: venue.availabilityRules,
     contactEmail: venue.contactEmail,
+    timeZoneId: venue.timeZoneId,
   };
 }
 
@@ -85,6 +86,7 @@ export function HoursAndAvailabilityForm({
         displayEnd: data.displayEnd * 60,
         announcements: data.announcements,
         contactEmail: data.contactEmail,
+        timeZoneId: data.timeZoneId,
       });
 
       await updateVenueAvailability({

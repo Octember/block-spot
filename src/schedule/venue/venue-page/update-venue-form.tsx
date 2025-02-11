@@ -1,6 +1,6 @@
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from 'react-hook-form';
 import { BiLoaderCircle } from "react-icons/bi";
 import { updateVenue, updateVenueAvailability } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
@@ -10,6 +10,7 @@ import { FormField } from "../../../client/components/form/form-field";
 import { TextInput } from "../../../client/components/form/text-input";
 import { useToast } from "../../../client/toast";
 import { UpdateVenueFormInputs } from "./types";
+import { Select } from '../../../client/components/form/select';
 
 function transformToFormInputs(
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] },
@@ -22,8 +23,14 @@ function transformToFormInputs(
     announcements: venue.announcements,
     availabilityRules: venue.availabilityRules,
     contactEmail: venue.contactEmail,
+    timeZoneId: venue.timeZoneId,
   };
 }
+
+const TimeZoneOptions = Intl.supportedValuesOf('timeZone').map((tz) => ({
+  value: tz,
+  label: tz,
+}));
 
 export function UpdateVenueForm({
   venue,
@@ -37,6 +44,7 @@ export function UpdateVenueForm({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { isDirty },
   } = useForm<UpdateVenueFormInputs>({
     defaultValues: transformToFormInputs(venue),
@@ -57,6 +65,7 @@ export function UpdateVenueForm({
         displayEnd: data.displayEnd * 60,
         announcements: data.announcements,
         contactEmail: data.contactEmail,
+        timeZoneId: data.timeZoneId,
       });
 
       await updateVenueAvailability({
@@ -103,7 +112,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               View Schedule
             </Button>
@@ -130,6 +139,25 @@ export function UpdateVenueForm({
             className="w-full rounded-lg border border-gray-200 p-3 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
             rows={4}
             placeholder="Enter any announcements or important notices for your venue..."
+          />
+        </FormField>
+      </div>
+
+      <div>
+        <FormField
+          label="Time Zone"
+          description="Set the local timezone for your venue to ensure accurate scheduling and time displays."
+        >
+          <Controller
+            control={control}
+            name="timeZoneId"
+            render={({ field: { value, onChange } }) => (
+              <Select
+                options={TimeZoneOptions}
+                value={TimeZoneOptions.find((tz) => tz.value === value) || { value: "America/New_York", label: "America/New_York" }}
+                onChange={(value) => onChange(value.value)}
+              />
+            )}
           />
         </FormField>
       </div>
