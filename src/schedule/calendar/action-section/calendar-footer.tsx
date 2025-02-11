@@ -1,4 +1,4 @@
-import { useScheduleContext } from "../providers/schedule-query-provider";
+import { useScheduleContext } from "../providers/schedule-context-provider";
 import { PendingChangesSection } from "./pending-changes-section";
 
 export const CalendarFooter = () => {

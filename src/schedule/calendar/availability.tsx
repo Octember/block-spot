@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useTimeLabels } from "./constants";
-import { useScheduleContext } from "./providers/schedule-query-provider";
+import { useScheduleContext } from "./providers/schedule-context-provider";
 import { getSharedGridStyle } from "./reservations/constants";
 import { getRowIndexFromMinutes } from "./reservations/utilities";
 

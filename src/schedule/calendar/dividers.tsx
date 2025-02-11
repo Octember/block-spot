@@ -5,7 +5,7 @@ import {
   PixelsPerSlot,
   getGridTemplateColumns,
 } from "./reservations/constants";
-import { useScheduleContext } from "./providers/schedule-query-provider";
+import { useScheduleContext } from "./providers/schedule-context-provider";
 
 export const HorizontalDividers: FC = () => {
   const timeLabels = useTimeLabels();

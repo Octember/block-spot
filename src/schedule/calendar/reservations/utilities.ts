@@ -1,6 +1,10 @@
 import { addMinutes, differenceInMinutes, isAfter, isBefore } from "date-fns";
 import { Reservation, Venue } from "wasp/entities";
-import { MinutesPerSlot } from "./constants";
+import { localToUTC, UTCToLocal } from "../date-utils";
+
+// Constants specific to reservation grid
+const HEADER_ROW_COUNT = 2;
+const MinutesPerSlot = 15;
 
 export function getRowSpan(reservation: Reservation) {
   const start = reservation.startTime;
@@ -11,15 +15,14 @@ export function getRowSpan(reservation: Reservation) {
   return result;
 }
 
-// Magic number 2 is to account for the header row and the 1 based index of the rows
-
-const HEADER_ROW_COUNT = 2;
-
 export function getRowIndex(venue: Venue, time: Date) {
+  // Convert to local time for display calculations
+  const localTime = UTCToLocal(time, venue);
+  
   const rowIndex =
     Math.ceil(
-      time.getHours() * (60 / MinutesPerSlot) +
-        time.getMinutes() / MinutesPerSlot -
+      localTime.getHours() * (60 / MinutesPerSlot) +
+        localTime.getMinutes() / MinutesPerSlot -
         venue.displayStart / MinutesPerSlot,
     ) + HEADER_ROW_COUNT;
 
@@ -49,8 +52,8 @@ export function getTimeFromRowIndex(venue: Venue, rowIndex: number): Date {
   const minutes = totalMinutes % 60;
 
   const result = new Date();
-  result.setHours(hours, minutes, 0, 0); // Set hours, minutes, seconds, and milliseconds
-  return result;
+  result.setHours(hours, minutes, 0, 0);
+  return localToUTC(result, venue); // Convert to UTC before returning
 }
 
 export function isWithinReservation(
@@ -66,6 +69,7 @@ export function isWithinReservation(
     rawStartTime,
     rawEndTime,
     target.startTime,
+    venue
   );
 
   const result =
@@ -74,21 +78,42 @@ export function isWithinReservation(
   return result;
 }
 
-export function setTimesOnDate(
+export function   setTimesOnDate(
   startTime: Date,
   endTime: Date,
   targetDate: Date,
+  venue: Venue,
 ): {
   startTime: Date;
   endTime: Date;
 } {
-  const result = new Date(targetDate);
+  const localTargetDate = UTCToLocal(targetDate, venue);
+  const localStartTime = UTCToLocal(startTime, venue);
+  const localEndTime = UTCToLocal(endTime, venue);
+
+  const result = new Date(localTargetDate);
   return {
-    startTime: new Date(
-      result.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0),
+    startTime: localToUTC(
+      new Date(
+        result.setHours(
+          localStartTime.getHours(),
+          localStartTime.getMinutes(),
+          0,
+          0,
+        ),
+      ),
+      venue
     ),
-    endTime: new Date(
-      result.setHours(endTime.getHours(), endTime.getMinutes(), 0, 0),
+    endTime: localToUTC(
+      new Date(
+        result.setHours(
+          localEndTime.getHours(),
+          localEndTime.getMinutes(),
+          0,
+          0,
+        ),
+      ),
+      venue
     ),
   };
 }

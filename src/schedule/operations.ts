@@ -16,6 +16,7 @@ import {
   UpdateVenue,
   UpdateVenueAvailability,
 } from "wasp/server/operations";
+import { getStartOfDay, localToUTC } from "./calendar/date-utils";
 
 type GetVenueInfoPayload = {
   venueId: string;
@@ -68,13 +69,17 @@ export const getVenueInfo: GetVenueInfo<
     })
   | null
 > = async (args, context) => {
-  // if (!context.user) {
-  //   throw new HttpError(401);
-  // }
+  const venue = await context.entities.Venue.findFirst({
+    where: { id: args.venueId },
+  });
+
+  if (!venue) {
+    throw new HttpError(404, "Venue not found");
+  }
 
   const date = isValid(args.selectedDate)
-    ? startOfDay(args.selectedDate)
-    : startOfToday();
+    ? getStartOfDay(args.selectedDate, venue)
+    : getStartOfDay(new Date(), venue);
 
   return context.entities.Venue.findFirst({
     where: {
@@ -117,10 +122,30 @@ export const createReservation: CreateReservation<
     throw new HttpError(401);
   }
 
-  const endTime = new Date(args.endTime);
+  const venue = await context.entities.Venue.findFirst({
+    where: {
+      spaces: {
+        some: {
+          id: args.spaceId
+        }
+      }
+    }
+  });
+
+  if (!venue) {
+    throw new HttpError(404, "Venue not found");
+  }
+
+  // Convert times to UTC for storage
+  const endTime = localToUTC(new Date(args.endTime), venue);
   endTime.setSeconds(0, 0);
-  const startTime = new Date(args.startTime);
+  const startTime = localToUTC(new Date(args.startTime), venue);
   startTime.setSeconds(0, 0);
+
+  // Validate times are in the correct order
+  if (startTime >= endTime) {
+    throw new HttpError(400, "Start time must be before end time");
+  }
 
   return context.entities.Reservation.create({
     data: {
@@ -154,14 +179,49 @@ export const updateReservation: UpdateReservation<
   UpdateReservationPayload,
   Reservation
 > = async (args, context) => {
+  const venue = await context.entities.Venue.findFirst({
+    where: {
+      spaces: {
+        some: {
+          id: args.spaceId || ""
+        }
+      }
+    }
+  });
+
+  if (!venue) {
+    throw new HttpError(404, "Venue not found");
+  }
+
+  // Convert times to UTC for storage if they are provided
+  const updates: Partial<Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">> = {
+    description: args.description,
+    spaceId: args.spaceId,
+  };
+  
+  let startTime: Date | undefined;
+  let endTime: Date | undefined;
+
+  if (args.startTime) {
+    startTime = localToUTC(new Date(args.startTime), venue);
+    startTime.setSeconds(0, 0);
+    updates.startTime = startTime;
+  }
+  
+  if (args.endTime) {
+    endTime = localToUTC(new Date(args.endTime), venue);
+    endTime.setSeconds(0, 0);
+    updates.endTime = endTime;
+  }
+
+  // Validate times if both are provided
+  if (startTime && endTime && startTime >= endTime) {
+    throw new HttpError(400, "Start time must be before end time");
+  }
+
   return context.entities.Reservation.update({
     where: { id: args.id },
-    data: {
-      description: args.description,
-      startTime: args.startTime,
-      endTime: args.endTime,
-      spaceId: args.spaceId,
-    },
+    data: updates,
   });
 };
 
@@ -239,6 +299,7 @@ type UpdateVenuePayload = Pick<
   | "displayEnd"
   | "announcements"
   | "contactEmail"
+  | "timeZoneId"
 > & { spaces: Pick<Space, "id" | "name">[] };
 
 export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
@@ -253,6 +314,7 @@ export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
       displayEnd: Number(args.displayEnd),
       announcements: args.announcements,
       contactEmail: args.contactEmail,
+      timeZoneId: args.timeZoneId,
       spaces: {
         deleteMany: {
           NOT: args.spaces

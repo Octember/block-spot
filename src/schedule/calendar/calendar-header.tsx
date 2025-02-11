@@ -3,7 +3,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
-import { addDays, format } from "date-fns";
+import { addDays } from "date-fns";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "wasp/client/router";
@@ -12,12 +12,12 @@ import { cn } from "../../client/cn";
 import { Button } from "../../client/components/button";
 import { ButtonGroup } from "../../client/components/button-group";
 import { isUserOwner } from "../../client/hooks/permissions";
-import { useSelectedDate } from "./providers/date-provider";
+import { formatTimeWithZone } from "./date-utils";
+import { useScheduleContext } from "./providers/schedule-context-provider";
 
 export const CalendarHeader: FC = () => {
-  const { selectedDate, setSelectedDate } = useSelectedDate();
+  const { selectedDate, setSelectedDate, venue } = useScheduleContext();
   const navigate = useNavigate();
-
   const isOwner = isUserOwner();
 
   return (
@@ -52,7 +52,7 @@ export const CalendarHeader: FC = () => {
         />
 
         <div className="px-2 font-bold">
-          {format(selectedDate, "MMMM d, yyyy")}
+          {formatTimeWithZone(selectedDate, "MMMM d, yyyy", venue)}
         </div>
       </div>
     </header>

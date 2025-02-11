@@ -2,12 +2,12 @@ import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { isSameDay } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { useTimeLabels } from "../constants";
-import { useSelectedDate } from "../providers/date-provider";
 import { usePendingChanges } from "../providers/pending-changes-provider";
-import { useScheduleContext } from "../providers/schedule-query-provider";
+import { useScheduleContext } from "../providers/schedule-context-provider";
 import { getSharedGridStyle, MinutesPerSlot } from "./constants";
 import { DroppableSpace } from "./droppable";
 import { ReservationSlot } from "./reservation-slot";
+import { UTCToLocal } from "../date-utils";
 import {
   getRowSpan,
   getTimeFromRowIndex,
@@ -16,10 +16,9 @@ import {
 } from "./utilities";
 
 export const ReservationsSection = () => {
-  const { venue } = useScheduleContext();
+  const { venue, selectedDate } = useScheduleContext();
   const timeLabels = useTimeLabels();
   const { pendingChange, setPendingChange } = usePendingChanges();
-  const { selectedDate } = useSelectedDate();
 
   const [draggingReservationId, setDraggingReservationId] = useState<
     string | null
@@ -46,6 +45,7 @@ export const ReservationsSection = () => {
     const match = reservations.find(
       (reservation) => reservation.id === draggingReservationId,
     );
+    console.log({ match });
     if (match) return match;
     if (pendingChange) return pendingChange.newState;
     return null;
@@ -76,6 +76,7 @@ export const ReservationsSection = () => {
           rawStartTime,
           rawEndTime,
           draggingReservation.startTime,
+          venue,
         );
 
         const newSpaceId = droppable.spaceId;
@@ -184,8 +185,14 @@ export const ReservationsSection = () => {
               }}
             />
           ))}
-        {pendingChange &&
-          isSameDay(pendingChange.newState.startTime, selectedDate) && (
+        {pendingChange && (() => {
+          // Convert both dates to venue's timezone before comparing
+          const pendingDate = UTCToLocal(pendingChange.newState.startTime, venue);
+          const selectedLocalDate = UTCToLocal(selectedDate, venue);
+
+          console.log({ startTime: pendingChange.newState.startTime, pendingDate, selectedLocalDate });
+          return isSameDay(pendingDate, selectedLocalDate);
+        })() && (
             <ReservationSlot
               reservation={pendingChange.newState}
               gridIndex={spaceIds.findIndex(

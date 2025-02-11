@@ -1,6 +1,6 @@
 import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
-import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { SubmitHandler, useFieldArray, useForm, Controller } from "react-hook-form";
 import { BiLoaderCircle } from "react-icons/bi";
 import { createVenue, updateVenue } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
@@ -8,6 +8,7 @@ import { FormField } from "../../client/components/form/form-field";
 import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
 import { PricingStep } from "./pricing-step";
+import { Select } from "../../client/components/form/select";
 
 interface FormData {
   organizationName: string;
@@ -125,6 +126,18 @@ export function OrganizationStep({
   );
 }
 
+
+const TimeZoneOptions = Intl.supportedValuesOf('timeZone').map((tz) => ({
+  value: tz,
+  label: tz,
+}));
+
+type SpacesStepFormData = {
+  spaces: { name: string; type: string; capacity: number }[];
+  contactEmail: string;
+  timeZoneId: string;
+};
+
 export function SpacesStep({
   organizationName,
   onNext,
@@ -137,13 +150,11 @@ export function SpacesStep({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<{
-    spaces: { name: string; type: string; capacity: number }[];
-    contactEmail: string;
-  }>({
+  } = useForm<SpacesStepFormData>({
     defaultValues: {
       spaces: [{ name: "", type: "Conference Room", capacity: 1 }],
       contactEmail: "",
+      timeZoneId: Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
   });
 
@@ -159,10 +170,7 @@ export function SpacesStep({
     name: "spaces",
   });
 
-  const handleCreateVenueAndSpaces: SubmitHandler<{
-    contactEmail: string;
-    spaces: { name: string; type: string; capacity: number }[];
-  }> = async (formData) => {
+  const handleCreateVenueAndSpaces: SubmitHandler<SpacesStepFormData> = async (formData) => {
     setIsCreating(true);
     try {
       const venue = await createVenue({
@@ -174,6 +182,7 @@ export function SpacesStep({
         name: venue.name,
         displayStart: 480,
         displayEnd: 1080,
+        timeZoneId: formData.timeZoneId,
         spaces: spaces.map((space) => ({
           name: space.name,
           id: "",
@@ -218,6 +227,19 @@ export function SpacesStep({
               },
             })}
           />
+
+          <Controller
+            control={control}
+            name="timeZoneId"
+            render={({ field: { value, onChange } }) => (
+              <Select
+                options={TimeZoneOptions}
+                value={TimeZoneOptions.find((tz) => tz.value === value) || { value: "America/New_York", label: "America/New_York" }}
+                onChange={(value) => onChange(value.value)}
+              />
+            )}
+          />
+
           {errors.contactEmail && (
             <p className="text-red-500">{errors.contactEmail.message}</p>
           )}

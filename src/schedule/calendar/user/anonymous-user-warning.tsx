@@ -1,7 +1,7 @@
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../../client/components/button";
 import { Modal } from "../../../client/components/modal";
-import { useScheduleContext } from "../providers/schedule-query-provider";
+import { useScheduleContext } from "../providers/schedule-context-provider";
 
 export const AnonymousUserWarning = ({
   isOpen,
