@@ -1,7 +1,5 @@
 import { FC } from "react";
-import { Reservation, Space, Venue } from "wasp/entities";
-
-import { AuthUser } from "wasp/auth";
+import { Space } from "wasp/entities";
 import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
@@ -10,8 +8,12 @@ import { PendingChangesProvider } from "./providers/pending-changes-provider";
 import { getGridTemplateColumns } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
+import { useScheduleContext } from "./providers/schedule-context-provider";
+import { useAuth } from "wasp/client/auth";
 
-const CalendarContent: FC<WeekViewCalendarProps> = ({ venue, user }) => {
+const CalendarContent: FC = () => {
+  const { venue } = useScheduleContext();
+
   return (
     <div className="flex h-full flex-col flex-1">
       <CalendarHeader />
@@ -59,19 +61,11 @@ const CalendarContent: FC<WeekViewCalendarProps> = ({ venue, user }) => {
   );
 };
 
-export interface WeekViewCalendarProps {
-  venue: Venue & { spaces: (Space & { reservations: Reservation[] })[] };
-  user: AuthUser;
-}
-
-export const WeekViewCalendar: FC<WeekViewCalendarProps> = ({
-  venue,
-  user,
-}) => {
+export const WeekViewCalendar: FC = () => {
   return (
     <PendingChangesProvider>
       <SelectionProvider>
-        <CalendarContent venue={venue} user={user} />
+        <CalendarContent />
       </SelectionProvider>
     </PendingChangesProvider>
   );

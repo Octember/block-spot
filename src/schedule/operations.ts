@@ -69,9 +69,17 @@ export const getVenueInfo: GetVenueInfo<
     })
   | null
 > = async (args, context) => {
+  const venue = await context.entities.Venue.findFirst({
+    where: { id: args.venueId },
+  });
+
+  if (!venue) {
+    throw new HttpError(404, "Venue not found");
+  }
+
   const date = isValid(args.selectedDate)
-    ? getStartOfDay(args.selectedDate)
-    : getStartOfDay(new Date());
+    ? getStartOfDay(args.selectedDate, venue)
+    : getStartOfDay(new Date(), venue);
 
   return context.entities.Venue.findFirst({
     where: {
@@ -114,10 +122,24 @@ export const createReservation: CreateReservation<
     throw new HttpError(401);
   }
 
+  const venue = await context.entities.Venue.findFirst({
+    where: {
+      spaces: {
+        some: {
+          id: args.spaceId
+        }
+      }
+    }
+  });
+
+  if (!venue) {
+    throw new HttpError(404, "Venue not found");
+  }
+
   // Convert times to UTC for storage
-  const endTime = localToUTC(new Date(args.endTime));
+  const endTime = localToUTC(new Date(args.endTime), venue);
   endTime.setSeconds(0, 0);
-  const startTime = localToUTC(new Date(args.startTime));
+  const startTime = localToUTC(new Date(args.startTime), venue);
   startTime.setSeconds(0, 0);
 
   return context.entities.Reservation.create({
@@ -152,6 +174,20 @@ export const updateReservation: UpdateReservation<
   UpdateReservationPayload,
   Reservation
 > = async (args, context) => {
+  const venue = await context.entities.Venue.findFirst({
+    where: {
+      spaces: {
+        some: {
+          id: args.spaceId || ""
+        }
+      }
+    }
+  });
+
+  if (!venue) {
+    throw new HttpError(404, "Venue not found");
+  }
+
   // Convert times to UTC for storage if they are provided
   const updates: Partial<Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">> = {
     description: args.description,
@@ -159,12 +195,12 @@ export const updateReservation: UpdateReservation<
   };
   
   if (args.startTime) {
-    updates.startTime = localToUTC(new Date(args.startTime));
+    updates.startTime = localToUTC(new Date(args.startTime), venue);
     updates.startTime.setSeconds(0, 0);
   }
   
   if (args.endTime) {
-    updates.endTime = localToUTC(new Date(args.endTime));
+    updates.endTime = localToUTC(new Date(args.endTime), venue);
     updates.endTime.setSeconds(0, 0);
   }
 

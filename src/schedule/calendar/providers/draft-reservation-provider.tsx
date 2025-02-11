@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { Reservation } from "wasp/entities";
-import { useSelectedDate } from "./date-provider";
+import { useScheduleContext } from "./schedule-context-provider";
 
 interface DraftReservationContextType {
   draftReservation: Reservation | null;
@@ -17,7 +17,7 @@ export const DraftReservationProvider: React.FC<{
   const [draftReservation, setDraftReservation] = useState<Reservation | null>(
     null,
   );
-  const { selectedDate } = useSelectedDate();
+  const { selectedDate } = useScheduleContext();
 
   useEffect(() => {
     setDraftReservation(null);

@@ -2,9 +2,8 @@ import { createContext, useContext, useState } from "react";
 import { useAuth } from "wasp/client/auth";
 import { Venue } from "wasp/entities";
 import { useTimeLabels } from "./constants";
-import { useSelectedDate } from "./providers/date-provider";
 import { usePendingChanges } from "./providers/pending-changes-provider";
-import { useScheduleContext } from "./providers/schedule-query-provider";
+import { useScheduleContext } from "./providers/schedule-context-provider";
 import { getSharedGridStyle } from "./reservations/constants";
 import { getTimeFromRowIndex } from "./reservations/utilities";
 import { AnonymousUserWarning } from "./user/anonymous-user-warning";
@@ -162,7 +161,7 @@ export const GridSelection: React.FC = () => {
   const { setPendingChange } = usePendingChanges();
   const [anonUserWarningOpen, setAnonUserWarningOpen] = useState(false);
   const timeLabels = useTimeLabels();
-  const { selectedDate } = useSelectedDate();
+  const { selectedDate } = useScheduleContext();
   const { venue, isTimeAvailable } = useScheduleContext();
   const { data: user } = useAuth();
 

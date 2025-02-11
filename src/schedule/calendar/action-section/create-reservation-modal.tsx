@@ -11,8 +11,8 @@ import { createReservation } from "wasp/client/operations";
 import { Select } from "../../../client/components/form/select";
 import { TextInput } from "../../../client/components/form/text-input";
 import { useToast } from "../../../client/toast";
-import { timeLabelsLong15Minutes } from "../constants";
-import { useScheduleContext } from "../providers/schedule-query-provider";
+import { useTimeLabelsLong15Minutes } from "../constants";
+import { useScheduleContext } from "../providers/schedule-context-provider";
 import { Reservation } from "wasp/entities";
 import { FC } from "react";
 
@@ -39,6 +39,7 @@ export const CreateReservationModal: FC<{
 }> = ({ reservation }) => {
   const { cancelChange, setPendingChange } = usePendingChanges();
   const { venue, getSpaceById } = useScheduleContext();
+  const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
 
   const {

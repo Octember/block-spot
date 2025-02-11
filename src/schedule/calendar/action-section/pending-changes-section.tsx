@@ -8,7 +8,7 @@ import {
 import { format } from "date-fns";
 import { FC, useMemo } from "react";
 import { useAuth } from "wasp/client/auth";
-import { Reservation } from "wasp/entities";
+import { Reservation, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { Modal } from "../../../client/components/modal";
 import { TimeSelect } from "../../../client/components/time-select";
@@ -16,7 +16,7 @@ import {
   PendingChange,
   usePendingChanges,
 } from "../providers/pending-changes-provider";
-import { useScheduleContext } from "../providers/schedule-query-provider";
+import { useScheduleContext } from "../providers/schedule-context-provider";
 import { CreateReservationModal } from "./create-reservation-modal";
 import { formatTimeWithZone } from "../date-utils";
 
@@ -106,7 +106,7 @@ const ReservationChangeDescription: FC<{
   color: "red" | "blue" | "gray";
   editable?: boolean;
 }> = ({ reservation, color, editable }) => {
-  const { getSpaceById } = useScheduleContext();
+  const { getSpaceById, venue } = useScheduleContext();
   const space = useMemo(
     () => getSpaceById(reservation.spaceId),
     [reservation.spaceId, getSpaceById],
@@ -171,9 +171,9 @@ const ReservationChangeDescription: FC<{
             />
           </div>
         ) : (
-          formatTime(reservation.startTime) +
+          formatTime(reservation.startTime, venue) +
           " - " +
-          formatTime(reservation.endTime)
+          formatTime(reservation.endTime, venue)
         )}
       </span>
     </div>
@@ -213,4 +213,4 @@ export const ChangeDescription = () => {
   );
 };
 
-const formatTime = (date: Date) => formatTimeWithZone(date, "h:mm a");
+const formatTime = (date: Date, venue: Venue) => formatTimeWithZone(date, "h:mm a", venue);

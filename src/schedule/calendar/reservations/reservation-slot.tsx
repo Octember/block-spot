@@ -10,7 +10,6 @@ import { useMemo, useState } from "react";
 import { Reservation } from "wasp/entities";
 import { isUserOwner } from "../../../client/hooks/permissions";
 import { usePendingChanges } from "../providers/pending-changes-provider";
-import { useScheduleContext } from "../providers/schedule-query-provider";
 import { useReservationSelection } from "../selection";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
 import { getRowIndex, getRowSpan } from "./utilities";
@@ -150,8 +149,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
           <div className="flex flex-row justify-between">
             <p className={`font-semibold text-gray-700`}>
               <time dateTime={reservation.startTime.toISOString()}>
-                {formatTimeWithZone(newTimes.startTime)} -{" "}
-                {formatTimeWithZone(newTimes.endTime)}
+                {formatTimeWithZone(newTimes.startTime, "h:mm a", venue)} -{" "}
+                {formatTimeWithZone(newTimes.endTime, "h:mm a", venue)}
               </time>
             </p>
 
@@ -175,6 +174,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 };
 
 import { usePopper } from "react-popper";
+import { useScheduleContext } from '../providers/schedule-context-provider';
 
 const ReservationMenu = ({
   onEdit,

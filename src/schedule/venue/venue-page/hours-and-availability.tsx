@@ -14,9 +14,9 @@ import { FormField } from "../../../client/components/form/form-field";
 import { Select } from "../../../client/components/form/select";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { useToast } from "../../../client/toast";
-import { timeLabels } from "../../calendar/constants";
 import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
+import { useTimeLabels } from "../../calendar/constants";
 
 function transformToFormInputs(
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] },
@@ -59,6 +59,7 @@ export function HoursAndAvailabilityForm({
 }: {
   venue: NonNullable<Awaited<ReturnType<typeof getVenueById>>>;
 }) {
+  const timeLabels = useTimeLabels();
   const toast = useToast();
 
   const {

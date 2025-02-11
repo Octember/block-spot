@@ -17,7 +17,7 @@ export function getRowSpan(reservation: Reservation) {
 
 export function getRowIndex(venue: Venue, time: Date) {
   // Convert to local time for display calculations
-  const localTime = UTCToLocal(time);
+  const localTime = UTCToLocal(time, venue);
   
   const rowIndex =
     Math.ceil(
@@ -53,7 +53,7 @@ export function getTimeFromRowIndex(venue: Venue, rowIndex: number): Date {
 
   const result = new Date();
   result.setHours(hours, minutes, 0, 0);
-  return localToUTC(result); // Convert to UTC before returning
+  return localToUTC(result, venue); // Convert to UTC before returning
 }
 
 export function isWithinReservation(
@@ -69,6 +69,7 @@ export function isWithinReservation(
     rawStartTime,
     rawEndTime,
     target.startTime,
+    venue
   );
 
   const result =
@@ -77,17 +78,18 @@ export function isWithinReservation(
   return result;
 }
 
-export function setTimesOnDate(
+export function   setTimesOnDate(
   startTime: Date,
   endTime: Date,
   targetDate: Date,
+  venue: Venue,
 ): {
   startTime: Date;
   endTime: Date;
 } {
-  const localTargetDate = UTCToLocal(targetDate);
-  const localStartTime = UTCToLocal(startTime);
-  const localEndTime = UTCToLocal(endTime);
+  const localTargetDate = UTCToLocal(targetDate, venue);
+  const localStartTime = UTCToLocal(startTime, venue);
+  const localEndTime = UTCToLocal(endTime, venue);
 
   const result = new Date(localTargetDate);
   return {
@@ -100,6 +102,7 @@ export function setTimesOnDate(
           0,
         ),
       ),
+      venue
     ),
     endTime: localToUTC(
       new Date(
@@ -110,6 +113,7 @@ export function setTimesOnDate(
           0,
         ),
       ),
+      venue
     ),
   };
 }

@@ -2,9 +2,8 @@ import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { isSameDay } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { useTimeLabels } from "../constants";
-import { useSelectedDate } from "../providers/date-provider";
 import { usePendingChanges } from "../providers/pending-changes-provider";
-import { useScheduleContext } from "../providers/schedule-query-provider";
+import { useScheduleContext } from "../providers/schedule-context-provider";
 import { getSharedGridStyle, MinutesPerSlot } from "./constants";
 import { DroppableSpace } from "./droppable";
 import { ReservationSlot } from "./reservation-slot";
@@ -16,10 +15,9 @@ import {
 } from "./utilities";
 
 export const ReservationsSection = () => {
-  const { venue } = useScheduleContext();
+  const { venue, selectedDate } = useScheduleContext();
   const timeLabels = useTimeLabels();
   const { pendingChange, setPendingChange } = usePendingChanges();
-  const { selectedDate } = useSelectedDate();
 
   const [draggingReservationId, setDraggingReservationId] = useState<
     string | null
@@ -76,6 +74,7 @@ export const ReservationsSection = () => {
           rawStartTime,
           rawEndTime,
           draggingReservation.startTime,
+          venue,
         );
 
         const newSpaceId = droppable.spaceId;
