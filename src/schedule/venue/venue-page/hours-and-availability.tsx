@@ -17,6 +17,7 @@ import { useToast } from "../../../client/toast";
 import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
 import { useTimeLabels } from "../../calendar/constants";
+import { VenueProvider } from "../../calendar/providers/venue-provider";
 
 function transformToFormInputs(
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] },
@@ -50,7 +51,9 @@ export function HoursAndAvailabilityPage() {
         description: "Manage your venue availability",
       }}
     >
-      <Card>{venue && <HoursAndAvailabilityForm venue={venue} />}</Card>
+      <VenueProvider venueId={venueId}>
+        <Card>{venue && <HoursAndAvailabilityForm venue={venue} />}</Card>
+      </VenueProvider>
     </SidebarLayout>
   );
 }
