@@ -37,8 +37,8 @@ export const AvailabilityRuleForm = ({
               onClick={() =>
                 append({
                   days: [],
-                  startTimeMinutes: 0,
-                  endTimeMinutes: 0,
+                  startTimeMinutes: 8,
+                  endTimeMinutes: 20,
                   spaceIds: [],
                 })
               }
