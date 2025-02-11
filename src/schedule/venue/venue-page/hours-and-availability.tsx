@@ -16,7 +16,7 @@ import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout
 import { useToast } from "../../../client/toast";
 import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
-import { useTimeLabels } from "../../calendar/constants";
+import { useTimeLabels, useTimeLabelsNoVenue } from "../../calendar/constants";
 import { VenueProvider } from "../../calendar/providers/venue-provider";
 
 function transformToFormInputs(
@@ -63,7 +63,7 @@ export function HoursAndAvailabilityForm({
 }: {
   venue: NonNullable<Awaited<ReturnType<typeof getVenueById>>>;
 }) {
-  const timeLabels = useTimeLabels();
+  const timeLabels = useTimeLabelsNoVenue();
   const toast = useToast();
 
   const {

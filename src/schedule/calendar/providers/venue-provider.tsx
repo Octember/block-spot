@@ -80,6 +80,7 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
     [venue],
   );
 
+
   if (!venue) {
     return null;
   }

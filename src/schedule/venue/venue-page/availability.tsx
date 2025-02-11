@@ -3,7 +3,7 @@ import { Control, Controller, useFieldArray } from "react-hook-form";
 import { Button } from "../../../client/components/button";
 import { FormField } from "../../../client/components/form/form-field";
 import { MultiSelect, Select } from "../../../client/components/form/select";
-import { useTimeLabels, useTimeLabelsLong } from "../../calendar/constants";
+import { useTimeLabels, useTimeLabelsLong, useTimeLabelsNoVenue } from "../../calendar/constants";
 import { UpdateVenueFormInputs } from "./types";
 
 export const AvailabilityRuleForm = ({
@@ -11,8 +11,6 @@ export const AvailabilityRuleForm = ({
 }: {
   control: Control<UpdateVenueFormInputs>;
 }) => {
-
-
   const { fields, append, remove } = useFieldArray({
     control: control,
     name: "availabilityRules",
@@ -66,8 +64,8 @@ export const AvailabilityRuleBlock = ({
   index: number;
   remove: () => void;
 }) => {
-  const timeLabels = useTimeLabels();
-  const timeLabelsLong = useTimeLabelsLong();
+  const timeLabels = useTimeLabelsNoVenue();
+  // const timeLabelsLong = useTimeLabelsLong();
 
   return (
     <div className="flex flex-row justify-between gap-2 items-center bg-gray-200 border border-gray-300 p-4 rounded-md">
@@ -98,12 +96,12 @@ export const AvailabilityRuleBlock = ({
             <Select
               size="sm"
               options={Array.from({ length: 24 }, (_, i) => ({
-                label: timeLabelsLong[i],
+                label: timeLabels[i],
                 value: String(i),
               }))}
-              onChange={(value) => onChange(Number(value.value) * 60)}
+              onChange={(value) => onChange(Number(value.value))}
               value={{
-                label: timeLabelsLong[value / 60],
+                label: timeLabels[value],
                 value: String(value),
               }}
             />
@@ -121,9 +119,9 @@ export const AvailabilityRuleBlock = ({
                 label: timeLabels[i],
                 value: String(i),
               }))}
-              onChange={(value) => onChange(Number(value.value) * 60)}
+              onChange={(value) => onChange(Number(value.value))}
               value={{
-                label: timeLabelsLong[value / 60],
+                label: timeLabels[value],
                 value: String(value),
               }}
             />
