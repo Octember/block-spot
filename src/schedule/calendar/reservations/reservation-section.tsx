@@ -14,9 +14,11 @@ import {
   isWithinReservation,
   setTimesOnDate,
 } from "./utilities";
+import { useVenueContext } from "../providers/venue-provider";
 
 export const ReservationsSection = () => {
-  const { venue, selectedDate } = useScheduleContext();
+  const { selectedDate } = useVenueContext()
+  const { venue } = useScheduleContext();
   const timeLabels = useTimeLabels();
   const { pendingChange, setPendingChange } = usePendingChanges();
 

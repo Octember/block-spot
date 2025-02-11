@@ -7,6 +7,7 @@ import {
 import { Reservation } from "wasp/entities";
 import { useToast } from "../../../client/toast";
 import { useScheduleContext } from "./schedule-context-provider";
+import { useVenueContext } from "./venue-provider";
 
 export interface PendingChange {
   type: "CREATE" | "UPDATE" | "DELETE";
@@ -37,7 +38,8 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({
     null,
   );
   const setToast = useToast();
-  const { refresh, selectedDate } = useScheduleContext();
+  const { selectedDate } = useVenueContext();
+  const { refresh } = useScheduleContext();
 
   useEffect(() => {
     setPendingChange(null);

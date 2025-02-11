@@ -7,23 +7,15 @@ import { useQuery } from "wasp/client/operations";
 import { getVenueInfo } from "wasp/client/operations";
 import React from 'react';
 import { getUnavailabilityBlocks } from './availability-utils';
+import { useVenueContext } from "./venue-provider";
 
 
 interface ScheduleContextValue {
-  // Date-related
-  selectedDate: Date;
-  setSelectedDate: (date: Date) => void;
 
   // Venue-related
-  unavailabileBlocks: {
-    id: string;
-    startTimeMinutes: number;
-    endTimeMinutes: number;
-  }[];
   refresh: () => void;
   venue: NonNullable<Awaited<ReturnType<typeof getVenueInfo>>>;
   isLoading: boolean;
-  getSpaceById: (id: string) => Space | undefined;
   isTimeAvailable: (rowIndex: number, columnIndex: number) => boolean;
 }
 
@@ -48,7 +40,8 @@ interface ScheduleProviderProps {
 }
 
 export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const { unavailabileBlocks } = useVenueContext();
 
   // Get the current date from URL params
   const urlDate = searchParams.get("selected_date");
@@ -61,7 +54,6 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
     venueId,
     selectedDate
   });
-
 
   // Effect to update selectedDate when URL changes
   useEffect(() => {
@@ -79,16 +71,6 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
   }, [selectedDate]);
 
   const currentDate = venue ? getDateOrDefault(urlDate, venue) : initialDate;
-
-  const getSpaceById = useMemo(
-    () => (id: string) => venue?.spaces.find((space: Space) => space.id === id),
-    [venue?.spaces]
-  );
-
-  const unavailabileBlocks = useMemo(
-    () => (venue ? getUnavailabilityBlocks(venue) : []),
-    [venue],
-  );
 
   const isTimeAvailable = useCallback(
     (rowIndex: number, columnIndex: number) => {
@@ -127,7 +109,7 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
 
       return !hasOverlappingReservation;
     },
-    [venue, unavailabileBlocks, currentDate],
+    [venue, currentDate],
   );
 
   if (!venue) {
@@ -135,22 +117,11 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
   }
 
   const value: ScheduleContextValue = {
-    selectedDate: currentDate,
-    setSelectedDate: (date: Date) => {
-      const utcDate = localToUTC(date, venue);
-      setSearchParams((prev) => {
-        prev.set("selected_date", format(utcDate, "yyyy-MM-dd"));
-        return prev;
-      });
-    },
     venue,
-    unavailabileBlocks,
     refresh: () => {
-      console.log("Refreshing");
       refetch();
     },
     isLoading,
-    getSpaceById,
     isTimeAvailable,
   };
 

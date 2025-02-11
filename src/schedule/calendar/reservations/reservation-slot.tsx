@@ -67,7 +67,7 @@ function getColorStyles({
 }
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
-  const { venue } = useScheduleContext();
+  const { venue } = useVenueContext();
   const { reservation, gridIndex, isDraft } = props;
   const isOwner = isUserOwner();
 
@@ -174,7 +174,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 };
 
 import { usePopper } from "react-popper";
-import { useScheduleContext } from '../providers/schedule-context-provider';
+import { useVenueContext } from '../providers/venue-provider';
 
 const ReservationMenu = ({
   onEdit,

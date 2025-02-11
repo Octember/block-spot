@@ -5,7 +5,7 @@ import {
   PixelsPerSlot,
   getGridTemplateColumns,
 } from "./reservations/constants";
-import { useScheduleContext } from "./providers/schedule-context-provider";
+import { useVenueContext } from "./providers/venue-provider";
 
 export const HorizontalDividers: FC = () => {
   const timeLabels = useTimeLabels();
@@ -46,7 +46,7 @@ function getBorderStyle(index: number) {
 }
 
 export const VerticalDividers: FC = () => {
-  const { venue } = useScheduleContext();
+  const { venue } = useVenueContext();
 
   return (
     <div

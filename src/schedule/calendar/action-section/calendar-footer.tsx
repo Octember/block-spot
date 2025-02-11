@@ -1,4 +1,4 @@
-import { useScheduleContext } from "../providers/schedule-context-provider";
+import { useVenueContext } from "../providers/venue-provider";
 import { PendingChangesSection } from "./pending-changes-section";
 
 export const CalendarFooter = () => {
@@ -13,7 +13,7 @@ export const CalendarFooter = () => {
 };
 
 export const AnnouncementSection = () => {
-  const { venue } = useScheduleContext();
+  const { venue } = useVenueContext();
   return (
     <div className="flex items-center justify-center h-full">
       {venue.announcements}

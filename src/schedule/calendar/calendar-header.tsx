@@ -13,10 +13,10 @@ import { Button } from "../../client/components/button";
 import { ButtonGroup } from "../../client/components/button-group";
 import { isUserOwner } from "../../client/hooks/permissions";
 import { formatTimeWithZone } from "./date-utils";
-import { useScheduleContext } from "./providers/schedule-context-provider";
+import { useVenueContext } from "./providers/venue-provider";
 
 export const CalendarHeader: FC = () => {
-  const { selectedDate, setSelectedDate, venue } = useScheduleContext();
+  const { selectedDate, setSelectedDate, venue } = useVenueContext();
   const navigate = useNavigate();
   const isOwner = isUserOwner();
 

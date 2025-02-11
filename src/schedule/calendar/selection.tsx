@@ -7,6 +7,7 @@ import { useScheduleContext } from "./providers/schedule-context-provider";
 import { getSharedGridStyle } from "./reservations/constants";
 import { getTimeFromRowIndex } from "./reservations/utilities";
 import { AnonymousUserWarning } from "./user/anonymous-user-warning";
+import { useVenueContext } from "./providers/venue-provider";
 
 interface Selection {
   start: { row: number; col: number } | null;
@@ -161,8 +162,9 @@ export const GridSelection: React.FC = () => {
   const { setPendingChange } = usePendingChanges();
   const [anonUserWarningOpen, setAnonUserWarningOpen] = useState(false);
   const timeLabels = useTimeLabels();
-  const { selectedDate } = useScheduleContext();
-  const { venue, isTimeAvailable } = useScheduleContext();
+  const { venue, selectedDate } = useVenueContext();
+  const { isTimeAvailable } = useScheduleContext();
+
   const { data: user } = useAuth();
 
   const {

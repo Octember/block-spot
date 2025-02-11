@@ -6,15 +6,15 @@ import { usePendingChanges } from "../providers/pending-changes-provider";
 
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 import { parse } from "date-fns";
+import { FC } from "react";
 import { BiLoaderCircle } from "react-icons/bi";
 import { createReservation } from "wasp/client/operations";
+import { Reservation } from "wasp/entities";
 import { Select } from "../../../client/components/form/select";
 import { TextInput } from "../../../client/components/form/text-input";
 import { useToast } from "../../../client/toast";
 import { useTimeLabelsLong15Minutes } from "../constants";
-import { useScheduleContext } from "../providers/schedule-context-provider";
-import { Reservation } from "wasp/entities";
-import { FC } from "react";
+import { useVenueContext } from "../providers/venue-provider";
 
 type CreateReservationFormInputs = {
   date: Date;
@@ -38,7 +38,7 @@ export const CreateReservationModal: FC<{
   reservation: Reservation;
 }> = ({ reservation }) => {
   const { cancelChange, setPendingChange } = usePendingChanges();
-  const { venue, getSpaceById } = useScheduleContext();
+  const { venue, getSpaceById } = useVenueContext();
   const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
 

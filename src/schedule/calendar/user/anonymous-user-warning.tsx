@@ -1,7 +1,7 @@
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../../client/components/button";
 import { Modal } from "../../../client/components/modal";
-import { useScheduleContext } from "../providers/schedule-context-provider";
+import { useVenueContext } from '../providers/venue-provider';
 
 export const AnonymousUserWarning = ({
   isOpen,
@@ -10,7 +10,7 @@ export const AnonymousUserWarning = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { venue } = useScheduleContext();
+  const { venue } = useVenueContext();
 
   return (
     <Modal

@@ -4,10 +4,10 @@ import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { PendingChangesProvider } from "./providers/pending-changes-provider";
-import { useScheduleContext } from "./providers/schedule-context-provider";
 import { getGridTemplateColumns } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
+import { useVenueContext } from "./providers/venue-provider";
 
 const CalendarContent: FC = () => {
 
@@ -38,7 +38,7 @@ const CalendarContent: FC = () => {
 };
 
 const SpacesNamesSection: FC = () => {
-  const { venue } = useScheduleContext();
+  const { venue } = useVenueContext();
 
   return (
     <div className="z-30 flex-none bg-white shadow-4 sm:pr-8">

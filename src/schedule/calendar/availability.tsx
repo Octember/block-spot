@@ -1,12 +1,13 @@
 import { FC } from "react";
 import { useTimeLabels } from "./constants";
-import { useScheduleContext } from "./providers/schedule-context-provider";
 import { getSharedGridStyle } from "./reservations/constants";
 import { getRowIndexFromMinutes } from "./reservations/utilities";
+import { useVenueContext } from "./providers/venue-provider";
 
 export const AvailabilitySection: FC = () => {
   const timeLabels = useTimeLabels();
-  const { venue, unavailabileBlocks } = useScheduleContext();
+  const { venue } = useVenueContext();
+  const { unavailabileBlocks } = useVenueContext();
 
   return (
     <div {...getSharedGridStyle(timeLabels.length, venue.spaces.length)}>

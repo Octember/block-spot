@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { WeekViewCalendar } from "./calendar/WeekViewCalendar";
 import { ScheduleProvider } from "./calendar/providers/schedule-context-provider";
+import { VenueProvider } from "./calendar/providers/venue-provider";
 import { useAuth } from "wasp/client/auth";
 
 export default function SchedulePage() {
@@ -10,8 +11,10 @@ export default function SchedulePage() {
   if (!venueId || !user) return null;
 
   return (
-    <ScheduleProvider venueId={venueId}>
-      <WeekViewCalendar />
-    </ScheduleProvider>
+    <VenueProvider venueId={venueId}>
+      <ScheduleProvider venueId={venueId}>
+        <WeekViewCalendar />
+      </ScheduleProvider>
+    </VenueProvider>
   );
 }

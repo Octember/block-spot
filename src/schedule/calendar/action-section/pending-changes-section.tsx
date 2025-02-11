@@ -16,9 +16,9 @@ import {
   PendingChange,
   usePendingChanges,
 } from "../providers/pending-changes-provider";
-import { useScheduleContext } from "../providers/schedule-context-provider";
 import { CreateReservationModal } from "./create-reservation-modal";
 import { formatTimeWithZone } from "../date-utils";
+import { useVenueContext } from "../providers/venue-provider";
 
 function getChangeType(pendingChange: PendingChange | null) {
   if (pendingChange?.type === "CREATE") return "New Reservation";
@@ -106,7 +106,7 @@ const ReservationChangeDescription: FC<{
   color: "red" | "blue" | "gray";
   editable?: boolean;
 }> = ({ reservation, color, editable }) => {
-  const { getSpaceById, venue } = useScheduleContext();
+  const { getSpaceById, venue } = useVenueContext();
   const space = useMemo(
     () => getSpaceById(reservation.spaceId),
     [reservation.spaceId, getSpaceById],

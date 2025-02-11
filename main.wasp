@@ -322,6 +322,11 @@ query getVenueInfo {
   entities: [User, Venue, Space]
 }
 
+query getVenueDetails {
+  fn: import { getVenueDetails } from "@src/schedule/venue/venue-operations",
+  entities: [User, Venue, Space]
+}
+
 query getAllVenues {
   fn: import { getAllVenues } from "@src/schedule/operations",
   entities: [User, Venue, Space]
