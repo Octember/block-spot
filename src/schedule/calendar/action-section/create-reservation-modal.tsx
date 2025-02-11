@@ -15,6 +15,7 @@ import { TextInput } from "../../../client/components/form/text-input";
 import { useToast } from "../../../client/toast";
 import { useTimeLabelsLong15Minutes } from "../constants";
 import { useVenueContext } from "../providers/venue-provider";
+import { useScheduleContext } from "../providers/schedule-context-provider";
 
 type CreateReservationFormInputs = {
   date: Date;
@@ -39,6 +40,7 @@ export const CreateReservationModal: FC<{
 }> = ({ reservation }) => {
   const { cancelChange, setPendingChange } = usePendingChanges();
   const { venue, getSpaceById } = useVenueContext();
+  const { refresh } = useScheduleContext();
   const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
 
@@ -70,7 +72,7 @@ export const CreateReservationModal: FC<{
     });
 
     cancelChange();
-
+    refresh();
     toast({
       title: "Reservation created",
       description: "The reservation has been created",
