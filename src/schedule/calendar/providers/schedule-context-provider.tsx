@@ -1,5 +1,5 @@
 import { format, isValid, parseISO } from "date-fns";
-import { createContext, useContext, useMemo, useCallback, useEffect, useRef } from 'react';
+import { createContext, useContext, useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from "react-router-dom";
 import { Space, Venue } from "wasp/entities";
 import { getStartOfDay, localToUTC } from "../date-utils";
@@ -55,25 +55,28 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
   const initialDate = urlDate ? parseISO(urlDate) : new Date();
 
   // Keep track of current query parameters
-  const queryInput = useRef({
+  const [selectedDate, setSelectedDate] = useState(initialDate);
+
+  const { data: venue, refetch, isLoading } = useQuery(getVenueInfo, {
     venueId,
-    selectedDate: initialDate
+    selectedDate
   });
 
-  // Fetch venue data with the current date
-  const { data: venue, refetch, isLoading } = useQuery(getVenueInfo, queryInput.current);
 
-  // Update venue data when date changes
+  // Effect to update selectedDate when URL changes
   useEffect(() => {
-    if (urlDate) {
-      const newDate = parseISO(urlDate);
-      queryInput.current = {
-        venueId,
-        selectedDate: newDate
-      };
-      refetch();
+    if (!urlDate) return;
+    const newDate = parseISO(urlDate);
+
+    if (newDate.getTime() !== selectedDate.getTime()) {
+      setSelectedDate(newDate);
     }
-  }, [urlDate, venueId, refetch]);
+  }, [urlDate]);
+
+  // Effect to refetch when selectedDate changes
+  useEffect(() => {
+    refetch();
+  }, [selectedDate]);
 
   const currentDate = venue ? getDateOrDefault(urlDate, venue) : initialDate;
 
@@ -142,7 +145,10 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
     },
     venue,
     unavailabileBlocks,
-    refresh: refetch,
+    refresh: () => {
+      console.log("Refreshing");
+      refetch();
+    },
     isLoading,
     getSpaceById,
     isTimeAvailable,

@@ -45,7 +45,6 @@ export const ReservationsSection = () => {
     const match = reservations.find(
       (reservation) => reservation.id === draggingReservationId,
     );
-    console.log({ match });
     if (match) return match;
     if (pendingChange) return pendingChange.newState;
     return null;
