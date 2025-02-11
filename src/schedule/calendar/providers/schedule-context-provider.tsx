@@ -1,4 +1,4 @@
-import { isValid, parseISO } from "date-fns";
+import { isValid, parseISO, startOfToday } from "date-fns";
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useSearchParams } from "react-router-dom";
 import { getVenueSchedule, useQuery } from "wasp/client/operations";
@@ -39,11 +39,13 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
 
   // Get the current date from URL params
   const urlDate = searchParams.get("selected_date");
-  const initialDate = urlDate ? parseISO(urlDate) : new Date();
+  const initialDate = urlDate ? parseISO(urlDate) : startOfToday();
 
   // Keep track of current query parameters
   const [selectedDate, setSelectedDate] = useState(initialDate);
 
+
+  console.log({ selectedDate })
   const { data: spaces, refetch, isLoading } = useQuery(getVenueSchedule, {
     venueId: venue.id,
     selectedDate
