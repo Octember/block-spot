@@ -1,5 +1,5 @@
 import { format, isValid, parseISO } from "date-fns";
-import { createContext, useContext, useMemo, useCallback } from 'react';
+import { createContext, useContext, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from "react-router-dom";
 import { Space, Venue } from "wasp/entities";
 import { getStartOfDay, localToUTC } from "../date-utils";
@@ -50,22 +50,37 @@ interface ScheduleProviderProps {
 export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Get the current date from URL params
+  const urlDate = searchParams.get("selected_date");
+  const initialDate = urlDate ? parseISO(urlDate) : new Date();
 
-  const date = useMemo(() => new Date(), []);
-  // Fetch venue data first since we need it for date calculations
-  const { data: venue, refetch, isLoading } = useQuery(getVenueInfo, {
+  // Keep track of current query parameters
+  const queryInput = useRef({
     venueId,
-    selectedDate: date,
+    selectedDate: initialDate
   });
 
-  // Only calculate current date once we have venue for timezone
-  const currentDate = venue ? getDateOrDefault(searchParams.get("selected_date"), venue) : new Date();
+  // Fetch venue data with the current date
+  const { data: venue, refetch, isLoading } = useQuery(getVenueInfo, queryInput.current);
+
+  // Update venue data when date changes
+  useEffect(() => {
+    if (urlDate) {
+      const newDate = parseISO(urlDate);
+      queryInput.current = {
+        venueId,
+        selectedDate: newDate
+      };
+      refetch();
+    }
+  }, [urlDate, venueId, refetch]);
+
+  const currentDate = venue ? getDateOrDefault(urlDate, venue) : initialDate;
 
   const getSpaceById = useMemo(
     () => (id: string) => venue?.spaces.find((space: Space) => space.id === id),
     [venue?.spaces]
   );
-
 
   const unavailabileBlocks = useMemo(
     () => (venue ? getUnavailabilityBlocks(venue) : []),
@@ -115,7 +130,6 @@ export function ScheduleProvider({ children, venueId }: ScheduleProviderProps) {
   if (!venue) {
     return null;
   }
-
 
   const value: ScheduleContextValue = {
     selectedDate: currentDate,
