@@ -94,16 +94,12 @@ export const AvailabilityRuleBlock = ({
           control={control}
           render={({ field: { onChange, value } }) => (
             <Select
-              size="sm"
               options={Array.from({ length: 24 }, (_, i) => ({
                 label: timeLabels[i],
-                value: String(i),
+                value: i * 60,
               }))}
               onChange={(value) => onChange(Number(value.value))}
-              value={{
-                label: timeLabels[value],
-                value: String(value),
-              }}
+              value={{ label: timeLabels[value / 60], value: String(value) }}
             />
           )}
         />
@@ -114,16 +110,12 @@ export const AvailabilityRuleBlock = ({
           control={control}
           render={({ field: { onChange, value } }) => (
             <Select
-              size="sm"
               options={Array.from({ length: 24 }, (_, i) => ({
                 label: timeLabels[i],
-                value: String(i),
+                value: i * 60,
               }))}
               onChange={(value) => onChange(Number(value.value))}
-              value={{
-                label: timeLabels[value],
-                value: String(value),
-              }}
+              value={{ label: timeLabels[value / 60], value: String(value) }}
             />
           )}
         />

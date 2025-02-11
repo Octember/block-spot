@@ -126,7 +126,7 @@ export function HoursAndAvailabilityForm({
                 <Select
                   options={Array.from({ length: 24 }, (_, i) => ({
                     label: timeLabels[i],
-                    value: String(i),
+                    value: i * 60,
                   }))}
                   onChange={(value) => onChange(Number(value.value))}
                   value={{ label: timeLabels[value], value: String(value) }}
@@ -142,7 +142,7 @@ export function HoursAndAvailabilityForm({
                 <Select
                   options={Array.from({ length: 24 }, (_, i) => ({
                     label: timeLabels[i],
-                    value: String(i),
+                    value: i * 60,
                   }))}
                   onChange={(value) => onChange(Number(value.value))}
                   value={{ label: timeLabels[value], value: String(value) }}
