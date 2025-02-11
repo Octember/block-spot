@@ -69,7 +69,7 @@ function getStartEndTime(
 const calculateTimeFromRow = (venue: Venue, date: Date, row: number): Date => {
   // Can cause bugs if date is mutated, need to clone it
   const result = new Date(date);
-  const hoursMinutes = getTimeFromRowIndex(venue, row, date);
+  const hoursMinutes = getTimeFromRowIndex(venue, row);
 
   result.setHours(hoursMinutes.getHours(), hoursMinutes.getMinutes(), 0, 0);
   return result;
