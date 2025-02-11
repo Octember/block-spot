@@ -44,8 +44,6 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
   // Keep track of current query parameters
   const [selectedDate, setSelectedDate] = useState(initialDate);
 
-
-  console.log({ selectedDate })
   const { data: spaces, refetch, isLoading } = useQuery(getVenueSchedule, {
     venueId: venue.id,
     selectedDate
