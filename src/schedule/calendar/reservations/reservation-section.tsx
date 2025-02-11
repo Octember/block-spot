@@ -45,20 +45,11 @@ export const ReservationsSection = () => {
     const match = reservations.find(
       (reservation) => reservation.id === draggingReservationId,
     );
+    console.log({ match });
     if (match) return match;
     if (pendingChange) return pendingChange.newState;
     return null;
   }, [reservations, draggingReservationId, pendingChange]);
-
-  const shouldShowPendingChange = useMemo(() => {
-    if (!pendingChange) return false;
-    const pendingDate = UTCToLocal(pendingChange.newState.startTime, venue);
-    const selectedLocalDate = UTCToLocal(selectedDate, venue);
-    console.log(pendingDate, selectedLocalDate);
-    return isSameDay(pendingDate, selectedLocalDate);
-  }, [pendingChange, selectedDate, venue]);
-
-  console.log(shouldShowPendingChange);
 
   return (
     <DndContext
@@ -198,6 +189,8 @@ export const ReservationsSection = () => {
           // Convert both dates to venue's timezone before comparing
           const pendingDate = UTCToLocal(pendingChange.newState.startTime, venue);
           const selectedLocalDate = UTCToLocal(selectedDate, venue);
+
+          console.log({ startTime: pendingChange.newState.startTime, pendingDate, selectedLocalDate });
           return isSameDay(pendingDate, selectedLocalDate);
         })() && (
             <ReservationSlot
