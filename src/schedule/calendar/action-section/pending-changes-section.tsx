@@ -138,6 +138,7 @@ const ReservationChangeDescription: FC<{
           <div className="flex items-center">
             <TimeSelect
               value={reservation.startTime}
+              venue={venue}
               onChange={(hour, minute) => {
                 if (!pendingChange) return;
                 setPendingChange({
@@ -154,6 +155,7 @@ const ReservationChangeDescription: FC<{
             -
             <TimeSelect
               value={reservation.endTime}
+              venue={venue}
               onChange={(hour, minute) => {
                 if (!pendingChange) return;
                 if (hour < reservation.startTime.getHours()) return;

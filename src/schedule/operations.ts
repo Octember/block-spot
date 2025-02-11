@@ -142,6 +142,11 @@ export const createReservation: CreateReservation<
   const startTime = localToUTC(new Date(args.startTime), venue);
   startTime.setSeconds(0, 0);
 
+  // Validate times are in the correct order
+  if (startTime >= endTime) {
+    throw new HttpError(400, "Start time must be before end time");
+  }
+
   return context.entities.Reservation.create({
     data: {
       spaceId: args.spaceId,
@@ -194,14 +199,24 @@ export const updateReservation: UpdateReservation<
     spaceId: args.spaceId,
   };
   
+  let startTime: Date | undefined;
+  let endTime: Date | undefined;
+
   if (args.startTime) {
-    updates.startTime = localToUTC(new Date(args.startTime), venue);
-    updates.startTime.setSeconds(0, 0);
+    startTime = localToUTC(new Date(args.startTime), venue);
+    startTime.setSeconds(0, 0);
+    updates.startTime = startTime;
   }
   
   if (args.endTime) {
-    updates.endTime = localToUTC(new Date(args.endTime), venue);
-    updates.endTime.setSeconds(0, 0);
+    endTime = localToUTC(new Date(args.endTime), venue);
+    endTime.setSeconds(0, 0);
+    updates.endTime = endTime;
+  }
+
+  // Validate times if both are provided
+  if (startTime && endTime && startTime >= endTime) {
+    throw new HttpError(400, "Start time must be before end time");
   }
 
   return context.entities.Reservation.update({

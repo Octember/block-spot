@@ -7,6 +7,7 @@ import { useScheduleContext } from "../providers/schedule-context-provider";
 import { getSharedGridStyle, MinutesPerSlot } from "./constants";
 import { DroppableSpace } from "./droppable";
 import { ReservationSlot } from "./reservation-slot";
+import { UTCToLocal } from "../date-utils";
 import {
   getRowSpan,
   getTimeFromRowIndex,
@@ -48,6 +49,16 @@ export const ReservationsSection = () => {
     if (pendingChange) return pendingChange.newState;
     return null;
   }, [reservations, draggingReservationId, pendingChange]);
+
+  const shouldShowPendingChange = useMemo(() => {
+    if (!pendingChange) return false;
+    const pendingDate = UTCToLocal(pendingChange.newState.startTime, venue);
+    const selectedLocalDate = UTCToLocal(selectedDate, venue);
+    console.log(pendingDate, selectedLocalDate);
+    return isSameDay(pendingDate, selectedLocalDate);
+  }, [pendingChange, selectedDate, venue]);
+
+  console.log(shouldShowPendingChange);
 
   return (
     <DndContext
@@ -183,8 +194,12 @@ export const ReservationsSection = () => {
               }}
             />
           ))}
-        {pendingChange &&
-          isSameDay(pendingChange.newState.startTime, selectedDate) && (
+        {pendingChange && (() => {
+          // Convert both dates to venue's timezone before comparing
+          const pendingDate = UTCToLocal(pendingChange.newState.startTime, venue);
+          const selectedLocalDate = UTCToLocal(selectedDate, venue);
+          return isSameDay(pendingDate, selectedLocalDate);
+        })() && (
             <ReservationSlot
               reservation={pendingChange.newState}
               gridIndex={spaceIds.findIndex(
