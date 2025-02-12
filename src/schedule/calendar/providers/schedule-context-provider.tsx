@@ -1,10 +1,12 @@
-import { isValid, parseISO, startOfToday } from "date-fns";
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { format, isValid, parseISO, startOfToday } from "date-fns";
+import React, { createContext, useCallback, useContext, useEffect, useState, useMemo, useRef } from 'react';
 import { useSearchParams } from "react-router-dom";
 import { getVenueSchedule, useQuery } from "wasp/client/operations";
-import { Venue } from "wasp/entities";
-import { getStartOfDay } from "../date-utils";
+import { Venue, Space } from "wasp/entities";
+import { getStartOfDay, localToUTC } from "../date-utils";
 import { useVenueContext } from "./venue-provider";
+import { toDate } from 'date-fns-tz';
+import { getVenueInfo } from "wasp/client/operations";
 
 
 interface ScheduleContextValue {
@@ -16,17 +18,24 @@ interface ScheduleContextValue {
 
 const ScheduleContext = createContext<ScheduleContextValue | null>(null);
 
-function getDateOrDefault(date: string | null, venue: Venue) {
-  if (!date) {
-    return getStartOfDay(new Date(), venue);
+function getDateOrDefault(dateStr: string | null, venue: Venue): Date {
+  if (!dateStr) {
+    // Create today at midnight in venue's timezone
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T00:00:00`;
+    return toDate(todayStr, { timeZone: venue.timeZoneId });
   }
 
-  const parsedDate = parseISO(date);
+  // Parse the date string and create it at midnight in venue's timezone
+  const parsedDate = parseISO(dateStr);
   if (!isValid(parsedDate)) {
-    return getStartOfDay(new Date(), venue);
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T00:00:00`;
+    return toDate(todayStr, { timeZone: venue.timeZoneId });
   }
 
-  return getStartOfDay(parsedDate, venue);
+  // Create the selected date at midnight in venue's timezone
+  return toDate(`${dateStr}T00:00:00`, { timeZone: venue.timeZoneId });
 }
 
 interface ScheduleProviderProps {
@@ -60,6 +69,7 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
   }, [urlDate]);
 
   const currentDate = getDateOrDefault(urlDate, venue);
+  console.log("currentDate", currentDate);
 
   const isTimeAvailable = useCallback(
     (rowIndex: number, columnIndex: number) => {
