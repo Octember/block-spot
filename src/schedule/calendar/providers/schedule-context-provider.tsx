@@ -1,12 +1,10 @@
-import { format, isValid, parseISO, startOfToday } from "date-fns";
-import React, { createContext, useCallback, useContext, useEffect, useState, useMemo, useRef } from 'react';
+import { isValid, parseISO, startOfToday } from "date-fns";
+import { toDate } from 'date-fns-tz';
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useSearchParams } from "react-router-dom";
 import { getVenueSchedule, useQuery } from "wasp/client/operations";
-import { Venue, Space } from "wasp/entities";
-import { getStartOfDay, localToUTC } from "../date-utils";
+import { Venue } from "wasp/entities";
 import { useVenueContext } from "./venue-provider";
-import { toDate } from 'date-fns-tz';
-import { getVenueInfo } from "wasp/client/operations";
 
 
 interface ScheduleContextValue {
@@ -48,28 +46,15 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
 
   // Get the current date from URL params
   const urlDate = searchParams.get("selected_date");
-  const initialDate = urlDate ? parseISO(urlDate) : startOfToday();
 
-  // Keep track of current query parameters
-  const [selectedDate, setSelectedDate] = useState(initialDate);
+  // Get the date in venue's timezone
+  const currentDate = getDateOrDefault(urlDate, venue);
 
   const { data: spaces, refetch, isLoading } = useQuery(getVenueSchedule, {
     venueId: venue.id,
-    selectedDate
+    selectedDate: currentDate
   });
 
-  // Effect to update selectedDate when URL changes
-  useEffect(() => {
-    if (!urlDate) return;
-    const newDate = parseISO(urlDate);
-
-    if (newDate.getTime() !== selectedDate.getTime()) {
-      setSelectedDate(newDate);
-    }
-  }, [urlDate]);
-
-  const currentDate = getDateOrDefault(urlDate, venue);
-  console.log("currentDate", currentDate);
 
   const isTimeAvailable = useCallback(
     (rowIndex: number, columnIndex: number) => {
@@ -108,7 +93,7 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
 
       return !hasOverlappingReservation;
     },
-    [venue, currentDate],
+    [venue, currentDate, spaces, unavailabileBlocks],
   );
 
   if (!venue) {
