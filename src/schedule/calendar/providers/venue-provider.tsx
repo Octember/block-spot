@@ -1,12 +1,19 @@
-import { getVenueDetails, useQuery } from 'wasp/client/operations';
+import { getVenueDetails, useQuery } from "wasp/client/operations";
 
 import { format, isValid, parseISO } from "date-fns";
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useSearchParams } from "react-router-dom";
 import { Space, Venue } from "wasp/entities";
 import { getStartOfDay, localToUTC, UTCToLocal } from "../date-utils";
-import { getUnavailabilityBlocks } from './availability-utils';
-import { toDate } from 'date-fns-tz';
+import { getUnavailabilityBlocks } from "./availability-utils";
+import { toDate } from "date-fns-tz";
 
 interface VenueContext {
   // Date-related
@@ -30,7 +37,7 @@ function getDateOrDefault(date: string | null, venue: Venue) {
   if (!date) {
     // Create today at midnight in venue's timezone
     const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T00:00:00`;
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}T00:00:00`;
     return toDate(todayStr, { timeZone: venue.timeZoneId });
   }
 
@@ -38,7 +45,7 @@ function getDateOrDefault(date: string | null, venue: Venue) {
   const parsedDate = parseISO(date);
   if (!isValid(parsedDate)) {
     const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T00:00:00`;
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}T00:00:00`;
     return toDate(todayStr, { timeZone: venue.timeZoneId });
   }
 
@@ -73,7 +80,7 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
 
   const getSpaceById = useCallback(
     (id: string) => venue?.spaces.find((space: Space) => space.id === id),
-    [venue?.spaces]
+    [venue?.spaces],
   );
 
   const unavailabileBlocks = useMemo(
@@ -89,7 +96,7 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
     selectedDate,
     setSelectedDate: (date: Date) => {
       // Convert the input date to midnight in venue's timezone
-      const venueDate = getDateOrDefault(format(date, 'yyyy-MM-dd'), venue);
+      const venueDate = getDateOrDefault(format(date, "yyyy-MM-dd"), venue);
       setSelectedDate(venueDate);
       setSearchParams((prev) => {
         prev.set("selected_date", format(venueDate, "yyyy-MM-dd"));
@@ -103,9 +110,7 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
   };
 
   return (
-    <VenueContext.Provider value={value}>
-      {children}
-    </VenueContext.Provider>
+    <VenueContext.Provider value={value}>{children}</VenueContext.Provider>
   );
 }
 
@@ -115,4 +120,4 @@ export function useVenueContext() {
     throw new Error("useVenueContext must be used within a VenueProvider");
   }
   return context;
-} 
+}

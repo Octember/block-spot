@@ -26,10 +26,8 @@ type GetVenueSchedulePayload = {
 
 export const getVenueSchedule: GetVenueSchedule<
   GetVenueSchedulePayload,
-  (Space & { reservations: Reservation[] })[] 
+  (Space & { reservations: Reservation[] })[]
 > = async (args, context) => {
-
-
   return context.entities.Space.findMany({
     where: {
       venueId: args.venueId,
@@ -46,7 +44,6 @@ export const getVenueSchedule: GetVenueSchedule<
     },
   });
 };
-
 
 type GetVenueInfoPayload = {
   venueId: string;
@@ -156,10 +153,10 @@ export const createReservation: CreateReservation<
     where: {
       spaces: {
         some: {
-          id: args.spaceId
-        }
-      }
-    }
+          id: args.spaceId,
+        },
+      },
+    },
   });
 
   if (!venue) {
@@ -213,10 +210,10 @@ export const updateReservation: UpdateReservation<
     where: {
       spaces: {
         some: {
-          id: args.spaceId || ""
-        }
-      }
-    }
+          id: args.spaceId || "",
+        },
+      },
+    },
   });
 
   if (!venue) {
@@ -224,11 +221,13 @@ export const updateReservation: UpdateReservation<
   }
 
   // Convert times to UTC for storage if they are provided
-  const updates: Partial<Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">> = {
+  const updates: Partial<
+    Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">
+  > = {
     description: args.description,
     spaceId: args.spaceId,
   };
-  
+
   let startTime: Date | undefined;
   let endTime: Date | undefined;
 
@@ -237,7 +236,7 @@ export const updateReservation: UpdateReservation<
     startTime.setSeconds(0, 0);
     updates.startTime = startTime;
   }
-  
+
   if (args.endTime) {
     endTime = localToUTC(new Date(args.endTime), venue);
     endTime.setSeconds(0, 0);

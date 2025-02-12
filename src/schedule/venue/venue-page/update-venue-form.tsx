@@ -1,16 +1,16 @@
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
 import { useEffect } from "react";
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { BiLoaderCircle } from "react-icons/bi";
 import { updateVenue, updateVenueAvailability } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { FormField } from "../../../client/components/form/form-field";
-import { Select } from '../../../client/components/form/select';
+import { Select } from "../../../client/components/form/select";
 import { TextInput } from "../../../client/components/form/text-input";
 import { useToast } from "../../../client/toast";
-import { TimeZoneOptions } from '../../../organization/onboarding/constants';
+import { TimeZoneOptions } from "../../../organization/onboarding/constants";
 import { UpdateVenueFormInputs } from "./types";
 
 function transformToFormInputs(
@@ -104,7 +104,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => { }}
+              onClick={() => {}}
             >
               View Schedule
             </Button>
@@ -146,7 +146,12 @@ export function UpdateVenueForm({
             render={({ field: { value, onChange } }) => (
               <Select
                 options={TimeZoneOptions}
-                value={TimeZoneOptions.find((tz) => tz.value === value) || { value: "America/New_York", label: "America/New_York" }}
+                value={
+                  TimeZoneOptions.find((tz) => tz.value === value) || {
+                    value: "America/New_York",
+                    label: "America/New_York",
+                  }
+                }
                 onChange={(value) => onChange(value.value)}
               />
             )}

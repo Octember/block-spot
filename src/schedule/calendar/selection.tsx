@@ -62,19 +62,10 @@ function getStartEndTime(
 ): { start: Date; end: Date } {
   const { start, end } = getStartEndRowsValidated(selection);
 
-  const startTime = calculateTimeFromRow(venue, selectedDate, start);
-  const endTime = calculateTimeFromRow(venue, selectedDate, end);
+  const startTime = getTimeFromRowIndex(venue, start, selectedDate);
+  const endTime = getTimeFromRowIndex(venue, end, selectedDate);
   return { start: startTime, end: endTime };
 }
-
-const calculateTimeFromRow = (venue: Venue, selectedDate: Date, row: number): Date => {
-  // Can cause bugs if date is mutated, need to clone it
-  const result = new Date(selectedDate);
-  const hoursMinutes = getTimeFromRowIndex(venue, row, selectedDate);
-
-  result.setHours(hoursMinutes.getHours(), hoursMinutes.getMinutes(), 0, 0);
-  return result;
-};
 
 interface SelectionProviderProps {
   children: React.ReactNode;

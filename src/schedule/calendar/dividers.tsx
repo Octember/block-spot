@@ -1,5 +1,9 @@
 import { Fragment, FC } from "react";
-import { useIsTimeZoneDifferent, useTimeLabels, useTimeLabelsAndZones } from './constants';
+import {
+  useIsTimeZoneDifferent,
+  useTimeLabels,
+  useTimeLabelsAndZones,
+} from "./constants";
 import {
   MinutesPerSlot,
   PixelsPerSlot,
@@ -25,7 +29,9 @@ export const HorizontalDividers: FC = () => {
         <Fragment key={index}>
           {/* 15min line and label */}
           <div className={`row-span-1 border-b ${getBorderStyle(0)}`}>
-            <div className={`sticky left-0 z-99 ${labelWidthClass} pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none`}>
+            <div
+              className={`sticky left-0 z-99 ${labelWidthClass} pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none`}
+            >
               {label}
             </div>
           </div>

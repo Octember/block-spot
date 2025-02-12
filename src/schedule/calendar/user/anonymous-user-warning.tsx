@@ -1,7 +1,7 @@
 import { EnvelopeIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../../client/components/button";
 import { Modal } from "../../../client/components/modal";
-import { useVenueContext } from '../providers/venue-provider';
+import { useVenueContext } from "../providers/venue-provider";
 
 export const AnonymousUserWarning = ({
   isOpen,

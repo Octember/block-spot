@@ -19,9 +19,7 @@ export const getUnavailabilityBlocks = (
   }
 
   // Start from venue opening if first availability doesn't start at opening
-  if (
-    sortedRules[0].startTimeMinutes > venue.displayStart
-  ) {
+  if (sortedRules[0].startTimeMinutes > venue.displayStart) {
     unavailabilityBlocks.push({
       id: "before-first",
       startTimeMinutes: 0,

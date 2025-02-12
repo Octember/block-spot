@@ -1,29 +1,43 @@
 import { startOfDay } from "date-fns";
-import { format, formatInTimeZone, getTimezoneOffset, toDate, toZonedTime } from "date-fns-tz";
+import {
+  format,
+  formatInTimeZone,
+  getTimezoneOffset,
+  toDate,
+  toZonedTime,
+} from "date-fns-tz";
 import { useMemo } from "react";
 import { Venue } from "wasp/entities";
-import { useVenueContext } from './providers/venue-provider';
-
+import { useVenueContext } from "./providers/venue-provider";
 
 export const getUserTimeZoneAbbreviation = () => {
-  return format(new Date(), "zzz", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
-}
+  return format(new Date(), "zzz", {
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  });
+};
 
 export const useVenueTimeZoneAbbreviation = () => {
   const { venue } = useVenueContext();
   return getTimeZoneAbbreviation(venue.timeZoneId);
-}
+};
 
 export const getTimeZoneAbbreviation = (timeZone: string) => {
   return format(new Date(), "zzz", { timeZone });
-}
+};
 
 export const useIsTimeZoneDifferent = () => {
   const { venue } = useVenueContext();
-  return useMemo(() => isTimeZoneDifferent(venue.timeZoneId), [venue.timeZoneId]);
-}
+  return useMemo(
+    () => isTimeZoneDifferent(venue.timeZoneId),
+    [venue.timeZoneId],
+  );
+};
 
-function isTimeZoneDifferent(referenceTZ: string) {
+function isTimeZoneDifferent(referenceTZ: string | undefined) {
+  if (!referenceTZ) {
+    return false;
+  }
+
   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   // Get UTC offsets at the current moment
@@ -34,39 +48,44 @@ function isTimeZoneDifferent(referenceTZ: string) {
   return userOffset !== referenceOffset;
 }
 
-function generateTimeLabels(venue?: Venue, formatType: "short" | "long" = "short"): string[] {
+function generateTimeLabels(
+  venue?: Venue,
+  formatType: "short" | "long" = "short",
+): string[] {
   const labels: string[] = [];
   const formatString = formatType === "long" ? "h:mm a" : "h a";
 
-  // Start with midnight in UTC
-  const baseDate = new Date();
-  baseDate.setUTCHours(0, 0, 0, 0);
+  const now = new Date();
+  const venueOffset = venue ? getTimezoneOffset(venue.timeZoneId, now) : 0;
+
+  // Create a UTC base date
+  const utcBase = new Date();
+  utcBase.setUTCHours(0, 0, 0, 0);
+
+  // Adjust for venue timezone to start at venue's midnight
+  const venueAdjustedBase = new Date(utcBase.getTime() - venueOffset);
 
   for (let hour = 0; hour < 24; hour++) {
-    if (venue) {
-      // Create a date at the current hour in venue's timezone
-      const date = toDate(baseDate, { timeZone: venue.timeZoneId });
-      date.setHours(hour, 0, 0, 0);
+    const date = new Date(venueAdjustedBase.getTime() + hour * 60 * 60 * 1000);
 
-      // Format time in venue's timezone
-      const venueTime = format(date, formatString, { timeZone: venue.timeZoneId });
+    // Format time in venue's timezone
+    const venueTime = venue
+      ? formatInTimeZone(date, venue.timeZoneId, formatString)
+      : format(date, formatString);
 
-      if (isTimeZoneDifferent(venue.timeZoneId)) {
-        // Get the user's timezone
-        const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (isTimeZoneDifferent(venue?.timeZoneId)) {
+      // Get the user's timezone
+      const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-        // Create a new date in the user's timezone at the same absolute time
-        const userDate = new Date(date.toLocaleString('en-US', { timeZone: userTZ }));
-        const userTime = format(userDate, formatString, { timeZone: userTZ });
+      // Create a new date in the user's timezone at the same absolute time
+      const userDate = new Date(
+        date.toLocaleString("en-US", { timeZone: userTZ }),
+      );
+      const userTime = format(userDate, formatString, { timeZone: userTZ });
 
-        labels.push(`${userTime} (${venueTime})`);
-      } else {
-        labels.push(venueTime);
-      }
+      labels.push(`${userTime} (${venueTime})`);
     } else {
-      const date = new Date(baseDate);
-      date.setHours(hour, 0, 0, 0);
-      labels.push(format(date, formatString));
+      labels.push(venueTime);
     }
   }
 
@@ -96,7 +115,10 @@ export function useTimeLabels() {
   return labels.slice(venue.displayStart / 60, venue.displayEnd / 60);
 }
 
-function generateTimeLabelsAndZones(venue: Venue, formatType: "short" | "long" = "short"): React.ReactNode[] {
+function generateTimeLabelsAndZones(
+  venue: Venue,
+  formatType: "short" | "long" = "short",
+): React.ReactNode[] {
   const labels: React.ReactNode[] = [];
   const formatString = formatType === "long" ? "h:mm a" : "h a";
   const isDifferent = isTimeZoneDifferent(venue.timeZoneId);
@@ -130,7 +152,7 @@ function generateTimeLabelsAndZones(venue: Venue, formatType: "short" | "long" =
           <span className="font-bold text-gray-700 items-center">
             {venueTime}
           </span>
-        </span>
+        </span>,
       );
     } else {
       labels.push(venueTime);

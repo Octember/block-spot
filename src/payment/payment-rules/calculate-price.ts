@@ -26,11 +26,12 @@ const doesRuleMatch = (
   rule: WireSafePaymentRule,
   startTime: Date,
   endTime: Date,
-  userTags: string[] = []
+  userTags: string[] = [],
 ): boolean => {
   const durationMinutes = differenceInMinutes(endTime, startTime);
   const dayOfWeek = startTime.getDay();
-  const minutesFromMidnight = startTime.getHours() * 60 + startTime.getMinutes();
+  const minutesFromMidnight =
+    startTime.getHours() * 60 + startTime.getMinutes();
 
   // Check day of week if specified
   if (rule.daysOfWeek.length > 0 && !rule.daysOfWeek.includes(dayOfWeek)) {
@@ -39,7 +40,10 @@ const doesRuleMatch = (
 
   // Check time of day if specified
   if (rule.startTime != null && rule.endTime != null) {
-    if (minutesFromMidnight < rule.startTime || minutesFromMidnight >= rule.endTime) {
+    if (
+      minutesFromMidnight < rule.startTime ||
+      minutesFromMidnight >= rule.endTime
+    ) {
       return false;
     }
   }
@@ -63,7 +67,9 @@ const doesRuleMatch = (
     // User tag conditions
     if (condition.userTags && condition.userTags.length > 0) {
       // Check if user has ANY of the required tags
-      const hasMatchingTag = condition.userTags.some(tag => userTags.includes(tag));
+      const hasMatchingTag = condition.userTags.some((tag) =>
+        userTags.includes(tag),
+      );
       if (!hasMatchingTag) {
         return false;
       }
@@ -77,7 +83,7 @@ const calculatePriceFromRules = (
   startTime: Date,
   endTime: Date,
   rules: WireSafePaymentRule[],
-  userTags: string[] = []
+  userTags: string[] = [],
 ): PriceBreakdownResponse => {
   const breakdown: PriceBreakdownResponse = {
     basePrice: 0,
@@ -89,8 +95,8 @@ const calculatePriceFromRules = (
   // Sort rules by priority (lower numbers first)
   const sortedRules = [...rules].sort((a, b) => a.priority - b.priority);
 
-  const matchedRule = sortedRules.find(rule => 
-    doesRuleMatch(rule, startTime, endTime, userTags)
+  const matchedRule = sortedRules.find((rule) =>
+    doesRuleMatch(rule, startTime, endTime, userTags),
   );
 
   if (!matchedRule || !matchedRule.pricePerPeriod) {
@@ -136,19 +142,19 @@ export const getReservationPrice: GetReservationPrice<
             include: {
               users: {
                 where: {
-                  userId: context.user.id
+                  userId: context.user.id,
                 },
                 include: {
                   tags: {
                     include: {
-                      organizationTag: true
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+                      organizationTag: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
   });
@@ -166,7 +172,7 @@ export const getReservationPrice: GetReservationPrice<
   if (!orgUser) {
     throw new HttpError(403, "User is not a member of this organization");
   }
-  const userTags = orgUser.tags.map(tag => tag.organizationTag.name);
+  const userTags = orgUser.tags.map((tag) => tag.organizationTag.name);
 
   // Get venue payment rules
   const paymentRules = await context.entities.PaymentRule.findMany({
@@ -205,7 +211,7 @@ export const getReservationPrice: GetReservationPrice<
     startTime,
     endTime,
     wireSafeRules,
-    userTags
+    userTags,
   );
 
   if (priceBreakdown.finalPrice <= 0) {

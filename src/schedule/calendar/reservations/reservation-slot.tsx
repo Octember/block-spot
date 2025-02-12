@@ -174,7 +174,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 };
 
 import { usePopper } from "react-popper";
-import { useVenueContext } from '../providers/venue-provider';
+import { useVenueContext } from "../providers/venue-provider";
 
 const ReservationMenu = ({
   onEdit,

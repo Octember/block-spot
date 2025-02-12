@@ -1,6 +1,11 @@
 import { ArrowRightIcon, PlusIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
-import { SubmitHandler, useFieldArray, useForm, Controller } from "react-hook-form";
+import {
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+  Controller,
+} from "react-hook-form";
 import { BiLoaderCircle } from "react-icons/bi";
 import { createVenue, updateVenue } from "wasp/client/operations";
 import { Button } from "../../client/components/button";
@@ -9,7 +14,7 @@ import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
 import { PricingStep } from "./pricing-step";
 import { Select } from "../../client/components/form/select";
-import { TimeZoneOptions } from './constants';
+import { TimeZoneOptions } from "./constants";
 
 interface FormData {
   organizationName: string;
@@ -127,10 +132,6 @@ export function OrganizationStep({
   );
 }
 
-
-
-
-
 type SpacesStepFormData = {
   spaces: { name: string; type: string; capacity: number }[];
   contactEmail: string;
@@ -169,7 +170,9 @@ export function SpacesStep({
     name: "spaces",
   });
 
-  const handleCreateVenueAndSpaces: SubmitHandler<SpacesStepFormData> = async (formData) => {
+  const handleCreateVenueAndSpaces: SubmitHandler<SpacesStepFormData> = async (
+    formData,
+  ) => {
     setIsCreating(true);
     try {
       const venue = await createVenue({
@@ -233,7 +236,12 @@ export function SpacesStep({
             render={({ field: { value, onChange } }) => (
               <Select
                 options={TimeZoneOptions}
-                value={TimeZoneOptions.find((tz) => tz.value === value) || { value: "America/New_York", label: "America/New_York" }}
+                value={
+                  TimeZoneOptions.find((tz) => tz.value === value) || {
+                    value: "America/New_York",
+                    label: "America/New_York",
+                  }
+                }
                 onChange={(value) => onChange(value.value)}
               />
             )}

@@ -87,7 +87,7 @@ export const CreateReservationModal: FC<{
       className="flex"
       open={true}
       size="lg"
-      onClose={() => { }}
+      onClose={() => {}}
       heading={{ title: "New Reservation" }}
       footer={
         <div className="flex items-center justify-end space-x-3 m-2">

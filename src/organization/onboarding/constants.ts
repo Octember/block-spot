@@ -117,7 +117,6 @@ export const determineOnboardingStep = (
   };
 };
 
-
 export const TimeZoneOptions = [
   { label: "Pacific Time (PST)", value: "America/Los_Angeles" },
   { label: "Mountain Time (MST)", value: "America/Denver" },

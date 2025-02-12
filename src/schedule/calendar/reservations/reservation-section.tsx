@@ -18,12 +18,11 @@ import {
 import { useVenueContext } from "../providers/venue-provider";
 
 export const ReservationsSection = () => {
-  const { selectedDate, venue } = useVenueContext()
+  const { selectedDate, venue } = useVenueContext();
   const { spaces } = useScheduleContext();
   const timeLabels = useTimeLabels();
   const { pendingChange, setPendingChange } = usePendingChanges();
-  const getTimeFromRowIndex = useGetTimeFromRowIndex()
-    ;
+  const getTimeFromRowIndex = useGetTimeFromRowIndex();
   const [draggingReservationId, setDraggingReservationId] = useState<
     string | null
   >(null);
@@ -187,12 +186,16 @@ export const ReservationsSection = () => {
               }}
             />
           ))}
-        {pendingChange && (() => {
-          // Convert both dates to venue's timezone before comparing
-          const pendingDate = UTCToLocal(pendingChange.newState.startTime, venue);
-          const selectedLocalDate = UTCToLocal(selectedDate, venue);
-          return isSameDay(pendingDate, selectedLocalDate);
-        })() && (
+        {pendingChange &&
+          (() => {
+            // Convert both dates to venue's timezone before comparing
+            const pendingDate = UTCToLocal(
+              pendingChange.newState.startTime,
+              venue,
+            );
+            const selectedLocalDate = UTCToLocal(selectedDate, venue);
+            return isSameDay(pendingDate, selectedLocalDate);
+          })() && (
             <ReservationSlot
               reservation={pendingChange.newState}
               gridIndex={spaceIds.findIndex(

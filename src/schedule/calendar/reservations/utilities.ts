@@ -1,7 +1,7 @@
 import { addMinutes, differenceInMinutes, isAfter, isBefore } from "date-fns";
 import { Reservation, Venue } from "wasp/entities";
 import { localToUTC, UTCToLocal } from "../date-utils";
-import { toDate } from 'date-fns-tz';
+import { toDate, toZonedTime, getTimezoneOffset } from "date-fns-tz";
 import { useVenueContext } from "../providers/venue-provider";
 import { useCallback } from "react";
 
@@ -20,8 +20,8 @@ export function getRowSpan(reservation: Reservation) {
 
 export function getRowIndex(venue: Venue, time: Date) {
   // Convert to local time for display calculations
-  const localTime = UTCToLocal(time, venue);
-  
+  const localTime = toZonedTime(time, venue.timeZoneId);
+
   const rowIndex =
     Math.ceil(
       localTime.getHours() * (60 / MinutesPerSlot) +
@@ -48,20 +48,34 @@ export function getRowIndexFromMinutes(venue: Venue, minutes: number) {
   return result;
 }
 
-export function getTimeFromRowIndex(venue: Venue, rowIndex: number, selectedDate: Date): Date {
+export function getTimeFromRowIndex(
+  venue: Venue,
+  rowIndex: number,
+  selectedDate: Date,
+): Date {
   // Calculate total minutes from row index
   const totalMinutes =
     (rowIndex - HEADER_ROW_COUNT) * MinutesPerSlot + venue.displayStart;
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
-  // Create a new date in the venue's timezone at midnight
-  const result = toDate(selectedDate, { timeZone: venue.timeZoneId });
-  
-  // Set the hours and minutes while preserving the date
-  result.setHours(hours, minutes, 0, 0);
-  
-  return result;
+  const venueOffset = getTimezoneOffset(venue.timeZoneId, new Date());
+
+  // Create a date at midnight in venue's timezone
+  const baseDate = toZonedTime(selectedDate, venue.timeZoneId);
+  baseDate.setHours(hours, minutes, 0, 0);
+
+  const utcBase = new Date(selectedDate);
+  utcBase.setUTCHours(0, 0, 0, 0);
+
+  // Adjust for venue timezone to start at venue's midnight
+  const venueAdjustedBase = new Date(utcBase.getTime() - venueOffset);
+
+  const date = new Date(
+    venueAdjustedBase.getTime() + hours * 60 * 60 * 1000 + minutes * 60 * 1000,
+  );
+
+  return date;
 }
 
 export function useGetTimeFromRowIndex() {
@@ -78,14 +92,18 @@ export function isWithinReservation(
   rowSpan: number,
   target: Reservation,
 ) {
-  const rawStartTime = getTimeFromRowIndex(venue, rowIndex + 1, target.startTime);
+  const rawStartTime = getTimeFromRowIndex(
+    venue,
+    rowIndex + 1,
+    target.startTime,
+  );
   const rawEndTime = addMinutes(rawStartTime, rowSpan * MinutesPerSlot);
 
   const { startTime, endTime } = setTimesOnDate(
     rawStartTime,
     rawEndTime,
     target.startTime,
-    venue
+    venue,
   );
 
   const result =
@@ -118,7 +136,7 @@ export function setTimesOnDate(
           0,
         ),
       ),
-      venue
+      venue,
     ),
     endTime: localToUTC(
       new Date(
@@ -129,7 +147,7 @@ export function setTimesOnDate(
           0,
         ),
       ),
-      venue
+      venue,
     ),
   };
 }

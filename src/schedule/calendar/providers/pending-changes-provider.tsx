@@ -1,4 +1,12 @@
-import { createContext, SetStateAction, Dispatch, useContext, useEffect, useState, useMemo } from "react";
+import {
+  createContext,
+  SetStateAction,
+  Dispatch,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import {
   createReservation,
   deleteReservation,
@@ -44,8 +52,10 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({
     setPendingChange(null);
   }, [selectedDate]);
 
-
-  const hasPendingChange = useMemo(() => pendingChange !== null, [pendingChange]);
+  const hasPendingChange = useMemo(
+    () => pendingChange !== null,
+    [pendingChange],
+  );
 
   const cancelChange = () => {
     setPendingChange(null);

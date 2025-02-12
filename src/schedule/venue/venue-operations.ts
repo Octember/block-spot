@@ -1,6 +1,6 @@
-import { AvailabilityRule, Space, Venue } from 'wasp/entities';
-import { HttpError } from 'wasp/server';
-import { GetVenueDetails } from 'wasp/server/operations';
+import { AvailabilityRule, Space, Venue } from "wasp/entities";
+import { HttpError } from "wasp/server";
+import { GetVenueDetails } from "wasp/server/operations";
 
 type GetVenueDetailsPayload = {
   venueId: string;
@@ -9,9 +9,9 @@ type GetVenueDetailsPayload = {
 export const getVenueDetails: GetVenueDetails<
   GetVenueDetailsPayload,
   | (Venue & {
-    availabilityRules: AvailabilityRule[];
-    spaces: Space[];
-  })
+      availabilityRules: AvailabilityRule[];
+      spaces: Space[];
+    })
   | null
 > = async (args, context) => {
   const venue = await context.entities.Venue.findFirst({

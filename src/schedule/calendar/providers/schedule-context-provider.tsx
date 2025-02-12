@@ -1,11 +1,20 @@
 import { isValid, parseISO, startOfToday } from "date-fns";
-import { toDate } from 'date-fns-tz';
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { toDate } from "date-fns-tz";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useSearchParams } from "react-router-dom";
 import { getVenueSchedule, useQuery } from "wasp/client/operations";
 import { Venue } from "wasp/entities";
 import { useVenueContext } from "./venue-provider";
-
+import {
+  getTimeFromRowIndex,
+  useGetTimeFromRowIndex,
+} from "../reservations/utilities";
 
 interface ScheduleContextValue {
   refresh: () => void;
@@ -54,17 +63,26 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
   // Get the date in venue's timezone
   const currentDate = getDateOrDefault(urlDate, venue);
 
-  const { data: spaces, refetch, isLoading } = useQuery(getVenueSchedule, {
+  const {
+    data: spaces,
+    refetch,
+    isLoading,
+  } = useQuery(getVenueSchedule, {
     venueId: venue.id,
-    selectedDate: currentDate
+    selectedDate: currentDate,
   });
+
+  const getTimeFromRow = useCallback(
+    (rowIndex: number) => getTimeFromRowIndex(venue, rowIndex, currentDate),
+    [venue, currentDate],
+  );
 
   const isTimeAvailable = useCallback(
     (rowIndex: number, columnIndex: number) => {
       if (!venue || !spaces) return false;
 
       // Convert row index to minutes since midnight
-      const timeInMinutes = (rowIndex - 2) * 15 + venue.displayStart;
+      const timeInMinutes = getTimeFromRow(rowIndex);
       const timeDate = new Date(currentDate);
       timeDate.setHours(
         Math.floor(timeInMinutes / 60),
@@ -122,7 +140,9 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
 export function useScheduleContext() {
   const context = useContext(ScheduleContext);
   if (!context) {
-    throw new Error("useScheduleContext must be used within a ScheduleProvider");
+    throw new Error(
+      "useScheduleContext must be used within a ScheduleProvider",
+    );
   }
   return context;
-} 
+}
