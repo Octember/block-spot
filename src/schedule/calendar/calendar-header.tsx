@@ -3,7 +3,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
-import { addDays, format } from "date-fns";
+import { addDays } from "date-fns";
+import { formatInTimeZone } from "date-fns-tz";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "wasp/client/router";
@@ -12,13 +13,17 @@ import { cn } from "../../client/cn";
 import { Button } from "../../client/components/button";
 import { ButtonGroup } from "../../client/components/button-group";
 import { isUserOwner } from "../../client/hooks/permissions";
-import { formatTimeWithZone } from "./date-utils";
 import { useVenueContext } from "./providers/venue-provider";
 
 export const CalendarHeader: FC = () => {
   const { selectedDate, setSelectedDate, venue } = useVenueContext();
   const navigate = useNavigate();
   const isOwner = isUserOwner();
+
+  console.log('selectedDate UTC:', selectedDate.toISOString());
+  console.log('selectedDate local:', selectedDate.toString());
+  console.log('venue timezone:', venue.timeZoneId);
+  console.log('formatted:', formatInTimeZone(selectedDate, venue.timeZoneId, "MMMM d, yyyy"));
 
   return (
     <header
@@ -52,7 +57,7 @@ export const CalendarHeader: FC = () => {
         />
 
         <div className="px-2 font-bold">
-          {format(selectedDate, "MMMM d, yyyy")}
+          {formatInTimeZone(selectedDate, venue.timeZoneId, "MMMM d, yyyy")}
         </div>
       </div>
     </header>

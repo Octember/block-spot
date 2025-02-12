@@ -1,11 +1,12 @@
 import { getVenueDetails, useQuery } from 'wasp/client/operations';
 
 import { format, isValid, parseISO } from "date-fns";
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from "react-router-dom";
 import { Space, Venue } from "wasp/entities";
-import { getStartOfDay, localToUTC } from "../date-utils";
+import { getStartOfDay, localToUTC, UTCToLocal } from "../date-utils";
 import { getUnavailabilityBlocks } from './availability-utils';
+import { toDate } from 'date-fns-tz';
 
 interface VenueContext {
   // Date-related
@@ -27,15 +28,22 @@ const VenueContext = createContext<VenueContext | null>(null);
 
 function getDateOrDefault(date: string | null, venue: Venue) {
   if (!date) {
-    return getStartOfDay(new Date(), venue);
+    // Create today at midnight in venue's timezone
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T00:00:00`;
+    return toDate(todayStr, { timeZone: venue.timeZoneId });
   }
 
+  // Parse the date string and create it at midnight in venue's timezone
   const parsedDate = parseISO(date);
   if (!isValid(parsedDate)) {
-    return getStartOfDay(new Date(), venue);
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T00:00:00`;
+    return toDate(todayStr, { timeZone: venue.timeZoneId });
   }
 
-  return getStartOfDay(parsedDate, venue);
+  // Create the selected date at midnight in venue's timezone
+  return toDate(`${date}T00:00:00`, { timeZone: venue.timeZoneId });
 }
 
 interface VenueProviderProps {
@@ -46,32 +54,25 @@ interface VenueProviderProps {
 export function VenueProvider({ children, venueId }: VenueProviderProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Get the current date from URL params
-  const urlDate = searchParams.get("selected_date");
-  const initialDate = urlDate ? parseISO(urlDate) : new Date();
-
-  // Keep track of current query parameters
-  const [selectedDate, setSelectedDate] = useState(initialDate);
-
   const { data: venue, isLoading } = useQuery(getVenueDetails, {
     venueId,
   });
 
-  // Effect to update selectedDate when URL changes
+  // Get the current date from URL params
+  const urlDate = searchParams.get("selected_date");
+
+  // Initialize with current date in venue's timezone if available
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+
+  // Update selectedDate when venue is loaded or URL changes
   useEffect(() => {
-    if (!urlDate) return;
-    const newDate = parseISO(urlDate);
+    if (!venue) return;
+    const newDate = getDateOrDefault(urlDate, venue);
+    setSelectedDate(newDate);
+  }, [urlDate, venue]);
 
-    if (newDate.getTime() !== selectedDate.getTime()) {
-      setSelectedDate(newDate);
-    }
-  }, [urlDate]);
-
-
-  const currentDate = venue ? getDateOrDefault(urlDate, venue) : initialDate;
-
-  const getSpaceById = useMemo(
-    () => (id: string) => venue?.spaces.find((space: Space) => space.id === id),
+  const getSpaceById = useCallback(
+    (id: string) => venue?.spaces.find((space: Space) => space.id === id),
     [venue?.spaces]
   );
 
@@ -84,13 +85,14 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
     return null;
   }
 
-
   const value: VenueContext = {
-    selectedDate: currentDate,
+    selectedDate,
     setSelectedDate: (date: Date) => {
-      const utcDate = localToUTC(date, venue);
+      // Convert the input date to midnight in venue's timezone
+      const venueDate = getDateOrDefault(format(date, 'yyyy-MM-dd'), venue);
+      setSelectedDate(venueDate);
       setSearchParams((prev) => {
-        prev.set("selected_date", format(utcDate, "yyyy-MM-dd"));
+        prev.set("selected_date", format(venueDate, "yyyy-MM-dd"));
         return prev;
       });
     },

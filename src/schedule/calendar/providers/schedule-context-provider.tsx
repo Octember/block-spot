@@ -16,7 +16,7 @@ interface ScheduleContextValue {
 
 const ScheduleContext = createContext<ScheduleContextValue | null>(null);
 
-function getDateOrDefault(dateStr: string | null, venue: Venue): Date {
+export function getDateOrDefault(dateStr: string | null, venue: Venue): Date {
   if (!dateStr) {
     // Create today at midnight in venue's timezone
     const now = new Date();
@@ -54,7 +54,6 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
     venueId: venue.id,
     selectedDate: currentDate
   });
-
 
   const isTimeAvailable = useCallback(
     (rowIndex: number, columnIndex: number) => {
