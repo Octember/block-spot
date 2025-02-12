@@ -1,15 +1,15 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
 import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
+import { getUserTimeZoneAbbreviation, useIsTimeZoneDifferent, useVenueTimeZoneAbbreviation } from "./constants";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { PendingChangesProvider } from "./providers/pending-changes-provider";
+import { ScheduleProvider } from "./providers/schedule-context-provider";
+import { useVenueContext } from "./providers/venue-provider";
 import { getGridTemplateColumns } from "./reservations/constants";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
-import { useVenueContext } from "./providers/venue-provider";
-import { ScheduleProvider } from "./providers/schedule-context-provider";
-import { getUserTimeZoneAbbreviation, useIsTimeZoneDifferent, useVenueTimeZoneAbbreviation } from "./constants";
 
 export const WeekViewCalendar: FC = () => {
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
@@ -92,7 +92,7 @@ export const TimeZoneLabel: FC = () => {
           {getUserTimeZoneAbbreviation()}
         </span>
       )}
-      <span className="text-xs text-gray-500">
+      <span className="text-xs text-gray-700 font-bold">
         {venueTimeZoneAbbreviation}
       </span>
     </div>
