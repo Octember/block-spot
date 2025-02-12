@@ -71,12 +71,15 @@ export const CreateReservationModal: FC<{
       spaceId: data.spaceId,
     });
 
-    cancelChange();
     refresh();
     toast({
       title: "Reservation created",
       description: "The reservation has been created",
     });
+
+    setTimeout(() => {
+      cancelChange();
+    }, 300);
   }
 
   return (
