@@ -1,5 +1,5 @@
 import { Fragment, FC } from "react";
-import { useTimeLabels } from "./constants";
+import { useIsTimeZoneDifferent, useTimeLabels } from "./constants";
 import {
   MinutesPerSlot,
   PixelsPerSlot,
@@ -9,6 +9,9 @@ import { useVenueContext } from "./providers/venue-provider";
 
 export const HorizontalDividers: FC = () => {
   const timeLabels = useTimeLabels();
+  const isTimeZoneDifferent = useIsTimeZoneDifferent();
+  const labelWidthClass = isTimeZoneDifferent ? "-ml-24 w-24" : "-ml-14 w-14";
+
   return (
     <div
       className="col-start-1 col-end-2 row-start-1 grid"
@@ -22,7 +25,7 @@ export const HorizontalDividers: FC = () => {
         <Fragment key={index}>
           {/* 15min line and label */}
           <div className={`row-span-1 border-b ${getBorderStyle(0)}`}>
-            <div className="sticky left-0 z-99 -ml-14 w-14 pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none">
+            <div className={`sticky left-0 z-99 ${labelWidthClass} pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none`}>
               {label}
             </div>
           </div>

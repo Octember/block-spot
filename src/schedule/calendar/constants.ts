@@ -1,7 +1,37 @@
 import { Venue } from "wasp/entities";
 import { formatTimeWithZone } from "./date-utils";
 import { useVenueContext } from './providers/venue-provider';
-import { format } from "date-fns";
+import { getTimezoneOffset, format } from "date-fns-tz";
+import { useMemo } from "react";
+
+export const getUserTimeZoneAbbreviation = () => {
+  return format(new Date(), "zzz", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
+}
+
+export const useVenueTimeZoneAbbreviation = () => {
+  const { venue } = useVenueContext();
+  return getTimeZoneAbbreviation(venue.timeZoneId);
+}
+
+export const getTimeZoneAbbreviation = (timeZone: string) => {
+  return format(new Date(), "zzz", { timeZone });
+}
+
+export const useIsTimeZoneDifferent = () => {
+  const { venue } = useVenueContext();
+  return useMemo(() => isTimeZoneDifferent(venue.timeZoneId), [venue.timeZoneId]);
+}
+
+function isTimeZoneDifferent(referenceTZ: string) {
+  const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Get UTC offsets at the current moment
+  const now = new Date();
+  const referenceOffset = getTimezoneOffset(referenceTZ, now);
+  const userOffset = getTimezoneOffset(userTZ, now);
+
+  return userOffset !== referenceOffset;
+}
 
 function generateTimeLabels(venue?: Venue, formatType: "short" | "long" = "short"): string[] {
   const labels: string[] = [];
@@ -13,7 +43,14 @@ function generateTimeLabels(venue?: Venue, formatType: "short" | "long" = "short
   for (let hour = 0; hour < 24; hour++) {
     date.setHours(hour, 0, 0, 0);
     if (venue) {
-      labels.push(formatTimeWithZone(date, formatString, venue));
+      const venueTime = formatTimeWithZone(date, formatString, venue)
+
+      if (isTimeZoneDifferent(venue.timeZoneId)) {
+        labels.push(`${venueTime} (${format(date, formatString)} ${getUserTimeZoneAbbreviation()})`);
+      } else {
+        labels.push(venueTime);
+      }
+
     } else {
       labels.push(format(date, formatString));
     }

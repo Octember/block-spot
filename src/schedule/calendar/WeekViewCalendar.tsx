@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
@@ -9,8 +9,15 @@ import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
 import { useVenueContext } from "./providers/venue-provider";
 import { ScheduleProvider } from "./providers/schedule-context-provider";
+import { getUserTimeZoneAbbreviation, useIsTimeZoneDifferent, useVenueTimeZoneAbbreviation } from "./constants";
+
+
+
 
 export const WeekViewCalendar: FC = () => {
+  const isTimeZoneDifferent = useIsTimeZoneDifferent();
+  const widthClass = isTimeZoneDifferent ? "w-24" : "w-14";
+
   return (
     <div className="flex h-full flex-col flex-1">
       <CalendarHeader />
@@ -19,7 +26,7 @@ export const WeekViewCalendar: FC = () => {
         <div className="flex min-w-max w-full flex-none flex-col">
           <SpacesNamesSection />
           <div className="flex flex-auto">
-            <div className="sticky left-0 z-99 w-14 flex-none bg-white ring-1 ring-gray-100" />
+            <div className={`sticky left-0 z-99 ${widthClass} flex-none bg-white ring-1 ring-gray-100`} />
             <div className="grid flex-auto grid-cols-1 grid-rows-1 ">
 
               <ScheduleProvider>
@@ -59,7 +66,7 @@ const SpacesNamesSection: FC = () => {
           ),
         }}
       >
-        <div className="col-end-1 w-14" />
+        <TimeZoneLabel />
         {venue.spaces.map((space) => (
           <div
             key={space.id}
@@ -74,3 +81,23 @@ const SpacesNamesSection: FC = () => {
     </div>
   );
 };
+
+export const TimeZoneLabel: FC = () => {
+  const isTimeZoneDifferent = useIsTimeZoneDifferent();
+  const widthClass = isTimeZoneDifferent ? "w-24" : "w-14";
+  const venueTimeZoneAbbreviation = useVenueTimeZoneAbbreviation();
+
+  return <div className={`col-end-1 ${widthClass} flex flex-col`}>
+
+    <div className={`flex-1 flex items-center ${isTimeZoneDifferent ? "justify-between" : "justify-center"} p-2`}>
+      <span className="text-xs text-gray-500">
+        {venueTimeZoneAbbreviation}
+      </span>
+      {isTimeZoneDifferent && (
+        <span className="text-xs text-gray-500">
+          {getUserTimeZoneAbbreviation()}
+        </span>
+      )}
+    </div>
+  </div >
+}

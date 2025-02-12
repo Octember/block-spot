@@ -44,6 +44,7 @@ export const CreateReservationModal: FC<{
   const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
 
+  console.log("2")
   const {
     register,
     handleSubmit,

@@ -80,8 +80,6 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
     [venue],
   );
 
-  console.log({ unavailabileBlocks });
-
   if (!venue) {
     return null;
   }
