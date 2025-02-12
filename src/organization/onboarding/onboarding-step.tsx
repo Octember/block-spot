@@ -9,6 +9,7 @@ import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
 import { PricingStep } from "./pricing-step";
 import { Select } from "../../client/components/form/select";
+import { TimeZoneOptions } from './constants';
 
 interface FormData {
   organizationName: string;
@@ -127,10 +128,8 @@ export function OrganizationStep({
 }
 
 
-const TimeZoneOptions = Intl.supportedValuesOf('timeZone').map((tz) => ({
-  value: tz,
-  label: tz,
-}));
+
+
 
 type SpacesStepFormData = {
   spaces: { name: string; type: string; capacity: number }[];

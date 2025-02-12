@@ -1,16 +1,17 @@
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
-import { useEffect, useState } from "react";
-import { SubmitHandler, useForm, Controller } from 'react-hook-form';
+import { useEffect } from "react";
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { BiLoaderCircle } from "react-icons/bi";
 import { updateVenue, updateVenueAvailability } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { FormField } from "../../../client/components/form/form-field";
+import { Select } from '../../../client/components/form/select';
 import { TextInput } from "../../../client/components/form/text-input";
 import { useToast } from "../../../client/toast";
+import { TimeZoneOptions } from '../../../organization/onboarding/constants';
 import { UpdateVenueFormInputs } from "./types";
-import { Select } from '../../../client/components/form/select';
 
 function transformToFormInputs(
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] },
@@ -27,17 +28,11 @@ function transformToFormInputs(
   };
 }
 
-const TimeZoneOptions = Intl.supportedValuesOf('timeZone').map((tz) => ({
-  value: tz,
-  label: tz,
-}));
-
 export function UpdateVenueForm({
   venue,
 }: {
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] };
 }) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
 
   const {
@@ -45,7 +40,7 @@ export function UpdateVenueForm({
     handleSubmit,
     reset,
     control,
-    formState: { isDirty },
+    formState: { isDirty, isSubmitting },
   } = useForm<UpdateVenueFormInputs>({
     defaultValues: transformToFormInputs(venue),
   });
@@ -56,7 +51,6 @@ export function UpdateVenueForm({
 
   const onSubmit: SubmitHandler<UpdateVenueFormInputs> = async (data) => {
     try {
-      setIsSubmitting(true);
       await updateVenue({
         id: venue.id,
         name: data.name,
@@ -84,8 +78,6 @@ export function UpdateVenueForm({
         description: JSON.stringify(error) || "Please try again",
       });
     }
-
-    setIsSubmitting(false);
   };
 
   return (

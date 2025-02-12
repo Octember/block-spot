@@ -116,3 +116,27 @@ export const determineOnboardingStep = (
     targetStep: `/onboarding/${targetStep}`,
   };
 };
+
+
+export const TimeZoneOptions = [
+  { label: "Pacific Time (PST)", value: "America/Los_Angeles" },
+  { label: "Mountain Time (MST)", value: "America/Denver" },
+  { label: "Central Time (CST)", value: "America/Chicago" },
+  { label: "Eastern Time (EST)", value: "America/New_York" },
+  { label: "Atlantic Time (AST)", value: "America/Halifax" },
+  { label: "Greenwich Mean Time (GMT)", value: "Europe/London" },
+  { label: "Central European Time (CET)", value: "Europe/Berlin" },
+  { label: "Eastern European Time (EET)", value: "Europe/Bucharest" },
+  { label: "Moscow Standard Time (MSK)", value: "Europe/Moscow" },
+  { label: "India Standard Time (IST)", value: "Asia/Kolkata" },
+  { label: "China Standard Time (CST)", value: "Asia/Shanghai" },
+  { label: "Japan Standard Time (JST)", value: "Asia/Tokyo" },
+  { label: "Korea Standard Time (KST)", value: "Asia/Seoul" },
+  { label: "Indochina Time (ICT)", value: "Asia/Bangkok" },
+  { label: "Western Australia Time (AWST)", value: "Australia/Perth" },
+  { label: "Eastern Australia Time (AEST)", value: "Australia/Sydney" },
+  { label: "New Zealand Time (NZST)", value: "Pacific/Auckland" },
+  { label: "Brasilia Time (BRT)", value: "America/Sao_Paulo" },
+  { label: "Argentina Time (ART)", value: "America/Argentina/Buenos_Aires" },
+  { label: "South Africa Standard Time (SAST)", value: "Africa/Johannesburg" },
+];
