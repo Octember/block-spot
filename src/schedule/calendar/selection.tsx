@@ -54,7 +54,7 @@ function getStartEndRowsValidated(selection: {
 
 function getStartEndTime(
   venue: Venue,
-  date: Date,
+  selectedDate: Date,
   selection: {
     start: { row: number; col: number };
     current: { row: number; col: number };
@@ -62,15 +62,15 @@ function getStartEndTime(
 ): { start: Date; end: Date } {
   const { start, end } = getStartEndRowsValidated(selection);
 
-  const startTime = calculateTimeFromRow(venue, date, start);
-  const endTime = calculateTimeFromRow(venue, date, end);
+  const startTime = calculateTimeFromRow(venue, selectedDate, start);
+  const endTime = calculateTimeFromRow(venue, selectedDate, end);
   return { start: startTime, end: endTime };
 }
 
-const calculateTimeFromRow = (venue: Venue, date: Date, row: number): Date => {
+const calculateTimeFromRow = (venue: Venue, selectedDate: Date, row: number): Date => {
   // Can cause bugs if date is mutated, need to clone it
-  const result = new Date(date);
-  const hoursMinutes = getTimeFromRowIndex(venue, row);
+  const result = new Date(selectedDate);
+  const hoursMinutes = getTimeFromRowIndex(venue, row, selectedDate);
 
   result.setHours(hoursMinutes.getHours(), hoursMinutes.getMinutes(), 0, 0);
   return result;

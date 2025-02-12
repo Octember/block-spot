@@ -20,11 +20,6 @@ export const CalendarHeader: FC = () => {
   const navigate = useNavigate();
   const isOwner = isUserOwner();
 
-  console.log('selectedDate UTC:', selectedDate.toISOString());
-  console.log('selectedDate local:', selectedDate.toString());
-  console.log('venue timezone:', venue.timeZoneId);
-  console.log('formatted:', formatInTimeZone(selectedDate, venue.timeZoneId, "MMMM d, yyyy"));
-
   return (
     <header
       className={cn(

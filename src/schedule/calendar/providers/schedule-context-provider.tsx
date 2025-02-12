@@ -16,24 +16,28 @@ interface ScheduleContextValue {
 
 const ScheduleContext = createContext<ScheduleContextValue | null>(null);
 
-export function getDateOrDefault(dateStr: string | null, venue: Venue): Date {
+function getDateOrDefault(dateStr: string | null, venue: Venue): Date {
   if (!dateStr) {
     // Create today at midnight in venue's timezone
     const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T00:00:00`;
-    return toDate(todayStr, { timeZone: venue.timeZoneId });
+    const date = toDate(now, { timeZone: venue.timeZoneId });
+    date.setHours(0, 0, 0, 0);
+    return date;
   }
 
   // Parse the date string and create it at midnight in venue's timezone
   const parsedDate = parseISO(dateStr);
   if (!isValid(parsedDate)) {
     const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T00:00:00`;
-    return toDate(todayStr, { timeZone: venue.timeZoneId });
+    const date = toDate(now, { timeZone: venue.timeZoneId });
+    date.setHours(0, 0, 0, 0);
+    return date;
   }
 
   // Create the selected date at midnight in venue's timezone
-  return toDate(`${dateStr}T00:00:00`, { timeZone: venue.timeZoneId });
+  const date = toDate(parsedDate, { timeZone: venue.timeZoneId });
+  date.setHours(0, 0, 0, 0);
+  return date;
 }
 
 interface ScheduleProviderProps {

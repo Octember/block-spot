@@ -15,7 +15,7 @@ function getMockDate(minutes: number) {
 
 function verifyMinutes(minutes: number) {
   const rowIndex = getRowIndex(mockVenue, getMockDate(minutes));
-  const time = getTimeFromRowIndex(mockVenue, rowIndex);
+  const time = getTimeFromRowIndex(mockVenue, rowIndex, getMockDate(0));
   expect(time.getHours() * 60 + time.getMinutes()).toBe(minutes);
 }
 

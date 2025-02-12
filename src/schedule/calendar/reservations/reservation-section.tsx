@@ -13,6 +13,7 @@ import {
   getTimeFromRowIndex,
   isWithinReservation,
   setTimesOnDate,
+  useGetTimeFromRowIndex,
 } from "./utilities";
 import { useVenueContext } from "../providers/venue-provider";
 
@@ -21,7 +22,8 @@ export const ReservationsSection = () => {
   const { spaces } = useScheduleContext();
   const timeLabels = useTimeLabels();
   const { pendingChange, setPendingChange } = usePendingChanges();
-
+  const getTimeFromRowIndex = useGetTimeFromRowIndex()
+    ;
   const [draggingReservationId, setDraggingReservationId] = useState<
     string | null
   >(null);
@@ -68,9 +70,8 @@ export const ReservationsSection = () => {
         if (!droppable) return;
 
         // Get raw times from row indices and set them to the same day as dragging reservation
-        const rawStartTime = getTimeFromRowIndex(venue, droppable.rowIndex + 1);
+        const rawStartTime = getTimeFromRowIndex(droppable.rowIndex + 1);
         const rawEndTime = getTimeFromRowIndex(
-          venue,
           droppable.rowIndex + droppable?.rowSpan + 1,
         );
         const { startTime, endTime } = setTimesOnDate(

@@ -1,6 +1,9 @@
 import { addMinutes, differenceInMinutes, isAfter, isBefore } from "date-fns";
 import { Reservation, Venue } from "wasp/entities";
 import { localToUTC, UTCToLocal } from "../date-utils";
+import { toDate } from 'date-fns-tz';
+import { useVenueContext } from "../providers/venue-provider";
+import { useCallback } from "react";
 
 // Constants specific to reservation grid
 const HEADER_ROW_COUNT = 2;
@@ -45,15 +48,28 @@ export function getRowIndexFromMinutes(venue: Venue, minutes: number) {
   return result;
 }
 
-export function getTimeFromRowIndex(venue: Venue, rowIndex: number): Date {
+export function getTimeFromRowIndex(venue: Venue, rowIndex: number, selectedDate: Date): Date {
+  // Calculate total minutes from row index
   const totalMinutes =
     (rowIndex - HEADER_ROW_COUNT) * MinutesPerSlot + venue.displayStart;
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
-  const result = new Date();
+  // Create a new date in the venue's timezone at midnight
+  const result = toDate(selectedDate, { timeZone: venue.timeZoneId });
+  
+  // Set the hours and minutes while preserving the date
   result.setHours(hours, minutes, 0, 0);
-  return localToUTC(result, venue); // Convert to UTC before returning
+  
+  return result;
+}
+
+export function useGetTimeFromRowIndex() {
+  const { venue, selectedDate } = useVenueContext();
+  return useCallback(
+    (rowIndex: number) => getTimeFromRowIndex(venue, rowIndex, selectedDate),
+    [venue, selectedDate],
+  );
 }
 
 export function isWithinReservation(
@@ -62,7 +78,7 @@ export function isWithinReservation(
   rowSpan: number,
   target: Reservation,
 ) {
-  const rawStartTime = getTimeFromRowIndex(venue, rowIndex + 1);
+  const rawStartTime = getTimeFromRowIndex(venue, rowIndex + 1, target.startTime);
   const rawEndTime = addMinutes(rawStartTime, rowSpan * MinutesPerSlot);
 
   const { startTime, endTime } = setTimesOnDate(
@@ -78,7 +94,7 @@ export function isWithinReservation(
   return result;
 }
 
-export function   setTimesOnDate(
+export function setTimesOnDate(
   startTime: Date,
   endTime: Date,
   targetDate: Date,
