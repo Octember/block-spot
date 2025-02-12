@@ -1,5 +1,5 @@
 import { Fragment, FC } from "react";
-import { useIsTimeZoneDifferent, useTimeLabels } from "./constants";
+import { useIsTimeZoneDifferent, useTimeLabels, useTimeLabelsAndZones } from './constants';
 import {
   MinutesPerSlot,
   PixelsPerSlot,
@@ -8,7 +8,7 @@ import {
 import { useVenueContext } from "./providers/venue-provider";
 
 export const HorizontalDividers: FC = () => {
-  const timeLabels = useTimeLabels();
+  const timeLabels = useTimeLabelsAndZones();
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
   const labelWidthClass = isTimeZoneDifferent ? "-ml-24 w-24" : "-ml-14 w-14";
 

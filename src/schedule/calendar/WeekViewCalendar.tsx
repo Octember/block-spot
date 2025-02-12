@@ -11,9 +11,6 @@ import { useVenueContext } from "./providers/venue-provider";
 import { ScheduleProvider } from "./providers/schedule-context-provider";
 import { getUserTimeZoneAbbreviation, useIsTimeZoneDifferent, useVenueTimeZoneAbbreviation } from "./constants";
 
-
-
-
 export const WeekViewCalendar: FC = () => {
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
   const widthClass = isTimeZoneDifferent ? "w-24" : "w-14";
@@ -90,14 +87,14 @@ export const TimeZoneLabel: FC = () => {
   return <div className={`col-end-1 ${widthClass} flex flex-col`}>
 
     <div className={`flex-1 flex items-center ${isTimeZoneDifferent ? "justify-between" : "justify-center"} p-2`}>
-      <span className="text-xs text-gray-500">
-        {venueTimeZoneAbbreviation}
-      </span>
       {isTimeZoneDifferent && (
         <span className="text-xs text-gray-500">
           {getUserTimeZoneAbbreviation()}
         </span>
       )}
+      <span className="text-xs text-gray-500">
+        {venueTimeZoneAbbreviation}
+      </span>
     </div>
   </div >
 }

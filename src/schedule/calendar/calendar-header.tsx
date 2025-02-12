@@ -3,7 +3,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
-import { addDays } from "date-fns";
+import { addDays, format } from "date-fns";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "wasp/client/router";
@@ -52,7 +52,7 @@ export const CalendarHeader: FC = () => {
         />
 
         <div className="px-2 font-bold">
-          {formatTimeWithZone(selectedDate, "MMMM d, yyyy", venue)}
+          {format(selectedDate, "MMMM d, yyyy")}
         </div>
       </div>
     </header>

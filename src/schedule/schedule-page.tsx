@@ -6,9 +6,10 @@ import { useAuth } from "wasp/client/auth";
 
 export default function SchedulePage() {
   const { venueId } = useParams();
+  // console.log("user", user);
   const { data: user } = useAuth();
 
-  if (!venueId || !user) return null;
+  if (!venueId) return null;
 
   return (
     <VenueProvider venueId={venueId}>

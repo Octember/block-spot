@@ -32,12 +32,10 @@ export const PendingChangesSection = () => {
   const { data: user } = useAuth();
 
   if (!pendingChange) {
-    console.log("no pending change");
     return null;
   }
 
   if (pendingChange.type === "CREATE" && user?.isAdmin) {
-    console.log("create reservation modal");
     return <CreateReservationModal reservation={pendingChange.newState} />;
   }
 

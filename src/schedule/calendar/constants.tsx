@@ -81,6 +81,49 @@ export function useTimeLabels() {
   return labels.slice(venue.displayStart / 60, venue.displayEnd / 60);
 }
 
+
+function generateTimeLabelsAndZones(venue: Venue, formatType: "short" | "long" = "short"): React.ReactNode[] {
+  const labels: React.ReactNode[] = [];
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+
+  const formatString = formatType === "long" ? "h:mm a" : "h a";
+
+  for (let hour = 0; hour < 24; hour++) {
+    date.setHours(hour, 0, 0, 0);
+    if (venue) {
+      const venueTime = formatTimeWithZone(date, formatString, venue)
+
+      if (isTimeZoneDifferent(venue.timeZoneId)) {
+        labels.push(
+          <span className="flex items-center justify-between pl-2">
+            <span className="text-xs text-gray-500">
+              {format(date, formatString)}
+            </span>
+            <span className="font-bold text-gray-700">
+              {venueTime}
+            </span>
+          </span>
+        );
+      } else {
+        labels.push(venueTime);
+      }
+
+    } else {
+      labels.push(format(date, formatString));
+    }
+  }
+
+  return labels;
+}
+
+export function useTimeLabelsAndZones() {
+  const { venue } = useVenueContext();
+  const labels = generateTimeLabelsAndZones(venue);
+
+  return labels.slice(venue.displayStart / 60, venue.displayEnd / 60);
+}
+
 export function useTimeLabelsNoVenue() {
   const labels = generateTimeLabels(undefined);
   return labels;
