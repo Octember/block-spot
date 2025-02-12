@@ -1,4 +1,4 @@
-import { createContext, SetStateAction, Dispatch, useContext, useEffect, useState } from "react";
+import { createContext, SetStateAction, Dispatch, useContext, useEffect, useState, useMemo } from "react";
 import {
   createReservation,
   deleteReservation,
@@ -34,18 +34,18 @@ interface PendingChangesProviderProps {
 export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({
   children,
 }) => {
-  const [pendingChange, setPendingChange] = useState<PendingChange | null>(
-    null,
-  );
   const setToast = useToast();
   const { selectedDate } = useVenueContext();
   const { refresh } = useScheduleContext();
-
+  const [pendingChange, setPendingChange] = useState<PendingChange | null>(
+    null,
+  );
   useEffect(() => {
     setPendingChange(null);
   }, [selectedDate]);
 
-  const hasPendingChange = pendingChange !== null;
+
+  const hasPendingChange = useMemo(() => pendingChange !== null, [pendingChange]);
 
   const cancelChange = () => {
     setPendingChange(null);
@@ -89,7 +89,9 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({
       value={{
         pendingChange,
         hasPendingChange,
-        setPendingChange,
+        setPendingChange: (change) => {
+          setPendingChange(change);
+        },
         cancelChange,
         applyChange,
       }}

@@ -31,10 +31,13 @@ export const PendingChangesSection = () => {
   const { pendingChange, cancelChange, applyChange } = usePendingChanges();
   const { data: user } = useAuth();
 
-  if (!pendingChange) return null;
+  if (!pendingChange) {
+    console.log("no pending change");
+    return null;
+  }
 
-  console.log("!", pendingChange, pendingChange.type);
   if (pendingChange.type === "CREATE" && user?.isAdmin) {
+    console.log("create reservation modal");
     return <CreateReservationModal reservation={pendingChange.newState} />;
   }
 

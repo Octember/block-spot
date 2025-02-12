@@ -40,19 +40,19 @@ export function Modal({
     >
       <DialogBackdrop
         transition
-        className="fixed inset-0 bg-gray-500/50 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+        className="fixed inset-0 bg-gray-500/50 transition-opacity ease-out duration-300 opacity-100 
+             data-[state=closed]:opacity-0 data-[state=leave]:duration-200"
       />
 
       <div className="fixed inset-0 z-999 w-screen overflow-y-auto">
         <div className="flex min-h-full items-center justify-center text-center sm:p-0">
           <DialogPanel
             transition
-            className={`
-            relative transform rounded-lg bg-white text-left shadow-xl 
-            transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 
-            data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 w-full ${sizeClass}
-             data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95
-             `}
+            className={`relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all 
+              sm:my-8 w-full ${sizeClass} 
+              ease-out duration-300 opacity-100 translate-y-0 scale-100 
+              data-[state=closed]:opacity-0 data-[state=closed]:translate-y-4 data-[state=closed]:sm:scale-95
+              data-[state=leave]:duration-200`}
           >
             {heading && (
               <div className="border-b border-gray-200 py-4 px-6">
