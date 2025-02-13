@@ -142,3 +142,13 @@ export function setTimesOnDate(
     ),
   };
 }
+
+export function getReservationDuration(reservation: Reservation) {
+  return differenceInMinutes(reservation.endTime, reservation.startTime);
+}
+
+export function getReservationDurationInSlots(
+  reservation: Reservation,
+): number {
+  return Math.ceil(getReservationDuration(reservation) / MinutesPerSlot);
+}

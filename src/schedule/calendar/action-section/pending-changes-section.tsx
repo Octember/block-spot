@@ -35,7 +35,7 @@ export const PendingChangesSection = () => {
     return null;
   }
 
-  if (pendingChange.type === "CREATE" && user?.isAdmin) {
+  if (pendingChange.type === "CREATE") {
     return <CreateReservationModal reservation={pendingChange.newState} />;
   }
 

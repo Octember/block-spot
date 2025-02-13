@@ -18,8 +18,6 @@ import { useMemo, useState } from "react";
 import { updateSpacePriority } from "wasp/client/operations";
 import { useToast } from "../../../client/toast";
 
-
-
 export const SpaceList = ({
   venueId,
   spaces,
@@ -27,7 +25,10 @@ export const SpaceList = ({
   venueId: string;
   spaces: Space[];
 }) => {
-  const initialSpaces = useMemo(() => spaces.toSorted((a, b) => a.priority - b.priority), [spaces]);
+  const initialSpaces = useMemo(
+    () => spaces.toSorted((a, b) => a.priority - b.priority),
+    [spaces],
+  );
 
   const toast = useToast();
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -57,8 +58,12 @@ export const SpaceList = ({
         const { active, over } = event;
 
         if (active.id !== over?.id) {
-          const oldIndex = sortedSpaces.findIndex((space) => space.id === active.id);
-          const newIndex = sortedSpaces.findIndex((space) => space.id === over?.id);
+          const oldIndex = sortedSpaces.findIndex(
+            (space) => space.id === active.id,
+          );
+          const newIndex = sortedSpaces.findIndex(
+            (space) => space.id === over?.id,
+          );
 
           const newSortedSpaces = arrayMove(sortedSpaces, oldIndex, newIndex);
 

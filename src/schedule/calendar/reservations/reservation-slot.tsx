@@ -1,19 +1,23 @@
-import { Over, useDraggable } from "@dnd-kit/core";
+import { useDraggable } from "@dnd-kit/core";
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import {
   EllipsisHorizontalIcon,
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/20/solid";
-import { addMinutes, format } from "date-fns";
+import { addMinutes } from "date-fns";
 import { useMemo, useState } from "react";
 import { Reservation } from "wasp/entities";
 import { isUserOwner } from "../../../client/hooks/permissions";
+import { formatTimeWithZone } from "../date-utils";
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useReservationSelection } from "../selection";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
-import { getRowIndex, getRowSpan } from "./utilities";
-import { formatTimeWithZone } from "../date-utils";
+import {
+  getReservationDurationInSlots,
+  getRowIndex,
+  getRowSpan,
+} from "./utilities";
 
 type ReservationSlotProps = {
   reservation: Reservation;
@@ -24,47 +28,56 @@ type ReservationSlotProps = {
   onDelete?: () => void;
 };
 
-const GrayColorStyle =
-  // "bg-violet-200/20 border-violet-400 hover:border-violet-400";
-  "bg-[#F7F4F3] border-[#B69A91]";
-// "bg-gradient-to-br from-emerald-600/10 to-emerald-600/20  hover:from-emerald-600/20 hover:to-emerald-600/10  border-emerald-800 hover:border-emerald-700";
-// "bg-gradient-to-br from-emerald-600/10 to-emerald-600/20  hover:from-emerald-600/20 hover:to-emerald-600/10  border-emerald-800 hover:border-emerald-700";
-// "bg-emerald-800/10  hover:from-gray-50 hover:to-gray-300 border-emerald-800 hover:border-emerald-700";
-const BlueColorStyle =
-  "bg-gradient-to-br from-cyan-500/20 to-cyan-500/10 hover:from-cyan-500/10 hover:to-cyan-500/20 border-cyan-800 hover:border-cyan-600";
-
-function getColorStyles({
-  isDraft,
-  over,
-  isDragging,
-  otherNodeActive,
-  isOwner,
+const ReservationDescription = ({
+  reservation,
+  startTime,
+  endTime,
 }: {
-  isDraft: boolean;
-  over: Over | null;
-  isDragging: boolean;
-  otherNodeActive: boolean;
-  isOwner: boolean;
-}) {
-  const opacityStyle = isDragging ? "opacity-50" : "";
+  reservation: Reservation;
+  startTime: Date;
+  endTime: Date;
+}) => {
+  const { venue } = useVenueContext();
 
-  if (isDragging && over && over.data.current?.occupied) {
-    return `bg-red-50 hover:bg-red-100 border-red-500 ${opacityStyle}`;
-  }
-  if (isDraft || isDragging) {
-    return `${BlueColorStyle} ${opacityStyle}`;
+  const timeSection = useMemo(() => {
+    if (getReservationDurationInSlots(reservation) < 2) {
+      return null;
+    }
+
+    return (
+      <p>
+        <time dateTime={reservation.startTime.toISOString()}>
+          {formatTimeWithZone(startTime, "h:mm a", venue)} -{" "}
+          {formatTimeWithZone(endTime, "h:mm a", venue)}
+        </time>
+      </p>
+    );
+  }, [reservation, startTime, endTime]);
+
+  const titleSection = useMemo(() => {
+    if (reservation.description) {
+      return <p className="font-bold text-gray-900">{reservation.description}</p>;
+    }
+    return null;
+  }, [reservation.description]);
+
+  if (!reservation.description) {
+    return timeSection;
   }
 
-  if (otherNodeActive) {
-    return GrayColorStyle;
+
+  if (getReservationDurationInSlots(reservation) <= 2) {
+    return titleSection;
   }
 
-  if (isOwner) {
-    return BlueColorStyle;
-  }
+  return (
+    <div className="flex flex-col font-semibold text-gray-700">
+      {titleSection}
 
-  return `${GrayColorStyle} cursor-not-allowed`;
-}
+      {timeSection}
+    </div>
+  );
+};
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
   const { venue } = useVenueContext();
@@ -128,6 +141,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     };
   }, [reservation, isDragging, transform]);
 
+  // const firstDisplay = reservation.description ? getReservationDurationInSlots(reservation) >= 2 : true;
+
   return (
     <li
       className={`relative flex ${isDragging ? "z-50" : "z-20"} select-none bg-white rounded-lg my-1 mx-2`}
@@ -143,16 +158,15 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
       {...listeners}
     >
       <a
-        className={`group w-full flex flex-col justify-between rounded-lg p-2 text-xs/5 border-t-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
+        className={`group w-full flex flex-col justify-between rounded-lg px-2 py-0 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
       >
         <div className="flex flex-col flex-1">
           <div className="flex flex-row justify-between">
-            <p className={`font-semibold text-gray-700`}>
-              <time dateTime={reservation.startTime.toISOString()}>
-                {formatTimeWithZone(newTimes.startTime, "h:mm a", venue)} -{" "}
-                {formatTimeWithZone(newTimes.endTime, "h:mm a", venue)}
-              </time>
-            </p>
+            <ReservationDescription
+              reservation={reservation}
+              startTime={newTimes.startTime}
+              endTime={newTimes.endTime}
+            />
 
             {isOwner && (
               <ReservationMenu
@@ -175,6 +189,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 
 import { usePopper } from "react-popper";
 import { useVenueContext } from "../providers/venue-provider";
+import { getColorStyles } from "./colors";
 
 const ReservationMenu = ({
   onEdit,

@@ -44,9 +44,9 @@ function getStartEndRowsValidated(selection: {
 }): { start: number; end: number } {
   const { start, end } = getStartEndRows(selection);
 
-  if (end - start <= 3) {
+  if (end - start <= 2) {
     // TODO: use venue default time minimum
-    return { start, end: start + 3 };
+    return { start, end: start + 2 };
   }
 
   return { start, end };

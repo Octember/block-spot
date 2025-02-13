@@ -66,8 +66,8 @@ export const updateSpacePriority: UpdateSpacePriority<
         context.entities.Space.update({
           where: { id: update.id },
           data: { priority: update.priority },
-        })
-      )
+        }),
+      ),
     );
     return { success: true };
   } catch (error) {

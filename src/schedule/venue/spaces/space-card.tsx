@@ -14,8 +14,10 @@ const ListItemStyle =
 
 export const SortableSpaceCard: FC<{ space: Space }> = ({ space }) => {
   const { isOwner } = useAuthUser();
-  const { attributes, listeners, setNodeRef } =
-    useSortable({ id: space.id, disabled: !isOwner });
+  const { attributes, listeners, setNodeRef } = useSortable({
+    id: space.id,
+    disabled: !isOwner,
+  });
 
   return (
     <SpaceCard space={space} ref={setNodeRef} {...attributes} {...listeners} />
