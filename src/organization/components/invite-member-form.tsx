@@ -5,6 +5,7 @@ import { Modal } from "../../client/components/modal";
 import { Button } from "../../client/components/button";
 import { useToast } from "../../client/toast";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "wasp/client/auth";
 
 type InviteMemberFormInputs = {
   email: string;
@@ -23,6 +24,7 @@ export function InviteMemberButton({
     <>
       <Button
         onClick={() => setIsModalOpen(true)}
+        // disabled={user?.role === "OWNER"}
         ariaLabel="Invite Member"
         variant="secondary"
         icon={<UserPlusIcon className="size-4" />}
