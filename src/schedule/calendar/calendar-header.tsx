@@ -20,6 +20,8 @@ import {
   useVenueTimeZoneAbbreviation,
 } from "./constants";
 import { getGridTemplateColumns } from "./reservations/constants";
+import { ScrollToSpaceButtons } from './scroll/scroll-to-space-buttons';
+
 
 export const CalendarHeader: FC = () => {
   const { selectedDate, setSelectedDate, venue } = useVenueContext();
@@ -32,34 +34,40 @@ export const CalendarHeader: FC = () => {
         "inset-x-0 top-0 left-0 right-0 z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max w-full ",
       )}
     >
-      <div className="flex px-4 py-2 gap-2 items-center bg-cyan-800/40">
-        {isOwner && (
-          <Button
-            icon={<ArrowLeftIcon className="size-5 my-[3px]" />}
-            ariaLabel="Calendar"
-            variant="secondary"
-            onClick={() => navigate(routes.AllVenuesPageRoute.build({}))}
-          >
-            Back to Dashboard
-          </Button>
-        )}
+      <div className="flex flex-row justify-between items-center bg-cyan-800/40">
+        <div className="flex px-4 py-2 gap-2 items-center">
+          {isOwner && (
+            <Button
+              icon={<ArrowLeftIcon className="size-5 my-[3px]" />}
+              ariaLabel="Calendar"
+              variant="secondary"
+              onClick={() => navigate(routes.AllVenuesPageRoute.build({}))}
+            >
+              Back to Dashboard
+            </Button>
+          )}
 
-        <ButtonGroup
-          items={[
-            {
-              label: <ChevronLeftIcon className="size-5" />,
-              onClick: () => setSelectedDate(addDays(selectedDate, -1)),
-            },
-            {
-              label: <ChevronRightIcon className="size-5" />,
-              onClick: () => setSelectedDate(addDays(selectedDate, 1)),
-            },
-          ]}
-        />
+          <ButtonGroup
+            items={[
+              {
+                label: <ChevronLeftIcon className="size-5" />,
+                onClick: () => setSelectedDate(addDays(selectedDate, -1)),
+              },
+              {
+                label: <ChevronRightIcon className="size-5" />,
+                onClick: () => setSelectedDate(addDays(selectedDate, 1)),
+              },
 
-        <div className="px-2 font-bold">
-          {formatInTimeZone(selectedDate, venue.timeZoneId, "MMMM d, yyyy")}
+            ]}
+          />
+
+          <div className="px-2 font-bold">
+            {formatInTimeZone(selectedDate, venue.timeZoneId, "MMMM d, yyyy")}
+          </div>
         </div>
+
+
+        <ScrollToSpaceButtons />
       </div>
     </header>
   );
@@ -80,8 +88,8 @@ export const SpacesNamesSection: FC = () => {
           }}
         >
           <TimeZoneLabel />
-          {venue.spaces.map((space) => (
-            <div key={space.id} className={`flex items-center justify-center py-2 snap-start ${scrollClass}`}>
+          {venue.spaces.map((space, index) => (
+            <div id={`space-${index}`} key={space.id} className={`flex items-center justify-center py-2 snap-start ${scrollClass}`}>
               <span className="flex items-baseline text-md font-semibold py-1 text-gray-900">
                 {space.name}
               </span>
