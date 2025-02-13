@@ -2,17 +2,14 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Link } from "wasp/client/router";
 import { routes } from "wasp/client/router";
-import { useAuth } from "wasp/client/auth";
 import { acceptInvitation, getInvitationDetails } from "wasp/client/operations";
 import { SignupForm, FormInput } from "wasp/client/auth";
 import { useQuery } from "wasp/client/operations";
 import { customizationOptions } from "../auth/SignupPage";
 import "../auth/overrides.css";
-import { useAuthUser } from "../auth/providers/AuthUserProvider";
 
-export function InvitationPage() {
+export function InvitationPage({ user }: { user?: AuthUser }) {
   const { token } = useParams();
-  const { user, isLoading: isAuthLoading } = useAuthUser();
   const {
     data: invitation,
     isLoading,
@@ -33,7 +30,7 @@ export function InvitationPage() {
     }
   };
 
-  if (isLoading || isAuthLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
