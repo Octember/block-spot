@@ -14,8 +14,12 @@ import { Button } from "../../client/components/button";
 import { ButtonGroup } from "../../client/components/button-group";
 import { isUserOwner } from "../../client/hooks/permissions";
 import { useVenueContext } from "./providers/venue-provider";
-import { getUserTimeZoneAbbreviation, useIsTimeZoneDifferent, useVenueTimeZoneAbbreviation } from './constants';
-import { getGridTemplateColumns } from './reservations/constants';
+import {
+  getUserTimeZoneAbbreviation,
+  useIsTimeZoneDifferent,
+  useVenueTimeZoneAbbreviation,
+} from "./constants";
+import { getGridTemplateColumns } from "./reservations/constants";
 
 export const CalendarHeader: FC = () => {
   const { selectedDate, setSelectedDate, venue } = useVenueContext();
@@ -59,12 +63,9 @@ export const CalendarHeader: FC = () => {
       </div>
 
       <SpacesNamesSection />
-
     </header>
   );
 };
-
-
 
 const SpacesNamesSection: FC = () => {
   const { venue } = useVenueContext();
@@ -101,13 +102,15 @@ export const TimeZoneLabel: FC = () => {
         className={`flex-1 flex items-center ${isTimeZoneDifferent ? "justify-between" : "justify-center"} p-2`}
       >
         {isTimeZoneDifferent && (
-          <span className="text-xs text-gray-500">
-            {getUserTimeZoneAbbreviation()}
-          </span>
+          <>
+            <span className="text-xs text-gray-500">
+              {getUserTimeZoneAbbreviation()}
+            </span>
+            <span className="text-xs text-gray-700 font-bold">
+              {venueTimeZoneAbbreviation}
+            </span>
+          </>
         )}
-        <span className="text-xs text-gray-700 font-bold">
-          {venueTimeZoneAbbreviation}
-        </span>
       </div>
     </div>
   );

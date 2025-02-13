@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { UpdateVenueForm } from "./update-venue-form";
 import { getVenueById, useQuery } from "wasp/client/operations";
-import { AuthUser } from 'wasp/auth';
+import { AuthUser } from "wasp/auth";
 
 export function UpdateVenuePage({ user }: { user: AuthUser }) {
   const { venueId } = useParams();

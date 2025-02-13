@@ -238,10 +238,7 @@ export function SpacesStep({
           )}
         </FormField>
 
-        <FormField
-          label="Time Zone"
-          description="The time zone for your venue"
-        >
+        <FormField label="Time Zone" description="The time zone for your venue">
           <Controller
             control={control}
             name="timeZoneId"

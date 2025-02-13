@@ -14,8 +14,14 @@ export default function VenuePage({ user }: { user: AuthUser }) {
     <Routes>
       <Route path="/" element={<UpdateVenuePage user={user} />} />
       <Route path="/spaces" element={<SpacesPage user={user} />} />
-      <Route path="/availability" element={<HoursAndAvailabilityPage user={user} />} />
-      <Route path="/integrations" element={<VenueIntegrationsPage user={user} />} />
+      <Route
+        path="/availability"
+        element={<HoursAndAvailabilityPage user={user} />}
+      />
+      <Route
+        path="/integrations"
+        element={<VenueIntegrationsPage user={user} />}
+      />
       <Route path="/payments" element={<PaymentsPage user={user} />} />
     </Routes>
   );

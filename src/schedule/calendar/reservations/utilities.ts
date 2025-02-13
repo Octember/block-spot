@@ -4,7 +4,7 @@ import { localToUTC, UTCToLocal } from "../date-utils";
 import { toDate, toZonedTime, getTimezoneOffset } from "date-fns-tz";
 import { useVenueContext } from "../providers/venue-provider";
 import { useCallback } from "react";
-import {getVenueStartOfDay} from '../constants';
+import { getVenueStartOfDay } from "../constants";
 
 // Constants specific to reservation grid
 const HEADER_ROW_COUNT = 2;

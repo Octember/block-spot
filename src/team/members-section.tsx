@@ -12,7 +12,7 @@ import { useToast } from "../client/toast";
 import { RoleSelect } from "./role-select";
 import { MultiSelect } from "../client/components/form/select";
 import { useMemo } from "react";
-import { Card, InvertedCardWidth } from '../client/components/card';
+import { Card, InvertedCardWidth } from "../client/components/card";
 import { useAuth } from "wasp/client/auth";
 import { useAuthUser } from "../auth/providers/AuthUserProvider";
 import { cn } from "../client/cn";
@@ -45,7 +45,6 @@ export function MembersSection() {
       })) || [],
     [tags],
   );
-
 
   const handleCancelInvitation = async (invitationId: string) => {
     try {
@@ -81,7 +80,12 @@ export function MembersSection() {
     <div className="space-y-6">
       <h3 className="text-xl font-bold mb-4">Members</h3>
       <Card>
-        <table className={cn("min-w-full divide-y divide-gray-200", InvertedCardWidth)}>
+        <table
+          className={cn(
+            "min-w-full divide-y divide-gray-200",
+            InvertedCardWidth,
+          )}
+        >
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -120,9 +124,7 @@ export function MembersSection() {
                     onUpdateRole={(newRole) =>
                       handleUpdateRole(member.user.id, newRole)
                     }
-                    disabled={
-                      member.user.id === organization.users[0].user.id
-                    } // Can't change own role
+                    disabled={member.user.id === organization.users[0].user.id} // Can't change own role
                   />
                 </td>
 
@@ -140,9 +142,7 @@ export function MembersSection() {
                         updateUserTags({
                           userId: member.user.id,
                           tagIds: [
-                            ...new Set(
-                              value.map((tag) => tag.value as string),
-                            ),
+                            ...new Set(value.map((tag) => tag.value as string)),
                           ],
                         });
                       }}
@@ -188,7 +188,9 @@ export function MembersSection() {
                 {invitations.map((invitation) => (
                   <tr key={invitation.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {invitation.email || <span className="text-gray-500">{'<Copied URL>'}</span>}
+                      {invitation.email || (
+                        <span className="text-gray-500">{"<Copied URL>"}</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
@@ -226,7 +228,6 @@ export function MembersSection() {
                         </button>
                       )} */}
                     </td>
-
                   </tr>
                 ))}
               </tbody>

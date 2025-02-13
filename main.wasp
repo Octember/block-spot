@@ -216,6 +216,11 @@ action createSpaces {
   entities: [Space, Venue]
 }
 
+action updateSpacePriority {
+  fn: import { updateSpacePriority } from "@src/schedule/venue/venue-operations",
+  entities: [Space, User]
+}
+
 action deleteSpace {
   fn: import { deleteSpace } from "@src/schedule/operations",
   entities: [Space]

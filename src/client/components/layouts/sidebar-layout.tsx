@@ -14,7 +14,10 @@ import { cn } from "../../cn";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
 import { LogoComponent } from "../logo";
 import { PageHeader } from "./page-layout";
-import { AuthUserProvider, useAuthUser } from '../../../auth/providers/AuthUserProvider';
+import {
+  AuthUserProvider,
+  useAuthUser,
+} from "../../../auth/providers/AuthUserProvider";
 import { AuthUser } from "wasp/auth";
 
 type SidebarLayoutProps = {
@@ -27,7 +30,11 @@ type SidebarLayoutProps = {
   };
 };
 
-export const SidebarLayout = ({ user, children, header }: SidebarLayoutProps) => {
+export const SidebarLayout = ({
+  user,
+  children,
+  header,
+}: SidebarLayoutProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -48,7 +55,6 @@ export const SidebarLayout = ({ user, children, header }: SidebarLayoutProps) =>
         </main>
       </div>
     </AuthUserProvider>
-
   );
 };
 

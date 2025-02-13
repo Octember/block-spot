@@ -9,12 +9,17 @@ import {
 } from "wasp/client/operations";
 import { routes } from "wasp/client/router";
 import { useToast } from "../../client/toast";
-import { determineOnboardingStep, getOnboardingUpdates, ONBOARDING_STEPS, OnboardingStepId } from './constants';
+import {
+  determineOnboardingStep,
+  getOnboardingUpdates,
+  ONBOARDING_STEPS,
+  OnboardingStepId,
+} from "./constants";
 import {
   CompleteStep,
   OrganizationStep,
   SpacesStep,
-  WelcomeStep
+  WelcomeStep,
 } from "./onboarding-step";
 import { OnboardingProgress } from "./progress";
 

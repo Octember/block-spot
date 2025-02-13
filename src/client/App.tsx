@@ -97,7 +97,10 @@ export default function App() {
           ) : (
             <>
               {shouldDisplayAppNavBar && (
-                <NavBar navigationItems={navigationItems} user={user || undefined} />
+                <NavBar
+                  navigationItems={navigationItems}
+                  user={user || undefined}
+                />
               )}
 
               <Outlet />

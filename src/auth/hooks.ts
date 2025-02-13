@@ -9,7 +9,6 @@ export const onAfterSignup: OnAfterSignupHook = async ({
   req,
   // res
 }) => {
-
   console.log("onAfterSignup", user);
 
   // Handle organization invitation

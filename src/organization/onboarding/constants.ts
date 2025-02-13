@@ -9,10 +9,14 @@ type OnboardingStep = {
   title: string;
   name: string;
   description?: string;
-  next:OnboardingStepId | null
+  next: OnboardingStepId | null;
 };
 
-export type OnboardingStepId = 'welcome' | 'organization' | 'spaces' | 'complete';
+export type OnboardingStepId =
+  | "welcome"
+  | "organization"
+  | "spaces"
+  | "complete";
 
 export const ONBOARDING_STEPS: Record<OnboardingStepId, OnboardingStep> = {
   welcome: {
@@ -84,7 +88,9 @@ export const getOnboardingUpdates = (
   return updates;
 };
 
-export const getTargetStep = (onboardingState: OnboardingState | null):OnboardingStepId=> {
+export const getTargetStep = (
+  onboardingState: OnboardingState | null,
+): OnboardingStepId => {
   console.log("onboardingState", onboardingState);
   if (!onboardingState) return "welcome";
   if (onboardingState.hasCompletedOnboarding) return "complete";

@@ -2,7 +2,6 @@ import { AuthUser } from "wasp/auth";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 
 export function NotFoundPage({ user }: { user?: AuthUser }) {
-
   return (
     <div className="flex items-center justify-center min-h-screen">
       <div className="text-center">

@@ -288,6 +288,7 @@ model Venue {
 
 model Space {
   id           String        @id @default(uuid())
+  priority     Int           @default(0)
   name         String
   venueId      String
   venue        Venue         @relation(fields: [venueId], references: [id])

@@ -2,9 +2,7 @@ import { FC } from "react";
 import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
 import { CalendarHeader } from "./calendar-header";
-import {
-  useIsTimeZoneDifferent
-} from "./constants";
+import { useIsTimeZoneDifferent } from "./constants";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { PendingChangesProvider } from "./providers/pending-changes-provider";
 import { ScheduleProvider } from "./providers/schedule-context-provider";

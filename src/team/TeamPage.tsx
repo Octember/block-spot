@@ -4,7 +4,7 @@ import { InviteMemberButton } from "../organization/components/invite-member-for
 import { InviteMembers } from "../organization/InviteMembers";
 import { useQuery, getUserOrganization } from "wasp/client/operations";
 import { ManageTagsButton } from "./manage-tags-button";
-import { AuthUserProvider } from '../auth/providers/AuthUserProvider';
+import { AuthUserProvider } from "../auth/providers/AuthUserProvider";
 import { AuthUser } from "wasp/auth";
 
 export default function TeamPage({ user }: { user: AuthUser }) {

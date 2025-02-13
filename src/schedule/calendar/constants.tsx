@@ -138,7 +138,7 @@ function generateTimeLabelsAndZones(
   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   // Adjust for venue timezone to start at venue's midnight
-  const venueAdjustedBase = getVenueStartOfDay(venue)
+  const venueAdjustedBase = getVenueStartOfDay(venue);
 
   for (let hour = 0; hour < 24; hour++) {
     const date = new Date(venueAdjustedBase.getTime() + hour * 60 * 60 * 1000);
