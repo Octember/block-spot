@@ -7,6 +7,7 @@ import { SignupForm, FormInput } from "wasp/client/auth";
 import { useQuery } from "wasp/client/operations";
 import { customizationOptions } from "../auth/SignupPage";
 import "../auth/overrides.css";
+import { AuthUser } from "wasp/auth";
 
 export function InvitationPage({ user }: { user?: AuthUser }) {
   const { token } = useParams();

@@ -12,9 +12,10 @@ import { useToast } from "../client/toast";
 import { RoleSelect } from "./role-select";
 import { MultiSelect } from "../client/components/form/select";
 import { useMemo } from "react";
-import { Card } from "../client/components/card";
+import { Card, InvertedCardWidth } from '../client/components/card';
 import { useAuth } from "wasp/client/auth";
 import { useAuthUser } from "../auth/providers/AuthUserProvider";
+import { cn } from "../client/cn";
 
 export function MembersSection() {
   const toast = useToast();
@@ -78,86 +79,84 @@ export function MembersSection() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-xl font-bold mb-4">Members</h3>
-        <Card>
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tags
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Joined
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {organization.users.map((member) => (
-                <tr key={member.user.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">
-                          {member.user.email}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {member.user.username}
-                        </div>
+      <h3 className="text-xl font-bold mb-4">Members</h3>
+      <Card>
+        <table className={cn("min-w-full divide-y divide-gray-200", InvertedCardWidth)}>
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                User
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Role
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Tags
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Joined
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {organization.users.map((member) => (
+              <tr key={member.user.id}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center">
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {member.user.email}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {member.user.username}
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <RoleSelect
-                      currentRole={member.role}
-                      isOwner={isOwner}
-                      onUpdateRole={(newRole) =>
-                        handleUpdateRole(member.user.id, newRole)
-                      }
-                      disabled={
-                        member.user.id === organization.users[0].user.id
-                      } // Can't change own role
-                    />
-                  </td>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <RoleSelect
+                    currentRole={member.role}
+                    isOwner={isOwner}
+                    onUpdateRole={(newRole) =>
+                      handleUpdateRole(member.user.id, newRole)
+                    }
+                    disabled={
+                      member.user.id === organization.users[0].user.id
+                    } // Can't change own role
+                  />
+                </td>
 
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {(!tags || tags?.length === 0) && <span>No tags set</span>}
-                    {tags && tags?.length > 0 && (
-                      <MultiSelect
-                        options={tagOptions}
-                        value={tagOptions.filter((tag) =>
-                          member.tags.some(
-                            (t) => t.organizationTag.id === tag.value,
-                          ),
-                        )}
-                        onChange={(value) => {
-                          updateUserTags({
-                            userId: member.user.id,
-                            tagIds: [
-                              ...new Set(
-                                value.map((tag) => tag.value as string),
-                              ),
-                            ],
-                          });
-                        }}
-                      />
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(member.user.createdAt).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
-      </div>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {(!tags || tags?.length === 0) && <span>No tags set</span>}
+                  {tags && tags?.length > 0 && (
+                    <MultiSelect
+                      options={tagOptions}
+                      value={tagOptions.filter((tag) =>
+                        member.tags.some(
+                          (t) => t.organizationTag.id === tag.value,
+                        ),
+                      )}
+                      onChange={(value) => {
+                        updateUserTags({
+                          userId: member.user.id,
+                          tagIds: [
+                            ...new Set(
+                              value.map((tag) => tag.value as string),
+                            ),
+                          ],
+                        });
+                      }}
+                    />
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(member.user.createdAt).toLocaleDateString()}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
 
       {invitations && invitations.length > 0 && (
         <div>
@@ -189,7 +188,7 @@ export function MembersSection() {
                 {invitations.map((invitation) => (
                   <tr key={invitation.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {invitation.email}
+                      {invitation.email || <span className="text-gray-500">{'<Copied URL>'}</span>}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
