@@ -16,8 +16,7 @@ import {
   prettyPaymentPlanName,
 } from "../payment/plans";
 
-export default function AccountPage() {
-  const { data: user } = useAuth();
+export default function AccountPage({ user }) {
   const { data: organization, isLoading } = useQuery(getUserOrganization);
 
   if (!organization) return <div>No organization found.</div>;
@@ -28,6 +27,7 @@ export default function AccountPage() {
 
   return (
     <SidebarLayout
+      user={user}
       header={{
         title: "Account Settings",
         description: "Manage your account settings and subscription.",

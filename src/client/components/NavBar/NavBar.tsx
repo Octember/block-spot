@@ -4,7 +4,7 @@ import { AiFillCloseCircle } from "react-icons/ai";
 import { BiLogIn } from "react-icons/bi";
 import { HiBars3 } from "react-icons/hi2";
 import { Link as ReactRouterLink } from "react-router-dom";
-import { useAuth } from "wasp/client/auth";
+import { AuthUser } from "wasp/auth";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import DropdownUser from "../../../user/DropdownUser";
 import { UserMenuItems } from "../../../user/UserMenuItems";
@@ -21,13 +21,14 @@ const NavLogo = () => <img className="h-8 w-8" src={logo} alt="BlockSpot" />;
 
 export default function AppNavBar({
   navigationItems,
+  user,
 }: {
   navigationItems: NavigationItem[];
+  user?: AuthUser;
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isLandingPage = useIsLandingPage();
 
-  const { data: user, isLoading: isUserLoading } = useAuth();
   return (
     <header
       className={cn("absolute inset-x-0 top-0 z-50 dark:bg-boxdark-2", {
@@ -69,7 +70,7 @@ export default function AppNavBar({
           {/* <ul className="flex justify-center items-center gap-2 sm:gap-4">
             <DarkModeSwitcher />
           </ul> */}
-          {isUserLoading ? null : !user ? (
+          {!user ? (
             <WaspRouterLink
               to={routes.LoginRoute.to}
               className="text-sm font-semibold leading-6 ml-3"
@@ -116,7 +117,7 @@ export default function AppNavBar({
                 {renderNavigationItems(navigationItems, setMobileMenuOpen)}
               </div>
               <div className="py-6">
-                {isUserLoading ? null : !user ? (
+                {!user ? (
                   <WaspRouterLink to={routes.LoginRoute.to}>
                     <div className="flex justify-end items-center duration-300 ease-in-out text-gray-900 hover:text-yellow-500 dark:text-white">
                       Log in <BiLogIn size="1.1rem" className="ml-1" />

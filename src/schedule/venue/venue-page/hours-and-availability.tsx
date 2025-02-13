@@ -18,6 +18,7 @@ import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
 import { useTimeLabels, useTimeLabelsNoVenue } from "../../calendar/constants";
 import { VenueProvider } from "../../calendar/providers/venue-provider";
+import { AuthUser } from "wasp/auth";
 
 function transformToFormInputs(
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] },
@@ -34,7 +35,7 @@ function transformToFormInputs(
   };
 }
 
-export function HoursAndAvailabilityPage() {
+export function HoursAndAvailabilityPage({ user }: { user: AuthUser }) {
   const { venueId } = useParams();
 
   const { data: venue, isLoading } = useQuery(getVenueById, {
@@ -46,6 +47,7 @@ export function HoursAndAvailabilityPage() {
   if (!venueId || !venue) return null;
   return (
     <SidebarLayout
+      user={user}
       header={{
         title: "Availability",
         description: "Manage your venue availability",

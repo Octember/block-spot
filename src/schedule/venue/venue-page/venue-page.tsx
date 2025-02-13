@@ -7,20 +7,21 @@ import { HoursAndAvailabilityPage } from "./hours-and-availability";
 import { VenueIntegrationsPage } from "./integrations-page";
 import { PaymentsPage } from "./payments/payments-page";
 import { UpdateVenuePage } from "./update-venue-page";
+import { AuthUser } from "wasp/auth";
 
-export default function VenuePage() {
+export default function VenuePage({ user }: { user: AuthUser }) {
   return (
     <Routes>
-      <Route path="/" element={<UpdateVenuePage />} />
-      <Route path="/spaces" element={<SpacesPage />} />
-      <Route path="/availability" element={<HoursAndAvailabilityPage />} />
-      <Route path="/integrations" element={<VenueIntegrationsPage />} />
-      <Route path="/payments" element={<PaymentsPage />} />
+      <Route path="/" element={<UpdateVenuePage user={user} />} />
+      <Route path="/spaces" element={<SpacesPage user={user} />} />
+      <Route path="/availability" element={<HoursAndAvailabilityPage user={user} />} />
+      <Route path="/integrations" element={<VenueIntegrationsPage user={user} />} />
+      <Route path="/payments" element={<PaymentsPage user={user} />} />
     </Routes>
   );
 }
 
-const SpacesPage = () => {
+const SpacesPage = ({ user }: { user: AuthUser }) => {
   const { venueId } = useParams();
   const { data: venue, isLoading } = useQuery(getVenueById, {
     venueId: venueId || "",
@@ -32,6 +33,7 @@ const SpacesPage = () => {
 
   return (
     <SidebarLayout
+      user={user}
       header={{
         title: venue.name,
         description: "Manage your venue settings and spaces",

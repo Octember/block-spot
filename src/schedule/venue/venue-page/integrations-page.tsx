@@ -6,8 +6,9 @@ import { Card } from "../../../client/components/card";
 import { TextInput } from "../../../client/components/form/text-input";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { useToast } from "../../../client/toast";
+import { AuthUser } from "wasp/auth";
 
-export const VenueIntegrationsPage: FC = () => {
+export const VenueIntegrationsPage = ({ user }: { user: AuthUser }) => {
   const toast = useToast();
   const { venueId } = useParams<{ venueId: string }>();
 
@@ -33,6 +34,7 @@ export const VenueIntegrationsPage: FC = () => {
 
   return (
     <SidebarLayout
+      user={user}
       header={{
         title: "Integrations",
         description: "Connect your venue's schedule with external services",

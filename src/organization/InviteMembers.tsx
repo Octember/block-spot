@@ -3,6 +3,7 @@ import { createInvitation } from "wasp/client/operations";
 import { useToast } from "../client/toast";
 import { Button } from "../client/components/button";
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
+import { useAuthUser } from "../auth/providers/AuthUserProvider";
 
 type InviteMembersProps = {
   organizationId: string;
@@ -11,6 +12,7 @@ type InviteMembersProps = {
 export function InviteMembers({ organizationId }: InviteMembersProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { isOwner } = useAuthUser();
 
   const toast = useToast();
 
@@ -44,7 +46,7 @@ export function InviteMembers({ organizationId }: InviteMembersProps) {
     <div className="">
       <Button
         onClick={handleGenerateLink}
-        disabled={isLoading}
+        disabled={isLoading || !isOwner}
         ariaLabel="Generate Invite Link"
         icon={<ArrowUpOnSquareIcon className="size-4" />}
         variant="secondary"

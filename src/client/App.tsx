@@ -11,12 +11,11 @@ import { useOnboardingRedirect } from "./hooks/useOnboardingRedirect";
 import { ToastProvider } from "./toast";
 
 import LogRocket from "logrocket";
+import { AuthUser } from "wasp/auth";
 
 LogRocket.init("myj73s/blockspot");
 
-function useLogRocket() {
-  const { data: user } = useAuth();
-
+function useLogRocket(user?: AuthUser) {
   useEffect(() => {
     if (user) {
       LogRocket.identify(user.id, {
@@ -37,7 +36,7 @@ export default function App() {
 
   const navigationItems = appNavigationItems;
 
-  useLogRocket();
+  useLogRocket(user || undefined);
   useOnboardingRedirect();
 
   const isSchedulePage = useMemo(
@@ -98,7 +97,7 @@ export default function App() {
           ) : (
             <>
               {shouldDisplayAppNavBar && (
-                <NavBar navigationItems={navigationItems} />
+                <NavBar navigationItems={navigationItems} user={user || undefined} />
               )}
 
               <Outlet />

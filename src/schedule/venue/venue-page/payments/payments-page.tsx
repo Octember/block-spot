@@ -3,12 +3,14 @@ import { SidebarLayout } from "../../../../client/components/layouts/sidebar-lay
 import { useOrganization } from "../../../../organization/hooks/use-organization";
 import { PaymentRules } from "../../../../payment/payments-form/payment-rules";
 import { PaymentsForm } from "../../../../payment/payments-form/payments-form";
+import { AuthUser } from 'wasp/auth';
 
-export const PaymentsPage = () => {
+export const PaymentsPage = ({ user }: { user: AuthUser }) => {
   const { isLoading: isOrganizationLoading, organization } = useOrganization();
 
   return (
     <SidebarLayout
+      user={user}
       header={{
         title: "Payments",
         description: "Manage your venue payments",

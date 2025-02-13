@@ -14,6 +14,7 @@ import { MultiSelect } from "../client/components/form/select";
 import { useMemo } from "react";
 import { Card } from "../client/components/card";
 import { useAuth } from "wasp/client/auth";
+import { useAuthUser } from "../auth/providers/AuthUserProvider";
 
 export function MembersSection() {
   const toast = useToast();
@@ -22,7 +23,7 @@ export function MembersSection() {
     isLoading,
     error,
   } = useQuery(getUserOrganization);
-  const { data: user } = useAuth();
+  const { isOwner } = useAuthUser();
   const { data: tags } = useQuery(getOrganizationTags, {
     organizationId: organization?.id ?? "",
   });
@@ -44,14 +45,6 @@ export function MembersSection() {
     [tags],
   );
 
-  // TODO this is wrong
-  const isOwner = organization.users.some(
-    (member) =>
-      member.user.id === user?.id &&
-      member.role === "OWNER",
-  );
-
-  console.log("isOwner", isOwner);
 
   const handleCancelInvitation = async (invitationId: string) => {
     try {

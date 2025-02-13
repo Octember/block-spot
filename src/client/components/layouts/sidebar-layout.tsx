@@ -9,14 +9,16 @@ import Sidebar from "./sidebar";
 
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/outline";
-import { useAuth } from "wasp/client/auth";
 import { Link as WaspRouterLink } from "wasp/client/router";
 import { cn } from "../../cn";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
 import { LogoComponent } from "../logo";
 import { PageHeader } from "./page-layout";
+import { AuthUserProvider, useAuthUser } from '../../../auth/providers/AuthUserProvider';
+import { AuthUser } from "wasp/auth";
 
 type SidebarLayoutProps = {
+  user: AuthUser;
   children: ReactNode;
   header?: {
     title: string;
@@ -25,25 +27,28 @@ type SidebarLayoutProps = {
   };
 };
 
-export const SidebarLayout = ({ children, header }: SidebarLayoutProps) => {
+export const SidebarLayout = ({ user, children, header }: SidebarLayoutProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="flex flex-col h-full">
-      <MenuDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+    <AuthUserProvider user={user}>
+      <div className="flex flex-col h-full">
+        <MenuDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
-      <SidebarHeader setMenuOpen={setMenuOpen} />
+        <SidebarHeader setMenuOpen={setMenuOpen} />
 
-      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <Sidebar />
+        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+          <Sidebar />
+        </div>
+
+        <main className="pb-10 lg:pl-72">
+          {header && <PageHeader {...header} />}
+
+          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+        </main>
       </div>
+    </AuthUserProvider>
 
-      <main className="pb-10 lg:pl-72">
-        {header && <PageHeader {...header} />}
-
-        <div className="px-4 sm:px-6 lg:px-8">{children}</div>
-      </main>
-    </div>
   );
 };
 
@@ -124,7 +129,7 @@ const SidebarHeader = ({
 }: {
   setMenuOpen: (open: boolean) => void;
 }) => {
-  const { data: user } = useAuth();
+  const { user } = useAuthUser();
 
   return (
     <div className="sticky top-0 z-99 flex items-center gap-x-6 bg-white px-4 py-2 shadow-sm sm:px-6 ">

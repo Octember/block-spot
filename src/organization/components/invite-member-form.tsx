@@ -6,6 +6,7 @@ import { Button } from "../../client/components/button";
 import { useToast } from "../../client/toast";
 import { UserPlusIcon } from "@heroicons/react/24/outline";
 import { useAuth } from "wasp/client/auth";
+import { useAuthUser } from "../../auth/providers/AuthUserProvider";
 
 type InviteMemberFormInputs = {
   email: string;
@@ -17,6 +18,7 @@ export function InviteMemberButton({
 }: {
   organizationId: string;
 }) {
+  const { isOwner } = useAuthUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const toast = useToast();
 
@@ -24,7 +26,7 @@ export function InviteMemberButton({
     <>
       <Button
         onClick={() => setIsModalOpen(true)}
-        // disabled={user?.role === "OWNER"}
+        disabled={!isOwner}
         ariaLabel="Invite Member"
         variant="secondary"
         icon={<UserPlusIcon className="size-4" />}

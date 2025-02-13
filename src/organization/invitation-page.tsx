@@ -8,10 +8,11 @@ import { SignupForm, FormInput } from "wasp/client/auth";
 import { useQuery } from "wasp/client/operations";
 import { customizationOptions } from "../auth/SignupPage";
 import "../auth/overrides.css";
+import { useAuthUser } from "../auth/providers/AuthUserProvider";
 
 export function InvitationPage() {
   const { token } = useParams();
-  const { data: user, isLoading: isAuthLoading } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuthUser();
   const {
     data: invitation,
     isLoading,

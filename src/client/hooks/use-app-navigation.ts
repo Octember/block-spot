@@ -13,6 +13,7 @@ import { useLocation } from "react-router-dom";
 import { useAuth } from "wasp/client/auth";
 import { getAllVenues, useQuery } from "wasp/client/operations";
 import { routes } from "wasp/client/router";
+import { useAuthUser } from "../../auth/providers/AuthUserProvider";
 
 type NavigationItem = {
   name: string;
@@ -23,7 +24,7 @@ type NavigationItem = {
 };
 
 export function useAppNavigation(): NavigationItem[] {
-  const { data: user } = useAuth();
+  const { user } = useAuthUser();
   const location = useLocation();
 
   const { data: venues } = useQuery(getAllVenues, null, { staleTime: 3600000 });
