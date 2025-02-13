@@ -42,6 +42,9 @@ export const getVenueSchedule: GetVenueSchedule<
         },
       },
     },
+    orderBy: {
+      priority: "asc",
+    },
   });
 };
 
