@@ -45,7 +45,7 @@ export function RoleSelect({
       value={currentRole}
       onChange={handleChange}
       disabled={disabled || isUpdating || !isOwner}
-      className={`px-2 py-1 text-xs font-semibold rounded-full 
+      className={`pl-2 pr-6 py-1 text-xs font-semibold rounded-full 
         ${currentRole === "OWNER" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}
         ${isOwner ? "cursor-pointer" : "cursor-not-allowed"}
         disabled:opacity-50`}

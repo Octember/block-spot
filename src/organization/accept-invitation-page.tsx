@@ -5,6 +5,7 @@ import { Link } from "wasp/client/router";
 import { routes } from "wasp/client/router";
 import { useSearchParams } from "react-router-dom";
 
+
 export function AcceptInvitationPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");

@@ -36,7 +36,7 @@ const AuthLayoutV2: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-const customizationOptions: CustomizationOptions = {
+export const customizationOptions: CustomizationOptions = {
   appearance: {
     fontSizes: {
       sm: "14px",

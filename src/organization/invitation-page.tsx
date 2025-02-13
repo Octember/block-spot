@@ -6,6 +6,8 @@ import { useAuth } from "wasp/client/auth";
 import { acceptInvitation, getInvitationDetails } from "wasp/client/operations";
 import { SignupForm, FormInput } from "wasp/client/auth";
 import { useQuery } from "wasp/client/operations";
+import { customizationOptions } from "../auth/SignupPage";
+import "../auth/overrides.css";
 
 export function InvitationPage() {
   const { token } = useParams();
@@ -125,14 +127,26 @@ export function InvitationPage() {
               </Link>
             </p>
           </div>
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 p-4 rounded-lg signupForm">
             <h3 className="text-lg font-medium text-gray-900 mb-4">
               Create an Account
             </h3>
             <SignupForm
+              appearance={customizationOptions.appearance}
               additionalFields={[
+                {
+                  // @ts-expect-error idk
+                  key: "name",
+                  name: "name",
+                  label: "Name",
+                  type: "input",
+                  validations: {
+                    required: "Name is required",
+                  },
+                },
                 (form) => (
                   <FormInput
+                    key="invitationToken"
                     type="hidden"
                     {...form.register("invitationToken")}
                     value={token}

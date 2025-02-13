@@ -583,7 +583,6 @@ action updateMemberRole {
 
 route AcceptInvitationRoute { path: "/accept-invitation", to: AcceptInvitationPage }
 page AcceptInvitationPage {
-  authRequired: true,
   component: import { AcceptInvitationPage } from "@src/organization/accept-invitation-page"
 }
 

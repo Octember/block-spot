@@ -13,6 +13,7 @@ import { RoleSelect } from "./role-select";
 import { MultiSelect } from "../client/components/form/select";
 import { useMemo } from "react";
 import { Card } from "../client/components/card";
+import { useAuth } from "wasp/client/auth";
 
 export function MembersSection() {
   const toast = useToast();
@@ -21,6 +22,7 @@ export function MembersSection() {
     isLoading,
     error,
   } = useQuery(getUserOrganization);
+  const { data: user } = useAuth();
   const { data: tags } = useQuery(getOrganizationTags, {
     organizationId: organization?.id ?? "",
   });
@@ -45,9 +47,11 @@ export function MembersSection() {
   // TODO this is wrong
   const isOwner = organization.users.some(
     (member) =>
-      member.user.id === organization.users[0].user.id &&
+      member.user.id === user?.id &&
       member.role === "OWNER",
   );
+
+  console.log("isOwner", isOwner);
 
   const handleCancelInvitation = async (invitationId: string) => {
     try {
@@ -164,7 +168,7 @@ export function MembersSection() {
 
       {invitations && invitations.length > 0 && (
         <div>
-          <h3 className="text-xl font-bold mb-4">Invitations</h3>
+          <h3 className="text-xl font-bold mb-4">Pending Invitations</h3>
           <div className="bg-white shadow rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">

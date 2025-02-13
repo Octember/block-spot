@@ -18,7 +18,7 @@ export async function sendInvitationEmail({
   token: string;
   expiresAt: Date;
 }) {
-  const acceptUrl = `${process.env.WASP_WEB_CLIENT_URL}/accept-invitation?token=${token}`;
+  const acceptUrl = `${process.env.WASP_WEB_CLIENT_URL}/invitation/${token}`;
   const expirationDate = formatInTimeZone(expiresAt, "UTC", "MMMM do, yyyy");
 
   await postmarkClient.sendEmailWithTemplate({
