@@ -45,7 +45,7 @@ export const PendingChangesSection = () => {
         className="flex" // lg:hidden"
         open={true}
         size="lg"
-        onClose={() => {}}
+        onClose={() => { }}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
@@ -80,7 +80,7 @@ export const PendingChangesSection = () => {
         </div>
       </Modal>
 
-      <div className="hidden max-w-5xl mx-auto gap-3 items-center justify-between whitespace-nowrap">
+      <div className="hidden max-w-fit mx-auto gap-3 items-center justify-between whitespace-nowrap">
         <div className="flex items-center">
           <div className="h-2 w-2 rounded-full bg-yellow-400 mr-2" />
           <span className="text-xl font-medium text-gray-900">
