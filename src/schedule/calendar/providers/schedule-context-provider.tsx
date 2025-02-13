@@ -73,7 +73,8 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
   });
 
   const getTimeFromRow = useCallback(
-    (rowIndex: number) => getTimeFromRowIndex(venue, rowIndex, currentDate),
+    (rowIndex: number, date?: Date) =>
+      getTimeFromRowIndex(venue, rowIndex, date ?? currentDate),
     [venue, currentDate],
   );
 
@@ -82,14 +83,8 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
       if (!venue || !spaces) return false;
 
       // Convert row index to minutes since midnight
-      const timeInMinutes = getTimeFromRow(rowIndex);
-      const timeDate = new Date(currentDate);
-      timeDate.setHours(
-        Math.floor(timeInMinutes / 60),
-        timeInMinutes % 60,
-        0,
-        0,
-      );
+      const timeDate = getTimeFromRow(rowIndex, currentDate);
+      const timeInMinutes = timeDate.getHours() * 60 + timeDate.getMinutes();
 
       // Check if time falls within any unavailability block
       const isInUnavailableBlock = unavailabileBlocks.some(

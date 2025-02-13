@@ -115,15 +115,7 @@ export function useTimeLabels() {
   return labels.slice(venue.displayStart / 60, venue.displayEnd / 60);
 }
 
-function generateTimeLabelsAndZones(
-  venue: Venue,
-  formatType: "short" | "long" = "short",
-): React.ReactNode[] {
-  const labels: React.ReactNode[] = [];
-  const formatString = formatType === "long" ? "h:mm a" : "h a";
-  const isDifferent = isTimeZoneDifferent(venue.timeZoneId);
-  const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
+export function getVenueStartOfDay(venue: Venue, date?: Date) {
   // Get the timezone offset in minutes for both timezones
   const now = new Date();
   const venueOffset = getTimezoneOffset(venue.timeZoneId, now);
@@ -133,7 +125,20 @@ function generateTimeLabelsAndZones(
   utcBase.setUTCHours(0, 0, 0, 0);
 
   // Adjust for venue timezone to start at venue's midnight
-  const venueAdjustedBase = new Date(utcBase.getTime() - venueOffset);
+  return new Date(utcBase.getTime() - venueOffset);
+}
+
+function generateTimeLabelsAndZones(
+  venue: Venue,
+  formatType: "short" | "long" = "short",
+): React.ReactNode[] {
+  const labels: React.ReactNode[] = [];
+  const formatString = formatType === "long" ? "h:mm a" : "h a";
+  const isDifferent = isTimeZoneDifferent(venue.timeZoneId);
+  const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Adjust for venue timezone to start at venue's midnight
+  const venueAdjustedBase = getVenueStartOfDay(venue)
 
   for (let hour = 0; hour < 24; hour++) {
     const date = new Date(venueAdjustedBase.getTime() + hour * 60 * 60 * 1000);

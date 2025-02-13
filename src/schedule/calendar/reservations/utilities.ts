@@ -4,6 +4,7 @@ import { localToUTC, UTCToLocal } from "../date-utils";
 import { toDate, toZonedTime, getTimezoneOffset } from "date-fns-tz";
 import { useVenueContext } from "../providers/venue-provider";
 import { useCallback } from "react";
+import {getVenueStartOfDay} from '../constants';
 
 // Constants specific to reservation grid
 const HEADER_ROW_COUNT = 2;
@@ -59,17 +60,7 @@ export function getTimeFromRowIndex(
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
 
-  const venueOffset = getTimezoneOffset(venue.timeZoneId, new Date());
-
-  // Create a date at midnight in venue's timezone
-  const baseDate = toZonedTime(selectedDate, venue.timeZoneId);
-  baseDate.setHours(hours, minutes, 0, 0);
-
-  const utcBase = new Date(selectedDate);
-  utcBase.setUTCHours(0, 0, 0, 0);
-
-  // Adjust for venue timezone to start at venue's midnight
-  const venueAdjustedBase = new Date(utcBase.getTime() - venueOffset);
+  const venueAdjustedBase = getVenueStartOfDay(venue, selectedDate);
 
   const date = new Date(
     venueAdjustedBase.getTime() + hours * 60 * 60 * 1000 + minutes * 60 * 1000,
