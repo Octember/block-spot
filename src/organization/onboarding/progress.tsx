@@ -9,19 +9,18 @@ export function OnboardingProgress({ currentStep }: { currentStep: string }) {
         {steps.map((step, index) => (
           <li
             key={step.id}
-            className={`relative ${index !== steps.length - 1 ? "pr-24" : ""}`}
+            className={`relative ${index !== steps.length - 1 ? "pr-32" : ""}`}
           >
             <div className="flex items-center">
               <div
                 className={`relative flex h-8 w-8 items-center justify-center rounded-full
-                  ${
-                    currentStep === step.id
-                      ? "border-2 border-indigo-600 bg-white"
-                      : Object.values(ONBOARDING_STEPS).findIndex(
-                            (s) => s.id === currentStep,
-                          ) > index
-                        ? "bg-indigo-600"
-                        : "border-2 border-gray-300 bg-white"
+                  ${currentStep === step.id
+                    ? "border-2 border-indigo-600 bg-white"
+                    : Object.values(ONBOARDING_STEPS).findIndex(
+                      (s) => s.id === currentStep,
+                    ) > index
+                      ? "bg-indigo-600"
+                      : "border-2 border-gray-300 bg-white"
                   }`}
               >
                 <span

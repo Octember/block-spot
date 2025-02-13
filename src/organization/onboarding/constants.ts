@@ -5,49 +5,51 @@ export type OrganizationWithOnboarding = Organization & {
 };
 
 type OnboardingStep = {
-  id: string;
+  id: OnboardingStepId;
   title: string;
   name: string;
   description?: string;
-  next: string | null;
+  next:OnboardingStepId | null
 };
 
-export const ONBOARDING_STEPS: Record<string, OnboardingStep> = {
-  WELCOME: {
+export type OnboardingStepId = 'welcome' | 'organization' | 'spaces' | 'complete';
+
+export const ONBOARDING_STEPS: Record<OnboardingStepId, OnboardingStep> = {
+  welcome: {
     id: "welcome",
     name: "Welcome",
     title: "Welcome to blockspot!",
     next: "organization",
   },
-  ORGANIZATION: {
+  organization: {
     id: "organization",
     name: "Organization",
     title: "Organization Details",
     description: "Tell us about your organization",
     next: "spaces",
   },
-  SPACES: {
+  spaces: {
     id: "spaces",
     name: "Spaces",
     title: "Setup Spaces",
     description: "Create your first venue and spaces",
-    next: "invite",
-  },
-  INVITE: {
-    id: "invite",
-    name: "Invite Team",
-    title: "Invite Your Team",
-    description: "Get your team onboard",
-    next: "pricing",
-  },
-  PRICING: {
-    id: "pricing",
-    name: "Select Plan",
-    title: "Choose Your Plan",
-    description: "Select the plan that best fits your needs",
     next: "complete",
   },
-  COMPLETE: {
+  // INVITE: {
+  //   id: "invite",
+  //   name: "Invite Team",
+  //   title: "Invite Your Team",
+  //   description: "Get your team onboard",
+  //   next: "pricing",
+  // },
+  // PRICING: {
+  //   id: "pricing",
+  //   name: "Select Plan",
+  //   title: "Choose Your Plan",
+  //   description: "Select the plan that best fits your needs",
+  //   next: "COMPLETE",
+  // },
+  complete: {
     id: "complete",
     name: "Complete",
     title: "All Set!",
@@ -82,12 +84,13 @@ export const getOnboardingUpdates = (
   return updates;
 };
 
-export const getTargetStep = (onboardingState: OnboardingState | null) => {
+export const getTargetStep = (onboardingState: OnboardingState | null):OnboardingStepId=> {
+  console.log("onboardingState", onboardingState);
   if (!onboardingState) return "welcome";
   if (onboardingState.hasCompletedOnboarding) return "complete";
-  if (onboardingState.hasSelectedPlan) return "complete";
-  if (onboardingState.hasInvitedMembers) return "pricing";
-  if (onboardingState.hasCreatedFirstSpace) return "invite";
+  // if (onboardingState.hasSelectedPlan) return "COMPLETE";
+  // if (onboardingState.hasInvitedMembers) return "COMPLETE";
+  if (onboardingState.hasCreatedFirstSpace) return "complete";
   if (onboardingState.hasCompletedProfile) return "spaces";
   return "organization";
 };
@@ -110,7 +113,7 @@ export const determineOnboardingStep = (
   }
 
   const targetStep = getTargetStep(onboardingState);
-
+  console.log("targetStep", targetStep);
   return {
     shouldRedirect: true,
     targetStep: `/onboarding/${targetStep}`,

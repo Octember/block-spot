@@ -15,6 +15,7 @@ import { useToast } from "../../client/toast";
 import { PricingStep } from "./pricing-step";
 import { Select } from "../../client/components/form/select";
 import { TimeZoneOptions } from "./constants";
+import { useAuth } from "wasp/client/auth";
 
 interface FormData {
   organizationName: string;
@@ -145,6 +146,8 @@ export function SpacesStep({
   organizationName: string;
   onNext: () => Promise<void>;
 }) {
+  const { data: user } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -153,7 +156,7 @@ export function SpacesStep({
   } = useForm<SpacesStepFormData>({
     defaultValues: {
       spaces: [{ name: "", type: "Conference Room", capacity: 1 }],
-      contactEmail: "",
+      contactEmail: user?.email || "",
       timeZoneId: Intl.DateTimeFormat().resolvedOptions().timeZone,
     },
   });
@@ -185,7 +188,7 @@ export function SpacesStep({
         displayStart: 480,
         displayEnd: 1080,
         timeZoneId: formData.timeZoneId,
-        spaces: spaces.map((space) => ({
+        spaces: formData.spaces.map((space) => ({
           name: space.name,
           id: "",
         })),
@@ -211,7 +214,7 @@ export function SpacesStep({
       className="space-y-6"
       onSubmit={handleSubmit(handleCreateVenueAndSpaces)}
     >
-      <div className="">
+      <div className="flex flex-col gap-4">
         <h2 className="text-2xl font-bold pb-2">Venue Details</h2>
         <FormField
           label="Contact Email"
@@ -230,6 +233,15 @@ export function SpacesStep({
             })}
           />
 
+          {errors.contactEmail && (
+            <p className="text-red-500">{errors.contactEmail.message}</p>
+          )}
+        </FormField>
+
+        <FormField
+          label="Time Zone"
+          description="The time zone for your venue"
+        >
           <Controller
             control={control}
             name="timeZoneId"
@@ -246,10 +258,6 @@ export function SpacesStep({
               />
             )}
           />
-
-          {errors.contactEmail && (
-            <p className="text-red-500">{errors.contactEmail.message}</p>
-          )}
         </FormField>
       </div>
 
@@ -271,10 +279,18 @@ export function SpacesStep({
                 </label>
                 <input
                   type="text"
-                  {...register(`spaces.${index}.name`)}
+                  {...register(`spaces.${index}.name`, {
+                    required: "Space name is required",
+                  })}
                   placeholder="e.g., Main Conference Room"
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                 />
+
+                {errors.spaces?.[index]?.name && (
+                  <p className="text-red-500">
+                    {errors.spaces[index].name.message}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">

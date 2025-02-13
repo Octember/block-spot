@@ -9,19 +9,12 @@ import {
 } from "wasp/client/operations";
 import { routes } from "wasp/client/router";
 import { useToast } from "../../client/toast";
-import {
-  determineOnboardingStep,
-  getOnboardingUpdates,
-  ONBOARDING_STEPS,
-  StepId,
-} from "./constants";
+import { determineOnboardingStep, getOnboardingUpdates, ONBOARDING_STEPS, OnboardingStepId } from './constants';
 import {
   CompleteStep,
-  InviteStep,
   OrganizationStep,
-  PricingStep,
   SpacesStep,
-  WelcomeStep,
+  WelcomeStep
 } from "./onboarding-step";
 import { OnboardingProgress } from "./progress";
 
@@ -58,7 +51,7 @@ export function OrganizationOnboardingPage() {
   }
 
   const currentStep =
-    ONBOARDING_STEPS[step.toUpperCase() as StepId] || ONBOARDING_STEPS.WELCOME;
+    ONBOARDING_STEPS[step as OnboardingStepId] || ONBOARDING_STEPS.welcome;
 
   const updateProgress = async (organizationId: string, step: string) => {
     try {
@@ -124,12 +117,12 @@ export function OrganizationOnboardingPage() {
             onNext={handleNext}
           />
         );
-      case "invite":
-        return <InviteStep onNext={handleNext} />;
-      case "pricing":
-        return organization ? (
-          <PricingStep onNext={handleNext} organizationId={organization.id} />
-        ) : null;
+      // case "invite":
+      // return <InviteStep onNext={handleNext} />;
+      // case "pricing":
+      // return organization ? (
+      // <PricingStep onNext={handleNext} organizationId={organization.id} />
+      // ) : null;
       case "complete":
         return <CompleteStep onNext={handleNext} />;
       default:
