@@ -42,6 +42,7 @@ export function MembersSection() {
     [tags],
   );
 
+  // TODO this is wrong
   const isOwner = organization.users.some(
     (member) =>
       member.user.id === organization.users[0].user.id &&
@@ -163,7 +164,7 @@ export function MembersSection() {
 
       {invitations && invitations.length > 0 && (
         <div>
-          <h3 className="text-xl font-bold mb-4">Pending Invitations</h3>
+          <h3 className="text-xl font-bold mb-4">Invitations</h3>
           <div className="bg-white shadow rounded-lg overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -173,6 +174,9 @@ export function MembersSection() {
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Role
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Expires
@@ -198,19 +202,35 @@ export function MembersSection() {
                         {invitation.role}
                       </span>
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full `}
+                      >
+                        {invitation.status}
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(invitation.expiresAt).toLocaleDateString()}
                     </td>
-                    {isOwner && (
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      {isOwner && (
                         <button
                           onClick={() => handleCancelInvitation(invitation.id)}
                           className="text-red-600 hover:text-red-900"
                         >
                           <XMarkIcon className="h-5 w-5" />
                         </button>
-                      </td>
-                    )}
+                      )}
+                      {/* {invitation.status === "PENDING" && (
+                        <button
+                          onClick={() => handleCopyInvitationLink(invitation.)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          Copy link
+                        </button>
+                      )} */}
+                    </td>
+
                   </tr>
                 ))}
               </tbody>

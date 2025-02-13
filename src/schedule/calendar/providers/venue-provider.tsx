@@ -33,7 +33,7 @@ interface VenueContext {
 
 const VenueContext = createContext<VenueContext | null>(null);
 
-function getDateOrDefault(date: string | null, venue: Venue) {
+export function getDateOrDefault(date: string | null, venue: Venue) {
   if (!date) {
     // Create today at midnight in venue's timezone
     const now = new Date();

@@ -1,5 +1,5 @@
-import { getDateOrDefault } from "../schedule-context-provider";
 import { describe, it, expect } from "vitest";
+import { getDateOrDefault } from "../venue-provider";
 
 // Mock the Venue type to avoid browser dependencies
 type MockVenue = {

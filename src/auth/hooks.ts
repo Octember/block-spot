@@ -11,23 +11,14 @@ export const onAfterSignup: OnAfterSignupHook = async ({
   req,
   // res
 }) => {
-  // TODO: Add onboarding flow here
-  // res.redirect("/onboarding")
 
-  // For Stripe to function correctly, we need a valid email associated with the user.
-  // Discord allows an email address to be optional. If this is the case, we delete the user
-  // from our DB and throw an error.
-  if (providerId.providerName === "discord" && !user.email) {
-    await prisma.user.delete({
-      where: {
-        id: user.id,
-      },
-    });
-    throw new HttpError(403, "Discord user needs a valid email to sign up");
-  }
+  console.log("onAfterSignup", user);
 
   // Handle organization invitation
   const invitationToken = req.body?.invitationToken;
+
+  console.log("invitationToken", invitationToken);
+
   if (invitationToken) {
     const invitation = await prisma.invitation.findUnique({
       where: { token: invitationToken },
