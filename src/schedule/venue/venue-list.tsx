@@ -43,7 +43,7 @@ const VenueCard = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
         </div>
       </div>
 
-      <SpaceList venueId={venue.id} spaces={venue.spaces} />
+      <SpaceList spaces={venue.spaces} />
     </li>
   );
 };

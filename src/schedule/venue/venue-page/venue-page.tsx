@@ -8,6 +8,7 @@ import { VenueIntegrationsPage } from "./integrations-page";
 import { PaymentsPage } from "./payments/payments-page";
 import { UpdateVenuePage } from "./update-venue-page";
 import { AuthUser } from "wasp/auth";
+import LoadingSpinner from "../../../admin/layout/LoadingSpinner";
 
 export default function VenuePage({ user }: { user: AuthUser }) {
   return (
@@ -33,22 +34,22 @@ const SpacesPage = ({ user }: { user: AuthUser }) => {
     venueId: venueId || "",
   });
 
-  if (isLoading) return null;
-
-  if (!venueId || !venue) return null;
-
   return (
     <SidebarLayout
       user={user}
       header={{
-        title: venue.name,
+        title: venue?.name || "Loading...",
         description: "Manage your venue settings and spaces",
-        actions: <BulkSpaceCreator venueId={venue.id} />,
+        actions: venueId ? <BulkSpaceCreator venueId={venueId} /> : null,
       }}
     >
-      <li className="relative flex flex-col justify-between gap-x-6 py-5 bg-white border border-gray-200 rounded-md">
-        <SpaceList venueId={venue.id} spaces={venue.spaces} />
-      </li>
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <li className="relative flex flex-col justify-between gap-x-6 py-5 bg-white border border-gray-200 rounded-md">
+          <SpaceList spaces={venue?.spaces || []} />
+        </li>
+      )}
     </SidebarLayout>
   );
 };

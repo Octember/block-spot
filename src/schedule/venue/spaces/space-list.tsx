@@ -18,13 +18,7 @@ import { useMemo, useState } from "react";
 import { updateSpacePriority } from "wasp/client/operations";
 import { useToast } from "../../../client/toast";
 
-export const SpaceList = ({
-  venueId,
-  spaces,
-}: {
-  venueId: string;
-  spaces: Space[];
-}) => {
+export const SpaceList = ({ spaces }: { spaces: Space[] }) => {
   const initialSpaces = useMemo(
     () => spaces.toSorted((a, b) => a.priority - b.priority),
     [spaces],

@@ -4,6 +4,7 @@ import { VenueList } from "./venue-list";
 
 import { SidebarLayout } from "../../client/components/layouts/sidebar-layout";
 import { AuthUser } from "wasp/auth";
+import LoadingSpinner from '../../admin/layout/LoadingSpinner';
 
 export default function VenuePage({ user }: { user: AuthUser }) {
   const { data: venues, isLoading: isVenueLoading } = useQuery(getAllVenues);
@@ -16,7 +17,11 @@ export default function VenuePage({ user }: { user: AuthUser }) {
         description: "Manage your venues and spaces",
       }}
     >
-      <VenueList venues={venues || []} />
+      {isVenueLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <VenueList venues={venues || []} />
+      )}
     </SidebarLayout>
   );
 }
