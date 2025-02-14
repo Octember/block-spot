@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
+import { AuthUser } from "wasp/auth";
 import {
   getVenueById,
   updateVenue,
@@ -14,11 +15,10 @@ import { FormField } from "../../../client/components/form/form-field";
 import { Select } from "../../../client/components/form/select";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { useToast } from "../../../client/toast";
+import { generateHoursLabels } from '../../calendar/constants';
+import { VenueProvider } from "../../calendar/providers/venue-provider";
 import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
-import { useTimeLabels, useTimeLabelsNoVenue } from "../../calendar/constants";
-import { VenueProvider } from "../../calendar/providers/venue-provider";
-import { AuthUser } from "wasp/auth";
 
 function transformToFormInputs(
   venue: Venue & { spaces: Space[]; availabilityRules: AvailabilityRule[] },
@@ -26,8 +26,8 @@ function transformToFormInputs(
   return {
     name: venue.name,
     spaces: venue.spaces,
-    displayStart: venue.displayStart / 60,
-    displayEnd: venue.displayEnd / 60,
+    displayStart: venue.displayStart,
+    displayEnd: venue.displayEnd,
     announcements: "",
     availabilityRules: venue.availabilityRules,
     contactEmail: venue.contactEmail,
@@ -65,7 +65,7 @@ export function HoursAndAvailabilityForm({
 }: {
   venue: NonNullable<Awaited<ReturnType<typeof getVenueById>>>;
 }) {
-  const timeLabels = useTimeLabelsNoVenue();
+  const timeLabels = generateHoursLabels();
   const toast = useToast();
 
   const {
@@ -87,8 +87,8 @@ export function HoursAndAvailabilityForm({
         id: venue.id,
         name: data.name,
         spaces: data.spaces,
-        displayStart: data.displayStart * 60,
-        displayEnd: data.displayEnd * 60,
+        displayStart: data.displayStart,
+        displayEnd: data.displayEnd,
         announcements: data.announcements,
         contactEmail: data.contactEmail,
         timeZoneId: data.timeZoneId,
@@ -131,7 +131,7 @@ export function HoursAndAvailabilityForm({
                     value: i * 60,
                   }))}
                   onChange={(value) => onChange(Number(value.value))}
-                  value={{ label: timeLabels[value], value: String(value) }}
+                  value={{ label: timeLabels[value / 60], value: String(value) }}
                 />
               )}
             />
@@ -147,7 +147,7 @@ export function HoursAndAvailabilityForm({
                     value: i * 60,
                   }))}
                   onChange={(value) => onChange(Number(value.value))}
-                  value={{ label: timeLabels[value], value: String(value) }}
+                  value={{ label: timeLabels[value / 60], value: String(value) }}
                 />
               )}
             />

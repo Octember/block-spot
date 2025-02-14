@@ -108,6 +108,19 @@ function generate15MinuteLabels(venue: Venue): string[] {
   return labels;
 }
 
+export function generateHoursLabels() {
+  const labels: string[] = [];
+  const baseDate = new Date();
+  baseDate.setUTCHours(0, 0, 0, 0);
+
+  for (let hour = 0; hour < 24; hour++) {
+    const date = toDate(baseDate, {});
+    date.setHours(hour, 0, 0, 0);
+    labels.push(format(date, "h:mm a", {}));
+  }
+  return labels;
+}
+
 export function useTimeLabels() {
   const { venue } = useVenueContext();
 
