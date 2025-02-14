@@ -1,6 +1,7 @@
 import { getVenueDetails, useQuery } from "wasp/client/operations";
 
-import { format, isValid, parseISO } from "date-fns";
+import { isValid, parseISO, startOfDay, startOfToday } from "date-fns";
+import { format, formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz';
 import React, {
   createContext,
   useCallback,
@@ -11,9 +12,7 @@ import React, {
 } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Space, Venue } from "wasp/entities";
-import { getStartOfDay, localToUTC, UTCToLocal } from "../date-utils";
 import { getUnavailabilityBlocks } from "./availability-utils";
-import { toDate } from "date-fns-tz";
 
 interface VenueContext {
   // Date-related
@@ -33,24 +32,19 @@ interface VenueContext {
 
 const VenueContext = createContext<VenueContext | null>(null);
 
-export function getDateOrDefault(date: string | null, venue: Venue) {
+
+export function getDateOrDefault(date: string | null, venue: Venue): Date {
   if (!date) {
-    // Create today at midnight in venue's timezone
-    const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}T00:00:00`;
-    return toDate(todayStr, { timeZone: venue.timeZoneId });
+    return toZonedTime(startOfToday(), venue.timeZoneId)
   }
 
-  // Parse the date string and create it at midnight in venue's timezone
-  const parsedDate = parseISO(date);
-  if (!isValid(parsedDate)) {
-    const now = new Date();
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}T00:00:00`;
-    return toDate(todayStr, { timeZone: venue.timeZoneId });
+  const parsed = parseISO(date);
+  if (!isValid(parsed)) {
+    return toZonedTime(startOfToday(), venue.timeZoneId)
   }
 
-  // Create the selected date at midnight in venue's timezone
-  return toDate(`${date}T00:00:00`, { timeZone: venue.timeZoneId });
+  // fromZonedTime converts the local time in the specified time zone to the equivalent UTC Date.
+  return toZonedTime(parsed, venue.timeZoneId);
 }
 
 interface VenueProviderProps {
@@ -95,11 +89,8 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
   const value: VenueContext = {
     selectedDate,
     setSelectedDate: (date: Date) => {
-      // Convert the input date to midnight in venue's timezone
-      const venueDate = getDateOrDefault(format(date, "yyyy-MM-dd"), venue);
-      setSelectedDate(venueDate);
       setSearchParams((prev) => {
-        prev.set("selected_date", format(venueDate, "yyyy-MM-dd"));
+        prev.set("selected_date", format(date, "yyyy-MM-dd"));
         return prev;
       });
     },

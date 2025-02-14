@@ -1,5 +1,4 @@
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-import { PencilSquareIcon, TrashIcon } from '@heroicons/react/20/solid';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { formatInTimeZone } from 'date-fns-tz';
 import { FC, useState } from 'react';

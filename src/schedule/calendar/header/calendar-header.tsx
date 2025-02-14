@@ -3,7 +3,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
-import { addDays } from "date-fns";
+import { addDays, format, parseISO } from "date-fns";
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "wasp/client/router";
@@ -12,13 +12,27 @@ import { cn } from "../../../client/cn";
 import { Button } from "../../../client/components/button";
 import { ButtonGroup } from "../../../client/components/button-group";
 import { isUserOwner } from "../../../client/hooks/permissions";
-import { useVenueContext } from "../providers/venue-provider";
+import { getDateOrDefault, useVenueContext } from "../providers/venue-provider";
 import { DateSelectButton } from './date-select-button';
 import { ScrollToSpaceButtons } from './scroll/scroll-to-space-buttons';
+import { formatInTimeZone } from 'date-fns-tz';
+import { Venue } from "wasp/entities";
+
+
+// Helper function to add/subtract days in the venue’s timezone
+function addDaysInVenueTimezone(date: Date, days: number, venue: Venue) {
+  // Format the date as a string (yyyy-MM-dd) in the venue's timezone.
+  const currentVenueDayStr = formatInTimeZone(date, venue.timeZoneId, "yyyy-MM-dd");
+  // Parse that string (interpreted as local midnight) and add the days.
+  const newDate = addDays(parseISO(currentVenueDayStr), days);
+  // Format the new date as a string and convert it back to a Date at midnight in venue's timezone.
+  const newDateStr = format(newDate, "yyyy-MM-dd");
+  return getDateOrDefault(newDateStr, venue);
+}
 
 
 export const CalendarHeader: FC = () => {
-  const { selectedDate, setSelectedDate } = useVenueContext();
+  const { selectedDate, setSelectedDate, venue } = useVenueContext();
   const navigate = useNavigate();
   const isOwner = isUserOwner();
 
