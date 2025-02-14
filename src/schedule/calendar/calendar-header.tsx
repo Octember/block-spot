@@ -76,10 +76,14 @@ export const CalendarHeader: FC = () => {
 export const SpacesNamesSection: FC = () => {
   const { venue } = useVenueContext();
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
+  const heightOfHeader = 56; // or whatever your CalendarHeader height is
+
   const scrollClass = isTimeZoneDifferent ? "scroll-ml-24" : "scroll-ml-14";
 
   return (
-    <div className="inset-x-0 top-0 left-0 right-0 z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max w-full ">
+    <div
+      className={`sticky top-[${heightOfHeader}px] z-40 bg-white min-w-max w-full`}
+    >
       <div className="z-30 flex-none bg-white shadow-4 sm:pr-8">
         <div
           className="-mr-px grid divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500"
@@ -89,7 +93,11 @@ export const SpacesNamesSection: FC = () => {
         >
           <TimeZoneLabel />
           {venue.spaces.map((space, index) => (
-            <div id={`space-${index}`} key={space.id} className={`flex items-center justify-center py-2 snap-start ${scrollClass}`}>
+            <div
+              id={`space-${index}`}
+              key={space.id}
+              className={`flex items-center justify-center py-2 snap-start ${scrollClass}`}
+            >
               <span className="flex items-baseline text-md font-semibold py-1 text-gray-900">
                 {space.name}
               </span>

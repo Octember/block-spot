@@ -15,13 +15,14 @@ export const WeekViewCalendar: FC = () => {
 
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen bg-white">
+      {/* 1) The header is sticky at the top */}
       <CalendarHeader />
 
-      <div className={`flex h-full flex-col flex-1 overflow-x-scroll bg-white snap-x`}>
+      <div className={`relative overflow-x-auto flex-1`}>
         <SpacesNamesSection />
 
-        <div className="isolate flex flex-auto flex-col bg-white">
+        <div className="relative flex flex-auto flex-col bg-white">
           <div className="flex min-w-max w-full flex-none flex-col">
             <div className="flex flex-auto">
               <div
@@ -46,6 +47,6 @@ export const WeekViewCalendar: FC = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };

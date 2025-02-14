@@ -19,6 +19,8 @@ import {
 import { CreateReservationModal } from "./create-reservation-modal";
 import { formatTimeWithZone } from "../date-utils";
 import { useVenueContext } from "../providers/venue-provider";
+import { UpdateReservationModal } from "./modals/update-reservation-modal";
+import { DeleteReservationModal } from "./modals/delete-reservation-modal";
 
 function getChangeType(pendingChange: PendingChange | null) {
   if (pendingChange?.type === "CREATE") return "New Reservation";
@@ -37,6 +39,10 @@ export const PendingChangesSection = () => {
 
   if (pendingChange.type === "CREATE") {
     return <CreateReservationModal reservation={pendingChange.newState} />;
+  } else if (pendingChange.type === "UPDATE") {
+    return <UpdateReservationModal reservation={pendingChange.newState} />;
+  } else if (pendingChange.type === "DELETE") {
+    return <DeleteReservationModal reservation={pendingChange.newState} />;
   }
 
   return (
@@ -45,7 +51,7 @@ export const PendingChangesSection = () => {
         className="flex" // lg:hidden"
         open={true}
         size="lg"
-        onClose={() => {}}
+        onClose={() => { }}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
