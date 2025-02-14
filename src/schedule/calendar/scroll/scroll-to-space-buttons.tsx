@@ -4,6 +4,8 @@ import {
 } from "@heroicons/react/20/solid";
 import { FC } from "react";
 import { ButtonGroup } from "../../../client/components/button-group";
+import { MultiSelect, Select } from '../../../client/components/form/select';
+import { useVenueContext } from "../providers/venue-provider";
 
 
 
@@ -17,10 +19,13 @@ function isElementInViewport(element: HTMLElement) {
   );
 }
 
-function scrollToSpace(spaceId: string) {
-  const spaceElement = document.getElementById(spaceId);
+function scrollToSpace(index: number) {
+  const spaceElement = document.getElementById(`space-${index}`);
   if (spaceElement) {
     spaceElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    setTimeout(() => {
+      spaceElement.focus({ preventScroll: true });
+    }, 100);
   }
 }
 
@@ -61,15 +66,28 @@ const getMinVisibleSpaceIndex = () => {
   return minIndex;
 };
 
-
 export const ScrollToSpaceButtons: FC = () => {
-  const maxVisibleSpaceIndex = getMaxVisibleSpaceIndex();
+  const { venue } = useVenueContext();
 
   return (
     <div className="flex px-4 py-2 gap-2 items-center" >
       <div className="px-2 font-bold">
         Spaces
       </div>
+
+      <Select
+        options={venue.spaces.map((space) => ({
+          label: space.name,
+          value: space.id,
+        }))}
+        onChange={(value) => {
+          const index = venue.spaces.findIndex((space) => space.id === value.value);
+          scrollToSpace(index);
+        }}
+        value={undefined}
+        placeholder="Jump to space..."
+      />
+
       <ButtonGroup
         items={[
           {
@@ -77,7 +95,7 @@ export const ScrollToSpaceButtons: FC = () => {
             onClick: () => {
               const minVisibleSpaceIndex = getMinVisibleSpaceIndex();
               if (minVisibleSpaceIndex > 0) {
-                scrollToSpace(`space-${minVisibleSpaceIndex - 1}`);
+                scrollToSpace(minVisibleSpaceIndex - 1);
               }
             }
           },
@@ -86,7 +104,7 @@ export const ScrollToSpaceButtons: FC = () => {
             onClick: () => {
               const maxVisibleSpaceIndex = getMaxVisibleSpaceIndex();
               if (maxVisibleSpaceIndex < 100) {
-                scrollToSpace(`space-${maxVisibleSpaceIndex + 1}`);
+                scrollToSpace(maxVisibleSpaceIndex + 1);
               }
             }
           },

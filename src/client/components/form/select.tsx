@@ -28,7 +28,7 @@ export const Select = forwardRef<
   {
     disabled?: boolean;
     options: SelectOption[];
-    value: SelectOption;
+    value?: SelectOption;
     onChange: (value: SelectOption) => void;
     placeholder?: string;
     size?: Size;
@@ -74,7 +74,7 @@ export const Select = forwardRef<
               `}
           >
             <span className="col-start-1 row-start-1 truncate pr-6">
-              {value.label || placeholder}
+              {value?.label || placeholder}
             </span>
             <ChevronUpDownIcon
               aria-hidden="true"
@@ -90,8 +90,8 @@ export const Select = forwardRef<
               <SelectOption
                 key={option.value}
                 option={option}
-                ref={option.value === value.value ? selectedRef : null}
-                selected={option.value === value.value}
+                ref={option.value === value?.value ? selectedRef : null}
+                selected={option.value === value?.value}
               />
             ))}
           </ListboxOptions>

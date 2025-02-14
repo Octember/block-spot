@@ -21,6 +21,7 @@ import {
 } from "./constants";
 import { getGridTemplateColumns } from "./reservations/constants";
 import { ScrollToSpaceButtons } from './scroll/scroll-to-space-buttons';
+import { MultiSelect, Select } from "../../client/components/form/select";
 
 
 export const CalendarHeader: FC = () => {
@@ -66,8 +67,20 @@ export const CalendarHeader: FC = () => {
           </div>
         </div>
 
-
-        <ScrollToSpaceButtons />
+        <div className="flex flex-row items-center">
+          {/* <MultiSelect
+            options={venue.spaces.map((space) => ({
+              label: space.name,
+              value: space.id,
+            }))}
+            onChange={(value) => {
+              console.log(value);
+            }}
+            value={[]}
+            placeholder="Filter..."
+          /> */}
+          <ScrollToSpaceButtons />
+        </div>
       </div>
     </header>
   );
@@ -96,7 +109,8 @@ export const SpacesNamesSection: FC = () => {
             <div
               id={`space-${index}`}
               key={space.id}
-              className={`flex items-center justify-center py-2 snap-start ${scrollClass}`}
+              tabIndex={0}
+              className={`flex items-center justify-center py-2 snap-start ${scrollClass} focus:bg-gray-300`}
             >
               <span className="flex items-baseline text-md font-semibold py-1 text-gray-900">
                 {space.name}
