@@ -49,7 +49,7 @@ export const UpdateReservationModal: FC<{
     handleSubmit,
     control,
     watch,
-    formState: { isSubmitting },
+    formState: { isSubmitting, submitCount },
   } = useForm<UpdateReservationFormInputs>({
     defaultValues: {
       date: reservation.startTime,
@@ -102,9 +102,9 @@ export const UpdateReservationModal: FC<{
           </Button>
           <Button
             onClick={handleSubmit(onSubmit)}
-            disabled={isSubmitting}
+            disabled={isSubmitting || submitCount > 0}
             icon={
-              isSubmitting ? (
+              isSubmitting || submitCount > 0 ? (
                 <BiLoaderCircle className="animate-spin" />
               ) : (
                 <ArrowRightCircleIcon className="w-6 h-6" />
