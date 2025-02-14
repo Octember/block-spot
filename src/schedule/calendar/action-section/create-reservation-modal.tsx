@@ -39,7 +39,7 @@ export const CreateReservationModal: FC<{
   reservation: Reservation;
 }> = ({ reservation }) => {
   const { cancelChange, setPendingChange } = usePendingChanges();
-  const { venue, getSpaceById } = useVenueContext();
+  const { venue, getSpaceById, selectedDate } = useVenueContext();
   const { refresh } = useScheduleContext();
   const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
@@ -87,7 +87,7 @@ export const CreateReservationModal: FC<{
       className="flex"
       open={true}
       size="lg"
-      onClose={() => {}}
+      onClose={() => { }}
       heading={{ title: "New Reservation" }}
       footer={
         <div className="flex items-center justify-end space-x-3 m-2">
@@ -127,7 +127,7 @@ export const CreateReservationModal: FC<{
               <input
                 type="date"
                 onChange={(e) => {
-                  const date = parse(e.target.value, "yyyy-MM-dd", new Date());
+                  const date = parse(e.target.value, "yyyy-MM-dd", selectedDate);
                   const newStart = new Date(
                     date.setHours(
                       startTimeMinutes / 60,

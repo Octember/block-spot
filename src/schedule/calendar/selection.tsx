@@ -184,6 +184,7 @@ export const GridSelection: React.FC = () => {
           start: selection.start,
           current: selection.current,
         });
+        console.log(start, end, selectedDate);
 
         setPendingChange({
           type: "CREATE",

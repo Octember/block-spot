@@ -117,11 +117,11 @@ export function useTimeLabels() {
 
 export function getVenueStartOfDay(venue: Venue, date?: Date) {
   // Get the timezone offset in minutes for both timezones
-  const now = new Date();
+  const now = new Date(date ?? new Date());
   const venueOffset = getTimezoneOffset(venue.timeZoneId, now);
 
   // Create a UTC base date
-  const utcBase = new Date();
+  const utcBase = new Date(date ?? new Date());
   utcBase.setUTCHours(0, 0, 0, 0);
 
   // Adjust for venue timezone to start at venue's midnight
