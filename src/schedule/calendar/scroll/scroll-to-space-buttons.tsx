@@ -91,7 +91,7 @@ export const ScrollToSpaceButtons: FC = () => {
       <ButtonGroup
         items={[
           {
-            label: <ChevronLeftIcon className="size-5" />,
+            label: <ChevronLeftIcon className="size-4" />,
             onClick: () => {
               const minVisibleSpaceIndex = getMinVisibleSpaceIndex();
               if (minVisibleSpaceIndex > 0) {
@@ -100,7 +100,7 @@ export const ScrollToSpaceButtons: FC = () => {
             }
           },
           {
-            label: <ChevronRightIcon className="size-5" />,
+            label: <ChevronRightIcon className="size-4" />,
             onClick: () => {
               const maxVisibleSpaceIndex = getMaxVisibleSpaceIndex();
               if (maxVisibleSpaceIndex < 100) {
