@@ -20,16 +20,16 @@ export const SortableSpaceCard: FC<{ space: Space }> = ({ space }) => {
   });
 
   return (
-    <SpaceCard space={space} ref={setNodeRef} {...attributes} {...listeners} />
+    <SpaceCard space={space} ref={setNodeRef} {...attributes} {...listeners} isDragging={false} />
   );
 };
 
-export const SpaceCard = forwardRef<HTMLLIElement, { space: Space }>(
-  ({ space, ...props }, ref) => {
+export const SpaceCard = forwardRef<HTMLLIElement, { space: Space; isDragging: boolean }>(
+  ({ space, isDragging, ...props }, ref) => {
     return (
       <li
         ref={ref}
-        className={`${ListItemStyle} bg-gray-100 justify-between`}
+        className={`${ListItemStyle} bg-gray-100 border-gray-200 ${isDragging ? "bg-gray-200 border-gray-400" : ""} border justify-between`}
         {...props}
       >
         <div className="flex flex-row items-center gap-4">

@@ -1,7 +1,8 @@
 import { FC } from "react";
 import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
-import { CalendarHeader, SpacesNamesSection } from './calendar-header';
+import { CalendarHeader } from './header/calendar-header';
+import { SpacesNamesSection } from './header/space-names-header';
 import { useIsTimeZoneDifferent } from "./constants";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { PendingChangesProvider } from "./providers/pending-changes-provider";

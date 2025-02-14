@@ -3,9 +3,11 @@ import {
   ChevronRightIcon
 } from "@heroicons/react/20/solid";
 import { FC } from "react";
-import { useVenueContext } from "../providers/venue-provider";
-import { Select } from "../../../client/components/form/select";
-import { ButtonGroup } from "../../../client/components/button-group";
+import { ButtonGroup } from "../../../../client/components/button-group";
+import { MultiSelect, Select } from '../../../../client/components/form/select';
+import { useVenueContext } from "../../providers/venue-provider";
+
+
 
 function isElementInViewport(element: HTMLElement) {
   const rect = element.getBoundingClientRect();

@@ -96,7 +96,7 @@ export const SpaceList = ({ spaces }: { spaces: Space[] }) => {
       </ul>
 
       <DragOverlay>
-        {activeSpace && <SpaceCard space={activeSpace} />}
+        {activeSpace && <SpaceCard space={activeSpace} isDragging />}
       </DragOverlay>
     </DndContext>
   );
