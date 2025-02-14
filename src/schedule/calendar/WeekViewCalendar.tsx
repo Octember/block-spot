@@ -26,7 +26,7 @@ export const WeekViewCalendar: FC = () => {
           <div className="flex min-w-max w-full flex-none flex-col">
             <div className="flex flex-auto">
               <div
-                className={`sticky left-0 z-99 ${widthClass} flex-none ring-1 ring-gray-100 bg-white`}
+                className={`sticky left-0 z-40 ${widthClass} flex-none ring-1 ring-gray-100 bg-white`}
               />
               <div className="grid flex-auto grid-cols-1 grid-rows-1">
                 <ScheduleProvider>

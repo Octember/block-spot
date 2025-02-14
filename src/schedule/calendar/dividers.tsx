@@ -30,7 +30,7 @@ export const HorizontalDividers: FC = () => {
           {/* 15min line and label */}
           <div className={`row-span-1 border-b ${getBorderStyle(0)}`}>
             <div
-              className={`sticky left-0 z-99 ${labelWidthClass} pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none`}
+              className={`sticky left-0 z-40 ${labelWidthClass} pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none`}
             >
               {label}
             </div>
