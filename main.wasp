@@ -161,8 +161,8 @@ query getPaginatedUsers {
   entities: [User]
 }
 
-action updateCurrentUser {
-  fn: import { updateCurrentUser } from "@src/user/operations",
+action updateCurrentUserLastActiveTimestamp {
+  fn: import { updateCurrentUserLastActiveTimestamp } from "@src/user/operations",
   entities: [User]
 }
 
@@ -253,7 +253,7 @@ action updateReservation {
 
 action updateVenueAvailability {
   fn: import { updateVenueAvailability } from "@src/schedule/operations",
-  entities: [Venue, AvailabilityRule]
+  entities: [Venue, AvailabilityRule],
 }
 
 api exportCalendar {

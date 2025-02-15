@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "wasp/client/auth";
-import { updateCurrentUser } from "wasp/client/operations";
+import { updateCurrentUserLastActiveTimestamp } from "wasp/client/operations";
 import { routes } from "wasp/client/router";
 import "./Main.css";
 import NavBar from "./components/NavBar/NavBar";
@@ -66,7 +66,7 @@ export default function App() {
       const lastSeenAt = new Date(user.lastActiveTimestamp);
       const today = new Date();
       if (today.getTime() - lastSeenAt.getTime() > 5 * 60 * 1000) {
-        updateCurrentUser({ lastActiveTimestamp: today });
+        updateCurrentUserLastActiveTimestamp();
       }
     }
   }, [user]);

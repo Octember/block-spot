@@ -2,7 +2,7 @@
   "name": "opensaas",
   "type": "module",
   "scripts": {
-    "deploy": "REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_51PEPbeKH8PRewdkByKnAv47TvmgskgFwUx2BePcaurI06lgKflfCyhq4VbC7mZDoFIsASM4nYyZ7Vba61ib6IrDM007ygLxYt7 wasp deploy fly deploy"
+    "deploy": "wasp build && cd .wasp/build && railway up -d"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.523.0",

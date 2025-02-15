@@ -1,7 +1,7 @@
 import {
-  type UpdateCurrentUser,
   type UpdateUserById,
   type GetPaginatedUsers,
+  UpdateCurrentUserLastActiveTimestamp,
 } from "wasp/server/operations";
 import { type User } from "wasp/entities";
 import { HttpError } from "wasp/server";
@@ -29,10 +29,7 @@ export const updateUserById: UpdateUserById<
   return updatedUser;
 };
 
-export const updateCurrentUser: UpdateCurrentUser<Partial<User>, User> = async (
-  user,
-  context,
-) => {
+export const updateCurrentUserLastActiveTimestamp: UpdateCurrentUserLastActiveTimestamp<void, User> = async (_args, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }
@@ -41,7 +38,9 @@ export const updateCurrentUser: UpdateCurrentUser<Partial<User>, User> = async (
     where: {
       id: context.user.id,
     },
-    data: user,
+    data: {
+      lastActiveTimestamp: new Date(),
+    },
   });
 };
 
