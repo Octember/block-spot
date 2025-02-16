@@ -34,6 +34,8 @@ app BlockSpot {
     // "<script defer data-domain='<your-site-id>' src='https://plausible.io/js/script.local.js'></script>",  // for development
     "<script async src='https://www.googletagmanager.com/gtag/js?id=AW-11557893994'></script>",
     "<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'AW-11557893994');</script>",
+
+    "<script>gtag('event', 'conversion', {'send_to': 'AW-11557893994/beHdCPDH9p4aEOrunYcr', 'value': 1.0, 'currency': 'USD'});</script>",
   ],
 
   // 🔐 Auth out of the box! https://wasp-lang.dev/docs/auth/overview
