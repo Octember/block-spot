@@ -2,9 +2,8 @@ import { useParams } from "react-router-dom";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { UpdateVenueForm } from "./update-venue-form";
 import { getVenueById, useQuery } from "wasp/client/operations";
-import { AuthUser } from "wasp/auth";
 
-export function UpdateVenuePage({ user }: { user: AuthUser }) {
+export function UpdateVenuePage() {
   const { venueId } = useParams();
 
   const { data: venue, isLoading } = useQuery(getVenueById, {
@@ -17,7 +16,6 @@ export function UpdateVenuePage({ user }: { user: AuthUser }) {
 
   return (
     <SidebarLayout
-      user={user}
       header={{
         title: venue.name,
         description: "Manage your venue settings and spaces",

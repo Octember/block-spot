@@ -1,13 +1,11 @@
+import { getUserOrganization, useQuery } from "wasp/client/operations";
 import { SidebarLayout } from "../client/components/layouts/sidebar-layout";
-import { MembersSection } from "./members-section";
 import { InviteMemberButton } from "../organization/components/invite-member-form";
 import { InviteMembers } from "../organization/InviteMembers";
-import { useQuery, getUserOrganization } from "wasp/client/operations";
 import { ManageTagsButton } from "./manage-tags-button";
-import { AuthUserProvider } from "../auth/providers/AuthUserProvider";
-import { AuthUser } from "wasp/auth";
+import { MembersSection } from "./members-section";
 
-export default function TeamPage({ user }: { user: AuthUser }) {
+export default function TeamPage() {
   const { data: organization } = useQuery(getUserOrganization);
 
   if (!organization) return <div>No organization found.</div>;
@@ -20,7 +18,6 @@ export default function TeamPage({ user }: { user: AuthUser }) {
 
   return (
     <SidebarLayout
-      user={user}
       header={{
         title: "Team",
         description: "Manage your team members and their roles",

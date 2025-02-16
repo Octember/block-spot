@@ -1,23 +1,22 @@
+import LoadingSpinner from "../../../../admin/layout/LoadingSpinner";
 import { Card } from "../../../../client/components/card";
 import { SidebarLayout } from "../../../../client/components/layouts/sidebar-layout";
 import { useOrganization } from "../../../../organization/hooks/use-organization";
 import { PaymentRules } from "../../../../payment/payments-form/payment-rules";
 import { PaymentsForm } from "../../../../payment/payments-form/payments-form";
-import { AuthUser } from "wasp/auth";
 
-export const PaymentsPage = ({ user }: { user: AuthUser }) => {
-  const { isLoading: isOrganizationLoading, organization } = useOrganization();
+export const PaymentsPage = () => {
+  const { isLoading, organization } = useOrganization();
 
   return (
     <SidebarLayout
-      user={user}
       header={{
         title: "Payments",
         description: "Manage your venue payments",
       }}
     >
-      {!organization ? (
-        <div>Loading...</div>
+      {!organization || isLoading ? (
+        <LoadingSpinner />
       ) : (
         <Card
           heading={{

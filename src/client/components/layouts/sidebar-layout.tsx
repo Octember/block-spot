@@ -10,18 +10,15 @@ import Sidebar from "./sidebar";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { Link as WaspRouterLink } from "wasp/client/router";
+import {
+  useAuthUser
+} from "../../../auth/providers/AuthUserProvider";
 import { cn } from "../../cn";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
 import { LogoComponent } from "../logo";
 import { PageHeader } from "./page-layout";
-import {
-  AuthUserProvider,
-  useAuthUser,
-} from "../../../auth/providers/AuthUserProvider";
-import { AuthUser } from "wasp/auth";
 
 type SidebarLayoutProps = {
-  user: AuthUser;
   children: ReactNode;
   header?: {
     title: string;
@@ -31,30 +28,27 @@ type SidebarLayoutProps = {
 };
 
 export const SidebarLayout = ({
-  user,
   children,
   header,
 }: SidebarLayoutProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <AuthUserProvider user={user}>
-      <div className="flex flex-col h-full">
-        <MenuDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+    <div className="flex flex-col h-full">
+      <MenuDialog menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
 
-        <SidebarHeader setMenuOpen={setMenuOpen} />
+      <SidebarHeader setMenuOpen={setMenuOpen} />
 
-        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-          <Sidebar />
-        </div>
-
-        <main className="pb-10 lg:pl-72">
-          {header && <PageHeader {...header} />}
-
-          <div className="px-4 sm:px-6 lg:px-8">{children}</div>
-        </main>
+      <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+        <Sidebar />
       </div>
-    </AuthUserProvider>
+
+      <main className="pb-10 lg:pl-72">
+        {header && <PageHeader {...header} />}
+
+        <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+      </main>
+    </div>
   );
 };
 

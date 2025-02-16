@@ -35,7 +35,7 @@ function transformToFormInputs(
   };
 }
 
-export function HoursAndAvailabilityPage({ user }: { user: AuthUser }) {
+export function HoursAndAvailabilityPage() {
   const { venueId } = useParams();
 
   const { data: venue, isLoading } = useQuery(getVenueById, {
@@ -47,7 +47,6 @@ export function HoursAndAvailabilityPage({ user }: { user: AuthUser }) {
   if (!venueId || !venue) return null;
   return (
     <SidebarLayout
-      user={user}
       header={{
         title: "Availability",
         description: "Manage your venue availability",

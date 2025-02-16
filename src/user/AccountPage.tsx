@@ -15,8 +15,10 @@ import {
   parsePaymentPlanId,
   prettyPaymentPlanName,
 } from "../payment/plans";
+import { useAuthUser } from "../auth/providers/AuthUserProvider";
 
-export default function AccountPage({ user }) {
+export default function AccountPage() {
+  const { user } = useAuthUser();
   const { data: organization, isLoading } = useQuery(getUserOrganization);
 
   if (!organization) return <div>No organization found.</div>;
@@ -27,7 +29,6 @@ export default function AccountPage({ user }) {
 
   return (
     <SidebarLayout
-      user={user}
       header={{
         title: "Account Settings",
         description: "Manage your account settings and subscription.",

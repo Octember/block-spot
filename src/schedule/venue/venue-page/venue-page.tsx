@@ -1,5 +1,6 @@
 import { Route, Routes, useParams } from "react-router-dom";
 import { getVenueById, useQuery } from "wasp/client/operations";
+import LoadingSpinner from "../../../admin/layout/LoadingSpinner";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { BulkSpaceCreator } from "../spaces/bulk-create-spaces";
 import { SpaceList } from "../spaces/space-list";
@@ -7,28 +8,26 @@ import { HoursAndAvailabilityPage } from "./hours-and-availability";
 import { VenueIntegrationsPage } from "./integrations-page";
 import { PaymentsPage } from "./payments/payments-page";
 import { UpdateVenuePage } from "./update-venue-page";
-import { AuthUser } from "wasp/auth";
-import LoadingSpinner from "../../../admin/layout/LoadingSpinner";
 
-export default function VenuePage({ user }: { user: AuthUser }) {
+export default function VenuePage() {
   return (
     <Routes>
-      <Route path="/" element={<UpdateVenuePage user={user} />} />
-      <Route path="/spaces" element={<SpacesPage user={user} />} />
+      <Route path="/" element={<UpdateVenuePage />} />
+      <Route path="/spaces" element={<SpacesPage />} />
       <Route
         path="/availability"
-        element={<HoursAndAvailabilityPage user={user} />}
+        element={<HoursAndAvailabilityPage />}
       />
       <Route
         path="/integrations"
-        element={<VenueIntegrationsPage user={user} />}
+        element={<VenueIntegrationsPage />}
       />
-      <Route path="/payments" element={<PaymentsPage user={user} />} />
+      <Route path="/payments" element={<PaymentsPage />} />
     </Routes>
   );
 }
 
-const SpacesPage = ({ user }: { user: AuthUser }) => {
+const SpacesPage = () => {
   const { venueId } = useParams();
   const { data: venue, isLoading } = useQuery(getVenueById, {
     venueId: venueId || "",
@@ -36,7 +35,6 @@ const SpacesPage = ({ user }: { user: AuthUser }) => {
 
   return (
     <SidebarLayout
-      user={user}
       header={{
         title: venue?.name || "Loading...",
         description: "Manage your venue settings and spaces",

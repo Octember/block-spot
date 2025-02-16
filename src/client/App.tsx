@@ -6,12 +6,12 @@ import { routes } from "wasp/client/router";
 import "./Main.css";
 import NavBar from "./components/NavBar/NavBar";
 import { appNavigationItems } from "./components/NavBar/contentSections";
-import CookieConsentBanner from "./components/cookie-consent/Banner";
 import { useOnboardingRedirect } from "./hooks/useOnboardingRedirect";
 import { ToastProvider } from "./toast";
-
 import LogRocket from "logrocket";
 import { AuthUser } from "wasp/auth";
+import { useCalendarRedirect } from "./hooks/use-calendar-redirect";
+import { AuthUserProvider } from '../auth/providers/AuthUserProvider';
 
 LogRocket.init("myj73s/blockspot");
 
@@ -82,33 +82,44 @@ export default function App() {
   }, [location]);
 
   return (
-    <>
-      <div
-        className="min-h-screen h-full dark:text-white  app-background  font-display"
-        style={
-          {
-            // background: 'linear-gradient(53deg, rgba(172,217,236,0.5340730042016807) 19%, rgba(252,217,224,0.4668461134453782) 67%, rgba(47,76,115,0.2567620798319328) 93%)',
-          }
-        }
-      >
-        <ToastProvider>
-          {isAdminDashboard ? (
-            <Outlet />
-          ) : (
-            <>
-              {shouldDisplayAppNavBar && (
-                <NavBar
-                  navigationItems={navigationItems}
-                  user={user || undefined}
-                />
-              )}
+    <AuthUserProvider user={user || undefined}>
 
-              <Outlet />
-            </>
-          )}
-        </ToastProvider>
-      </div>
-      <CookieConsentBanner />
-    </>
+      <ToastProvider>
+        {isSchedulePage ? (
+          <CalendarPage />
+        ) : (
+          <AppDashboard>
+            <div className="min-h-screen h-full dark:text-white  app-background  font-display">
+              {isAdminDashboard ? (
+                <Outlet />
+              ) : (
+                <>
+                  {shouldDisplayAppNavBar && (
+                    <NavBar
+                      navigationItems={navigationItems}
+                      user={user || undefined}
+                    />
+                  )}
+
+                  <Outlet />
+                </>
+              )}
+            </div>
+          </AppDashboard>
+        )}
+        {/* <CookieConsentBanner /> */}
+      </ToastProvider>
+    </AuthUserProvider>
   );
+}
+
+
+const CalendarPage = () => {
+  return <Outlet />;
+}
+
+
+const AppDashboard: React.FC<React.PropsWithChildren> = ({ children }) => {
+  useCalendarRedirect();
+  return children;
 }

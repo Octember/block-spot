@@ -1,21 +1,17 @@
-import { FC } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "wasp/client/api";
-import { getVenueById, useQuery } from "wasp/client/operations";
 import { Card } from "../../../client/components/card";
 import { TextInput } from "../../../client/components/form/text-input";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { useToast } from "../../../client/toast";
-import { AuthUser } from "wasp/auth";
 
-export const VenueIntegrationsPage = ({ user }: { user: AuthUser }) => {
+export const VenueIntegrationsPage = () => {
   const toast = useToast();
   const { venueId } = useParams<{ venueId: string }>();
 
   if (!venueId) {
     return <div>Invalid venue ID</div>;
   }
-
 
   const url = `${api.getUri()}/calendar/export?venueId=${venueId}`;
 
@@ -29,7 +25,6 @@ export const VenueIntegrationsPage = ({ user }: { user: AuthUser }) => {
 
   return (
     <SidebarLayout
-      user={user}
       header={{
         title: "Integrations",
         description: "Connect your venue's schedule with external services",

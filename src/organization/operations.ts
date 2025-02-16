@@ -8,6 +8,7 @@ import {
   OrganizationUser,
   OrganizationUserTag,
   User,
+  Venue,
 } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
@@ -53,6 +54,7 @@ type GetUserOrganizationResponse =
         })[];
       })[];
       onboardingState: OnboardingState | null;
+      venues: Venue[];
     })
   | null;
 
@@ -107,6 +109,7 @@ export const getUserOrganization: GetUserOrganization<
         },
       },
       onboardingState: true,
+      venues: true,
     },
   });
 

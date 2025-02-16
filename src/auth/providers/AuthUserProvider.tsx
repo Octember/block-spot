@@ -9,6 +9,7 @@ interface AuthUserContextType {
   role: "OWNER" | "MEMBER" | undefined;
   isOwner: boolean;
   isLoading: boolean;
+  venueId: string | undefined;
 }
 
 const AuthUserContext = createContext<AuthUserContextType | undefined>(
@@ -30,6 +31,8 @@ export const AuthUserProvider: React.FC<
     [organization, user],
   );
 
+  const venueId = organization?.venues?.[0]?.id;
+
   return (
     <AuthUserContext.Provider
       value={{
@@ -37,6 +40,7 @@ export const AuthUserProvider: React.FC<
         role: orgMember?.role,
         isOwner: orgMember?.role === "OWNER",
         isLoading: isOrganizationLoading,
+        venueId,
       }}
     >
       {children}
