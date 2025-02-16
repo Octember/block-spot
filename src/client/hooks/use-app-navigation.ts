@@ -29,7 +29,6 @@ type SidebarRoute = {
   icon: React.ElementType;
   public?: boolean;
   count?: string;
-  adminOnly?: boolean;
 };
 
 const sidebarRoutes: SidebarRoute[] = [
@@ -46,7 +45,7 @@ const sidebarRoutes: SidebarRoute[] = [
   },
   {
     name: "Team",
-    route: (venueId: string) => routes.TeamRoute.build({}),
+    route: (venueId) => routes.TeamRoute.build({}),
     icon: UsersIcon,
   },
   {
@@ -62,7 +61,6 @@ const sidebarRoutes: SidebarRoute[] = [
       params: { venueId, "*": "payments" },
     }),
     icon: BanknotesIcon,
-    adminOnly: true,
   },
   {
     name: "Integrations",
@@ -73,7 +71,7 @@ const sidebarRoutes: SidebarRoute[] = [
   },
   {
     name: "Account",
-    route: (venueId: string) => routes.AccountRoute.to,
+    route: (venueId) => routes.AccountRoute.to,
     icon: Cog8ToothIcon,
   },
   {
@@ -82,19 +80,19 @@ const sidebarRoutes: SidebarRoute[] = [
       params: { venueId },
     }),
     icon: CalendarIcon,
-    count: "",
+    public: true
   },
 ];
 
 export function useAppNavigation(): NavigationItem[] {
-  const { user } = useAuthUser();
+  const { user, isOwner } = useAuthUser();
   const location = useLocation();
   const { data: venues } = useQuery(getAllVenues, null, { staleTime: 3600000 });
   const firstVenue = venues?.[0];
 
   const navItems: NavigationItem[] = useMemo(
     () => sidebarRoutes
-      .filter(route => !route.adminOnly || user?.isAdmin)
+      .filter(route => route.public || isOwner)
       .map((route) => ({
         name: route.name,
         route: firstVenue ? route.route(firstVenue.id) : routes.AllVenuesPageRoute.build({}),
