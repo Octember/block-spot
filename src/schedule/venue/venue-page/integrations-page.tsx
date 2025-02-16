@@ -16,11 +16,6 @@ export const VenueIntegrationsPage = ({ user }: { user: AuthUser }) => {
     return <div>Invalid venue ID</div>;
   }
 
-  const { data: venue, isLoading } = useQuery(getVenueById, { venueId });
-
-  if (isLoading || !venue) {
-    return <div>Loading...</div>;
-  }
 
   const url = `${api.getUri()}/calendar/export?venueId=${venueId}`;
 
