@@ -1,20 +1,16 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon
-} from "@heroicons/react/20/solid";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { FC } from "react";
 import { ButtonGroup } from "../../../../client/components/button-group";
-import { MultiSelect, Select } from '../../../../client/components/form/select';
+import { MultiSelect, Select } from "../../../../client/components/form/select";
 import { useVenueContext } from "../../providers/venue-provider";
-
-
 
 function isElementInViewport(element: HTMLElement) {
   const rect = element.getBoundingClientRect();
   return (
     rect.top >= 0 &&
     rect.left >= 0 &&
-    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight) &&
     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
 }
@@ -46,8 +42,6 @@ const getMaxVisibleSpaceIndex = () => {
   return maxIndex;
 };
 
-
-
 const getMinVisibleSpaceIndex = () => {
   let minIndex = 0;
   let spaceIndex = 0;
@@ -70,10 +64,8 @@ export const ScrollToSpaceButtons: FC = () => {
   const { venue } = useVenueContext();
 
   return (
-    <div className="flex px-4 py-2 gap-2 items-center" >
-      <div className="px-2 font-bold">
-        Spaces
-      </div>
+    <div className="flex px-4 py-2 gap-2 items-center">
+      <div className="px-2 font-bold">Spaces</div>
 
       <Select
         options={venue.spaces.map((space) => ({
@@ -81,7 +73,9 @@ export const ScrollToSpaceButtons: FC = () => {
           value: space.id,
         }))}
         onChange={(value) => {
-          const index = venue.spaces.findIndex((space) => space.id === value.value);
+          const index = venue.spaces.findIndex(
+            (space) => space.id === value.value,
+          );
           scrollToSpace(index);
         }}
         value={undefined}
@@ -97,7 +91,7 @@ export const ScrollToSpaceButtons: FC = () => {
               if (minVisibleSpaceIndex > 0) {
                 scrollToSpace(minVisibleSpaceIndex - 1);
               }
-            }
+            },
           },
           {
             label: <ChevronRightIcon className="size-4" />,
@@ -106,10 +100,10 @@ export const ScrollToSpaceButtons: FC = () => {
               if (maxVisibleSpaceIndex < 100) {
                 scrollToSpace(maxVisibleSpaceIndex + 1);
               }
-            }
+            },
           },
         ]}
       />
-    </div >
+    </div>
   );
 };

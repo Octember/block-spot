@@ -1,7 +1,12 @@
 import { getVenueDetails, useQuery } from "wasp/client/operations";
 
 import { isValid, parseISO, startOfDay, startOfToday } from "date-fns";
-import { format, formatInTimeZone, fromZonedTime, toZonedTime } from 'date-fns-tz';
+import {
+  format,
+  formatInTimeZone,
+  fromZonedTime,
+  toZonedTime,
+} from "date-fns-tz";
 import React, {
   createContext,
   useCallback,
@@ -32,15 +37,14 @@ interface VenueContext {
 
 const VenueContext = createContext<VenueContext | null>(null);
 
-
 export function getDateOrDefault(date: string | null, venue: Venue): Date {
   if (!date) {
-    return toZonedTime(startOfToday(), venue.timeZoneId)
+    return toZonedTime(startOfToday(), venue.timeZoneId);
   }
 
   const parsed = parseISO(date);
   if (!isValid(parsed)) {
-    return toZonedTime(startOfToday(), venue.timeZoneId)
+    return toZonedTime(startOfToday(), venue.timeZoneId);
   }
 
   // fromZonedTime converts the local time in the specified time zone to the equivalent UTC Date.

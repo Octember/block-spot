@@ -1,8 +1,8 @@
 import { FC } from "react";
 import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
-import { CalendarHeader } from './header/calendar-header';
-import { SpacesNamesSection } from './header/space-names-header';
+import { CalendarHeader } from "./header/calendar-header";
+import { SpacesNamesSection } from "./header/space-names-header";
 import { useIsTimeZoneDifferent } from "./constants";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { PendingChangesProvider } from "./providers/pending-changes-provider";
@@ -13,7 +13,6 @@ import { GridSelection, SelectionProvider } from "./selection";
 export const WeekViewCalendar: FC = () => {
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
   const widthClass = isTimeZoneDifferent ? "w-24" : "w-14";
-
 
   return (
     <div className="flex flex-col min-h-screen bg-white">

@@ -1,7 +1,11 @@
-import { FC } from 'react';
-import { useVenueContext } from '../providers/venue-provider';
-import { getUserTimeZoneAbbreviation, useIsTimeZoneDifferent, useVenueTimeZoneAbbreviation } from '../constants';
-import { getGridTemplateColumns } from '../reservations/constants';
+import { FC } from "react";
+import { useVenueContext } from "../providers/venue-provider";
+import {
+  getUserTimeZoneAbbreviation,
+  useIsTimeZoneDifferent,
+  useVenueTimeZoneAbbreviation,
+} from "../constants";
+import { getGridTemplateColumns } from "../reservations/constants";
 
 export const SpacesNamesSection: FC = () => {
   const { venue } = useVenueContext();
@@ -44,7 +48,6 @@ export const TimeZoneLabel: FC = () => {
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
   const widthClass = isTimeZoneDifferent ? "w-24" : "w-14";
   const venueTimeZoneAbbreviation = useVenueTimeZoneAbbreviation();
-
 
   return (
     <div className={`col-end-1 ${widthClass} flex flex-col`}>

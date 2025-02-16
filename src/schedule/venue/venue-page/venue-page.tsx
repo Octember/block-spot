@@ -14,14 +14,8 @@ export default function VenuePage() {
     <Routes>
       <Route path="/" element={<UpdateVenuePage />} />
       <Route path="/spaces" element={<SpacesPage />} />
-      <Route
-        path="/availability"
-        element={<HoursAndAvailabilityPage />}
-      />
-      <Route
-        path="/integrations"
-        element={<VenueIntegrationsPage />}
-      />
+      <Route path="/availability" element={<HoursAndAvailabilityPage />} />
+      <Route path="/integrations" element={<VenueIntegrationsPage />} />
       <Route path="/payments" element={<PaymentsPage />} />
     </Routes>
   );

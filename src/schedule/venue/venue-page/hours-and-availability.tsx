@@ -15,7 +15,7 @@ import { FormField } from "../../../client/components/form/form-field";
 import { Select } from "../../../client/components/form/select";
 import { SidebarLayout } from "../../../client/components/layouts/sidebar-layout";
 import { useToast } from "../../../client/toast";
-import { generateHoursLabels } from '../../calendar/constants';
+import { generateHoursLabels } from "../../calendar/constants";
 import { VenueProvider } from "../../calendar/providers/venue-provider";
 import { AvailabilityRuleForm } from "./availability";
 import { UpdateVenueFormInputs } from "./types";
@@ -130,7 +130,10 @@ export function HoursAndAvailabilityForm({
                     value: i * 60,
                   }))}
                   onChange={(value) => onChange(Number(value.value))}
-                  value={{ label: timeLabels[value / 60], value: String(value) }}
+                  value={{
+                    label: timeLabels[value / 60],
+                    value: String(value),
+                  }}
                 />
               )}
             />
@@ -146,7 +149,10 @@ export function HoursAndAvailabilityForm({
                     value: i * 60,
                   }))}
                   onChange={(value) => onChange(Number(value.value))}
-                  value={{ label: timeLabels[value / 60], value: String(value) }}
+                  value={{
+                    label: timeLabels[value / 60],
+                    value: String(value),
+                  }}
                 />
               )}
             />

@@ -56,7 +56,9 @@ const ReservationDescription = ({
 
   const titleSection = useMemo(() => {
     if (reservation.description) {
-      return <p className="font-bold text-gray-900">{reservation.description}</p>;
+      return (
+        <p className="font-bold text-gray-900">{reservation.description}</p>
+      );
     }
     return null;
   }, [reservation.description]);
@@ -64,7 +66,6 @@ const ReservationDescription = ({
   if (!reservation.description) {
     return timeSection;
   }
-
 
   if (getReservationDurationInSlots(reservation) <= 2) {
     return titleSection;
@@ -82,13 +83,17 @@ const ReservationDescription = ({
 export const ReservationSlot = (props: ReservationSlotProps) => {
   const { venue } = useVenueContext();
   const { reservation, gridIndex, isDraft } = props;
-  const isOwner = isUserOwner();
+  const { isOwner, user } = useAuthUser();
+  const canEdit = useMemo(
+    () => isOwner || isDraft || props.reservation.userId === user?.id,
+    [isOwner, isDraft, props.reservation.userId, user?.id],
+  );
 
   const { isSelecting } = useReservationSelection();
   const { pendingChange, setPendingChange } = usePendingChanges();
 
   const disabled =
-    (!isDraft && !isOwner) ||
+    (!canEdit) ||
     (pendingChange ? pendingChange.newState.id !== reservation.id : false);
 
   const {
@@ -119,9 +124,9 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
         over,
         isDragging,
         otherNodeActive: Boolean(active || isSelecting || pendingChange),
-        isOwner,
+        canEdit,
       }),
-    [isDraft, over, isDragging, active, isOwner, isSelecting, pendingChange],
+    [isDraft, over, isDragging, active, canEdit, isSelecting, pendingChange],
   );
 
   // Take into account the current drag position
@@ -168,7 +173,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
               endTime={newTimes.endTime}
             />
 
-            {isOwner && (
+            {canEdit && (
               <ReservationMenu
                 onEdit={() =>
                   setPendingChange({
@@ -190,6 +195,7 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
 import { usePopper } from "react-popper";
 import { useVenueContext } from "../providers/venue-provider";
 import { getColorStyles } from "./colors";
+import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
 
 const ReservationMenu = ({
   onEdit,

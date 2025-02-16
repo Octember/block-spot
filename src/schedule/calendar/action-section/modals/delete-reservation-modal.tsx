@@ -27,7 +27,7 @@ export const DeleteReservationModal: FC<{
       className="flex"
       open={true}
       size="lg"
-      onClose={() => { }}
+      onClose={() => {}}
       heading={{ title: "Delete Reservation" }}
       footer={
         <div className="flex items-center justify-end space-x-3 m-2">
@@ -68,4 +68,4 @@ export const DeleteReservationModal: FC<{
       </div>
     </Modal>
   );
-}; 
+};

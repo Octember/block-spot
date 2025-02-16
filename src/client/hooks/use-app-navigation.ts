@@ -50,23 +50,26 @@ const sidebarRoutes: SidebarRoute[] = [
   },
   {
     name: "Availability",
-    route: (venueId) => routes.VenuePageRouteChildren.build({
-      params: { venueId, "*": "availability" },
-    }),
+    route: (venueId) =>
+      routes.VenuePageRouteChildren.build({
+        params: { venueId, "*": "availability" },
+      }),
     icon: ClockIcon,
   },
   {
     name: "Payments",
-    route: (venueId) => routes.VenuePageRouteChildren.build({
-      params: { venueId, "*": "payments" },
-    }),
+    route: (venueId) =>
+      routes.VenuePageRouteChildren.build({
+        params: { venueId, "*": "payments" },
+      }),
     icon: BanknotesIcon,
   },
   {
     name: "Integrations",
-    route: (venueId) => routes.VenuePageRouteChildren.build({
-      params: { venueId, "*": "integrations" },
-    }),
+    route: (venueId) =>
+      routes.VenuePageRouteChildren.build({
+        params: { venueId, "*": "integrations" },
+      }),
     icon: LinkIcon,
   },
   {
@@ -76,11 +79,12 @@ const sidebarRoutes: SidebarRoute[] = [
   },
   {
     name: "Calendar",
-    route: (venueId) => routes.ScheduleRoute.build({
-      params: { venueId },
-    }),
+    route: (venueId) =>
+      routes.ScheduleRoute.build({
+        params: { venueId },
+      }),
     icon: CalendarIcon,
-    public: true
+    public: true,
   },
 ];
 
@@ -91,15 +95,20 @@ export function useAppNavigation(): NavigationItem[] {
   const firstVenue = venues?.[0];
 
   const navItems: NavigationItem[] = useMemo(
-    () => sidebarRoutes
-      .filter(route => route.public || isOwner)
-      .map((route) => ({
-        name: route.name,
-        route: firstVenue ? route.route(firstVenue.id) : routes.AllVenuesPageRoute.build({}),
-        icon: route.icon,
-        count: route.count,
-        current: firstVenue ? location.pathname === route.route(firstVenue.id) : false,
-      })),
+    () =>
+      sidebarRoutes
+        .filter((route) => route.public || isOwner)
+        .map((route) => ({
+          name: route.name,
+          route: firstVenue
+            ? route.route(firstVenue.id)
+            : routes.AllVenuesPageRoute.build({}),
+          icon: route.icon,
+          count: route.count,
+          current: firstVenue
+            ? location.pathname === route.route(firstVenue.id)
+            : false,
+        })),
     [user, firstVenue, location.pathname],
   );
 

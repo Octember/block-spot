@@ -11,7 +11,10 @@ export function useOnboardingRedirect() {
   const { data: organization, isLoading } = useQuery(getUserOrganization);
 
   useEffect(() => {
-    if (!user || PUBLIC_ROUTES.find((route) => location.pathname.startsWith(route))) {
+    if (
+      !user ||
+      PUBLIC_ROUTES.find((route) => location.pathname.startsWith(route))
+    ) {
       return;
     }
 

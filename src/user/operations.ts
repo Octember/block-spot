@@ -29,7 +29,10 @@ export const updateUserById: UpdateUserById<
   return updatedUser;
 };
 
-export const updateCurrentUserLastActiveTimestamp: UpdateCurrentUserLastActiveTimestamp<void, User> = async (_args, context) => {
+export const updateCurrentUserLastActiveTimestamp: UpdateCurrentUserLastActiveTimestamp<
+  void,
+  User
+> = async (_args, context) => {
   if (!context.user) {
     throw new HttpError(401);
   }

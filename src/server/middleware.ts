@@ -14,12 +14,15 @@ const allowedOriginRegex = /^https:\/\/([a-z0-9-]+\.)?block-spot\.com$/i;
 export const corsMiddleware: MiddlewareConfigFn = (config) => {
   const isDevelopment = process.env.NODE_ENV === "development";
   const clientUrl = process.env.WASP_WEB_CLIENT_URL ?? "http://localhost:3000";
-  
+
   // Combine your specific allowed origins
   const allowedOrigins = [clientUrl, ...ALLOWED_ORIGINS];
 
   // Create a function to determine if the request origin is allowed.
-  const originFunction = (requestOrigin: string, callback: (err: Error | null, allow: boolean) => void) => {
+  const originFunction = (
+    requestOrigin: string,
+    callback: (err: Error | null, allow: boolean) => void,
+  ) => {
     if (isDevelopment) {
       // In development, allow everything.
       return callback(null, true);

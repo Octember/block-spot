@@ -87,7 +87,7 @@ export const CreateReservationModal: FC<{
       className="flex"
       open={true}
       size="lg"
-      onClose={() => { }}
+      onClose={() => {}}
       heading={{ title: "New Reservation" }}
       footer={
         <div className="flex items-center justify-end space-x-3 m-2">
@@ -103,7 +103,7 @@ export const CreateReservationModal: FC<{
             onClick={handleSubmit(onSubmit)}
             disabled={isSubmitting || submitCount > 0}
             icon={
-              (isSubmitting || submitCount > 0) ? (
+              isSubmitting || submitCount > 0 ? (
                 <BiLoaderCircle className="animate-spin" />
               ) : (
                 <ArrowRightCircleIcon className="w-6 h-6" />
@@ -127,7 +127,11 @@ export const CreateReservationModal: FC<{
               <input
                 type="date"
                 onChange={(e) => {
-                  const date = parse(e.target.value, "yyyy-MM-dd", selectedDate);
+                  const date = parse(
+                    e.target.value,
+                    "yyyy-MM-dd",
+                    selectedDate,
+                  );
                   const newStart = new Date(
                     date.setHours(
                       startTimeMinutes / 60,

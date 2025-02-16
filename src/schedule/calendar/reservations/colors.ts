@@ -14,13 +14,13 @@ export function getColorStyles({
   over,
   isDragging,
   otherNodeActive,
-  isOwner,
+  canEdit,
 }: {
   isDraft: boolean;
   over: Over | null;
   isDragging: boolean;
   otherNodeActive: boolean;
-  isOwner: boolean;
+  canEdit: boolean;
 }) {
   const opacityStyle = isDragging ? "opacity-50" : "";
 
@@ -35,7 +35,7 @@ export function getColorStyles({
     return GrayColorStyle;
   }
 
-  if (isOwner) {
+  if (canEdit) {
     return BlueColorStyle;
   }
 

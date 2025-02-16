@@ -20,36 +20,43 @@ export const SortableSpaceCard: FC<{ space: Space }> = ({ space }) => {
   });
 
   return (
-    <SpaceCard space={space} ref={setNodeRef} {...attributes} {...listeners} isDragging={false} />
+    <SpaceCard
+      space={space}
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      isDragging={false}
+    />
   );
 };
 
-export const SpaceCard = forwardRef<HTMLLIElement, { space: Space; isDragging: boolean }>(
-  ({ space, isDragging, ...props }, ref) => {
-    return (
-      <li
-        ref={ref}
-        className={`${ListItemStyle} bg-gray-100 border-gray-200 ${isDragging ? "bg-gray-200 border-gray-400" : ""} border justify-between`}
-        {...props}
-      >
-        <div className="flex flex-row items-center gap-4">
-          <Squares2X2Icon className="size-5" />
-          <div className="flex flex-col gap-0.5">
-            <div className="text-md font-semibold">{space.name}</div>
-            <div className="text-sm text-gray-500">
-              Capacity: {pluralize("person", space.capacity, true)}
-            </div>
+export const SpaceCard = forwardRef<
+  HTMLLIElement,
+  { space: Space; isDragging: boolean }
+>(({ space, isDragging, ...props }, ref) => {
+  return (
+    <li
+      ref={ref}
+      className={`${ListItemStyle} bg-gray-100 border-gray-200 ${isDragging ? "bg-gray-200 border-gray-400" : ""} border justify-between`}
+      {...props}
+    >
+      <div className="flex flex-row items-center gap-4">
+        <Squares2X2Icon className="size-5" />
+        <div className="flex flex-col gap-0.5">
+          <div className="text-md font-semibold">{space.name}</div>
+          <div className="text-sm text-gray-500">
+            Capacity: {pluralize("person", space.capacity, true)}
           </div>
         </div>
+      </div>
 
-        <div className="flex flex-row items-center gap-2">
-          <DeleteSpaceButton spaceId={space.id} />
-          <UpdateSpaceButton space={space} />
-        </div>
-      </li>
-    );
-  },
-);
+      <div className="flex flex-row items-center gap-2">
+        <DeleteSpaceButton spaceId={space.id} />
+        <UpdateSpaceButton space={space} />
+      </div>
+    </li>
+  );
+});
 
 SpaceCard.displayName = "SpaceCard";
 

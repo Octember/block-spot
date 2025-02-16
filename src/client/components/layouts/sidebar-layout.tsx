@@ -10,9 +10,7 @@ import Sidebar from "./sidebar";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { Link as WaspRouterLink } from "wasp/client/router";
-import {
-  useAuthUser
-} from "../../../auth/providers/AuthUserProvider";
+import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
 import { cn } from "../../cn";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
 import { LogoComponent } from "../logo";
@@ -27,10 +25,7 @@ type SidebarLayoutProps = {
   };
 };
 
-export const SidebarLayout = ({
-  children,
-  header,
-}: SidebarLayoutProps) => {
+export const SidebarLayout = ({ children, header }: SidebarLayoutProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (

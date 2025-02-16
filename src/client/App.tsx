@@ -11,7 +11,7 @@ import { ToastProvider } from "./toast";
 import LogRocket from "logrocket";
 import { AuthUser } from "wasp/auth";
 import { useCalendarRedirect } from "./hooks/use-calendar-redirect";
-import { AuthUserProvider } from '../auth/providers/AuthUserProvider';
+import { AuthUserProvider } from "../auth/providers/AuthUserProvider";
 
 LogRocket.init("myj73s/blockspot");
 
@@ -83,7 +83,6 @@ export default function App() {
 
   return (
     <AuthUserProvider user={user || undefined}>
-
       <ToastProvider>
         {isSchedulePage ? (
           <CalendarPage />
@@ -113,13 +112,11 @@ export default function App() {
   );
 }
 
-
 const CalendarPage = () => {
   return <Outlet />;
-}
-
+};
 
 const AppDashboard: React.FC<React.PropsWithChildren> = ({ children }) => {
   useCalendarRedirect();
   return children;
-}
+};
