@@ -1,4 +1,5 @@
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import { useMemo } from "react";
 import {
   cancelInvitation,
   getOrganizationTags,
@@ -8,14 +9,13 @@ import {
   updateUserTags,
   useQuery,
 } from "wasp/client/operations";
-import { useToast } from "../client/toast";
-import { RoleSelect } from "./role-select";
-import { MultiSelect } from "../client/components/form/select";
-import { useMemo } from "react";
-import { Card, InvertedCardWidth } from "../client/components/card";
-import { useAuth } from "wasp/client/auth";
+import LoadingSpinner from "../admin/layout/LoadingSpinner";
 import { useAuthUser } from "../auth/providers/AuthUserProvider";
 import { cn } from "../client/cn";
+import { Card } from "../client/components/card";
+import { MultiSelect } from "../client/components/form/select";
+import { useToast } from "../client/toast";
+import { RoleSelect } from "./role-select";
 
 export function MembersSection() {
   const toast = useToast();
@@ -33,7 +33,7 @@ export function MembersSection() {
     organizationId: organization?.id ?? "",
   });
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <LoadingSpinner />;
   if (error) return <div>Error: {error.message}</div>;
   if (!organization) return <div>No organization found.</div>;
 
@@ -79,84 +79,81 @@ export function MembersSection() {
   return (
     <div className="space-y-6">
       <h3 className="text-xl font-bold mb-4">Members</h3>
-      <Card>
-        <table
-          className={cn(
-            "min-w-full divide-y divide-gray-200",
-            InvertedCardWidth,
-          )}
-        >
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                User
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Role
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Tags
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Joined
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {organization.users.map((member) => (
-              <tr key={member.user.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {member.user.email}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {member.user.username}
-                      </div>
+      <table
+        className={cn(
+          "min-w-full divide-y divide-gray-200 shadow rounded-lg overflow-hidden",
+        )}
+      >
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              User
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Role
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Tags
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Joined
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200 rounded">
+          {organization.users.map((member) => (
+            <tr key={member.user.id}>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center">
+                  <div>
+                    <div className="text-sm font-medium text-gray-900">
+                      {member.user.email}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      {member.user.name}
                     </div>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <RoleSelect
-                    currentRole={member.role}
-                    isOwner={isOwner}
-                    onUpdateRole={(newRole) =>
-                      handleUpdateRole(member.user.id, newRole)
-                    }
-                    disabled={member.user.id === organization.users[0].user.id} // Can't change own role
-                  />
-                </td>
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <RoleSelect
+                  currentRole={member.role}
+                  isOwner={isOwner}
+                  onUpdateRole={(newRole) =>
+                    handleUpdateRole(member.user.id, newRole)
+                  }
+                  disabled={member.user.id === organization.users[0].user.id} // Can't change own role
+                />
+              </td>
 
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {(!tags || tags?.length === 0) && <span>No tags set</span>}
-                  {tags && tags?.length > 0 && (
-                    <MultiSelect
-                      options={tagOptions}
-                      value={tagOptions.filter((tag) =>
-                        member.tags.some(
-                          (t) => t.organizationTag.id === tag.value,
-                        ),
-                      )}
-                      onChange={(value) => {
-                        updateUserTags({
-                          userId: member.user.id,
-                          tagIds: [
-                            ...new Set(value.map((tag) => tag.value as string)),
-                          ],
-                        });
-                      }}
-                    />
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(member.user.createdAt).toLocaleDateString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </Card>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {(!tags || tags?.length === 0) && <span>No tags set</span>}
+                {tags && tags?.length > 0 && (
+                  <MultiSelect
+                    options={tagOptions}
+                    value={tagOptions.filter((tag) =>
+                      member.tags.some(
+                        (t) => t.organizationTag.id === tag.value,
+                      ),
+                    )}
+                    onChange={(value) => {
+                      updateUserTags({
+                        userId: member.user.id,
+                        tagIds: [
+                          ...new Set(value.map((tag) => tag.value as string)),
+                        ],
+                      });
+                    }}
+                  />
+                )}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {new Date(member.user.createdAt).toLocaleDateString()}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       {invitations && invitations.length > 0 && (
         <div>
