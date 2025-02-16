@@ -34,9 +34,7 @@ function addDaysInVenueTimezone(date: Date, days: number, venue: Venue) {
 }
 
 export const CalendarHeader: FC = () => {
-  const { selectedDate, setSelectedDate, venue } = useVenueContext();
-  const navigate = useNavigate();
-  const isOwner = isUserOwner();
+  const { selectedDate, setSelectedDate } = useVenueContext();
 
   return (
     <header
@@ -46,16 +44,7 @@ export const CalendarHeader: FC = () => {
     >
       <div className="flex flex-row justify-between items-center bg-cyan-800/40">
         <div className="flex px-4 py-2 gap-2 items-center">
-          {isOwner && (
-            <Button
-              icon={<ArrowLeftIcon className="size-5 my-[3px]" />}
-              ariaLabel="Calendar"
-              variant="secondary"
-              onClick={() => navigate(routes.AllVenuesPageRoute.build({}))}
-            >
-              Back to Dashboard
-            </Button>
-          )}
+          <BackToDashboardButton />
 
           <ButtonGroup
             items={[
@@ -79,4 +68,31 @@ export const CalendarHeader: FC = () => {
       </div>
     </header>
   );
+};
+
+const BackToDashboardButton: FC = () => {
+  const navigate = useNavigate();
+  const isOwner = isUserOwner();
+
+  if (isOwner) {
+    return <Button
+      icon={<ArrowLeftIcon className="size-5 my-[3px]" />}
+      ariaLabel="Back to Dashboard"
+      variant="secondary"
+      onClick={() => navigate(routes.AllVenuesPageRoute.build({}))}
+    >
+      Back to Dashboard
+    </Button>
+  } else {
+    return (
+      <Button
+        icon={<ArrowLeftIcon className="size-5 my-[3px]" />}
+        ariaLabel="Back to Home"
+        variant="secondary"
+        onClick={() => navigate(routes.LandingPageRoute.to)}
+      >
+        Back to Home
+      </Button>
+    );
+  }
 };

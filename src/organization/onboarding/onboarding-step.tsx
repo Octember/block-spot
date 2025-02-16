@@ -16,6 +16,7 @@ import { PricingStep } from "./pricing-step";
 import { Select } from "../../client/components/form/select";
 import { TimeZoneOptions } from "./constants";
 import { useAuth } from "wasp/client/auth";
+import { useAuthUser } from "../../auth/providers/AuthUserProvider";
 
 interface FormData {
   organizationName: string;
@@ -146,7 +147,7 @@ export function SpacesStep({
   organizationName: string;
   onNext: () => Promise<void>;
 }) {
-  const { data: user } = useAuth();
+  const { user } = useAuthUser();
 
   const {
     register,

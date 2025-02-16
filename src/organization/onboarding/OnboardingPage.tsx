@@ -22,6 +22,7 @@ import {
   WelcomeStep,
 } from "./onboarding-step";
 import { OnboardingProgress } from "./progress";
+import { useAuthUser } from "../../auth/providers/AuthUserProvider";
 
 interface ErrorResponse {
   message?: string;
@@ -33,7 +34,7 @@ export function OrganizationOnboardingPage() {
   const { data: organization } = useQuery(getUserOrganization);
 
   const { step = "welcome" } = useParams();
-  const { data: user, isLoading } = useAuth();
+  const { user, isLoading } = useAuthUser();
   const toast = useToast();
   const [formData, setFormData] = useState({
     organizationName: "",

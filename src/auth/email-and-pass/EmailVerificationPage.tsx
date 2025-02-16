@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth, verifyEmail } from "wasp/client/auth";
-import { acceptInvitation } from "wasp/client/operations";
+import { verifyEmail } from "wasp/client/auth";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { AuthPageLayout } from "../AuthPageLayout";
 
 export function EmailVerificationPage() {
-  const user = useAuth();
   return (
     <AuthPageLayout>
       <VerifyEmailForm />

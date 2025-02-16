@@ -10,6 +10,7 @@ import {
 import { cn } from "../client/cn";
 import { useOrganization } from "../organization/hooks/use-organization";
 import { PaymentPlanId, prettyPaymentPlanName } from "./plans";
+import { useAuthUser } from "../auth/providers/AuthUserProvider";
 
 const bestDealPaymentPlanId: PaymentPlanId = PaymentPlanId.Business;
 
@@ -52,7 +53,7 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
 const PricingPage = () => {
   const [isPaymentLoading, setIsPaymentLoading] = useState<boolean>(false);
 
-  const { data: user } = useAuth();
+  const { user } = useAuthUser();
   const { organization } = useOrganization();
 
   const isOrganizationSubscribed =

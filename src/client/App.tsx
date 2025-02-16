@@ -37,7 +37,6 @@ export default function App() {
   const navigationItems = appNavigationItems;
 
   useLogRocket(user || undefined);
-  useOnboardingRedirect();
 
   const isSchedulePage = useMemo(
     () =>
@@ -117,6 +116,8 @@ const CalendarPage = () => {
 };
 
 const AppDashboard: React.FC<React.PropsWithChildren> = ({ children }) => {
+  useOnboardingRedirect();
+
   useCalendarRedirect();
   return children;
 };

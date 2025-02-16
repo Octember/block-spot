@@ -31,7 +31,6 @@ function getChangeType(pendingChange: PendingChange | null) {
 
 export const PendingChangesSection = () => {
   const { pendingChange, cancelChange, applyChange } = usePendingChanges();
-  const { data: user } = useAuth();
 
   if (!pendingChange) {
     return null;
@@ -51,7 +50,7 @@ export const PendingChangesSection = () => {
         className="flex" // lg:hidden"
         open={true}
         size="lg"
-        onClose={() => {}}
+        onClose={() => { }}
         heading={{ title: getChangeType(pendingChange) }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
