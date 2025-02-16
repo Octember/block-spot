@@ -16,7 +16,6 @@ export function useCalendarRedirect() {
     ) {
       return;
     }
-    console.log("venueId", venueId);
 
     if (!isOwner && venueId) {
       navigate(`/schedule/${venueId}`, { replace: true });
