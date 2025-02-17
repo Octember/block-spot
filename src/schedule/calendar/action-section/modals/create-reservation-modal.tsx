@@ -1,4 +1,4 @@
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, FormProvider } from "react-hook-form";
 import { Button } from "../../../../client/components/button";
 import { FormField } from "../../../../client/components/form/form-field";
 import { Modal } from "../../../../client/components/modal";
@@ -15,14 +15,10 @@ import { useToast } from "../../../../client/toast";
 import { useTimeLabelsLong15Minutes } from "../../constants";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { useVenueContext } from "../../providers/venue-provider";
+import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
+import { DateInput } from "./date-input";
+import { CreateReservationFormInputs } from './types';
 
-type CreateReservationFormInputs = {
-  date: Date;
-  startTimeMinutes: number;
-  endTimeMinutes: number;
-  spaceId: string;
-  title: string;
-};
 
 function timeToMinutes(time: Date) {
   return time.getHours() * 60 + time.getMinutes();
@@ -42,14 +38,9 @@ export const CreateReservationModal: FC<{
   const { refresh } = useScheduleContext();
   const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
+  const { isOwner } = useAuthUser();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    formState: { isSubmitting, submitCount },
-  } = useForm<CreateReservationFormInputs>({
+  const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
       date: reservation.startTime,
       startTimeMinutes: timeToMinutes(reservation.startTime),
@@ -58,6 +49,7 @@ export const CreateReservationModal: FC<{
       spaceId: reservation.spaceId,
     },
   });
+  const { control, register, handleSubmit, watch, formState: { isSubmitting, submitCount } } = form;
 
   const startTimeMinutes = watch("startTimeMinutes");
   const endTimeMinutes = watch("endTimeMinutes");
@@ -112,128 +104,90 @@ export const CreateReservationModal: FC<{
         </div>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <FormField label="Date" required>
-          <Controller
-            name="date"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <input
-                type="date"
-                onChange={(e) => {
-                  const date = parse(
-                    e.target.value,
-                    "yyyy-MM-dd",
-                    selectedDate,
-                  );
-                  const newStart = new Date(
-                    date.setHours(
-                      startTimeMinutes / 60,
-                      startTimeMinutes % 60,
-                      0,
-                      0,
-                    ),
-                  );
-                  const newEnd = new Date(
-                    date.setHours(
-                      endTimeMinutes / 60,
-                      endTimeMinutes % 60,
-                      0,
-                      0,
-                    ),
-                  );
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <FormField label="Date" required>
+            <DateInput
+              startTimeMinutes={startTimeMinutes}
+              endTimeMinutes={endTimeMinutes}
+              reservation={reservation}
+            />
+          </FormField>
 
-                  setPendingChange({
-                    type: "CREATE",
-                    newState: {
-                      ...reservation,
-                      startTime: newStart,
-                      endTime: newEnd,
-                    },
-                  });
+          <FormField label="Time" required>
+            <div className="flex flex-wrap flex-row justify-evenly gap-4">
+              <div className="flex-1">
+                <Controller
+                  name={`startTimeMinutes`}
+                  control={control}
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <Select
+                        options={timeLabelsLong15Minutes
+                          .slice(0, endTimeMinutes / 15)
+                          .map((time, index) => ({
+                            label: time,
+                            value: String(index * 15),
+                          }))}
+                        onChange={(value) => onChange(Number(value.value))}
+                        value={{
+                          label: `Starting at ${timeLabelsLong15Minutes[value / 15]}`,
+                          value: String(value),
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </div>
 
-                  onChange(date);
-                }}
-                value={value.toISOString().split("T")[0]}
-                className="px-2 py-1 border border-gray-300 rounded-md"
-              />
-            )}
-          />
-        </FormField>
-
-        <FormField label="Time" required>
-          <div className="flex flex-wrap flex-row justify-evenly gap-4">
-            <div className="flex-1">
-              <Controller
-                name={`startTimeMinutes`}
-                control={control}
-                render={({ field: { onChange, value } }) => {
-                  return (
+              <div className="flex-1">
+                <Controller
+                  name={`endTimeMinutes`}
+                  control={control}
+                  render={({ field: { onChange, value } }) => (
                     <Select
                       options={timeLabelsLong15Minutes
-                        .slice(0, endTimeMinutes / 15)
+                        .slice(startTimeMinutes / 15)
                         .map((time, index) => ({
                           label: time,
-                          value: String(index * 15),
+                          value: String(startTimeMinutes + index * 15),
                         }))}
                       onChange={(value) => onChange(Number(value.value))}
                       value={{
-                        label: `Starting at ${timeLabelsLong15Minutes[value / 15]}`,
+                        label: `Ending at ${timeLabelsLong15Minutes[value / 15]}`,
                         value: String(value),
                       }}
                     />
-                  );
-                }}
-              />
+                  )}
+                />
+              </div>
             </div>
+          </FormField>
 
-            <div className="flex-1">
-              <Controller
-                name={`endTimeMinutes`}
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    options={timeLabelsLong15Minutes
-                      .slice(startTimeMinutes / 15)
-                      .map((time, index) => ({
-                        label: time,
-                        value: String(startTimeMinutes + index * 15),
-                      }))}
-                    onChange={(value) => onChange(Number(value.value))}
-                    value={{
-                      label: `Ending at ${timeLabelsLong15Minutes[value / 15]}`,
-                      value: String(value),
-                    }}
-                  />
-                )}
-              />
-            </div>
-          </div>
-        </FormField>
+          <FormField label="Space" required>
+            <Controller
+              name="spaceId"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  options={venue.spaces.map((space) => ({
+                    label: space.name,
+                    value: space.id,
+                  }))}
+                  value={{ label: getSpaceById(value)?.name || "", value: value }}
+                  onChange={(value) => {
+                    onChange(value.value);
+                  }}
+                />
+              )}
+            />
+          </FormField>
 
-        <FormField label="Space" required>
-          <Controller
-            name="spaceId"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                options={venue.spaces.map((space) => ({
-                  label: space.name,
-                  value: space.id,
-                }))}
-                value={{ label: getSpaceById(value)?.name || "", value: value }}
-                onChange={(value) => {
-                  onChange(value.value);
-                }}
-              />
-            )}
-          />
-        </FormField>
-
-        <FormField label="Reservation Title">
-          <TextInput {...register("title")} />
-        </FormField>
-      </form>
+          <FormField label="Reservation Title">
+            <TextInput {...register("title")} />
+          </FormField>
+        </form>
+      </FormProvider>
     </Modal>
   );
 };
