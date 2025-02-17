@@ -7,16 +7,32 @@ import {
 import { Organization } from "wasp/entities";
 import { Button } from "../../client/components/button";
 import { Switch } from "../../client/components/switch";
+import { useToast } from "../../client/toast";
 
 export const PaymentsForm = ({
   organization,
 }: {
   organization: Organization;
 }) => {
+  const toast = useToast();
+
   const [isLoading, setIsLoading] = useState(false);
   async function handleEnablePayment() {
+
     setIsLoading(true);
-    await createStripeAccount();
+    try {
+      await createStripeAccount();
+      toast({
+        title: "Stripe account created",
+        description: "You can now start accepting payments",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Failed to create Stripe account",
+        description: error?.message,
+        type: "error",
+      });
+    }
     setIsLoading(false);
   }
 

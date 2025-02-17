@@ -36,6 +36,7 @@ import {
 import { PaymentRoleFormInput } from "./types";
 import { CheckBadgeIcon } from "@heroicons/react/20/solid";
 import { ManageTagsButton } from '../../team/manage-tags-button';
+import LoadingSpinner from "../../admin/layout/LoadingSpinner";
 
 type PaymentRuleForm = {
   paymentRules: PaymentRoleFormInput[];
@@ -75,9 +76,6 @@ export const PaymentRules = () => {
     name: "paymentRules",
   });
 
-  if (isLoading || !paymentRules) {
-    return <div>Loading...</div>;
-  }
 
   async function onSubmit(data: PaymentRuleForm) {
     try {
@@ -99,7 +97,6 @@ export const PaymentRules = () => {
       });
     }
   }
-  console.log(fields);
 
   return (
     <Card
@@ -108,6 +105,7 @@ export const PaymentRules = () => {
         description:
           "Manage your venue's payment rules. Rules are applied in order of priority, from highest to lowest.",
       }}
+      isLoading={isLoading}
     >
       <FormProvider {...form}>
         <form className="flex flex-col gap-4 -mx-4">

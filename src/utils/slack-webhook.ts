@@ -17,6 +17,5 @@ export async function sendSlackMessage(text: string): Promise<void> {
     }
   } catch (error) {
     console.error('Error sending Slack message:', error);
-    throw error;
   }
 }
