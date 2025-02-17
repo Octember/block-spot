@@ -3,11 +3,7 @@ import { Control, Controller, useFieldArray } from "react-hook-form";
 import { Button } from "../../../client/components/button";
 import { FormField } from "../../../client/components/form/form-field";
 import { MultiSelect, Select } from "../../../client/components/form/select";
-import {
-  useTimeLabels,
-  useTimeLabelsLong,
-  useTimeLabelsNoVenue,
-} from "../../calendar/constants";
+import { useTimeLabels, useTimeLabelsLong, useTimeLabelsNoVenue, generateHoursLabels } from '../../calendar/constants';
 import { UpdateVenueFormInputs } from "./types";
 
 export const AvailabilityRuleForm = ({
@@ -68,8 +64,7 @@ export const AvailabilityRuleBlock = ({
   index: number;
   remove: () => void;
 }) => {
-  const timeLabels = useTimeLabelsNoVenue();
-  // const timeLabelsLong = useTimeLabelsLong();
+  const timeLabels = generateHoursLabels();
 
   return (
     <div className="flex flex-row justify-between gap-2 items-center bg-gray-200 border border-gray-300 p-4 rounded-md">
