@@ -4,7 +4,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { Reservation } from "wasp/entities";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useVenueContext } from "../../providers/venue-provider";
-import { CreateReservationFormInputs } from "./types";
+import { CreateReservationFormInputs } from "../modals/types";
 
 type DateInputProps = {
   startTimeMinutes: number;

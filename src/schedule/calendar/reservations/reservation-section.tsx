@@ -129,6 +129,11 @@ export const ReservationsSection = () => {
       }}
     >
       {/* Droppable spaces */}
+      {/* TODO: this is a performance nightmare -- 
+        Ideally we would only render the droppable spaces that are in the viewport
+        Or, just the spaces under the current `draggingReservation`
+        So instead of rendering 24*4*(n spaces), we would render just a small number
+      */}
       {draggingReservation && (
         <ol {...getSharedGridStyle(timeLabels.length, spaceIds.length)}>
           {spaceIds.map((spaceId, columnIndex) =>

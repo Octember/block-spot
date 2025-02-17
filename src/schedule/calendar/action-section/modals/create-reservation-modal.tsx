@@ -16,7 +16,7 @@ import { useTimeLabelsLong15Minutes } from "../../constants";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { useVenueContext } from "../../providers/venue-provider";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
-import { DateInput } from "./date-input";
+import { DateInput } from "../components/date-input";
 import { CreateReservationFormInputs } from './types';
 
 

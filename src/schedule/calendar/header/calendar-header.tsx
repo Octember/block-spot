@@ -24,25 +24,27 @@ export const CalendarHeader: FC = () => {
   return (
     <header
       className={cn(
-        "inset-x-0 top-0 left-0 right-0 z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max w-full ",
+        "inset-x-0 top-0 left-0 right-0 z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max w-full overflow-x-hidden",
       )}
     >
       <div className="flex flex-row justify-between items-center bg-cyan-800/40">
         <div className="flex px-4 py-2 gap-2 items-center">
           <BackToDashboardButton />
 
-          <ButtonGroup
-            items={[
-              {
-                label: <ChevronLeftIcon className="size-5" />,
-                onClick: () => setSelectedDate(addDays(selectedDate, -1)),
-              },
-              {
-                label: <ChevronRightIcon className="size-5" />,
-                onClick: () => setSelectedDate(addDays(selectedDate, 1)),
-              },
-            ]}
-          />
+          <div className="hidden md:block">
+            <ButtonGroup
+              items={[
+                {
+                  label: <ChevronLeftIcon className="size-4" />,
+                  onClick: () => setSelectedDate(addDays(selectedDate, -1)),
+                },
+                {
+                  label: <ChevronRightIcon className="size-4" />,
+                  onClick: () => setSelectedDate(addDays(selectedDate, 1)),
+                },
+              ]}
+            />
+          </div>
 
           <DateSelectButton />
         </div>
@@ -61,7 +63,7 @@ const BackToDashboardButton: FC = () => {
 
   if (isOwner) {
     return <Button
-      icon={<ArrowLeftIcon className="size-5 my-[3px]" />}
+      icon={<ArrowLeftIcon className="size-4 my-[3px]" />}
       ariaLabel="Back to Dashboard"
       variant="secondary"
       onClick={() => navigate(routes.AllVenuesPageRoute.build({}))}

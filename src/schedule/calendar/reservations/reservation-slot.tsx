@@ -85,7 +85,17 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const { reservation, gridIndex, isDraft } = props;
   const { isOwner, user } = useAuthUser();
   const canEdit = useMemo(
-    () => isOwner || isDraft || props.reservation.userId === user?.id,
+    () => {
+      console.log("canEdit", isOwner, isDraft, props.reservation.userId, user?.id);
+
+      if (isOwner) {
+        return true;
+      }
+      if (isDraft) {
+        return true;
+      }
+      return props.reservation.userId === user?.id;
+    },
     [isOwner, isDraft, props.reservation.userId, user?.id],
   );
 
@@ -114,8 +124,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     disabled,
   });
 
-  const startRow = getRowIndex(venue, reservation.startTime);
-  const rowSpan = getRowSpan(reservation);
+  const startRow = useMemo(() => getRowIndex(venue, reservation.startTime), [venue, reservation.startTime]);
+  const rowSpan = useMemo(() => getRowSpan(reservation), [reservation]);
 
   const colorStyles = useMemo(
     () =>
@@ -173,18 +183,17 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
               endTime={newTimes.endTime}
             />
 
-            {canEdit && (
-              <ReservationMenu
-                onEdit={() =>
-                  setPendingChange({
-                    type: "UPDATE",
-                    newState: reservation,
-                    oldState: reservation,
-                  })
-                }
-                onDelete={props.onDelete}
-              />
-            )}
+            <ReservationMenu
+              onEdit={() =>
+                setPendingChange({
+                  type: "UPDATE",
+                  newState: reservation,
+                  oldState: reservation,
+                })
+              }
+              onDelete={props.onDelete}
+              canEdit={canEdit}
+            />
           </div>
         </div>
       </a>
@@ -198,9 +207,11 @@ import { getColorStyles } from "./colors";
 import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
 
 const ReservationMenu = ({
+  canEdit,
   onEdit,
   onDelete,
 }: {
+  canEdit: boolean;
   onEdit: () => void;
   onDelete?: () => void;
 }) => {
@@ -212,7 +223,7 @@ const ReservationMenu = ({
   });
 
   return (
-    <Popover className="relative group">
+    <Popover className={`relative group ${canEdit ? "" : "hidden"}`}>
       <PopoverButton ref={setReferenceElement}>
         <EllipsisHorizontalIcon
           aria-hidden="true"

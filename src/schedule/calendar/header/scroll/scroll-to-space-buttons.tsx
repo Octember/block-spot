@@ -1,7 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { FC } from "react";
 import { ButtonGroup } from "../../../../client/components/button-group";
-import { MultiSelect, Select } from "../../../../client/components/form/select";
+import { Select } from "../../../../client/components/form/select";
 import { useVenueContext } from "../../providers/venue-provider";
 
 function isElementInViewport(element: HTMLElement) {
@@ -10,7 +10,7 @@ function isElementInViewport(element: HTMLElement) {
     rect.top >= 0 &&
     rect.left >= 0 &&
     rect.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
+    (window.innerHeight || document.documentElement.clientHeight) &&
     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
 }
@@ -65,7 +65,7 @@ export const ScrollToSpaceButtons: FC = () => {
 
   return (
     <div className="flex px-4 py-2 gap-2 items-center">
-      <div className="px-2 font-bold">Spaces</div>
+      <div className="px-2 font-bold hidden md:block">Spaces</div>
 
       <Select
         options={venue.spaces.map((space) => ({
