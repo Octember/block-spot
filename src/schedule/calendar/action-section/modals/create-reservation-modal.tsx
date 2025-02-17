@@ -1,17 +1,18 @@
+import { Controller, useForm } from "react-hook-form";
+import { Button } from "../../../../client/components/button";
+import { FormField } from "../../../../client/components/form/form-field";
+import { Modal } from "../../../../client/components/modal";
+import { usePendingChanges } from "../../providers/pending-changes-provider";
+
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 import { parse } from "date-fns";
 import { FC } from "react";
-import { Controller, useForm } from "react-hook-form";
 import { createReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
-import { Button } from "../../../../client/components/button";
-import { FormField } from "../../../../client/components/form/form-field";
 import { Select } from "../../../../client/components/form/select";
 import { TextInput } from "../../../../client/components/form/text-input";
-import { Modal } from "../../../../client/components/modal";
 import { useToast } from "../../../../client/toast";
 import { useTimeLabelsLong15Minutes } from "../../constants";
-import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { useVenueContext } from "../../providers/venue-provider";
 
@@ -37,7 +38,7 @@ export const CreateReservationModal: FC<{
   reservation: Reservation;
 }> = ({ reservation }) => {
   const { cancelChange, setPendingChange } = usePendingChanges();
-  const { venue, getSpaceById } = useVenueContext();
+  const { venue, getSpaceById, selectedDate } = useVenueContext();
   const { refresh } = useScheduleContext();
   const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
@@ -47,7 +48,7 @@ export const CreateReservationModal: FC<{
     handleSubmit,
     control,
     watch,
-    formState: { isSubmitting },
+    formState: { isSubmitting, submitCount },
   } = useForm<CreateReservationFormInputs>({
     defaultValues: {
       date: reservation.startTime,
@@ -72,7 +73,7 @@ export const CreateReservationModal: FC<{
     refresh();
     toast({
       title: "Reservation created",
-      description: "The reservation has been created successfully",
+      description: "The reservation has been created",
     });
 
     setTimeout(() => {
@@ -99,8 +100,8 @@ export const CreateReservationModal: FC<{
           </Button>
           <Button
             onClick={handleSubmit(onSubmit)}
-            disabled={isSubmitting}
-            isLoading={isSubmitting}
+            disabled={isSubmitting || submitCount > 0}
+            isLoading={isSubmitting || submitCount > 0}
             icon={<ArrowRightCircleIcon className="w-6 h-6" />}
             ariaLabel="Confirm"
             variant="primary"
@@ -120,7 +121,11 @@ export const CreateReservationModal: FC<{
               <input
                 type="date"
                 onChange={(e) => {
-                  const date = parse(e.target.value, "yyyy-MM-dd", new Date());
+                  const date = parse(
+                    e.target.value,
+                    "yyyy-MM-dd",
+                    selectedDate,
+                  );
                   const newStart = new Date(
                     date.setHours(
                       startTimeMinutes / 60,

@@ -7,7 +7,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { format } from "date-fns";
 import { FC, useMemo } from "react";
-import { useAuth } from "wasp/client/auth";
 import { Reservation, Venue } from "wasp/entities";
 import { Button } from "../../../client/components/button";
 import { Modal } from "../../../client/components/modal";
@@ -16,7 +15,7 @@ import {
   PendingChange,
   usePendingChanges,
 } from "../providers/pending-changes-provider";
-import { CreateReservationModal } from "./create-reservation-modal";
+import { CreateReservationModal } from "./modals/create-reservation-modal";
 import { formatTimeWithZone } from "../date-utils";
 import { useVenueContext } from "../providers/venue-provider";
 import { UpdateReservationModal } from "./modals/update-reservation-modal";
