@@ -157,7 +157,7 @@ export const GridSelection: React.FC = () => {
   const { venue, selectedDate } = useVenueContext();
   const { isTimeAvailable } = useScheduleContext();
 
-  const { user } = useAuthUser();
+  const { user, isOwner } = useAuthUser();
 
   const {
     handleMouseDown,
@@ -216,11 +216,14 @@ export const GridSelection: React.FC = () => {
           if (row === 0) return <div key={`${row + 1}-${col}`} />;
 
           if (user) {
+
+            const timeAvailable = isTimeAvailable(row + 1, col);
+            const canSelect = timeAvailable || isOwner
             return (
               // Add ones to account for 1-based grid indexing
               <div
                 key={`${row + 1}-${col}`}
-                className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${isTimeAvailable(row + 1, col) ? "cursor-pointer" : ""}`}
+                className={`${getGridCell(row + 1, col)} inset-1 z-10 rounded ${canSelect ? "cursor-pointer" : ""}`}
                 onMouseDown={() => handleMouseDown(row + 1, col)}
                 onMouseMove={() => handleMouseMove(row + 1, col)}
               />
