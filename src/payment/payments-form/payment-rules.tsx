@@ -35,6 +35,7 @@ import {
 } from "./constants";
 import { PaymentRoleFormInput } from "./types";
 import { CheckBadgeIcon } from "@heroicons/react/20/solid";
+import { ManageTagsButton } from '../../team/manage-tags-button';
 
 type PaymentRuleForm = {
   paymentRules: PaymentRoleFormInput[];
@@ -46,7 +47,7 @@ export const PaymentRules = () => {
 
   const form = useForm<PaymentRuleForm>({
     defaultValues: {
-      paymentRules: [defaultPaymentRule()],
+      paymentRules: [],
     },
   });
 
@@ -62,6 +63,7 @@ export const PaymentRules = () => {
 
   useEffect(() => {
     if (paymentRules) {
+      console.log("paymentRules", paymentRules);
       form.reset({
         paymentRules: paymentRules.map(toFormInput),
       });
@@ -97,6 +99,7 @@ export const PaymentRules = () => {
       });
     }
   }
+  console.log(fields);
 
   return (
     <Card
@@ -110,7 +113,7 @@ export const PaymentRules = () => {
         <form className="flex flex-col gap-4 -mx-4">
           {fields.map((rule, ruleIndex) => (
             <div key={ruleIndex} className="flex flex-row gap-2 items-center">
-              <div className="text-sm text-gray-500">{rule.priority + 1}</div>
+              <div className="text-sm text-gray-500">{(rule.priority || 0) + 1}</div>
               <PaymentRuleComponent ruleIndex={ruleIndex} />
               <Button
                 variant="tertiary"
@@ -315,25 +318,29 @@ const PaymentRuleComponent: FC<{
                   )}
 
                   {value.type === "userTags" && (
-                    <Controller
-                      control={control}
-                      name={`paymentRules.${ruleIndex}.conditions.${conditionIndex}.userTags`}
-                      render={({
-                        field: { value: selectedTags, onChange },
-                      }) => (
-                        <MultiSelect
-                          options={tagOptions}
-                          value={tagOptions.filter((tag) =>
-                            selectedTags.some(
-                              (selectedTag) => tag.value === selectedTag,
-                            ),
-                          )}
-                          onChange={(tags) =>
-                            onChange(tags.map((tag) => tag.value))
-                          }
-                        />
-                      )}
-                    />
+                    <>
+                      <Controller
+                        control={control}
+                        name={`paymentRules.${ruleIndex}.conditions.${conditionIndex}.userTags`}
+                        render={({
+                          field: { value: selectedTags, onChange },
+                        }) => (
+                          <MultiSelect
+                            options={tagOptions}
+                            value={tagOptions.filter((tag) =>
+                              selectedTags.some(
+                                (selectedTag) => tag.value === selectedTag,
+                              ),
+                            )}
+                            onChange={(tags) =>
+                              onChange(tags.map((tag) => tag.value))
+                            }
+                          />
+                        )}
+                      />
+
+                      <ManageTagsButton />
+                    </>
                   )}
 
                   <button onClick={() => remove(conditionIndex)}>

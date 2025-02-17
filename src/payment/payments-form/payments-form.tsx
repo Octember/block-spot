@@ -13,8 +13,11 @@ export const PaymentsForm = ({
 }: {
   organization: Organization;
 }) => {
+  const [isLoading, setIsLoading] = useState(false);
   async function handleEnablePayment() {
+    setIsLoading(true);
     await createStripeAccount();
+    setIsLoading(false);
   }
 
   return (
@@ -26,6 +29,7 @@ export const PaymentsForm = ({
           value={Boolean(organization?.stripeAccountId)}
           onChange={handleEnablePayment}
         />
+        {isLoading && <BiLoaderCircle className="size-6 animate-spin" />}
       </p>
 
       <p className="flex flex-row items-center gap-2">

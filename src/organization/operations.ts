@@ -461,6 +461,12 @@ export const createOrganization: CreateOrganization<
           role: "OWNER",
         },
       },
+      tags: {
+        create: [
+          { name: "Staff" },
+          { name: "Member" },
+        ],
+      },
     },
   });
 
