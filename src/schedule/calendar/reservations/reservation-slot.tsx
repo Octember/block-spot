@@ -86,8 +86,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const { isOwner, user } = useAuthUser();
   const canEdit = useMemo(
     () => {
-      console.log("canEdit", isOwner, isDraft, props.reservation.userId, user?.id);
-
       if (isOwner) {
         return true;
       }
