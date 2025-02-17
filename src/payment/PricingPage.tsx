@@ -27,9 +27,9 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
     price: "Free",
     description: "Perfect for small businesses and community centers",
     features: [
-      "Unlimited bookings per month",
+      "Unlimited bookings",
       "Drag-and-drop calendar",
-      "One location",
+      "Unlimited spaces",
       "One admin user",
       "Calendar sync",
       "Basic support",
@@ -38,11 +38,11 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
   [PaymentPlanId.Business]: {
     name: prettyPaymentPlanName(PaymentPlanId.Business),
     price: "$25",
-    description: "For growing businesses with multiple venues",
+    description: "For growing businesses with paid reservations",
     features: [
       "Everything in the Community plan",
-      "Unlimited bookings",
-      "Multiple venues & spaces",
+      "Unlimited admins",
+      "Paid reservations",
       "Priority support",
       "Advanced availability rules",
       "Analytics & reporting",
