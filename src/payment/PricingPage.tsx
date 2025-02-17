@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "wasp/client/auth";
 import {
   generateCheckoutSession,
   getCustomerPortalUrl,

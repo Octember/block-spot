@@ -2,6 +2,7 @@ import { ChevronRightIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { FC, forwardRef, useState } from "react";
 import { Space } from "wasp/entities";
 import { Squares2X2Icon, TrashIcon } from "@heroicons/react/24/outline";
+import { LuMenu } from "react-icons/lu";
 import { AddSpaceModal } from "./add-space-modal";
 import pluralize from "pluralize";
 import { DeleteSpaceButton } from "./delete-space-button";
@@ -38,10 +39,12 @@ export const SpaceCard = forwardRef<
     <li
       ref={ref}
       className={`${ListItemStyle} bg-gray-100 border-gray-200 ${isDragging ? "bg-gray-200 border-gray-400" : ""} border justify-between`}
-      {...props}
     >
       <div className="flex flex-row items-center gap-4">
-        <Squares2X2Icon className="size-5" />
+        <div {...props}>
+          <LuMenu className="size-5" />
+        </div>
+
         <div className="flex flex-col gap-0.5">
           <div className="text-md font-semibold">{space.name}</div>
           <div className="text-sm text-gray-500">
