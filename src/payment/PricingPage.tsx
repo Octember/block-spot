@@ -30,9 +30,8 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
       "Unlimited bookings",
       "Drag-and-drop calendar",
       "Unlimited spaces",
-      "One admin user",
-      "Calendar sync",
-      "Basic support",
+      "Calendar sync & integrations",
+      "Email support",
     ],
   },
   [PaymentPlanId.Business]: {
@@ -41,7 +40,6 @@ export const paymentPlanCards: Record<PaymentPlanId, PaymentPlanCard> = {
     description: "For growing businesses with paid reservations",
     features: [
       "Everything in the Community plan",
-      "Unlimited admins",
       "Paid reservations",
       "Priority support",
       "Advanced availability rules",
