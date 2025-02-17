@@ -14,6 +14,7 @@ import { useAuth } from "wasp/client/auth";
 import { getAllVenues, useQuery } from "wasp/client/operations";
 import { routes } from "wasp/client/router";
 import { useAuthUser } from "../../auth/providers/AuthUserProvider";
+import { PaymentPlanId } from "wasp/src/payment/plans";
 
 type NavigationItem = {
   name: string;
@@ -21,17 +22,19 @@ type NavigationItem = {
   icon: React.ElementType;
   count?: string;
   current: boolean;
+  behindPaywall?: boolean;
 };
 
-type SidebarRoute = {
+type SidebarRouteInternal = {
   name: string;
   route: (venueId: string) => string;
   icon: React.ElementType;
+  paywall?: boolean;
   public?: boolean;
   count?: string;
 };
 
-const sidebarRoutes: SidebarRoute[] = [
+const sidebarRoutes: SidebarRouteInternal[] = [
   {
     name: "Venue",
     route: (venueId) => routes.VenuePageRoute.build({ params: { venueId } }),
@@ -63,6 +66,7 @@ const sidebarRoutes: SidebarRoute[] = [
         params: { venueId, "*": "payments" },
       }),
     icon: BanknotesIcon,
+    paywall: true,
   },
   {
     name: "Integrations",
@@ -89,7 +93,7 @@ const sidebarRoutes: SidebarRoute[] = [
 ];
 
 export function useAppNavigation(): NavigationItem[] {
-  const { user, isOwner } = useAuthUser();
+  const { user, isOwner, organizationPlan } = useAuthUser();
   const location = useLocation();
   const { data: venues } = useQuery(getAllVenues, null, { staleTime: 3600000 });
   const firstVenue = venues?.[0];
@@ -97,7 +101,17 @@ export function useAppNavigation(): NavigationItem[] {
   const navItems: NavigationItem[] = useMemo(
     () =>
       sidebarRoutes
-        .filter((route) => route.public || isOwner)
+        .filter((route) => {
+          if (route.public) {
+            return true;
+          }
+
+          if (route.paywall) {
+            return organizationPlan === PaymentPlanId.Business;
+          }
+
+          return isOwner;
+        })
         .map((route) => ({
           name: route.name,
           route: firstVenue
@@ -108,8 +122,9 @@ export function useAppNavigation(): NavigationItem[] {
           current: firstVenue
             ? location.pathname === route.route(firstVenue.id)
             : false,
+          behindPaywall: route.paywall && organizationPlan !== PaymentPlanId.Business,
         })),
-    [user, firstVenue, location.pathname],
+    [user, firstVenue, location.pathname, organizationPlan],
   );
 
   return navItems;

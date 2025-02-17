@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import { User } from "wasp/entities";
 import { useQuery, getUserOrganization } from "wasp/client/operations";
+import { PaymentPlanId } from '../../payment/plans';
 
 type AuthUser = User;
 
@@ -10,6 +11,7 @@ interface AuthUserContextType {
   isOwner: boolean;
   isLoading: boolean;
   venueId: string | undefined;
+  organizationPlan: PaymentPlanId;
 }
 
 const AuthUserContext = createContext<AuthUserContextType | undefined>(
@@ -31,7 +33,9 @@ export const AuthUserProvider: React.FC<
     [organization, user],
   );
 
-  const venueId = organization?.venues?.[0]?.id;
+  const venueId = useMemo(() => organization?.venues?.[0]?.id, [organization]);
+
+  const organizationPlan = useMemo(() => organization?.subscriptionPlanId || PaymentPlanId.Community, [organization]);
 
   return (
     <AuthUserContext.Provider
@@ -41,6 +45,7 @@ export const AuthUserProvider: React.FC<
         isOwner: orgMember?.role === "OWNER",
         isLoading: isOrganizationLoading,
         venueId,
+        organizationPlan: organizationPlan as PaymentPlanId,
       }}
     >
       {children}

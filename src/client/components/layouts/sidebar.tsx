@@ -1,6 +1,8 @@
 import { Link as WaspRouterLink } from "wasp/client/router";
 import { cn } from "../../cn";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
+import { LuPlusCircle } from "react-icons/lu";
+
 
 export default function Sidebar() {
   const navItems = useAppNavigation();
@@ -40,6 +42,16 @@ export default function Sidebar() {
                         {item.count}
                       </span>
                     ) : null}
+
+                    {/* TODO: upsell paywall */}
+                    {/* {item.behindPaywall &&
+                      <span
+                        aria-hidden="true"
+                        className="ml-auto w-9 min-w-max"
+                      >
+                        <LuPlusCircle className="size-6 text-teal-800" />
+                      </span>
+                    } */}
                   </WaspRouterLink>
                 </li>
               ))}
