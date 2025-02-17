@@ -19,6 +19,7 @@ import {
   type GetUserOrganization,
 } from "wasp/server/operations";
 import { sendInvitationEmail } from "./email";
+import {sendSlackMessage} from '../utils/slack-webhook';
 
 type CreateInvitationInput = {
   email: string;
@@ -462,6 +463,8 @@ export const createOrganization: CreateOrganization<
       },
     },
   });
+
+  await sendSlackMessage(`🎉🎉🎉 New organization created: ${organization.name} \nby ${context.user.email}`);
 
   return organization;
 };
