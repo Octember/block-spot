@@ -18,7 +18,7 @@ import { useMemo, useState } from "react";
 import { updateSpacePriority } from "wasp/client/operations";
 import { useToast } from "../../../client/toast";
 
-export const SpaceList = ({ spaces }: { spaces: Space[] }) => {
+export const SpaceList = ({ spaces, refetch }: { spaces: Space[]; refetch: () => void }) => {
   const initialSpaces = useMemo(
     () => spaces.toSorted((a, b) => a.priority - b.priority),
     [spaces],
@@ -90,13 +90,13 @@ export const SpaceList = ({ spaces }: { spaces: Space[] }) => {
       <ul className="flex flex-col gap-2 px-4 py-2 sm:px-6 lg:px-8">
         <SortableContext items={spaces} strategy={verticalListSortingStrategy}>
           {sortedSpaces.map((space) => (
-            <SortableSpaceCard space={space} key={space.id} />
+            <SortableSpaceCard space={space} key={space.id} refetch={refetch} />
           ))}
         </SortableContext>
       </ul>
 
       <DragOverlay>
-        {activeSpace && <SpaceCard space={activeSpace} isDragging />}
+        {activeSpace && <SpaceCard space={activeSpace} isDragging refetch={refetch} />}
       </DragOverlay>
     </DndContext>
   );

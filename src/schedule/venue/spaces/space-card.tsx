@@ -13,7 +13,7 @@ import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
 const ListItemStyle =
   "flex flex-row p-2 rounded-md border border-gray-200 items-center h-16";
 
-export const SortableSpaceCard: FC<{ space: Space }> = ({ space }) => {
+export const SortableSpaceCard: FC<{ space: Space; refetch: () => void }> = ({ space, refetch }) => {
   const { isOwner } = useAuthUser();
   const { attributes, listeners, setNodeRef } = useSortable({
     id: space.id,
@@ -27,14 +27,15 @@ export const SortableSpaceCard: FC<{ space: Space }> = ({ space }) => {
       {...attributes}
       {...listeners}
       isDragging={false}
+      refetch={refetch}
     />
   );
 };
 
 export const SpaceCard = forwardRef<
   HTMLLIElement,
-  { space: Space; isDragging: boolean }
->(({ space, isDragging, ...props }, ref) => {
+  { space: Space; isDragging: boolean; refetch: () => void }
+>(({ space, refetch, isDragging, ...props }, ref) => {
   return (
     <li
       ref={ref}
@@ -55,7 +56,7 @@ export const SpaceCard = forwardRef<
 
       <div className="flex flex-row items-center gap-2">
         <DeleteSpaceButton spaceId={space.id} />
-        <UpdateSpaceButton space={space} />
+        <UpdateSpaceButton space={space} refetch={refetch} />
       </div>
     </li>
   );

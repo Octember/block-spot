@@ -11,7 +11,6 @@ import {
   useForm,
   useFormContext,
 } from "react-hook-form";
-import { BiLoaderCircle } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import {
   getOrganizationTags,
@@ -24,6 +23,7 @@ import { Card } from "../../client/components/card";
 import { MultiSelect, Select } from "../../client/components/form/select";
 import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
+import { ManageTagsButton } from '../../team/manage-tags-button';
 import {
   CONDITION_FILTER_OPTIONS,
   defaultPaymentRule,
@@ -34,9 +34,6 @@ import {
   toFormInput,
 } from "./constants";
 import { PaymentRoleFormInput } from "./types";
-import { CheckBadgeIcon } from "@heroicons/react/20/solid";
-import { ManageTagsButton } from '../../team/manage-tags-button';
-import LoadingSpinner from "../../admin/layout/LoadingSpinner";
 
 type PaymentRuleForm = {
   paymentRules: PaymentRoleFormInput[];
@@ -139,18 +136,14 @@ export const PaymentRules = () => {
               type="submit"
               ariaLabel="Save payment rules"
               onClick={handleSubmit(onSubmit)}
-              icon={
-                isSubmitting ? (
-                  <BiLoaderCircle className="w-4 h-4 animate-spin" />
-                ) : undefined
-              }
+              isLoading={isSubmitting}
             >
               Save Changes
             </Button>
           </div>
         </form>
       </FormProvider>
-    </Card>
+    </Card >
   );
 };
 

@@ -70,7 +70,7 @@ const StripeConnectButton = () => {
     <Button
       ariaLabel="Connect to Stripe"
       onClick={handleStripeConnect}
-      icon={isLoading ? <BiLoaderCircle className="animate-spin" /> : undefined}
+      isLoading={isLoading}
     >
       Connect to Stripe
     </Button>

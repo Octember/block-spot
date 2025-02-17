@@ -7,15 +7,14 @@ import { usePendingChanges } from "../providers/pending-changes-provider";
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 import { parse } from "date-fns";
 import { FC } from "react";
-import { BiLoaderCircle } from "react-icons/bi";
 import { createReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { Select } from "../../../client/components/form/select";
 import { TextInput } from "../../../client/components/form/text-input";
 import { useToast } from "../../../client/toast";
 import { useTimeLabelsLong15Minutes } from "../constants";
-import { useVenueContext } from "../providers/venue-provider";
 import { useScheduleContext } from "../providers/schedule-context-provider";
+import { useVenueContext } from "../providers/venue-provider";
 
 type CreateReservationFormInputs = {
   date: Date;
@@ -87,7 +86,7 @@ export const CreateReservationModal: FC<{
       className="flex"
       open={true}
       size="lg"
-      onClose={() => {}}
+      onClose={() => { }}
       heading={{ title: "New Reservation" }}
       footer={
         <div className="flex items-center justify-end space-x-3 m-2">
@@ -102,13 +101,8 @@ export const CreateReservationModal: FC<{
           <Button
             onClick={handleSubmit(onSubmit)}
             disabled={isSubmitting || submitCount > 0}
-            icon={
-              isSubmitting || submitCount > 0 ? (
-                <BiLoaderCircle className="animate-spin" />
-              ) : (
-                <ArrowRightCircleIcon className="w-6 h-6" />
-              )
-            }
+            isLoading={isSubmitting || submitCount > 0}
+            icon={<ArrowRightCircleIcon className="w-6 h-6" />}
             ariaLabel="Confirm"
             variant="primary"
             size="lg"

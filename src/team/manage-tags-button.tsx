@@ -1,19 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
-  useQuery,
-  getOrganizationTags,
   createTag,
   deleteTag,
+  getOrganizationTags,
   updateTag,
+  useQuery,
 } from "wasp/client/operations";
 import { Button } from "../client/components/button";
 import { TextInput } from "../client/components/form/text-input";
-import type { OrganizationTag } from "wasp/entities";
 import { Modal } from "../client/components/modal";
-import { BiLoaderCircle } from "react-icons/bi";
 import { useToast } from "../client/toast";
 
 type TagFormData = {
@@ -144,11 +142,7 @@ export function ManageTagsButton() {
                 type="submit"
                 ariaLabel="Save tag changes"
                 disabled={!isDirty || isSubmitting}
-                icon={
-                  isSubmitting ? (
-                    <BiLoaderCircle className="w-4 h-4 animate-spin" />
-                  ) : undefined
-                }
+                isLoading={isSubmitting}
               >
                 Save Changes
               </Button>

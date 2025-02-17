@@ -38,7 +38,8 @@ export function UpgradeButton({ organization }: UpgradeButtonProps) {
     <div>
       <Button
         variant="primary"
-        icon={isPaymentLoading ? <BiLoaderCircle className="size-4 animate-spin" /> : <BoltIcon className="size-4" />}
+        isLoading={isPaymentLoading}
+        icon={<BoltIcon className="size-4" />}
         onClick={() => handleBuyNowClick(PaymentPlanId.Business)}
         ariaLabel="Upgrade to Business Tier"
         disabled={isPaymentLoading}

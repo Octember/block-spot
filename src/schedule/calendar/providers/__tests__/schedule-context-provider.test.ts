@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getDateOrDefault } from "../venue-provider";
+import { parseDateOrDefault } from "../venue-provider";
 
 // Mock the Venue type to avoid browser dependencies
 type MockVenue = {
@@ -16,7 +16,7 @@ type MockVenue = {
   displayEnd: number;
 };
 
-describe("getDateOrDefault", () => {
+describe("parseDateOrDefault", () => {
   const mockVenue: MockVenue = {
     timeZoneId: "America/New_York",
     id: "1",
@@ -33,7 +33,7 @@ describe("getDateOrDefault", () => {
 
   it("should return midnight in venue timezone when given a date string", () => {
     // March 20th, 2024
-    const result = getDateOrDefault("2024-03-20", mockVenue as any);
+    const result = parseDateOrDefault("2024-03-20", mockVenue as any);
 
     // Should be March 20th 04:00 UTC (midnight EDT)
     expect(result.toISOString()).toBe("2024-03-20T04:00:00.000Z");
@@ -46,7 +46,7 @@ describe("getDateOrDefault", () => {
     };
 
     // March 20th, 2024
-    const result = getDateOrDefault("2024-03-20", laVenue as any);
+    const result = parseDateOrDefault("2024-03-20", laVenue as any);
 
     // Should be March 20th 07:00 UTC (midnight PDT)
     expect(result.toISOString()).toBe("2024-03-20T07:00:00.000Z");
@@ -59,7 +59,7 @@ describe("getDateOrDefault", () => {
     };
 
     // March 20th, 2024
-    const result = getDateOrDefault("2024-03-20", tokyoVenue as any);
+    const result = parseDateOrDefault("2024-03-20", tokyoVenue as any);
 
     // Should be March 19th 15:00 UTC (midnight March 20th JST)
     expect(result.toISOString()).toBe("2024-03-19T15:00:00.000Z");
@@ -67,14 +67,14 @@ describe("getDateOrDefault", () => {
 
   it("should handle date near DST transition", () => {
     // US DST starts second Sunday in March
-    const result = getDateOrDefault("2024-03-10", mockVenue as any);
+    const result = parseDateOrDefault("2024-03-10", mockVenue as any);
 
     // Should be March 10th 04:00 UTC (midnight EDT after DST change)
     expect(result.toISOString()).toBe("2024-03-10T04:00:00.000Z");
   });
 
   it("should handle null date by using today", () => {
-    const result = getDateOrDefault(null, mockVenue as any);
+    const result = parseDateOrDefault(null, mockVenue as any);
     const now = new Date();
     const expectedDate = new Date(now);
     expectedDate.setHours(4, 0, 0, 0); // 04:00 UTC = midnight EDT

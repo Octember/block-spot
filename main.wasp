@@ -232,7 +232,7 @@ action deleteSpace {
 
 action updateSpace {
   fn: import { updateSpace } from "@src/schedule/operations",
-  entities: [Space]
+  entities: [Space, Venue]
 }
 
 action updateVenue {

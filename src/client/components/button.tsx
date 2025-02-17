@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { cn } from "../cn";
+import { BiLoaderCircle } from "react-icons/bi";
 
 type ButtonProps = {
   ariaLabel: string;
@@ -11,6 +12,7 @@ type ButtonProps = {
   disabled?: boolean;
   className?: string;
   size?: "sm" | "md" | "lg";
+  isLoading?: boolean;
 };
 
 export const Button = ({
@@ -23,6 +25,7 @@ export const Button = ({
   disabled = false,
   className,
   size = "md",
+  isLoading = false,
 }: ButtonProps) => {
   const variantClasses = {
     primary: "bg-teal-600 hover:bg-teal-700 text-white",
@@ -52,7 +55,7 @@ export const Button = ({
       )}
       onClick={onClick}
     >
-      {icon}
+      {isLoading ? <BiLoaderCircle className="w-4 h-4 animate-spin" /> : icon}
       {children}
     </button>
   );

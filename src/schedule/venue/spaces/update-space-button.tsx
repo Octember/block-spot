@@ -21,7 +21,7 @@ type UpdateSpaceFormInputs = {
   type: string;
 };
 
-export const UpdateSpaceButton = ({ space }: { space: Space }) => {
+export const UpdateSpaceButton = ({ space, refetch }: { space: Space; refetch: () => void }) => {
   const [isOpen, setIsOpen] = useState(false);
   const toast = useToast();
 
@@ -51,6 +51,7 @@ export const UpdateSpaceButton = ({ space }: { space: Space }) => {
         type: "success",
         title: "Space updated successfully",
       });
+      refetch();
     } catch (error) {
       console.error("Failed to update space:", error);
       toast({
@@ -101,14 +102,6 @@ export const UpdateSpaceButton = ({ space }: { space: Space }) => {
                 valueAsNumber: true,
                 min: 1,
               })}
-            />
-          </FormField>
-
-          <FormField label="Type">
-            <TextInput
-              type="text"
-              placeholder="Enter space type"
-              {...register("type")}
             />
           </FormField>
 

@@ -2,23 +2,22 @@ import { DndContext, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { isSameDay } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { useTimeLabels } from "../constants";
+import { UTCToLocal } from "../date-utils";
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-context-provider";
+import { useVenueContext } from "../providers/venue-provider";
 import { getSharedGridStyle, MinutesPerSlot } from "./constants";
 import { DroppableSpace } from "./droppable";
 import { ReservationSlot } from "./reservation-slot";
-import { UTCToLocal } from "../date-utils";
 import {
   getRowSpan,
-  getTimeFromRowIndex,
   isWithinReservation,
   setTimesOnDate,
-  useGetTimeFromRowIndex,
+  useGetTimeFromRowIndex
 } from "./utilities";
-import { useVenueContext } from "../providers/venue-provider";
 
 export const ReservationsSection = () => {
-  const { selectedDate, venue } = useVenueContext();
+  const { venue } = useVenueContext();
   const { spaces } = useScheduleContext();
   const timeLabels = useTimeLabels();
   const { pendingChange, setPendingChange } = usePendingChanges();
@@ -186,25 +185,35 @@ export const ReservationsSection = () => {
               }}
             />
           ))}
-        {pendingChange &&
-          (() => {
-            // Convert both dates to venue's timezone before comparing
-            const pendingDate = UTCToLocal(
-              pendingChange.newState.startTime,
-              venue,
-            );
-            const selectedLocalDate = UTCToLocal(selectedDate, venue);
-            return isSameDay(pendingDate, selectedLocalDate);
-          })() && (
-            <ReservationSlot
-              reservation={pendingChange.newState}
-              gridIndex={spaceIds.findIndex(
-                (spaceId) => spaceId === pendingChange.newState.spaceId,
-              )}
-              isDraft
-            />
-          )}
+        <PendingChangeSlot />
       </ol>
     </DndContext>
+  );
+};
+
+const PendingChangeSlot = () => {
+  const { spaces } = useScheduleContext();
+  const { venue, selectedDate } = useVenueContext();
+  const spaceIds = spaces.map((space) => space.id);
+
+  const { pendingChange } = usePendingChanges();
+
+  if (!pendingChange) return null;
+
+  const pendingDate = UTCToLocal(
+    pendingChange.newState.startTime,
+    venue,
+  );
+  const selectedLocalDate = UTCToLocal(selectedDate, venue);
+  if (!isSameDay(pendingDate, selectedLocalDate)) return null;
+
+  return (
+    <ReservationSlot
+      reservation={pendingChange.newState}
+      gridIndex={spaceIds.findIndex(
+        (spaceId) => spaceId === pendingChange.newState.spaceId,
+      )}
+      isDraft
+    />
   );
 };

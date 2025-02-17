@@ -113,13 +113,8 @@ export function OrganizationStep({
           setLoading(true);
           onNext();
         }}
-        icon={
-          loading ? (
-            <BiLoaderCircle className="size-4 animate-spin" />
-          ) : (
-            <ArrowRightIcon className="size-4" />
-          )
-        }
+        isLoading={loading}
+        icon={<ArrowRightIcon className="size-4" />}
         disabled={
           !formData.organizationName ||
           !formData.organizationType ||
@@ -336,13 +331,8 @@ export function SpacesStep({
 
       <div className="flex gap-4">
         <Button
-          icon={
-            isCreating ? (
-              <BiLoaderCircle className="size-4 animate-spin" />
-            ) : (
-              <PlusIcon className="size-4" />
-            )
-          }
+          icon={<PlusIcon className="size-4" />}
+          isLoading={isCreating}
           onClick={() =>
             append({ name: "", type: "Conference Room", capacity: 1 })
           }
@@ -354,13 +344,8 @@ export function SpacesStep({
         </Button>
 
         <Button
-          icon={
-            isCreating ? (
-              <BiLoaderCircle className="size-4 animate-spin" />
-            ) : (
-              <ArrowRightIcon className="size-4" />
-            )
-          }
+          icon={<ArrowRightIcon className="size-4" />}
+          isLoading={isCreating}
           type="submit"
           disabled={isCreating}
           ariaLabel="Continue"

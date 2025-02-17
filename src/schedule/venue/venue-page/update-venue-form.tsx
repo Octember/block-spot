@@ -1,7 +1,6 @@
 import { ArrowUpRightIcon } from "@heroicons/react/20/solid";
 import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { BiLoaderCircle } from "react-icons/bi";
 import { updateVenue, updateVenueAvailability } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { AvailabilityRule, Space, Venue } from "wasp/entities";
@@ -104,7 +103,7 @@ export function UpdateVenueForm({
               variant="secondary"
               ariaLabel="View Schedule"
               icon={<ArrowUpRightIcon className="size-4" />}
-              onClick={() => {}}
+              onClick={() => { }}
             >
               View Schedule
             </Button>
@@ -162,11 +161,7 @@ export function UpdateVenueForm({
       <div className="flex gap-4">
         <Button
           disabled={!isDirty || isSubmitting}
-          icon={
-            isSubmitting ? (
-              <BiLoaderCircle className="size-4 animate-spin" />
-            ) : undefined
-          }
+          isLoading={isSubmitting}
           type="submit"
           ariaLabel="Update Venue"
         >

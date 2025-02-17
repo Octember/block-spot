@@ -1,5 +1,8 @@
+import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
+import { parse } from "date-fns";
 import { FC } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { createReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { Button } from "../../../../client/components/button";
 import { FormField } from "../../../../client/components/form/form-field";
@@ -8,14 +11,9 @@ import { TextInput } from "../../../../client/components/form/text-input";
 import { Modal } from "../../../../client/components/modal";
 import { useToast } from "../../../../client/toast";
 import { useTimeLabelsLong15Minutes } from "../../constants";
-import { formatTimeWithZone } from "../../date-utils";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { useVenueContext } from "../../providers/venue-provider";
-import { BiLoaderCircle } from "react-icons/bi";
-import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
-import { parse } from "date-fns";
-import { createReservation } from "wasp/client/operations";
 
 type CreateReservationFormInputs = {
   date: Date;
@@ -87,7 +85,7 @@ export const CreateReservationModal: FC<{
       className="flex"
       open={true}
       size="lg"
-      onClose={() => {}}
+      onClose={() => { }}
       heading={{ title: "New Reservation" }}
       footer={
         <div className="flex items-center justify-end space-x-3 m-2">
@@ -102,13 +100,8 @@ export const CreateReservationModal: FC<{
           <Button
             onClick={handleSubmit(onSubmit)}
             disabled={isSubmitting}
-            icon={
-              isSubmitting ? (
-                <BiLoaderCircle className="animate-spin" />
-              ) : (
-                <ArrowRightCircleIcon className="w-6 h-6" />
-              )
-            }
+            isLoading={isSubmitting}
+            icon={<ArrowRightCircleIcon className="w-6 h-6" />}
             ariaLabel="Confirm"
             variant="primary"
             size="lg"

@@ -23,7 +23,7 @@ export default function VenuePage() {
 
 const SpacesPage = () => {
   const { venueId } = useParams();
-  const { data: venue, isLoading } = useQuery(getVenueById, {
+  const { data: venue, isLoading, refetch } = useQuery(getVenueById, {
     venueId: venueId || "",
   });
 
@@ -39,7 +39,7 @@ const SpacesPage = () => {
         <LoadingSpinner />
       ) : (
         <li className="relative flex flex-col justify-between gap-x-6 py-5 bg-white border border-gray-200 rounded-md">
-          <SpaceList spaces={venue?.spaces || []} />
+          <SpaceList spaces={venue?.spaces || []} refetch={refetch} />
         </li>
       )}
     </SidebarLayout>

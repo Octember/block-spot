@@ -6,7 +6,7 @@ import { SidebarLayout } from "../../client/components/layouts/sidebar-layout";
 import LoadingSpinner from "../../admin/layout/LoadingSpinner";
 
 export default function VenuePage() {
-  const { data: venues, isLoading: isVenueLoading } = useQuery(getAllVenues);
+  const { data: venues, isLoading: isVenueLoading, refetch } = useQuery(getAllVenues);
 
   return (
     <SidebarLayout
@@ -18,7 +18,7 @@ export default function VenuePage() {
       {isVenueLoading ? (
         <LoadingSpinner />
       ) : (
-        <VenueList venues={venues || []} />
+        <VenueList venues={venues || []} refetch={refetch} />
       )}
     </SidebarLayout>
   );

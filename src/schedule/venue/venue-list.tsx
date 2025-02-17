@@ -10,19 +10,20 @@ import { Button } from "../../client/components/button";
 import { BulkSpaceCreator } from "./spaces/bulk-create-spaces";
 import { SpaceList } from "./spaces/space-list";
 
-export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[] }> = ({
+export const VenueList: FC<{ venues: (Venue & { spaces: Space[] })[]; refetch: () => void }> = ({
   venues,
+  refetch,
 }) => {
   return (
     <ul role="list" className="flex flex-col gap-4">
       {venues.map((venue) => (
-        <VenueCard venue={venue} key={venue.id} />
+        <VenueCard venue={venue} key={venue.id} refetch={refetch} />
       ))}
     </ul>
   );
 };
 
-const VenueCard = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
+const VenueCard = ({ venue, refetch }: { venue: Venue & { spaces: Space[] }; refetch: () => void }) => {
   return (
     <li className="relative flex flex-col justify-between gap-x-6 py-5 bg-white border border-gray-200 rounded-md">
       <div className="flex flex-row justify-between border-b border-gray-200 pb-4 px-4 sm:px-6 lg:px-8">
@@ -43,7 +44,7 @@ const VenueCard = ({ venue }: { venue: Venue & { spaces: Space[] } }) => {
         </div>
       </div>
 
-      <SpaceList spaces={venue.spaces} />
+      <SpaceList spaces={venue.spaces} refetch={refetch} />
     </li>
   );
 };
