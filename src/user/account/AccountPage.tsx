@@ -1,21 +1,14 @@
-import { BoltIcon } from "@heroicons/react/20/solid";
 import { Cog8ToothIcon } from "@heroicons/react/24/outline";
-import { logout, useAuth } from "wasp/client/auth";
-import {
-  getCustomerPortalUrl,
-  getUserOrganization,
-  useQuery,
-} from "wasp/client/operations";
+import { logout } from "wasp/client/auth";
+import { getUserOrganization, useQuery } from 'wasp/client/operations';
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
-import { Button } from "../client/components/button";
-import { Card } from "../client/components/card";
-import { SidebarLayout } from "../client/components/layouts/sidebar-layout";
-import {
-  type SubscriptionStatus,
-  parsePaymentPlanId,
-  prettyPaymentPlanName,
-} from "../payment/plans";
-import { useAuthUser } from "../auth/providers/AuthUserProvider";
+import { Organization } from "wasp/entities";
+import { useAuthUser } from "../../auth/providers/AuthUserProvider";
+import { Button } from "../../client/components/button";
+import { Card } from "../../client/components/card";
+import { SidebarLayout } from "../../client/components/layouts/sidebar-layout";
+import { SubscriptionStatus, parsePaymentPlanId, prettyPaymentPlanName } from '../../payment/plans';
+import { CustomerPortalButton, UpgradeButton } from "./payment/buttons";
 
 export default function AccountPage() {
   const { user } = useAuthUser();
@@ -88,11 +81,7 @@ export default function AccountPage() {
                   Your Plan
                 </dt>
                 <UserCurrentPaymentPlan
-                  subscriptionStatus={
-                    organization.subscriptionStatus as SubscriptionStatus
-                  }
-                  subscriptionPlan={organization.subscriptionPlanId}
-                  datePaid={organization.datePaid}
+                  organization={organization}
                 />
               </div>
             </dl>
@@ -120,24 +109,23 @@ export default function AccountPage() {
 }
 
 type UserCurrentPaymentPlanProps = {
-  subscriptionPlan: string | null;
-  subscriptionStatus: SubscriptionStatus | null;
-  datePaid: Date | null;
+  organization: Organization
 };
 
 function UserCurrentPaymentPlan({
-  subscriptionPlan,
-  subscriptionStatus,
-  datePaid,
+  organization,
 }: UserCurrentPaymentPlanProps) {
-  if (subscriptionStatus && subscriptionPlan && datePaid) {
+
+
+
+  if (organization.subscriptionStatus && organization.subscriptionPlanId && organization.datePaid) {
     return (
       <>
         <div>
           {getUserSubscriptionStatusDescription({
-            subscriptionPlan,
-            subscriptionStatus,
-            datePaid,
+            subscriptionPlan: organization.subscriptionPlanId,
+            subscriptionStatus: organization.subscriptionStatus as SubscriptionStatus,
+            datePaid: organization.datePaid,
           })}
         </div>
         <CustomerPortalButton />
@@ -148,8 +136,7 @@ function UserCurrentPaymentPlan({
   return (
     <>
       <div className="text-md prose">Community Tier</div>
-      <CustomerPortalButton />
-      {/* <BuyMoreButton /> */}
+      <UpgradeButton organization={organization} />
     </>
   );
 }
@@ -194,53 +181,4 @@ function prettyPrintEndOfBillingPeriod(date: Date) {
   const oneMonthFromNow = new Date(date);
   oneMonthFromNow.setMonth(oneMonthFromNow.getMonth() + 1);
   return ": " + oneMonthFromNow.toLocaleDateString();
-}
-
-function BuyMoreButton() {
-  return (
-    <WaspRouterLink
-      to={routes.PricingPageRoute.to}
-      className="font-medium text-sm text-teal-600 dark:text-teal-400 hover:text-teal-500"
-    >
-      <Button
-        variant="primary"
-        icon={<BoltIcon className="size-4" />}
-        ariaLabel="Upgrade to Business Tier"
-      >
-        Upgrade to Business Tier
-      </Button>
-    </WaspRouterLink>
-  );
-}
-
-function CustomerPortalButton() {
-  const {
-    data: customerPortalUrl,
-    isLoading: isCustomerPortalUrlLoading,
-    error: customerPortalUrlError,
-  } = useQuery(getCustomerPortalUrl);
-
-  const handleClick = () => {
-    if (customerPortalUrlError) {
-      console.error("Error fetching customer portal url");
-    }
-
-    if (customerPortalUrl) {
-      window.open(customerPortalUrl, "_blank");
-    } else {
-      console.error("Customer portal URL is not available");
-    }
-  };
-
-  return (
-    <div className="ml-4 flex-shrink-0 sm:col-span-1 sm:mt-0">
-      <button
-        onClick={handleClick}
-        disabled={isCustomerPortalUrlLoading}
-        className="font-medium text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
-      >
-        Manage Subscription
-      </button>
-    </div>
-  );
 }

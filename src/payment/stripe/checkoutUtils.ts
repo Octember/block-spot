@@ -66,6 +66,9 @@ export async function createStripeCheckoutSession({
       ? `${DOMAIN}/onboarding/complete?success=true`
       : `${DOMAIN}/checkout?success=true`;
 
+    console.log("Creating Stripe checkout session", successUrl);
+
+
     return await stripe.checkout.sessions.create({
       line_items: [
         {

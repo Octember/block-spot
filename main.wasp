@@ -157,7 +157,7 @@ page EmailVerificationPage {
 route AccountRoute { path: "/account", to: AccountPage }
 page AccountPage {
   authRequired: true,
-  component: import Account from "@src/user/AccountPage"
+  component: import Account from "@src/user/account/AccountPage"
 }
 
 query getPaginatedUsers {
