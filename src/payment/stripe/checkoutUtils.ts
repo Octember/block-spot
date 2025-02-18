@@ -82,6 +82,7 @@ export async function createStripeCheckoutSession({
       customer_update: {
         address: "auto",
       },
+      allow_promotion_codes: true,
       customer: customerId,
       subscription_data: {
         trial_period_days: 30,
