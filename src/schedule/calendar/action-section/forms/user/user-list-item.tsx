@@ -4,13 +4,13 @@ import { UserListItemProps } from "./types";
 
 export const UserListItem = ({ user, selected, onSelect }: UserListItemProps) => {
   return (
-    <li className={`flex rounded-md hover:bg-gray-100 ${selected
-      ? "border-2 border-sky-600 bg-sky-600/10"
-      : "border border-gray-200"
+    <li className={`flex rounded-md hover:bg-sky-100 ${selected
+      ? "border-2 border-sky-600 bg-sky-600/10 box-content"
+      : "border-2 border-gray-200"
       }`}>
       <button
         type="button"
-        className="flex flex-row gap-x-4 items-center p-2 rounded-md hover:bg-gray-100 w-full"
+        className="flex flex-row gap-x-4 items-center p-2   rounded-md hover:bg-gray-100 w-full"
         onClick={() => onSelect?.(user)}
       >
         <UserAvatar user={user} size="sm" />

@@ -33,7 +33,7 @@ export const UserAvatar: FC<UserAvatarProps> = ({
     <div
       className={`
         flex items-center justify-center 
-        rounded-full bg-teal-600 text-white font-medium
+        rounded-full bg-sky-600 text-white font-medium
         ${sizeClasses[size]}
         ${className}
       `}

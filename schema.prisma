@@ -101,6 +101,7 @@ model User {
   files               File[]
 
   reservations Reservation[]
+  createdReservations Reservation[] @relation("CreatedReservations")
 }
 
 model GptResponse {
@@ -186,6 +187,8 @@ model ContactFormMessage {
 // Reservations 
 model Reservation {
   id          String            @id @default(uuid())
+  createdById   String?          
+  createdByUser   User?              @relation("CreatedReservations", fields: [createdById], references: [id])
   userId      String
   user        User              @relation(fields: [userId], references: [id])
   startTime   DateTime

@@ -3,6 +3,7 @@ import { Button } from "../../../../../client/components/button";
 import { UserListItem } from "./user-list-item";
 import { User } from "./types";
 import LoadingSpinner, { LoadingSpinnerSmall } from "../../../../../admin/layout/LoadingSpinner";
+import { BiLoaderCircle } from 'react-icons/bi';
 
 interface UserListProps {
   users: User[];
@@ -22,7 +23,7 @@ export const UserList = ({
   if (isLoading) {
     return (
       <div className="flex flex-col gap-y-2 p-4 rounded-md border border-gray-400 items-center">
-        <LoadingSpinnerSmall />
+        <BiLoaderCircle className="size-6 animate-spin" />
       </div>
     );
   }

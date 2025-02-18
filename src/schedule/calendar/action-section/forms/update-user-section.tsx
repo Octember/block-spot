@@ -30,9 +30,9 @@ export const UpdateReservationUserSection = () => {
     setValue('user', undefined);
   }, [setValue]);
 
-  const handleUserSelect = useCallback((user: User) => {
+  const handleUserSelect = useCallback((user: User | undefined) => {
     // If the user is already selected, deselect them
-    if (selectedUser?.id === user.id) {
+    if (!user || selectedUser?.id === user.id) {
       setValue('user', undefined);
       return;
     }
@@ -51,14 +51,7 @@ export const UpdateReservationUserSection = () => {
         <span className="text-sm font-normal text-gray-500">optional</span>
       </div>
 
-      <select
-        value={sortBy}
-        onChange={(e) => setSortBy(e.target.value as 'recent' | 'alphabetical')}
-        className="rounded-md border border-gray-300 bg-white py-1.5 pl-3 pr-8 text-sm focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600"
-      >
-        <option value="recent">Most Recent</option>
-        <option value="alphabetical">Alphabetical</option>
-      </select>
+
     </div>
 
     <TextInput
@@ -69,6 +62,14 @@ export const UpdateReservationUserSection = () => {
       size="lg"
       icon={<LuSearch className="size-6" />}
     />
+    {/* <select
+      value={sortBy}
+      onChange={(e) => setSortBy(e.target.value as 'recent' | 'alphabetical')}
+      className="rounded-md border border-gray-300 bg-white py-1.5 pl-3 pr-8 text-sm focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600"
+    >
+      <option value="recent">Most Recent</option>
+      <option value="alphabetical">Alphabetical</option>
+    </select> */}
 
     <UserList
       users={data?.users.map(u => ({
@@ -81,6 +82,14 @@ export const UpdateReservationUserSection = () => {
       selectedUserId={selectedUser?.id}
       onUserSelect={handleUserSelect}
     />
+
+
   </div>
 }
 
+
+const NoUserButton = () => {
+  return <div className='p-2 border border-gray-200 flex flex-row gap-2'>
+    <input type="checkbox" />
+  </div>
+}
