@@ -20,7 +20,7 @@ export const corsMiddleware: MiddlewareConfigFn = (config) => {
 
   // Create a function to determine if the request origin is allowed.
   const originFunction = (
-    requestOrigin: string,
+    requestOrigin: string | undefined,
     callback: (err: Error | null, allow: boolean) => void,
   ) => {
     if (isDevelopment) {
