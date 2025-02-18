@@ -1,5 +1,4 @@
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { FormField } from "../../../../client/components/form/form-field";
 import { Modal } from "../../../../client/components/modal";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 
@@ -7,8 +6,6 @@ import { FC } from "react";
 import { createReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
-import { Select } from "../../../../client/components/form/select";
-import { TextInput } from "../../../../client/components/form/text-input";
 import { useToast } from "../../../../client/toast";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { useVenueContext } from "../../providers/venue-provider";
@@ -17,6 +14,9 @@ import { DateInput } from "../components/date-input";
 import { TimeRangeSelect } from "../components/time-range-select";
 import { UpdateReservationUserSection } from '../forms/update-user-section';
 import { CreateReservationFormInputs } from "./types";
+import { FormField } from "../../../../client/components/form/form-field";
+import { Select } from "../../../../client/components/form/select";
+import { TextInput } from "../../../../client/components/form/text-input";
 
 function timeToMinutes(time: Date) {
   return time.getHours() * 60 + time.getMinutes();
