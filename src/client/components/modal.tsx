@@ -20,17 +20,19 @@ export function Modal({
   children: ReactNode;
   open: boolean;
   onClose: () => void;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   heading?: ModalHeading;
   footer?: ReactNode;
   className?: string;
 }) {
-  const sizeClass =
-    size === "sm"
-      ? "sm:max-w-sm"
-      : size === "md"
-        ? "sm:max-w-md"
-        : "sm:max-w-xl";
+  const sizeClasses = {
+    sm: "sm:max-w-sm",
+    md: "sm:max-w-md",
+    lg: "sm:max-w-xl",
+    xl: "sm:max-w-2xl"
+  } as const;
+
+  const sizeClass = sizeClasses[size];
 
   return (
     <Dialog
@@ -48,7 +50,7 @@ export function Modal({
         <div className="flex min-h-full items-center justify-center text-center sm:p-0">
           <DialogPanel
             transition
-            className={`relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all 
+            className={`relative transform rounded-lg bg-white text-left shadow-xl transition-all 
               sm:my-8 w-full ${sizeClass} 
               ease-out duration-300 opacity-100 translate-y-0 scale-100 
               data-[state=closed]:opacity-0 data-[state=closed]:translate-y-4 data-[state=closed]:sm:scale-95

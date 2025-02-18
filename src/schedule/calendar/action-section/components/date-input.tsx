@@ -19,7 +19,6 @@ export const DateInput: FC<DateInputProps> = ({
 }) => {
   const { setPendingChange } = usePendingChanges();
   const { selectedDate } = useVenueContext();
-  console.log(selectedDate);
   const { control } = useFormContext<CreateReservationFormInputs>();
 
   return (
