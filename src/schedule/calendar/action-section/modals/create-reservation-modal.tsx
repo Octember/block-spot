@@ -83,7 +83,7 @@ export const CreateReservationModal: FC<{
     <Modal
       className="flex"
       open={true}
-      size="xl"
+      size="2xl"
       onClose={() => cancelChange()}
       heading={{ title: "New Reservation" }}
       footer={
@@ -97,7 +97,7 @@ export const CreateReservationModal: FC<{
       <FormProvider {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className={`grid ${enableUserSection ? "md:grid-cols-2" : ""} grid-cols-1 gap-12`}
+          className={`grid ${enableUserSection ? "sm:grid-cols-2" : ""} grid-cols-1 gap-12`}
         >
           <div className="flex flex-col gap-4">
             <h2 className="text-xl font-semibold">Date & Time</h2>

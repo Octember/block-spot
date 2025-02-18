@@ -20,7 +20,7 @@ export function Modal({
   children: ReactNode;
   open: boolean;
   onClose: () => void;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
   heading?: ModalHeading;
   footer?: ReactNode;
   className?: string;
@@ -30,6 +30,7 @@ export function Modal({
     md: "sm:max-w-md",
     lg: "sm:max-w-xl",
     xl: "sm:max-w-2xl",
+    "2xl": "sm:max-w-4xl"
   } as const;
 
   const sizeClass = sizeClasses[size];
