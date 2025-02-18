@@ -120,7 +120,7 @@ export const PaymentRules = () => {
             </div>
           ))}
 
-          <div>
+          <div className="ml-4 flex flex-col gap-4 items-start">
             <Button
               variant="secondary"
               icon={<PlusIcon className="w-4 h-4" />}
@@ -129,9 +129,7 @@ export const PaymentRules = () => {
             >
               Add rule
             </Button>
-          </div>
 
-          <div>
             <Button
               disabled={!isDirty}
               type="submit"

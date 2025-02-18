@@ -179,13 +179,7 @@ const BulkSpaceCreatorModal = ({
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <FormField label="Space Type">
-                  <Select
-                    options={spaceTypeOptions}
-                    value={formData.spaceType}
-                    onChange={(value) => handleChange("spaceType", value.value)}
-                  />
-                </FormField>
+
                 <FormField label="Capacity (per space)">
                   <TextInput
                     type="number"
