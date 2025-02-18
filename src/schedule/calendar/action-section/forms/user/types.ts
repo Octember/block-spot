@@ -1,14 +1,11 @@
-export interface UserListItemProps {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  };
-  selected: boolean;
-}
-
 export interface User {
   id: string;
   name: string;
   email: string;
+}
+
+export interface UserListItemProps {
+  user: User;
+  selected: boolean;
+  onSelect?: (user: User) => void;
 } 

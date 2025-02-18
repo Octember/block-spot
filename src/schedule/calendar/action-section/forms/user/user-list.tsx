@@ -2,13 +2,31 @@ import { LuPlus, LuSearch } from "react-icons/lu";
 import { Button } from "../../../../../client/components/button";
 import { UserListItem } from "./user-list-item";
 import { User } from "./types";
+import LoadingSpinner, { LoadingSpinnerSmall } from "../../../../../admin/layout/LoadingSpinner";
 
 interface UserListProps {
   users: User[];
   noResults: boolean;
+  isLoading?: boolean;
+  selectedUserId?: string;
+  onUserSelect?: (user: User) => void;
 }
 
-export const UserList = ({ users, noResults }: UserListProps) => {
+export const UserList = ({
+  users,
+  noResults,
+  isLoading,
+  selectedUserId,
+  onUserSelect
+}: UserListProps) => {
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-y-2 p-4 rounded-md border border-gray-400 items-center">
+        <LoadingSpinnerSmall />
+      </div>
+    );
+  }
+
   if (noResults) {
     return (
       <div className="flex flex-col gap-y-2 p-4 rounded-md border border-gray-400 items-center">
@@ -26,9 +44,14 @@ export const UserList = ({ users, noResults }: UserListProps) => {
 
   return (
     <ul className="flex flex-col gap-y-2 p-2 rounded-md border border-gray-400">
-      {users.map((user, i) => (
-        <UserListItem key={user.id} user={user} selected={i % 2 === 0} />
+      {users.map((user) => (
+        <UserListItem
+          key={user.id}
+          user={user}
+          selected={user.id === selectedUserId}
+          onSelect={onUserSelect}
+        />
       ))}
     </ul>
   );
-} 
+}; 

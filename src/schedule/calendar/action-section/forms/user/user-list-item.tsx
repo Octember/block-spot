@@ -2,10 +2,17 @@ import { LuCheck } from "react-icons/lu";
 import { UserAvatar } from "../../../../../client/components/user-avatar";
 import { UserListItemProps } from "./types";
 
-export const UserListItem = ({ user, selected }: UserListItemProps) => {
+export const UserListItem = ({ user, selected, onSelect }: UserListItemProps) => {
   return (
-    <li className={`flex rounded-md hover:bg-gray-100 ${selected ? " border border-gray-400 bg-sky-600/10" : ""} `}>
-      <button type="button" className="flex flex-row gap-x-4 items-center p-2 rounded-md hover:bg-gray-100 w-full">
+    <li className={`flex rounded-md hover:bg-gray-100 ${selected
+      ? "border-2 border-sky-600 bg-sky-600/10"
+      : "border border-gray-200"
+      }`}>
+      <button
+        type="button"
+        className="flex flex-row gap-x-4 items-center p-2 rounded-md hover:bg-gray-100 w-full"
+        onClick={() => onSelect?.(user)}
+      >
         <UserAvatar user={user} size="sm" />
 
         <div className="flex flex-grow flex-col items-start">
@@ -13,7 +20,7 @@ export const UserListItem = ({ user, selected }: UserListItemProps) => {
           <span className="text-sm font-normal text-gray-500">{user.email}</span>
         </div>
 
-        {selected && <LuCheck className="size-6 text-sky-600" />}
+        {selected && <LuCheck className="size-7 text-white bg-sky-600 p-0.5 rounded-full" />}
       </button>
     </li>
   );

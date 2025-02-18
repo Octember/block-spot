@@ -629,3 +629,8 @@ query getUserOrganizationRole {
   fn: import { getUserOrganizationRole } from "@src/organization/operations.js",
   entities: [OrganizationUser, User]
 }
+
+query searchUsers {
+  fn: import { searchUsers } from "@src/user/operations",
+  entities: [User, OrganizationUser]
+}

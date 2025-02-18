@@ -3,9 +3,10 @@ import {
   type GetPaginatedUsers,
   UpdateCurrentUserLastActiveTimestamp,
 } from "wasp/server/operations";
-import { type User } from "wasp/entities";
+import { type User, OrganizationUser } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import { type SubscriptionStatus } from "../payment/plans";
+import { type SearchUsers } from 'wasp/server/operations';
 
 export const updateUserById: UpdateUserById<
   { id: string; data: Partial<User> },
@@ -159,5 +160,74 @@ export const getPaginatedUsers: GetPaginatedUsers<
   return {
     users: queryResults,
     totalPages,
+  };
+};
+
+type SearchUsersInput = {
+  query: string;
+  sortBy: 'recent' | 'alphabetical';
+};
+
+type SearchUsersOutput = {
+  users: (User & {
+    organizationUser: OrganizationUser | null;
+  })[];
+};
+
+export const searchUsers: SearchUsers<SearchUsersInput, SearchUsersOutput> = async ({ query, sortBy }, context) => {
+  if (!context.user) {
+    throw new HttpError(401, "Not authenticated");
+  }
+
+  // Get the user's organization and role
+  const organizationUser = await context.entities.OrganizationUser.findFirst({
+    where: {
+      userId: context.user.id,
+    },
+    include: {
+      organization: true,
+    },
+  });
+
+  if (!organizationUser) {
+    throw new HttpError(403, "User is not part of an organization");
+  }
+
+  // Only allow organization owners to search users
+  if (organizationUser.role !== "OWNER") {
+    throw new HttpError(403, "Only organization owners can search users");
+  }
+
+  // Search for users in the same organization
+  const users = await context.entities.User.findMany({
+    where: {
+      OR: [
+        { name: { contains: query, mode: 'insensitive' } },
+        { email: { contains: query, mode: 'insensitive' } },
+      ],
+      organizations: {
+        some: {
+          organizationId: organizationUser.organizationId,
+        },
+      },
+    },
+    include: {
+      organizations: {
+        where: {
+          organizationId: organizationUser.organizationId,
+        },
+      },
+    },
+    orderBy: sortBy === 'recent' 
+      ? { lastActiveTimestamp: 'desc' }
+      : { name: 'asc' }
+  });
+
+  // Transform the results to match the expected output type
+  return {
+    users: users.map(user => ({
+      ...user,
+      organizationUser: user.organizations[0] || null,
+    })),
   };
 };
