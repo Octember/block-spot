@@ -2,7 +2,7 @@ import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
 import { FormProvider, useForm } from 'react-hook-form';
 import { updateReservation } from "wasp/client/operations";
-import { Reservation } from "wasp/entities";
+import { Reservation, User } from "wasp/entities";
 import { Button } from "../../../../client/components/button";
 import { Modal } from "../../../../client/components/modal";
 import { useToast } from "../../../../client/toast";
@@ -30,11 +30,13 @@ function minutesToTime(date: Date, minutes: number) {
 }
 
 export const UpdateReservationModal: FC<{
-  reservation: Reservation;
+  reservation: Reservation & { user?: User };
 }> = ({ reservation }) => {
   const { cancelChange } = usePendingChanges();
   const { refresh } = useScheduleContext();
   const toast = useToast();
+
+  // const getUserById = useGetUserById();
 
   const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
@@ -43,6 +45,7 @@ export const UpdateReservationModal: FC<{
       endTimeMinutes: timeToMinutes(reservation.endTime),
       title: reservation.description ?? "",
       spaceId: reservation.spaceId,
+      user: reservation.user,
     },
   });
 
@@ -51,14 +54,14 @@ export const UpdateReservationModal: FC<{
     formState: { isSubmitting, submitCount },
   } = form;
 
-
-  async function onSubmit(data: UpdateReservationFormInputs) {
+  async function onSubmit(data: CreateReservationFormInputs) {
     await updateReservation({
       id: reservation.id,
       startTime: minutesToTime(data.date, data.startTimeMinutes),
       endTime: minutesToTime(data.date, data.endTimeMinutes),
       description: data.title,
       spaceId: data.spaceId,
+      userId: data.user?.id,
     });
 
     refresh();

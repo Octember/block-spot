@@ -40,6 +40,9 @@ export const getVenueSchedule: GetVenueSchedule<
             lt: addDays(args.selectedDate, 1),
           },
         },
+        include: {
+          user: true,
+        },
       },
     },
     orderBy: {
@@ -202,7 +205,7 @@ export const deleteReservation: DeleteReservation<
 
 type UpdateReservationPayload = Pick<Reservation, "id"> &
   Partial<
-    Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">
+    Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId" | "userId">
   >;
 
 export const updateReservation: UpdateReservation<
@@ -225,10 +228,11 @@ export const updateReservation: UpdateReservation<
 
   // Convert times to UTC for storage if they are provided
   const updates: Partial<
-    Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId">
+    Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId" | "userId">
   > = {
     description: args.description,
     spaceId: args.spaceId,
+    userId: args.userId,
   };
 
   let startTime: Date | undefined;

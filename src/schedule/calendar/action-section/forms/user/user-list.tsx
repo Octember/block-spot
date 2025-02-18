@@ -34,11 +34,11 @@ export const UserList = ({
         <LuSearch className="size-12 text-gray-500 bg-gray-100 rounded-full p-1" />
         <span className="text-lg font-bold text-gray-800">No results found</span>
         <span className="text-sm font-normal text-gray-500">Try searching for a different user</span>
-        <li className="flex flex-row gap-x-2 self-center items-center rounded-md">
+        {/* <li className="flex flex-row gap-x-2 self-center items-center rounded-md">
           <Button variant="secondary" size="lg" icon={<LuPlus className="size-6" />} ariaLabel="Add a new user">
             Add a new user
           </Button>
-        </li>
+        </li> */}
       </div>
     );
   }

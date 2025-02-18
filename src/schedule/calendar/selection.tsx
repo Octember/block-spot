@@ -199,6 +199,7 @@ export const GridSelection: React.FC = () => {
             updatedAt: new Date(),
             description: null,
             createdById: user?.id || "",
+            user,
             // TODO: set on backend
           },
         });

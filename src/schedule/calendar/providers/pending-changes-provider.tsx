@@ -12,15 +12,15 @@ import {
   deleteReservation,
   updateReservation,
 } from "wasp/client/operations";
-import { Reservation } from "wasp/entities";
+import { Reservation, User } from "wasp/entities";
 import { useToast } from "../../../client/toast";
 import { useScheduleContext } from "./schedule-context-provider";
 import { useVenueContext } from "./venue-provider";
 
 export interface PendingChange {
   type: "CREATE" | "UPDATE" | "DELETE";
-  oldState?: Reservation;
-  newState: Reservation;
+  oldState?: Reservation & { user?: User };
+  newState: Reservation & { user?: User };
 }
 
 interface PendingChangesContextType {

@@ -4,7 +4,7 @@ import { usePendingChanges } from "../../providers/pending-changes-provider";
 
 import { FC } from "react";
 import { createReservation } from "wasp/client/operations";
-import { Reservation } from "wasp/entities";
+import { Reservation, User } from "wasp/entities";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 import { useToast } from "../../../../client/toast";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
@@ -25,12 +25,11 @@ function minutesToTime(date: Date, minutes: number) {
 }
 
 export const CreateReservationModal: FC<{
-  reservation: Reservation;
+  reservation: Reservation & { user?: User };
 }> = ({ reservation }) => {
   const { cancelChange } = usePendingChanges();
   const { refresh } = useScheduleContext();
   const toast = useToast();
-  const { isAdmin } = useAuthUser();
 
   const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
@@ -39,6 +38,7 @@ export const CreateReservationModal: FC<{
       endTimeMinutes: timeToMinutes(reservation.endTime),
       title: reservation.description ?? "",
       spaceId: reservation.spaceId,
+      user: reservation.user,
     },
   });
 
