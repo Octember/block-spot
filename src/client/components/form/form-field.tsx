@@ -18,7 +18,11 @@ export const FormField = ({
       <label className="text-md font-bold text-gray-700">
         {label}
         {required && <span className="text-red-500 pl-1">*</span>}
-        {!required && <span className="text-sm font-normal text-gray-500 pl-1">(optional)</span>}
+        {!required && (
+          <span className="text-sm font-normal text-gray-500 pl-1">
+            (optional)
+          </span>
+        )}
       </label>
       {description && (
         <p className="text-sm text-gray-500 pb-1">{description}</p>

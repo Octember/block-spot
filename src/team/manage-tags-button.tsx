@@ -88,9 +88,9 @@ export function ManageTagsButton() {
   };
 
   const onClose = () => {
-    setIsOpen(false)
-    reset()
-  }
+    setIsOpen(false);
+    reset();
+  };
 
   return (
     <>
@@ -101,11 +101,7 @@ export function ManageTagsButton() {
         Manage Tags
       </Button>
 
-      <Modal
-        heading={{ title: "Manage Tags" }}
-        open={isOpen}
-        onClose={onClose}
-      >
+      <Modal heading={{ title: "Manage Tags" }} open={isOpen} onClose={onClose}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {fields.map((field, index) => (
             <div key={field.id} className="flex items-center gap-2">

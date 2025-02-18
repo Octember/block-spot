@@ -80,9 +80,7 @@ export function MembersSection() {
     <div className="space-y-6">
       <h3 className="text-xl font-bold mb-4">Members</h3>
       <table
-        className={cn(
-          "min-w-full divide-y divide-gray-200 shadow rounded-lg ",
-        )}
+        className={cn("min-w-full divide-y divide-gray-200 shadow rounded-lg ")}
       >
         <thead className="bg-gray-50">
           <tr>

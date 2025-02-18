@@ -23,7 +23,7 @@ import { Card } from "../../client/components/card";
 import { MultiSelect, Select } from "../../client/components/form/select";
 import { TextInput } from "../../client/components/form/text-input";
 import { useToast } from "../../client/toast";
-import { ManageTagsButton } from '../../team/manage-tags-button';
+import { ManageTagsButton } from "../../team/manage-tags-button";
 import {
   CONDITION_FILTER_OPTIONS,
   defaultPaymentRule,
@@ -74,7 +74,6 @@ export const PaymentRules = () => {
     name: "paymentRules",
   });
 
-
   async function onSubmit(data: PaymentRuleForm) {
     try {
       console.log("data", data);
@@ -109,7 +108,9 @@ export const PaymentRules = () => {
         <form className="flex flex-col gap-4 -mx-4">
           {fields.map((rule, ruleIndex) => (
             <div key={ruleIndex} className="flex flex-row gap-2 items-center">
-              <div className="text-sm text-gray-500">{(rule.priority || 0) + 1}</div>
+              <div className="text-sm text-gray-500">
+                {(rule.priority || 0) + 1}
+              </div>
               <PaymentRuleComponent ruleIndex={ruleIndex} />
               <Button
                 variant="tertiary"
@@ -142,7 +143,7 @@ export const PaymentRules = () => {
           </div>
         </form>
       </FormProvider>
-    </Card >
+    </Card>
   );
 };
 
@@ -186,14 +187,11 @@ const PaymentRuleComponent: FC<{
                 </button>
               </div>
             ) : (
-              <button className="flex flex-row gap-2 items-center"
+              <button
+                className="flex flex-row gap-2 items-center"
                 onClick={() => setIsEditingPrice(true)}
-
               >
-
-                <span
-                  className="font-bold text-teal-700"
-                >
+                <span className="font-bold text-teal-700">
                   ${value?.toString()}
                 </span>
                 <LuPencil className="size-4 text-teal-700" />

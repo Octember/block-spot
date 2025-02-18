@@ -1,25 +1,20 @@
-import { Controller, useForm, FormProvider } from "react-hook-form";
-import { Button } from "../../../../client/components/button";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { FormField } from "../../../../client/components/form/form-field";
 import { Modal } from "../../../../client/components/modal";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 
-import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
-import { parse } from "date-fns";
 import { FC } from "react";
 import { createReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { Select } from "../../../../client/components/form/select";
 import { TextInput } from "../../../../client/components/form/text-input";
 import { useToast } from "../../../../client/toast";
-import { useTimeLabelsLong15Minutes } from "../../constants";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { useVenueContext } from "../../providers/venue-provider";
-import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
+import { UpdateReservationActionButtons } from '../components/action-buttons';
 import { DateInput } from "../components/date-input";
 import { TimeRangeSelect } from "../components/time-range-select";
-import { CreateReservationFormInputs } from './types';
-
+import { CreateReservationFormInputs } from "./types";
 
 function timeToMinutes(time: Date) {
   return time.getHours() * 60 + time.getMinutes();
@@ -37,9 +32,7 @@ export const CreateReservationModal: FC<{
   const { cancelChange } = usePendingChanges();
   const { venue, getSpaceById } = useVenueContext();
   const { refresh } = useScheduleContext();
-  const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
-  const { isOwner } = useAuthUser();
 
   const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
@@ -50,7 +43,14 @@ export const CreateReservationModal: FC<{
       spaceId: reservation.spaceId,
     },
   });
-  const { control, register, handleSubmit, watch, formState: { isSubmitting, submitCount } } = form;
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { isSubmitting, submitCount },
+  } = form;
 
   const startTimeMinutes = watch("startTimeMinutes");
   const endTimeMinutes = watch("endTimeMinutes");
@@ -79,30 +79,14 @@ export const CreateReservationModal: FC<{
       className="flex"
       open={true}
       size="lg"
-      onClose={() => { }}
+      onClose={() => cancelChange()}
       heading={{ title: "New Reservation" }}
       footer={
-        <div className="flex items-center justify-end space-x-3 m-2">
-          <Button
-            onClick={cancelChange}
-            ariaLabel="Cancel"
-            variant="secondary"
-            size="lg"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit(onSubmit)}
-            disabled={isSubmitting || submitCount > 0}
-            isLoading={isSubmitting || submitCount > 0}
-            icon={<ArrowRightCircleIcon className="w-6 h-6" />}
-            ariaLabel="Confirm"
-            variant="primary"
-            size="lg"
-          >
-            Create Booking
-          </Button>
-        </div>
+        <UpdateReservationActionButtons
+          onCancel={cancelChange}
+          onClick={handleSubmit(onSubmit)}
+          isLoading={isSubmitting || submitCount > 0}
+        />
       }
     >
       <FormProvider {...form}>
@@ -127,7 +111,10 @@ export const CreateReservationModal: FC<{
                     label: space.name,
                     value: space.id,
                   }))}
-                  value={{ label: getSpaceById(value)?.name || "", value: value }}
+                  value={{
+                    label: getSpaceById(value)?.name || "",
+                    value: value,
+                  }}
                   onChange={(value) => {
                     onChange(value.value);
                   }}

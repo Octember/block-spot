@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 import { cn } from "../cn";
 import LoadingSpinner from "../../admin/layout/LoadingSpinner";
-import { LoadingSpinnerSmall } from '../../admin/layout/LoadingSpinner';
+import { LoadingSpinnerSmall } from "../../admin/layout/LoadingSpinner";
 
 interface CardProps {
   heading?: {
@@ -15,19 +15,32 @@ interface CardProps {
 
 const width = "px-4 sm:px-6 lg:px-8";
 
-export const Card: FC<CardProps> = ({ children, className, heading, isLoading }) => {
+export const Card: FC<CardProps> = ({
+  children,
+  className,
+  heading,
+  isLoading,
+}) => {
   return (
     <div className={cn("card", className)}>
       {heading && <CardHeading {...heading} />}
 
-      {isLoading ? <LoadingSpinnerSmall /> : (
+      {isLoading ? (
+        <LoadingSpinnerSmall />
+      ) : (
         <div className="px-4 py-5 sm:px-6 lg:px-8">{children}</div>
       )}
     </div>
   );
 };
 
-export const CardHeading = ({ title, description }: { title: string; description?: string }) => {
+export const CardHeading = ({
+  title,
+  description,
+}: {
+  title: string;
+  description?: string;
+}) => {
   return (
     <div
       className={cn(

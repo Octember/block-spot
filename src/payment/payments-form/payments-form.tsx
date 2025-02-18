@@ -19,7 +19,6 @@ export const PaymentsForm = ({
 
   const [isLoading, setIsLoading] = useState(false);
   async function handleEnablePayment() {
-
     setIsLoading(true);
     try {
       await createStripeAccount();
@@ -40,7 +39,14 @@ export const PaymentsForm = ({
   return (
     <div className="prose">
       <p className="flex items-center gap-2">
-        <label>Stripe status: <span className={`font-bold ${organization?.stripeAccountId ? "text-teal-900" : "text-red-500"}`}>{organization?.stripeAccountId ? "Connected" : "Not connected"}</span></label>
+        <label>
+          Stripe status:{" "}
+          <span
+            className={`font-bold ${organization?.stripeAccountId ? "text-teal-900" : "text-red-500"}`}
+          >
+            {organization?.stripeAccountId ? "Connected" : "Not connected"}
+          </span>
+        </label>
         <Switch
           disabled={Boolean(organization?.stripeAccountId)}
           value={Boolean(organization?.stripeAccountId)}

@@ -84,24 +84,21 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   const { venue } = useVenueContext();
   const { reservation, gridIndex, isDraft } = props;
   const { isOwner, user } = useAuthUser();
-  const canEdit = useMemo(
-    () => {
-      if (isOwner) {
-        return true;
-      }
-      if (isDraft) {
-        return true;
-      }
-      return props.reservation.userId === user?.id;
-    },
-    [isOwner, isDraft, props.reservation.userId, user?.id],
-  );
+  const canEdit = useMemo(() => {
+    if (isOwner) {
+      return true;
+    }
+    if (isDraft) {
+      return true;
+    }
+    return props.reservation.userId === user?.id;
+  }, [isOwner, isDraft, props.reservation.userId, user?.id]);
 
   const { isSelecting } = useReservationSelection();
   const { pendingChange, setPendingChange } = usePendingChanges();
 
   const disabled =
-    (!canEdit) ||
+    !canEdit ||
     (pendingChange ? pendingChange.newState.id !== reservation.id : false);
 
   const {
@@ -122,7 +119,10 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     disabled,
   });
 
-  const startRow = useMemo(() => getRowIndex(venue, reservation.startTime), [venue, reservation.startTime]);
+  const startRow = useMemo(
+    () => getRowIndex(venue, reservation.startTime),
+    [venue, reservation.startTime],
+  );
   const rowSpan = useMemo(() => getRowSpan(reservation), [reservation]);
 
   const colorStyles = useMemo(

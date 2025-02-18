@@ -33,10 +33,15 @@ export const DateInput: FC<DateInputProps> = ({
             onChange={(e) => {
               const date = parse(e.target.value, "yyyy-MM-dd", selectedDate);
               const newStart = new Date(
-                date.setHours(startTimeMinutes / 60, startTimeMinutes % 60, 0, 0)
+                date.setHours(
+                  startTimeMinutes / 60,
+                  startTimeMinutes % 60,
+                  0,
+                  0,
+                ),
               );
               const newEnd = new Date(
-                date.setHours(endTimeMinutes / 60, endTimeMinutes % 60, 0, 0)
+                date.setHours(endTimeMinutes / 60, endTimeMinutes % 60, 0, 0),
               );
 
               setPendingChange({

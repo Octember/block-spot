@@ -23,7 +23,11 @@ export default function VenuePage() {
 
 const SpacesPage = () => {
   const { venueId } = useParams();
-  const { data: venue, isLoading, refetch } = useQuery(getVenueById, {
+  const {
+    data: venue,
+    isLoading,
+    refetch,
+  } = useQuery(getVenueById, {
     venueId: venueId || "",
   });
 

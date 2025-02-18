@@ -37,24 +37,23 @@ interface VenueContext {
 
 const VenueContext = createContext<VenueContext | null>(null);
 
-
 interface VenueProviderProps {
   children: React.ReactNode;
   venueId: string;
 }
 
-
-export function parseDateOrDefault(dateStr: string | null, timeZone: string): Date {
+export function parseDateOrDefault(
+  dateStr: string | null,
+  timeZone: string,
+): Date {
   if (!dateStr) return toZonedTime(startOfToday(), timeZone);
 
   const parsed = parseISO(dateStr);
 
   if (!isValid(parsed)) return toZonedTime(startOfToday(), timeZone);
 
-
-  return parsed
+  return parsed;
 }
-
 
 export function VenueProvider({ children, venueId }: VenueProviderProps) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -65,8 +64,6 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
   const urlDate = searchParams.get("selected_date");
   const initialDate = parseDateOrDefault(urlDate, venue?.timeZoneId ?? "UTC");
   const [selectedDate, setSelectedDate] = useState(initialDate);
-
-
 
   const updateDate = (date: Date) => {
     if (date.getTime() !== selectedDate.getTime()) {

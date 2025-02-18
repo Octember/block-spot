@@ -179,7 +179,6 @@ const BulkSpaceCreatorModal = ({
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-
                 <FormField label="Capacity (per space)">
                   <TextInput
                     type="number"

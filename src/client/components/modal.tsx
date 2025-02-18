@@ -29,7 +29,7 @@ export function Modal({
     sm: "sm:max-w-sm",
     md: "sm:max-w-md",
     lg: "sm:max-w-xl",
-    xl: "sm:max-w-2xl"
+    xl: "sm:max-w-2xl",
   } as const;
 
   const sizeClass = sizeClasses[size];

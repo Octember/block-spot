@@ -18,7 +18,13 @@ import { useMemo, useState } from "react";
 import { updateSpacePriority } from "wasp/client/operations";
 import { useToast } from "../../../client/toast";
 
-export const SpaceList = ({ spaces, refetch }: { spaces: Space[]; refetch: () => void }) => {
+export const SpaceList = ({
+  spaces,
+  refetch,
+}: {
+  spaces: Space[];
+  refetch: () => void;
+}) => {
   const initialSpaces = useMemo(
     () => spaces.toSorted((a, b) => a.priority - b.priority),
     [spaces],
@@ -96,7 +102,9 @@ export const SpaceList = ({ spaces, refetch }: { spaces: Space[]; refetch: () =>
       </ul>
 
       <DragOverlay>
-        {activeSpace && <SpaceCard space={activeSpace} isDragging refetch={refetch} />}
+        {activeSpace && (
+          <SpaceCard space={activeSpace} isDragging refetch={refetch} />
+        )}
       </DragOverlay>
     </DndContext>
   );

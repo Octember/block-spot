@@ -1,4 +1,3 @@
-
 export type CreateReservationFormInputs = {
   date: Date;
   startTimeMinutes: number;

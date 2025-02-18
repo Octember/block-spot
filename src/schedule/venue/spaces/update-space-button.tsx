@@ -21,7 +21,13 @@ type UpdateSpaceFormInputs = {
   type: string;
 };
 
-export const UpdateSpaceButton = ({ space, refetch }: { space: Space; refetch: () => void }) => {
+export const UpdateSpaceButton = ({
+  space,
+  refetch,
+}: {
+  space: Space;
+  refetch: () => void;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const toast = useToast();
 

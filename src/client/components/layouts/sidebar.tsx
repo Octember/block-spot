@@ -3,7 +3,6 @@ import { cn } from "../../cn";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
 import { LuPlusCircle } from "react-icons/lu";
 
-
 export default function Sidebar() {
   const navItems = useAppNavigation();
 

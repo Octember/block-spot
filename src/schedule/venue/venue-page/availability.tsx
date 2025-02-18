@@ -3,7 +3,12 @@ import { Control, Controller, useFieldArray } from "react-hook-form";
 import { Button } from "../../../client/components/button";
 import { FormField } from "../../../client/components/form/form-field";
 import { MultiSelect, Select } from "../../../client/components/form/select";
-import { useTimeLabels, useTimeLabelsLong, useTimeLabelsNoVenue, generateHoursLabels } from '../../calendar/constants';
+import {
+  useTimeLabels,
+  useTimeLabelsLong,
+  useTimeLabelsNoVenue,
+  generateHoursLabels,
+} from "../../calendar/constants";
 import { UpdateVenueFormInputs } from "./types";
 
 export const AvailabilityRuleForm = ({

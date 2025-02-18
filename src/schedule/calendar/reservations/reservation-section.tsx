@@ -13,7 +13,7 @@ import {
   getRowSpan,
   isWithinReservation,
   setTimesOnDate,
-  useGetTimeFromRowIndex
+  useGetTimeFromRowIndex,
 } from "./utilities";
 
 export const ReservationsSection = () => {
@@ -205,10 +205,7 @@ const PendingChangeSlot = () => {
 
   if (!pendingChange) return null;
 
-  const pendingDate = UTCToLocal(
-    pendingChange.newState.startTime,
-    venue,
-  );
+  const pendingDate = UTCToLocal(pendingChange.newState.startTime, venue);
   const selectedLocalDate = UTCToLocal(selectedDate, venue);
   if (!isSameDay(pendingDate, selectedLocalDate)) return null;
 

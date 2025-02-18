@@ -1,7 +1,11 @@
 import * as Sentry from "@sentry/react";
 import { useEffect } from "react";
-import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from "react-router-dom";
-
+import {
+  createRoutesFromChildren,
+  matchRoutes,
+  useLocation,
+  useNavigationType,
+} from "react-router-dom";
 
 Sentry.init({
   dsn: "https://7aa6c270ff9ea23691682ec723f49cc8@o4508678930169856.ingest.us.sentry.io/4508679034306560",
@@ -16,7 +20,7 @@ Sentry.init({
       matchRoutes,
     }),
   ],
-  enabled: process.env.NODE_ENV !== 'development',
+  enabled: process.env.NODE_ENV !== "development",
 });
 
 export const setupClient = () => {

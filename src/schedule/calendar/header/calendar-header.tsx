@@ -16,8 +16,6 @@ import { useVenueContext } from "../providers/venue-provider";
 import { DateSelectButton } from "./date-select-button";
 import { ScrollToSpaceButtons } from "./scroll/scroll-to-space-buttons";
 
-
-
 export const CalendarHeader: FC = () => {
   const { selectedDate, setSelectedDate } = useVenueContext();
 
@@ -62,14 +60,16 @@ const BackToDashboardButton: FC = () => {
   const isOwner = isUserOwner();
 
   if (isOwner) {
-    return <Button
-      icon={<ArrowLeftIcon className="size-4 my-[3px]" />}
-      ariaLabel="Back to Dashboard"
-      variant="secondary"
-      onClick={() => navigate(routes.AllVenuesPageRoute.build({}))}
-    >
-      Back to Dashboard
-    </Button>
+    return (
+      <Button
+        icon={<ArrowLeftIcon className="size-4 my-[3px]" />}
+        ariaLabel="Back to Dashboard"
+        variant="secondary"
+        onClick={() => navigate(routes.AllVenuesPageRoute.build({}))}
+      >
+        Back to Dashboard
+      </Button>
+    );
   } else {
     return (
       <Button

@@ -216,9 +216,8 @@ export const GridSelection: React.FC = () => {
           if (row === 0) return <div key={`${row + 1}-${col}`} />;
 
           if (user) {
-
             const timeAvailable = isTimeAvailable(row + 1, col);
-            const canSelect = timeAvailable || isOwner
+            const canSelect = timeAvailable || isOwner;
             return (
               // Add ones to account for 1-based grid indexing
               <div

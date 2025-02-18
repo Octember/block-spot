@@ -122,7 +122,8 @@ export function useAppNavigation(): NavigationItem[] {
           current: firstVenue
             ? location.pathname === route.route(firstVenue.id)
             : false,
-          behindPaywall: route.paywall && organizationPlan !== PaymentPlanId.Business,
+          behindPaywall:
+            route.paywall && organizationPlan !== PaymentPlanId.Business,
         })),
     [user, firstVenue, location.pathname, organizationPlan],
   );

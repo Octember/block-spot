@@ -1,13 +1,17 @@
 import { Cog8ToothIcon } from "@heroicons/react/24/outline";
 import { logout } from "wasp/client/auth";
-import { getUserOrganization, useQuery } from 'wasp/client/operations';
+import { getUserOrganization, useQuery } from "wasp/client/operations";
 import { Link as WaspRouterLink, routes } from "wasp/client/router";
 import { Organization } from "wasp/entities";
 import { useAuthUser } from "../../auth/providers/AuthUserProvider";
 import { Button } from "../../client/components/button";
 import { Card } from "../../client/components/card";
 import { SidebarLayout } from "../../client/components/layouts/sidebar-layout";
-import { SubscriptionStatus, parsePaymentPlanId, prettyPaymentPlanName } from '../../payment/plans';
+import {
+  SubscriptionStatus,
+  parsePaymentPlanId,
+  prettyPaymentPlanName,
+} from "../../payment/plans";
 import { CustomerPortalButton, UpgradeButton } from "./payment/buttons";
 
 export default function AccountPage() {
@@ -80,9 +84,7 @@ export default function AccountPage() {
                 <dt className="text-sm font-medium text-gray-500 dark:text-white">
                   Your Plan
                 </dt>
-                <UserCurrentPaymentPlan
-                  organization={organization}
-                />
+                <UserCurrentPaymentPlan organization={organization} />
               </div>
             </dl>
           </div>
@@ -109,22 +111,22 @@ export default function AccountPage() {
 }
 
 type UserCurrentPaymentPlanProps = {
-  organization: Organization
+  organization: Organization;
 };
 
-function UserCurrentPaymentPlan({
-  organization,
-}: UserCurrentPaymentPlanProps) {
-
-
-
-  if (organization.subscriptionStatus && organization.subscriptionPlanId && organization.datePaid) {
+function UserCurrentPaymentPlan({ organization }: UserCurrentPaymentPlanProps) {
+  if (
+    organization.subscriptionStatus &&
+    organization.subscriptionPlanId &&
+    organization.datePaid
+  ) {
     return (
       <>
         <div>
           {getUserSubscriptionStatusDescription({
             subscriptionPlan: organization.subscriptionPlanId,
-            subscriptionStatus: organization.subscriptionStatus as SubscriptionStatus,
+            subscriptionStatus:
+              organization.subscriptionStatus as SubscriptionStatus,
             datePaid: organization.datePaid,
           })}
         </div>

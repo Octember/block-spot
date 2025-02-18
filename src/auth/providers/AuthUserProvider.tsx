@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import { User } from "wasp/entities";
 import { useQuery, getUserOrganization } from "wasp/client/operations";
-import { PaymentPlanId } from '../../payment/plans';
+import { PaymentPlanId } from "../../payment/plans";
 
 type AuthUser = User;
 
@@ -35,7 +35,10 @@ export const AuthUserProvider: React.FC<
 
   const venueId = useMemo(() => organization?.venues?.[0]?.id, [organization]);
 
-  const organizationPlan = useMemo(() => organization?.subscriptionPlanId || PaymentPlanId.Community, [organization]);
+  const organizationPlan = useMemo(
+    () => organization?.subscriptionPlanId || PaymentPlanId.Community,
+    [organization],
+  );
 
   return (
     <AuthUserContext.Provider

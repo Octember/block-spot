@@ -1,21 +1,23 @@
-import { BoltIcon } from '@heroicons/react/20/solid';
-import { getCustomerPortalUrl, useQuery, generateCheckoutSession } from 'wasp/client/operations';
-import { Button } from '../../../client/components/button';
-import { PaymentPlanId } from '../../../payment/plans';
-import { Organization } from 'wasp/entities';
-import { BiLoaderCircle } from 'react-icons/bi';
-import { useState } from 'react';
+import { BoltIcon } from "@heroicons/react/20/solid";
+import {
+  getCustomerPortalUrl,
+  useQuery,
+  generateCheckoutSession,
+} from "wasp/client/operations";
+import { Button } from "../../../client/components/button";
+import { PaymentPlanId } from "../../../payment/plans";
+import { Organization } from "wasp/entities";
+import { BiLoaderCircle } from "react-icons/bi";
+import { useState } from "react";
 
 type UpgradeButtonProps = {
-  organization: Organization
-}
+  organization: Organization;
+};
 
 export function UpgradeButton({ organization }: UpgradeButtonProps) {
   const [isPaymentLoading, setIsPaymentLoading] = useState(false);
 
   async function handleBuyNowClick(planId: PaymentPlanId) {
-
-
     try {
       setIsPaymentLoading(true);
 
