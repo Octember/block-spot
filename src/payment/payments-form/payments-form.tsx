@@ -8,6 +8,7 @@ import { Organization } from "wasp/entities";
 import { Button } from "../../client/components/button";
 import { Switch } from "../../client/components/switch";
 import { useToast } from "../../client/toast";
+import { LuExternalLink } from "react-icons/lu";
 
 export const PaymentsForm = ({
   organization,
@@ -39,7 +40,7 @@ export const PaymentsForm = ({
   return (
     <div className="prose">
       <p className="flex items-center gap-2">
-        <label>Enable payment for bookings</label>
+        <label>Stripe status: <span className={`font-bold ${organization?.stripeAccountId ? "text-teal-900" : "text-red-500"}`}>{organization?.stripeAccountId ? "Connected" : "Not connected"}</span></label>
         <Switch
           disabled={Boolean(organization?.stripeAccountId)}
           value={Boolean(organization?.stripeAccountId)}
@@ -49,14 +50,13 @@ export const PaymentsForm = ({
       </p>
 
       <p className="flex flex-row items-center gap-2">
-        <label>View your stripe dashboard</label>
-        <StripeConnectButton />
+        <StripeDashboardButton />
       </p>
     </div>
   );
 };
 
-const StripeConnectButton = () => {
+const StripeDashboardButton = () => {
   const [isLoading, setIsLoading] = useState(false);
   async function handleStripeConnect() {
     setIsLoading(true);
@@ -68,11 +68,12 @@ const StripeConnectButton = () => {
 
   return (
     <Button
-      ariaLabel="Connect to Stripe"
+      ariaLabel="View Stripe Dashboard"
+      icon={<LuExternalLink className="size-4" />}
       onClick={handleStripeConnect}
       isLoading={isLoading}
     >
-      Connect to Stripe
+      View Stripe Dashboard
     </Button>
   );
 };

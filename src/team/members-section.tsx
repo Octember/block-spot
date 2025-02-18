@@ -81,7 +81,7 @@ export function MembersSection() {
       <h3 className="text-xl font-bold mb-4">Members</h3>
       <table
         className={cn(
-          "min-w-full divide-y divide-gray-200 shadow rounded-lg overflow-hidden",
+          "min-w-full divide-y divide-gray-200 shadow rounded-lg ",
         )}
       >
         <thead className="bg-gray-50">
