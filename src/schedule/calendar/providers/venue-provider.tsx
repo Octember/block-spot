@@ -99,7 +99,7 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
   const value: VenueContext = {
     selectedDate,
     setSelectedDate: (date: Date) => {
-      updateDate(date);
+      updateDate(startOfDay(date));
     },
     unavailabileBlocks,
     venue,
