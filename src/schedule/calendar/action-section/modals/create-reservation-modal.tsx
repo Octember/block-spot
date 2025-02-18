@@ -11,10 +11,11 @@ import { TextInput } from "../../../../client/components/form/text-input";
 import { useToast } from "../../../../client/toast";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { useVenueContext } from "../../providers/venue-provider";
-import { UpdateReservationActionButtons } from '../components/action-buttons';
+import { UpdateReservationActionButtons } from "../components/action-buttons";
 import { DateInput } from "../components/date-input";
 import { TimeRangeSelect } from "../components/time-range-select";
 import { CreateReservationFormInputs } from "./types";
+import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 
 function timeToMinutes(time: Date) {
   return time.getHours() * 60 + time.getMinutes();
@@ -33,6 +34,7 @@ export const CreateReservationModal: FC<{
   const { venue, getSpaceById } = useVenueContext();
   const { refresh } = useScheduleContext();
   const toast = useToast();
+  const { isAdmin } = useAuthUser();
 
   const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
@@ -74,11 +76,13 @@ export const CreateReservationModal: FC<{
     }, 300);
   }
 
+  const enableUserSection = isAdmin;
+
   return (
     <Modal
       className="flex"
       open={true}
-      size="lg"
+      size="xl"
       onClose={() => cancelChange()}
       heading={{ title: "New Reservation" }}
       footer={
@@ -90,42 +94,48 @@ export const CreateReservationModal: FC<{
       }
     >
       <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <FormField label="Date" required>
-            <DateInput
-              startTimeMinutes={startTimeMinutes}
-              endTimeMinutes={endTimeMinutes}
-              reservation={reservation}
-            />
-          </FormField>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className={`grid ${enableUserSection ? "grid-cols-2" : "grid-cols-1"} gap-4`}
+        >
+          <div className="flex flex-col gap-4">
+            <h2 className="text-xl font-semibold">Date & Time</h2>
+            <FormField label="Date" required>
+              <DateInput
+                startTimeMinutes={startTimeMinutes}
+                endTimeMinutes={endTimeMinutes}
+                reservation={reservation}
+              />
+            </FormField>
 
-          <TimeRangeSelect />
+            <TimeRangeSelect />
 
-          <FormField label="Space" required>
-            <Controller
-              name="spaceId"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <Select
-                  options={venue.spaces.map((space) => ({
-                    label: space.name,
-                    value: space.id,
-                  }))}
-                  value={{
-                    label: getSpaceById(value)?.name || "",
-                    value: value,
-                  }}
-                  onChange={(value) => {
-                    onChange(value.value);
-                  }}
-                />
-              )}
-            />
-          </FormField>
+            <FormField label="Space" required>
+              <Controller
+                name="spaceId"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <Select
+                    options={venue.spaces.map((space) => ({
+                      label: space.name,
+                      value: space.id,
+                    }))}
+                    value={{
+                      label: getSpaceById(value)?.name || "",
+                      value: value,
+                    }}
+                    onChange={(value) => {
+                      onChange(value.value);
+                    }}
+                  />
+                )}
+              />
+            </FormField>
 
-          <FormField label="Reservation Title">
-            <TextInput {...register("title")} />
-          </FormField>
+            <FormField label="Reservation Title">
+              <TextInput {...register("title")} />
+            </FormField>
+          </div>
         </form>
       </FormProvider>
     </Modal>

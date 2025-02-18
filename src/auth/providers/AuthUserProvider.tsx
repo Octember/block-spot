@@ -8,6 +8,7 @@ type AuthUser = User;
 interface AuthUserContextType {
   user: AuthUser | undefined;
   role: "OWNER" | "MEMBER" | undefined;
+  isAdmin: boolean;
   isOwner: boolean;
   isLoading: boolean;
   venueId: string | undefined;
@@ -45,6 +46,7 @@ export const AuthUserProvider: React.FC<
       value={{
         user,
         role: orgMember?.role,
+        isAdmin: user?.isAdmin || false,
         isOwner: orgMember?.role === "OWNER",
         isLoading: isOrganizationLoading,
         venueId,
