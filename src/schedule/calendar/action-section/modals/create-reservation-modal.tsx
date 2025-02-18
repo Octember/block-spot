@@ -17,6 +17,7 @@ import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { useVenueContext } from "../../providers/venue-provider";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 import { DateInput } from "../components/date-input";
+import { TimeRangeSelect } from "../components/time-range-select";
 import { CreateReservationFormInputs } from './types';
 
 
@@ -33,8 +34,8 @@ function minutesToTime(date: Date, minutes: number) {
 export const CreateReservationModal: FC<{
   reservation: Reservation;
 }> = ({ reservation }) => {
-  const { cancelChange, setPendingChange } = usePendingChanges();
-  const { venue, getSpaceById, selectedDate } = useVenueContext();
+  const { cancelChange } = usePendingChanges();
+  const { venue, getSpaceById } = useVenueContext();
   const { refresh } = useScheduleContext();
   const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
@@ -114,55 +115,7 @@ export const CreateReservationModal: FC<{
             />
           </FormField>
 
-          <FormField label="Time" required>
-            <div className="flex flex-wrap flex-row justify-evenly gap-4">
-              <div className="flex-1">
-                <Controller
-                  name={`startTimeMinutes`}
-                  control={control}
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <Select
-                        options={timeLabelsLong15Minutes
-                          .slice(0, endTimeMinutes / 15)
-                          .map((time, index) => ({
-                            label: time,
-                            value: String(index * 15),
-                          }))}
-                        onChange={(value) => onChange(Number(value.value))}
-                        value={{
-                          label: `Starting at ${timeLabelsLong15Minutes[value / 15]}`,
-                          value: String(value),
-                        }}
-                      />
-                    );
-                  }}
-                />
-              </div>
-
-              <div className="flex-1">
-                <Controller
-                  name={`endTimeMinutes`}
-                  control={control}
-                  render={({ field: { onChange, value } }) => (
-                    <Select
-                      options={timeLabelsLong15Minutes
-                        .slice(startTimeMinutes / 15)
-                        .map((time, index) => ({
-                          label: time,
-                          value: String(startTimeMinutes + index * 15),
-                        }))}
-                      onChange={(value) => onChange(Number(value.value))}
-                      value={{
-                        label: `Ending at ${timeLabelsLong15Minutes[value / 15]}`,
-                        value: String(value),
-                      }}
-                    />
-                  )}
-                />
-              </div>
-            </div>
-          </FormField>
+          <TimeRangeSelect />
 
           <FormField label="Space" required>
             <Controller

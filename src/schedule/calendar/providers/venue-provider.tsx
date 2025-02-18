@@ -63,17 +63,10 @@ export function VenueProvider({ children, venueId }: VenueProviderProps) {
 
   // Compute initial selectedDate before state to avoid unnecessary re-renders
   const urlDate = searchParams.get("selected_date");
-  const initialDate = venue ? parseDateOrDefault(urlDate, venue.timeZoneId) : new Date();
+  const initialDate = parseDateOrDefault(urlDate, venue?.timeZoneId ?? "UTC");
   const [selectedDate, setSelectedDate] = useState(initialDate);
 
-  // Sync state with URL changes (but avoid redundant updates)
-  useEffect(() => {
-    // if (!venue) return;
-    // const newDate = parseDateOrDefault(urlDate, venue.timeZoneId);
-    // if (selectedDate.getTime() !== newDate.getTime()) {
-    //   setSelectedDate(newDate);
-    // }
-  }, [urlDate, venue]);
+
 
   const updateDate = (date: Date) => {
     if (date.getTime() !== selectedDate.getTime()) {
