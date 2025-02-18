@@ -5,7 +5,7 @@ import { LuSearch } from 'react-icons/lu';
 import { UserList } from './user/user-list';
 import { User } from './user/types';
 import { useQuery, searchUsers } from 'wasp/client/operations';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, FC } from 'react';
 import { useDebounce } from '../../../../client/hooks/use-debounce';
 
 export const UpdateReservationUserSection = () => {
@@ -50,8 +50,6 @@ export const UpdateReservationUserSection = () => {
         <h2 className="text-xl font-semibold">User</h2>
         <span className="text-sm font-normal text-gray-500">optional</span>
       </div>
-
-
     </div>
 
     <TextInput
@@ -83,13 +81,21 @@ export const UpdateReservationUserSection = () => {
       onUserSelect={handleUserSelect}
     />
 
-
+    <NoUserButton
+      value={selectedUser === undefined}
+      onClick={() => {
+        if (selectedUser !== undefined) {
+          setValue('user', undefined);
+        }
+      }} />
   </div>
 }
 
 
-const NoUserButton = () => {
-  return <div className='p-2 border border-gray-200 flex flex-row gap-2'>
-    <input type="checkbox" />
-  </div>
+const NoUserButton: FC<{ value: boolean, onClick: () => void }> = ({ value, onClick }) => {
+  return <button type="button" className={`p-2 border ${value ? 'border-sky-600' : 'border-gray-200'} rounded-md flex flex-row gap-2 items-center`} onClick={onClick}>
+    <input type="checkbox" checked={value} onChange={onClick} />
+
+    <span>No specific user (walk in)</span>
+  </button>
 }

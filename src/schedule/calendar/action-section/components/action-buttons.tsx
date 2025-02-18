@@ -4,9 +4,9 @@ import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 
 export const UpdateReservationActionButtons: FC<{
   onCancel: () => void;
-  onClick: () => void;
+  onSubmit: () => void;
   isLoading: boolean;
-}> = ({ onCancel, onClick, isLoading }) => {
+}> = ({ onCancel, onSubmit, isLoading }) => {
   return (
     <div className="flex items-center justify-end space-x-3 m-2">
       <Button
@@ -18,7 +18,7 @@ export const UpdateReservationActionButtons: FC<{
         Cancel
       </Button>
       <Button
-        onClick={onClick}
+        onClick={onSubmit}
         disabled={isLoading}
         isLoading={isLoading}
         icon={<ArrowRightCircleIcon className="w-6 h-6" />}

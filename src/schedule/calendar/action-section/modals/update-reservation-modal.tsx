@@ -1,19 +1,15 @@
+import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { FormProvider, useForm } from 'react-hook-form';
+import { updateReservation } from "wasp/client/operations";
 import { Reservation } from "wasp/entities";
 import { Button } from "../../../../client/components/button";
-import { FormField } from "../../../../client/components/form/form-field";
-import { Select } from "../../../../client/components/form/select";
-import { TextInput } from "../../../../client/components/form/text-input";
 import { Modal } from "../../../../client/components/modal";
 import { useToast } from "../../../../client/toast";
-import { useTimeLabelsLong15Minutes } from "../../constants";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
-import { useVenueContext } from "../../providers/venue-provider";
-import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
-import { parse } from "date-fns";
-import { updateReservation } from "wasp/client/operations";
+import { ReservationForm } from "../forms/reservation-form";
+import { CreateReservationFormInputs } from './types';
 
 type UpdateReservationFormInputs = {
   date: Date;
@@ -36,19 +32,11 @@ function minutesToTime(date: Date, minutes: number) {
 export const UpdateReservationModal: FC<{
   reservation: Reservation;
 }> = ({ reservation }) => {
-  const { cancelChange, setPendingChange } = usePendingChanges();
-  const { venue, getSpaceById } = useVenueContext();
+  const { cancelChange } = usePendingChanges();
   const { refresh } = useScheduleContext();
-  const timeLabelsLong15Minutes = useTimeLabelsLong15Minutes();
   const toast = useToast();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    formState: { isSubmitting, submitCount },
-  } = useForm<UpdateReservationFormInputs>({
+  const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
       date: reservation.startTime,
       startTimeMinutes: timeToMinutes(reservation.startTime),
@@ -58,8 +46,11 @@ export const UpdateReservationModal: FC<{
     },
   });
 
-  const startTimeMinutes = watch("startTimeMinutes");
-  const endTimeMinutes = watch("endTimeMinutes");
+  const {
+    handleSubmit,
+    formState: { isSubmitting, submitCount },
+  } = form;
+
 
   async function onSubmit(data: UpdateReservationFormInputs) {
     await updateReservation({
@@ -85,8 +76,8 @@ export const UpdateReservationModal: FC<{
     <Modal
       className="flex"
       open={true}
-      size="lg"
-      onClose={() => {}}
+      size="2xl"
+      onClose={cancelChange}
       heading={{ title: "Update Reservation" }}
       footer={
         <div className="flex items-center justify-end space-x-3 m-2">
@@ -112,125 +103,12 @@ export const UpdateReservationModal: FC<{
         </div>
       }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-        <FormField label="Date" required>
-          <Controller
-            name="date"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <input
-                type="date"
-                onChange={(e) => {
-                  const date = parse(e.target.value, "yyyy-MM-dd", new Date());
-                  const newStart = new Date(
-                    date.setHours(
-                      startTimeMinutes / 60,
-                      startTimeMinutes % 60,
-                      0,
-                      0,
-                    ),
-                  );
-                  const newEnd = new Date(
-                    date.setHours(
-                      endTimeMinutes / 60,
-                      endTimeMinutes % 60,
-                      0,
-                      0,
-                    ),
-                  );
-
-                  setPendingChange({
-                    type: "UPDATE",
-                    oldState: reservation,
-                    newState: {
-                      ...reservation,
-                      startTime: newStart,
-                      endTime: newEnd,
-                    },
-                  });
-
-                  onChange(date);
-                }}
-                value={value.toISOString().split("T")[0]}
-                className="px-2 py-1 border border-gray-300 rounded-md"
-              />
-            )}
-          />
-        </FormField>
-
-        <FormField label="Time" required>
-          <div className="flex flex-wrap flex-row justify-evenly gap-4">
-            <div className="flex-1">
-              <Controller
-                name={`startTimeMinutes`}
-                control={control}
-                render={({ field: { onChange, value } }) => {
-                  return (
-                    <Select
-                      options={timeLabelsLong15Minutes
-                        .slice(0, endTimeMinutes / 15)
-                        .map((time, index) => ({
-                          label: time,
-                          value: String(index * 15),
-                        }))}
-                      onChange={(value) => onChange(Number(value.value))}
-                      value={{
-                        label: `Starting at ${timeLabelsLong15Minutes[value / 15]}`,
-                        value: String(value),
-                      }}
-                    />
-                  );
-                }}
-              />
-            </div>
-
-            <div className="flex-1">
-              <Controller
-                name={`endTimeMinutes`}
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    options={timeLabelsLong15Minutes
-                      .slice(startTimeMinutes / 15)
-                      .map((time, index) => ({
-                        label: time,
-                        value: String(startTimeMinutes + index * 15),
-                      }))}
-                    onChange={(value) => onChange(Number(value.value))}
-                    value={{
-                      label: `Ending at ${timeLabelsLong15Minutes[value / 15]}`,
-                      value: String(value),
-                    }}
-                  />
-                )}
-              />
-            </div>
-          </div>
-        </FormField>
-
-        <FormField label="Space" required>
-          <Controller
-            name="spaceId"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                options={venue.spaces.map((space) => ({
-                  label: space.name,
-                  value: space.id,
-                }))}
-                value={{ label: getSpaceById(value)?.name || "", value: value }}
-                onChange={(value) => {
-                  onChange(value.value);
-                }}
-              />
-            )}
-          />
-        </FormField>
-
-        <FormField label="Reservation Title">
-          <TextInput {...register("title")} />
-        </FormField>
-      </form>
+      <FormProvider {...form}>
+        <ReservationForm
+          reservation={reservation}
+          onSubmit={onSubmit}
+        />
+      </FormProvider>
     </Modal>
   );
 };

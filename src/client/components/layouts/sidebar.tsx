@@ -1,7 +1,6 @@
 import { Link as WaspRouterLink } from "wasp/client/router";
 import { cn } from "../../cn";
 import { useAppNavigation } from "../../hooks/use-app-navigation";
-import { LuPlusCircle } from "react-icons/lu";
 
 export default function Sidebar() {
   const navItems = useAppNavigation();
