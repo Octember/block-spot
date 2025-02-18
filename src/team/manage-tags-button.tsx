@@ -87,6 +87,11 @@ export function ManageTagsButton() {
     }
   };
 
+  const onClose = () => {
+    setIsOpen(false)
+    reset()
+  }
+
   return (
     <>
       <Button
@@ -99,7 +104,7 @@ export function ManageTagsButton() {
       <Modal
         heading={{ title: "Manage Tags" }}
         open={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={onClose}
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {fields.map((field, index) => (
@@ -132,7 +137,7 @@ export function ManageTagsButton() {
             <div className="space-x-2">
               <Button
                 type="button"
-                onClick={() => setIsOpen(false)}
+                onClick={onClose}
                 variant="secondary"
                 ariaLabel="Cancel changes"
               >

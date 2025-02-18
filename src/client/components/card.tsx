@@ -31,7 +31,7 @@ export const CardHeading = ({ title, description }: { title: string; description
   return (
     <div
       className={cn(
-        "py-5 border-b border-gray-900/10 dark:border-gray-100/10",
+        "py-5 border-b border-gray-900/10 dark:border-gray-100/10 bg-gray-100",
         width,
       )}
     >

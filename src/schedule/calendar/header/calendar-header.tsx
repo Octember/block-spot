@@ -24,7 +24,7 @@ export const CalendarHeader: FC = () => {
   return (
     <header
       className={cn(
-        "inset-x-0 top-0 left-0 right-0 z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max w-full overflow-x-hidden",
+        "inset-x-0 top-0 left-0 right-0 z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max w-full ",
       )}
     >
       <div className="flex flex-row justify-between items-center bg-cyan-800/40">

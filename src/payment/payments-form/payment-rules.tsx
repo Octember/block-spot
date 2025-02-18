@@ -34,6 +34,7 @@ import {
   toFormInput,
 } from "./constants";
 import { PaymentRoleFormInput } from "./types";
+import { LuPencil } from "react-icons/lu";
 
 type PaymentRuleForm = {
   paymentRules: PaymentRoleFormInput[];
@@ -187,11 +188,17 @@ const PaymentRuleComponent: FC<{
                 </button>
               </div>
             ) : (
-              <button
-                className="font-bold text-teal-700"
+              <button className="flex flex-row gap-2 items-center"
                 onClick={() => setIsEditingPrice(true)}
+
               >
-                ${value?.toString()}
+
+                <span
+                  className="font-bold text-teal-700"
+                >
+                  ${value?.toString()}
+                </span>
+                <LuPencil className="size-4 text-teal-700" />
               </button>
             )
           }

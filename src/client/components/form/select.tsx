@@ -178,13 +178,13 @@ const SelectOption = forwardRef<
       ref={ref}
       className={cn(
         "group relative cursor-pointer select-none min-w-60 py-2 pl-3 pr-9 text-gray-900 data-[focus]:bg-teal-500 data-[focus]:text-white data-[focus]:outline-none",
-        selected && "bg-teal-600  hover:bg-teal-500 text-white",
+        selected && "bg-teal-600  data-[focus]:bg-teal-700 text-white",
       )}
     >
       <span
         className={cn(
           "block truncate font-normal group-data-[selected]:font-semibold",
-          selected && "text-white font-semibold",
+          selected && "text-white font-bold",
         )}
       >
         {option.label}
