@@ -102,6 +102,19 @@ model User {
 
   reservations Reservation[]
   createdReservations Reservation[] @relation("CreatedReservations")
+
+  // Add new fields for passwordless auth
+  magicTokens MagicLoginToken[]
+}
+
+model MagicLoginToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 model GptResponse {

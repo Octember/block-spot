@@ -80,6 +80,7 @@ app BlockSpot {
     onAuthSucceededRedirectTo: "/venues",
   },
 
+
   db: {
     // Run `wasp db seed` to seed the database with the seed functions below:
     seeds: [
@@ -105,6 +106,22 @@ app BlockSpot {
       email: "noah@block-spot.com"
     },
   },
+}
+
+// Add new routes and actions for passwordless auth
+route MagicLoginRoute { path: "/magic-login", to: MagicLoginPage }
+page MagicLoginPage {
+  component: import { MagicLoginPage } from "@src/auth/magic-login/MagicLoginPage"
+}
+
+action createMagicLoginToken {
+  fn: import { createMagicLoginToken } from "@src/auth/magic-login/operations",
+  entities: [User, MagicLoginToken]
+}
+
+action authenticateWithToken {
+  fn: import { authenticateWithToken } from "@src/auth/magic-login/operations",
+  entities: [User, MagicLoginToken]
 }
 
 route LandingPageRoute { path: "/", to: LandingPage }
