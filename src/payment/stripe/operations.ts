@@ -102,8 +102,7 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
     throw new HttpError(400, "Organization does not have a Stripe account");
   }
 
-  // Create a PaymentIntent instead of a Checkout Session for embedded checkout
-  const paymentIntent = await stripe.checkout.sessions.create({
+  const session = await stripe.checkout.sessions.create({
     ui_mode: "embedded",
     line_items: [
       {
@@ -119,18 +118,17 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
     customer_email: context.user.email || undefined,
     mode: "payment",
   },
-{
-  stripeAccount: organization.stripeAccountId
-});
+  {
+    stripeAccount: organization.stripeAccountId
+  });
 
-  console.log("paymentIntent", paymentIntent);
 
-  if (!paymentIntent.client_secret) {
+  if (!session.client_secret) {
     throw new Error("Failed to create payment intent");
   }
 
   return {
-    checkoutSessionId: paymentIntent.id,
-    clientSecret: paymentIntent.client_secret,
+    checkoutSessionId: session.id,
+    clientSecret: session.client_secret,
   };
 };

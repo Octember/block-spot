@@ -9,7 +9,7 @@ import { useToast } from "../../../../client/toast";
 import { getConnectedStripePromise } from "../../../../payment/stripe/stripe-react";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
-import { StripeCheckoutForm, useClientSecret } from "../forms/payments-form";
+import { StripeCheckoutForm, StripeWrapper, useClientSecret } from "../forms/payments-form";
 import { ReservationForm } from "../forms/reservation-form";
 import { CreateReservationFormInputs } from "./types";
 
@@ -105,31 +105,3 @@ export const CreateReservationWizard: FC<{
   );
 };
 
-const StripeWrapper: FC<{
-  children: React.ReactNode,
-  organization?: Organization
-}> = ({ children, organization }) => {
-
-  const { clientSecret } = useClientSecret();
-
-
-  const stripePromise = useMemo(() => {
-    if (!organization?.stripeAccountId) {
-      return undefined;
-    }
-    return getConnectedStripePromise(organization.stripeAccountId);
-  }, [organization?.stripeAccountId]);
-
-  if (!clientSecret || !stripePromise) {
-    console.log("no client secret or stripe promise");
-    return null;
-  }
-  console.log("YES client secret and stripe promise");
-
-  return <EmbeddedCheckoutProvider
-    stripe={stripePromise}
-    options={{ clientSecret }}
-  >
-    {children}
-  </EmbeddedCheckoutProvider>
-}

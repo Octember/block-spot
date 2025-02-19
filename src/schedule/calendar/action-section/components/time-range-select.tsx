@@ -44,10 +44,10 @@ export const TimeRangeSelect = () => {
             render={({ field: { onChange, value } }) => (
               <Select
                 options={timeLabelsLong15Minutes
-                  .slice(startTimeMinutes / 15)
+                  .slice((startTimeMinutes / 15) + 1)
                   .map((time, index) => ({
                     label: time,
-                    value: String(startTimeMinutes + index * 15),
+                    value: String(startTimeMinutes + (index + 1) * 15),
                   }))}
                 onChange={(value) => onChange(Number(value.value))}
                 value={{
