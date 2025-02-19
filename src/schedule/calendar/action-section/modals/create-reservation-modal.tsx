@@ -1,8 +1,8 @@
 import { EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
-import { FC, useMemo } from "react";
+import React, { FC, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { createReservation } from "wasp/client/operations";
-import { Reservation, User } from "wasp/entities";
+import { Organization, Reservation, User } from "wasp/entities";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 import { Wizard } from "../../../../client/components/wizard";
 import { useToast } from "../../../../client/toast";
@@ -67,15 +67,7 @@ export const CreateReservationWizard: FC<{
     }, 300);
   }
 
-  // const { clientSecret } = useClientSecret();
-
-
-  // const stripePromise2 = useMemo(() => {
-  //   if (!organization?.stripeAccountId) {
-  //     return undefined;
-  //   }
-  //   return getConnectedStripePromise(organization.stripeAccountId);
-  // }, [organization?.stripeAccountId]);
+  const enablePayments = isAdmin && organization?.stripeAccountId;
 
   const steps = [
     {
@@ -85,23 +77,22 @@ export const CreateReservationWizard: FC<{
         <ReservationForm reservation={reservation} onSubmit={() => { }} />
       ),
     },
-    // ...(isAdmin
-    //   ? [
-    //     {
-    //       title: "Payment",
-    //       description: "Pay for the reservation",
-    //       content: <StripeCheckoutForm />,
-    //     },
-    //   ]
-    //   : []),
+    ...(enablePayments
+      ? [
+        {
+          title: "Payment",
+          description: "Pay for the reservation",
+          content:
+            <StripeWrapper organization={organization}>
+              <StripeCheckoutForm />
+            </StripeWrapper>
+        },
+      ]
+      : []),
   ];
 
   return (
     <FormProvider {...form}>
-      {/* <EmbeddedCheckoutProvider
-        stripe={stripePromise2}
-        options={{ clientSecret }}
-      > */}
       <Wizard
         steps={steps}
         size="2xl"
@@ -110,7 +101,35 @@ export const CreateReservationWizard: FC<{
         onClose={cancelChange}
         onSubmit={handleSubmit(onSubmit)}
       />
-      {/* </EmbeddedCheckoutProvider> */}
     </FormProvider>
   );
 };
+
+const StripeWrapper: FC<{
+  children: React.ReactNode,
+  organization?: Organization
+}> = ({ children, organization }) => {
+
+  const { clientSecret } = useClientSecret();
+
+
+  const stripePromise = useMemo(() => {
+    if (!organization?.stripeAccountId) {
+      return undefined;
+    }
+    return getConnectedStripePromise(organization.stripeAccountId);
+  }, [organization?.stripeAccountId]);
+
+  if (!clientSecret || !stripePromise) {
+    console.log("no client secret or stripe promise");
+    return null;
+  }
+  console.log("YES client secret and stripe promise");
+
+  return <EmbeddedCheckoutProvider
+    stripe={stripePromise}
+    options={{ clientSecret }}
+  >
+    {children}
+  </EmbeddedCheckoutProvider>
+}

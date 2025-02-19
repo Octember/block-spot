@@ -118,7 +118,10 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
     redirect_on_completion: "never",
     customer_email: context.user.email || undefined,
     mode: "payment",
-  });
+  },
+{
+  stripeAccount: organization.stripeAccountId
+});
 
   console.log("paymentIntent", paymentIntent);
 
