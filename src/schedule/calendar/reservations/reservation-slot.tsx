@@ -57,7 +57,10 @@ const ReservationDescription = ({
   const titleSection = useMemo(() => {
     if (reservation.description) {
       return (
-        <p className="font-bold text-gray-900">{reservation.description}</p>
+        // Needs to be max-w-30 so the name doesn't stretch the slot
+        <p className="font-bold text-gray-900 max-w-30 text-ellipsis whitespace-nowrap overflow-hidden">
+          {reservation.description}
+        </p>
       );
     }
     return null;

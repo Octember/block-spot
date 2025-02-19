@@ -2,8 +2,10 @@ import { LuPlus, LuSearch } from "react-icons/lu";
 import { Button } from "../../../../../client/components/button";
 import { UserListItem } from "./user-list-item";
 import { User } from "./types";
-import LoadingSpinner, { LoadingSpinnerSmall } from "../../../../../admin/layout/LoadingSpinner";
-import { BiLoaderCircle } from 'react-icons/bi';
+import LoadingSpinner, {
+  LoadingSpinnerSmall,
+} from "../../../../../admin/layout/LoadingSpinner";
+import { BiLoaderCircle } from "react-icons/bi";
 
 interface UserListProps {
   users: User[];
@@ -18,7 +20,7 @@ export const UserList = ({
   noResults,
   isLoading,
   selectedUserId,
-  onUserSelect
+  onUserSelect,
 }: UserListProps) => {
   if (isLoading) {
     return (
@@ -32,8 +34,12 @@ export const UserList = ({
     return (
       <div className="flex flex-col gap-y-2 p-4 rounded-md border border-gray-200 items-center">
         <LuSearch className="size-12 text-gray-500 bg-gray-100 rounded-full p-1" />
-        <span className="text-lg font-bold text-gray-800">No results found</span>
-        <span className="text-sm font-normal text-gray-500">Try searching for a different user</span>
+        <span className="text-lg font-bold text-gray-800">
+          No results found
+        </span>
+        <span className="text-sm font-normal text-gray-500">
+          Try searching for a different user
+        </span>
         {/* <li className="flex flex-row gap-x-2 self-center items-center rounded-md">
           <Button variant="secondary" size="lg" icon={<LuPlus className="size-6" />} ariaLabel="Add a new user">
             Add a new user
@@ -55,4 +61,4 @@ export const UserList = ({
       ))}
     </ul>
   );
-}; 
+};

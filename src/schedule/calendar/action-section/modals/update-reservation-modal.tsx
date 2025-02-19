@@ -1,6 +1,6 @@
 import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from "react-hook-form";
 import { updateReservation } from "wasp/client/operations";
 import { Reservation, User } from "wasp/entities";
 import { Button } from "../../../../client/components/button";
@@ -9,7 +9,7 @@ import { useToast } from "../../../../client/toast";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { ReservationForm } from "../forms/reservation-form";
-import { CreateReservationFormInputs } from './types';
+import { CreateReservationFormInputs } from "./types";
 
 type UpdateReservationFormInputs = {
   date: Date;
@@ -107,10 +107,7 @@ export const UpdateReservationModal: FC<{
       }
     >
       <FormProvider {...form}>
-        <ReservationForm
-          reservation={reservation}
-          onSubmit={onSubmit}
-        />
+        <ReservationForm reservation={reservation} onSubmit={onSubmit} />
       </FormProvider>
     </Modal>
   );

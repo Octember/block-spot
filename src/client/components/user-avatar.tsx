@@ -16,7 +16,7 @@ const sizeClasses = {
 export const UserAvatar: FC<UserAvatarProps> = ({
   user,
   size = "md",
-  className = ""
+  className = "",
 }) => {
   const getInitials = (user: Pick<User, "name" | "email">) => {
     if (user.name) {
@@ -42,4 +42,4 @@ export const UserAvatar: FC<UserAvatarProps> = ({
       {getInitials(user)}
     </div>
   );
-}; 
+};

@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 type ModalHeading = {
   title: string;
   description?: string;
+  right?: ReactNode;
 };
 
 export function Modal({
@@ -30,7 +31,7 @@ export function Modal({
     md: "sm:max-w-md",
     lg: "sm:max-w-xl",
     xl: "sm:max-w-2xl",
-    "2xl": "sm:max-w-4xl"
+    "2xl": "sm:max-w-4xl",
   } as const;
 
   const sizeClass = sizeClasses[size];
@@ -58,13 +59,16 @@ export function Modal({
               data-[state=leave]:duration-200`}
           >
             {heading && (
-              <div className="border-b border-gray-200 py-4 px-6">
-                <h2 className="text-xl font-semibold">{heading.title}</h2>
-                {heading?.description && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    {heading.description}
-                  </p>
-                )}
+              <div className="border-b border-gray-200 py-4 px-6 flex flex-row justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold">{heading.title}</h2>
+                  {heading?.description && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      {heading.description}
+                    </p>
+                  )}
+                </div>
+                {heading.right}
               </div>
             )}
             <div className="py-4 px-6">{children}</div>

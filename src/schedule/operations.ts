@@ -205,7 +205,10 @@ export const deleteReservation: DeleteReservation<
 
 type UpdateReservationPayload = Pick<Reservation, "id"> &
   Partial<
-    Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId" | "userId">
+    Pick<
+      Reservation,
+      "description" | "startTime" | "endTime" | "spaceId" | "userId"
+    >
   >;
 
 export const updateReservation: UpdateReservation<
@@ -228,7 +231,10 @@ export const updateReservation: UpdateReservation<
 
   // Convert times to UTC for storage if they are provided
   const updates: Partial<
-    Pick<Reservation, "description" | "startTime" | "endTime" | "spaceId" | "userId">
+    Pick<
+      Reservation,
+      "description" | "startTime" | "endTime" | "spaceId" | "userId"
+    >
   > = {
     description: args.description,
     spaceId: args.spaceId,

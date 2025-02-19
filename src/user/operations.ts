@@ -6,7 +6,7 @@ import {
 import { type User, OrganizationUser } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import { type SubscriptionStatus } from "../payment/plans";
-import { type SearchUsers } from 'wasp/server/operations';
+import { type SearchUsers } from "wasp/server/operations";
 
 export const updateUserById: UpdateUserById<
   { id: string; data: Partial<User> },
@@ -165,7 +165,7 @@ export const getPaginatedUsers: GetPaginatedUsers<
 
 type SearchUsersInput = {
   query: string;
-  sortBy: 'recent' | 'alphabetical';
+  sortBy: "recent" | "alphabetical";
 };
 
 type SearchUsersOutput = {
@@ -174,7 +174,10 @@ type SearchUsersOutput = {
   })[];
 };
 
-export const searchUsers: SearchUsers<SearchUsersInput, SearchUsersOutput> = async ({ query, sortBy }, context) => {
+export const searchUsers: SearchUsers<
+  SearchUsersInput,
+  SearchUsersOutput
+> = async ({ query, sortBy }, context) => {
   if (!context.user) {
     throw new HttpError(401, "Not authenticated");
   }
@@ -202,8 +205,8 @@ export const searchUsers: SearchUsers<SearchUsersInput, SearchUsersOutput> = asy
   const users = await context.entities.User.findMany({
     where: {
       OR: [
-        { name: { contains: query, mode: 'insensitive' } },
-        { email: { contains: query, mode: 'insensitive' } },
+        { name: { contains: query, mode: "insensitive" } },
+        { email: { contains: query, mode: "insensitive" } },
       ],
       organizations: {
         some: {
@@ -218,14 +221,13 @@ export const searchUsers: SearchUsers<SearchUsersInput, SearchUsersOutput> = asy
         },
       },
     },
-    orderBy: sortBy === 'recent' 
-      ? { lastActiveTimestamp: 'desc' }
-      : { name: 'asc' }
+    orderBy:
+      sortBy === "recent" ? { lastActiveTimestamp: "desc" } : { name: "asc" },
   });
 
   // Transform the results to match the expected output type
   return {
-    users: users.map(user => ({
+    users: users.map((user) => ({
       ...user,
       organizationUser: user.organizations[0] || null,
     })),
