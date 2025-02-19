@@ -208,7 +208,7 @@ export const GridSelection: React.FC = () => {
   return (
     <div
       style={style}
-      className={`${className} relative cursor-pointer`}
+      className={`${className} cursor-pointer`}
       onMouseDown={handleContainerMouseDown}
       onMouseMove={handleContainerMouseMove}
       onMouseUp={handleContainerMouseUp}
@@ -216,7 +216,7 @@ export const GridSelection: React.FC = () => {
     >
       {selection.gridArea && (
         <div
-          className="bg-cyan-600/20 mx-2 my-0.5 rounded"
+          className="bg-cyan-600/20 border border-teal-600/50 mx-1 my-0.5 rounded"
           style={{
             gridRow: `${selection.gridArea.rowStart} / ${selection.gridArea.rowEnd}`,
             gridColumn: `${selection.gridArea.colStart} / ${selection.gridArea.colEnd}`,
