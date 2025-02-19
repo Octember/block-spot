@@ -99,6 +99,7 @@ export const SpaceList = ({
             <SortableSpaceCard space={space} key={space.id} refetch={refetch} />
           ))}
         </SortableContext>
+        <AddSpaceButton />
       </ul>
 
       <DragOverlay>

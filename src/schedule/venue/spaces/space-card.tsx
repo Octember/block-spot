@@ -9,6 +9,7 @@ import { DeleteSpaceButton } from "./delete-space-button";
 import { UpdateSpaceButton } from "./update-space-button";
 import { useSortable } from "@dnd-kit/sortable";
 import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
+import { useParams } from "react-router-dom";
 
 const ListItemStyle =
   "flex flex-row p-2 rounded-md border border-gray-200 items-center h-16";
@@ -67,7 +68,8 @@ export const SpaceCard = forwardRef<
 
 SpaceCard.displayName = "SpaceCard";
 
-export const AddSpaceButton = ({ venueId }: { venueId: string }) => {
+export const AddSpaceButton = () => {
+  const { venueId } = useParams();
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -82,7 +84,7 @@ export const AddSpaceButton = ({ venueId }: { venueId: string }) => {
       <AddSpaceModal
         open={showModal}
         onClose={() => setShowModal(false)}
-        venueId={venueId}
+        venueId={venueId!}
       />
     </>
   );
