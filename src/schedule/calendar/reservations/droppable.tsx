@@ -1,11 +1,13 @@
 import { useDroppable } from "@dnd-kit/core";
 
 function getColor(isOver: boolean, occupied: boolean) {
+  if (occupied) {
+    return "bg-red-100/20";
+  }
   if (isOver) {
     return "bg-cyan-600/20 animate-pulse";
   }
-
-  return "";
+  return "bg-transparent hover:bg-cyan-600/10 transition-colors duration-200";
 }
 
 export const DroppableSpace = ({
@@ -35,9 +37,9 @@ export const DroppableSpace = ({
   return (
     <li
       ref={setNodeRef}
-      className={`${getColor(isOver, occupied)}`}
+      className={`${getColor(isOver, occupied)} h-full`}
       style={{
-        gridRow: `${rowIndex + 1} / span ${rowSpan}`,
+        gridRow: `${rowIndex} / span ${rowSpan}`,
         gridColumnStart: columnIndex + 1,
       }}
     />

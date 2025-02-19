@@ -1,22 +1,19 @@
-import { DndContext, MouseSensor, useSensor, useSensors, DragStartEvent, DragEndEvent, DragMoveEvent } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragMoveEvent, DragStartEvent, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { isSameDay } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
+import { Reservation } from "wasp/entities";
 import { useTimeLabels } from "../constants";
 import { UTCToLocal } from "../date-utils";
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-context-provider";
 import { useVenueContext } from "../providers/venue-provider";
-import { getSharedGridStyle, MinutesPerSlot } from "./constants";
-import { DroppableSpace } from "./droppable";
+import { getSharedGridStyle } from "./constants";
+import { DraggingGrid } from './drag-drop-grid';
 import { ReservationSlot } from "./reservation-slot";
 import {
-  getRowSpan,
-  isWithinReservation,
   setTimesOnDate,
   useGetTimeFromRowIndex,
 } from "./utilities";
-import { Reservation, User, Venue } from "wasp/entities";
-import { DraggingGrid } from './drag-drop-grid';
 
 
 export const ReservationsSection = () => {
@@ -130,8 +127,18 @@ export const ReservationsSection = () => {
   };
 
   const handleDragMove = (event: DragMoveEvent) => {
-    // Implement drag move logic if needed
+    // Store the transform in state
+    setTransform(event.delta);
   };
+
+  const [transform, setTransform] = useState<{ x: number; y: number } | null>(null);
+
+  // Reset transform when drag ends
+  useEffect(() => {
+    if (!draggingReservationId) {
+      setTransform(null);
+    }
+  }, [draggingReservationId]);
 
   return (
     <DndContext
@@ -147,6 +154,7 @@ export const ReservationsSection = () => {
           spaceIds={spaceIds}
           reservations={reservations}
           venue={venue}
+          transform={transform}
         />
       )}
 
