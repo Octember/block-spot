@@ -82,19 +82,19 @@ export const authenticateWithToken: AuthenticateWithToken<TokenAuthInput, TokenA
     } }
   })
 
-  console.log("MAGIC TOKEN", magicToken)
+  const authId = magicToken?.user.auth?.id
 
-  if (!magicToken || magicToken.used || magicToken.expiresAt < new Date()) {
+  if (!magicToken || magicToken.used || magicToken.expiresAt < new Date() || !authId) {
     throw new Error('Invalid or expired token')
   }
 
   // Mark token as used
-  // await context.entities.MagicLoginToken.update({
-  //   where: { id: magicToken.id },
-  //   data: { used: true }
-  // })
+  await context.entities.MagicLoginToken.update({
+    where: { id: magicToken.id },
+    data: { used: true }
+  })
 
   // Create session
-  const session = await createSession(magicToken.user.auth.id)
+  const session = await createSession(authId)
   return { sessionId: session.id }
 } 

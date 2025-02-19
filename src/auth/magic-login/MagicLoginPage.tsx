@@ -48,8 +48,6 @@ export function MagicLoginPage() {
     }
   }
 
-  initSession
-
   if (isLoading) {
     return <div>Loading...</div>
   }
