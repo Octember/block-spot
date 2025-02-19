@@ -66,9 +66,9 @@ export const ReservationsSection = () => {
     if (!droppable) return;
 
     // Get raw times from row indices and set them to the same day as dragging reservation
-    const rawStartTime = getTimeFromRowIndex(droppable.rowIndex + 1);
+    const rawStartTime = getTimeFromRowIndex(droppable.rowIndex);
     const rawEndTime = getTimeFromRowIndex(
-      droppable.rowIndex + droppable?.rowSpan + 1,
+      droppable.rowIndex + droppable?.rowSpan,
     );
     const { startTime, endTime } = setTimesOnDate(
       rawStartTime,
