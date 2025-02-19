@@ -108,22 +108,6 @@ app BlockSpot {
   },
 }
 
-// Add new routes and actions for passwordless auth
-route MagicLoginRoute { path: "/magic-login", to: MagicLoginPage }
-page MagicLoginPage {
-  component: import { MagicLoginPage } from "@src/auth/magic-login/MagicLoginPage"
-}
-
-action createMagicLoginToken {
-  fn: import { createMagicLoginToken } from "@src/auth/magic-login/operations",
-  entities: [User, MagicLoginToken]
-}
-
-action authenticateWithToken {
-  fn: import { authenticateWithToken } from "@src/auth/magic-login/operations",
-  entities: [User, MagicLoginToken]
-}
-
 route LandingPageRoute { path: "/", to: LandingPage }
 page LandingPage {
   component: import LandingPage from "@src/landing-page/LandingPage"

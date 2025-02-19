@@ -4,4 +4,7 @@ export const PUBLIC_ROUTES = [
   "/about",
   "/checkout",
   "/schedule",
+  '/password-reset',
+  '/request-password-reset',
+  '/login',
 ];
