@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { createMagicLoginToken, authenticateWithToken } from 'wasp/client/operations'
-// import { createSession } from 'wasp/auth/session'
 import { initSession } from 'wasp/auth/helpers/user'
 
 export function MagicLoginPage() {
@@ -8,7 +7,6 @@ export function MagicLoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [emailSent, setEmailSent] = useState(false)
-
 
   // Check for token in URL on mount
   useEffect(() => {
