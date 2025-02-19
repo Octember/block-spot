@@ -36,7 +36,6 @@ export const WeekViewCalendar: FC = () => {
                       <HorizontalDividers />
                       <AvailabilitySection />
                       <ReservationsSection />
-
                       <GridSelection />
                       <PendingChangesSection />
                     </SelectionProvider>
