@@ -8,4 +8,7 @@ export type CreateReservationFormInputs = {
   title: string;
 
   user?: User;
+
+  // Payment related fields
+  stripeCheckoutId?: string;
 };
