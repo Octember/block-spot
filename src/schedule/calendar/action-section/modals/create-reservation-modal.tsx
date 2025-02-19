@@ -67,21 +67,15 @@ export const CreateReservationWizard: FC<{
     }, 300);
   }
 
-  const { clientSecret } = useClientSecret();
+  // const { clientSecret } = useClientSecret();
 
-  // console.log("organization.stripeAccountId", organization?.stripeAccountId);
-  // console.log("clientSecret", clientSecret);
 
-  const stripePromise2 = useMemo(() => {
-    if (!organization?.stripeAccountId) {
-      return undefined;
-    }
-    return getConnectedStripePromise(organization.stripeAccountId);
-  }, [organization?.stripeAccountId]);
-
-  if (!stripePromise2 || !clientSecret) {
-    return <div>No stripe account id</div>;
-  }
+  // const stripePromise2 = useMemo(() => {
+  //   if (!organization?.stripeAccountId) {
+  //     return undefined;
+  //   }
+  //   return getConnectedStripePromise(organization.stripeAccountId);
+  // }, [organization?.stripeAccountId]);
 
   const steps = [
     {
@@ -91,32 +85,32 @@ export const CreateReservationWizard: FC<{
         <ReservationForm reservation={reservation} onSubmit={() => { }} />
       ),
     },
-    ...(isAdmin
-      ? [
-        {
-          title: "Payment",
-          description: "Pay for the reservation",
-          content: <StripeCheckoutForm />,
-        },
-      ]
-      : []),
+    // ...(isAdmin
+    //   ? [
+    //     {
+    //       title: "Payment",
+    //       description: "Pay for the reservation",
+    //       content: <StripeCheckoutForm />,
+    //     },
+    //   ]
+    //   : []),
   ];
 
   return (
     <FormProvider {...form}>
-      <EmbeddedCheckoutProvider
+      {/* <EmbeddedCheckoutProvider
         stripe={stripePromise2}
         options={{ clientSecret }}
-      >
-        <Wizard
-          steps={steps}
-          size="2xl"
-          open={true}
-          isSubmitting={isSubmitting || submitCount > 0}
-          onClose={cancelChange}
-          onSubmit={handleSubmit(onSubmit)}
-        />
-      </EmbeddedCheckoutProvider>
+      > */}
+      <Wizard
+        steps={steps}
+        size="2xl"
+        open={true}
+        isSubmitting={isSubmitting || submitCount > 0}
+        onClose={cancelChange}
+        onSubmit={handleSubmit(onSubmit)}
+      />
+      {/* </EmbeddedCheckoutProvider> */}
     </FormProvider>
   );
 };
