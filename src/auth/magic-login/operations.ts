@@ -3,6 +3,8 @@ import { createSession } from 'wasp/auth/session';
 import { createProviderId, createUser, findAuthIdentity } from 'wasp/auth/utils';
 import { emailSender } from 'wasp/server/email';
 import { AuthenticateWithToken, CreateMagicLoginToken } from 'wasp/server/operations';
+import { getFrontendUrl } from '../../payment/stripe/operations';
+import { HttpError } from 'wasp/server';
 
 const TOKEN_EXPIRY_HOURS = 24
 
@@ -22,24 +24,22 @@ export type TokenAuthResponse = {
 export const createMagicLoginToken: CreateMagicLoginToken<MagicLoginTokenInput, void> = async ({ email }, context)=> {
 
   const providerId = createProviderId('email', email)
-  const existingAuthIdentity = await findAuthIdentity(providerId)
-
-  console.log("EXISTING AUTH IDENTITY", existingAuthIdentity)
 
   // Find or create user
-  let user = await context.entities.User.findUnique({ where: { email } })
-  
-  if (!user) {
-    // Create shadow user with temp password
+  const existingUser = await context.entities.User.findUnique({ where: { email } })
 
-    user = await createUser(
-      providerId,
-      JSON.stringify({ email }),
-      {
-        email,
-      }
-    )
+  if (existingUser) {
+    throw new HttpError(400, 'User already exists')
   }
+  
+  // Create shadow user with temp password
+  const user = await createUser(
+    providerId,
+    JSON.stringify({ email }),
+    {
+      email,
+    }
+  )
 
   // Create magic token
   const expiresAt = new Date(Date.now() + TOKEN_EXPIRY_HOURS * 60 * 60 * 1000)  
@@ -54,7 +54,7 @@ export const createMagicLoginToken: CreateMagicLoginToken<MagicLoginTokenInput, 
   })
 
   // Send magic link email
-  const magicLink = `${process.env.WASP_WEB_CLIENT_URL}/magic-login?token=${token}`
+  const magicLink = `${getFrontendUrl()}/magic-login?token=${token}`
 
   console.log("?????? EMAIL", magicLink)
   
@@ -85,7 +85,7 @@ export const authenticateWithToken: AuthenticateWithToken<TokenAuthInput, TokenA
   const authId = magicToken?.user.auth?.id
 
   if (!magicToken || magicToken.used || magicToken.expiresAt < new Date() || !authId) {
-    throw new Error('Invalid or expired token')
+    throw new HttpError(400, 'Invalid or expired token')
   }
 
   // Mark token as used
