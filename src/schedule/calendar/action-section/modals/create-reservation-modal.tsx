@@ -1,15 +1,13 @@
-import { EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
-import React, { FC, useMemo } from "react";
+import { FC } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { createReservation } from "wasp/client/operations";
-import { Organization, Reservation, User } from "wasp/entities";
+import { Reservation, User } from "wasp/entities";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 import { Wizard } from "../../../../client/components/wizard";
 import { useToast } from "../../../../client/toast";
-import { getConnectedStripePromise } from "../../../../payment/stripe/stripe-react";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
-import { StripeCheckoutForm, StripeWrapper, useClientSecret } from "../forms/payments-form";
+import { StripeCheckoutForm, StripeWrapper } from "../forms/payments-form";
 import { ReservationForm } from "../forms/reservation-form";
 import { CreateReservationFormInputs } from "./types";
 
