@@ -41,7 +41,8 @@ export const DraggingGrid: React.FC<DraggingGridProps> = ({
           (reservation) =>
             reservation.id !== draggingReservation.id &&
             reservation.spaceId === spaceId &&
-            isWithinReservation(venue, rowIndex, rowSpan, reservation)
+            // TODO: Not sure why -1 is needed here
+            isWithinReservation(venue, rowIndex - 1, rowSpan, reservation)
         );
 
         // Only render one droppable space per column
