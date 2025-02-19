@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from "react";
-import { User } from "wasp/entities";
+import { Organization, User } from "wasp/entities";
 import { useQuery, getUserOrganization } from "wasp/client/operations";
 import { PaymentPlanId } from "../../payment/plans";
 
@@ -13,6 +13,7 @@ interface AuthUserContextType {
   isLoading: boolean;
   venueId: string | undefined;
   organizationPlan: PaymentPlanId;
+  organization: Organization | undefined;
 }
 
 const AuthUserContext = createContext<AuthUserContextType | undefined>(
@@ -51,6 +52,7 @@ export const AuthUserProvider: React.FC<
         isLoading: isOrganizationLoading,
         venueId,
         organizationPlan: organizationPlan as PaymentPlanId,
+        organization: organization || undefined,
       }}
     >
       {children}

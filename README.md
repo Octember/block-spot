@@ -11,44 +11,54 @@ For more details, check READMEs of each respective directory!
 # Development
 
 Install dependencies
+
 ```sh
 npm install
 ```
 
 [Optional] Install `wasp` globally
+
 ```sh
 ~/ $ curl -sSL https://get.wasp.sh/installer.sh | sh
 ```
 
 Docker
+
 - Install docker desktop ensure daemon is running
 
 Upgrade node version if needed
+
 ```sh
 nvm install 18.18.0
 nvm use 18.18.0
 ```
 
 Start `wasp` database
+
 ```sh
 wasp db start
 ```
-*local database credentials will be printed in the console like `postgresql://postgresWaspDevUser:postgresWaspDevPass@localhost:5432/BlockSpot-1fa0f53b02`*
+
+_local database credentials will be printed in the console like `postgresql://postgresWaspDevUser:postgresWaspDevPass@localhost:5432/BlockSpot-1fa0f53b02`_
 
 Migrate database
+
 ```sh
 wasp db migrate-dev
 ```
 
 Start `wasp` service
+
 ```sh
-wasp start 
+wasp start
 ```
 
 ### Setup Stripe
+
 https://docs.opensaas.sh/guides/payments-integration/#install-the-stripe-cli
 
 Steps
+
 1. Get Dev API key from Stripe UI -- Add to `.env.server`
 2. `stripe login`
 3. `stripe listen --forward-to localhost:3001/payments-webhook`

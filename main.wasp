@@ -91,6 +91,7 @@ app BlockSpot {
   client: {
     rootComponent: import App from "@src/client/App",
     setupFn: import { setupClient } from "@src/client/setup",
+    envValidationSchema: import { clientEnvValidationSchema } from "@src/env",
   },
 
   emailSender: {
@@ -413,7 +414,12 @@ api paymentsWebhook {
 
 action createStripeAccountLink {
   fn: import { createStripeAccountLink } from "@src/payment/stripe/operations",
-  entities: [User, Organization],
+  entities: [User, Organization]
+}
+
+action createConnectCheckoutSession {
+  fn: import { createConnectCheckoutSession } from "@src/payment/stripe/operations",
+  entities: [User, Organization]
 }
 
 action createStripeAccount {

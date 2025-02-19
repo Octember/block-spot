@@ -15,6 +15,7 @@ import {
   setTimesOnDate,
   useGetTimeFromRowIndex,
 } from "./utilities";
+import { Reservation, User } from "wasp/entities";
 
 export const ReservationsSection = () => {
   const { venue } = useVenueContext();
@@ -26,9 +27,9 @@ export const ReservationsSection = () => {
     string | null
   >(null);
 
-  const [reservations, setReservations] = useState(
-    spaces.flatMap((space) => space.reservations),
-  );
+  const [reservations, setReservations] = useState<
+    (Reservation)[]
+  >(spaces.flatMap((space) => space.reservations));
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {

@@ -8,7 +8,6 @@ import {
 import { addMinutes } from "date-fns";
 import { useMemo, useState } from "react";
 import { Reservation } from "wasp/entities";
-import { isUserOwner } from "../../../client/hooks/permissions";
 import { formatTimeWithZone } from "../date-utils";
 import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useReservationSelection } from "../selection";
@@ -55,30 +54,43 @@ const ReservationDescription = ({
   }, [reservation, startTime, endTime]);
 
   const titleSection = useMemo(() => {
-    if (reservation.description) {
-      return (
-        // Needs to be max-w-30 so the name doesn't stretch the slot
-        <p className="font-bold text-gray-900 max-w-30 text-ellipsis whitespace-nowrap overflow-hidden">
-          {reservation.description}
-        </p>
-      );
+    if (!reservation.description) {
+      return null;
     }
-    return null;
+    return (
+      // Needs to be max-w-30 so the name doesn't stretch the slot
+      <p className="font-bold text-gray-900 max-w-30 text-ellipsis whitespace-nowrap overflow-hidden">
+        {reservation.description}
+      </p>
+    );
   }, [reservation.description]);
 
-  if (!reservation.description) {
-    return timeSection;
-  }
+  // if (!reservation.description) {
+  //   return timeSection;
+  // }
 
-  if (getReservationDurationInSlots(reservation) <= 2) {
-    return titleSection;
-  }
+  // if (getReservationDurationInSlots(reservation) <= 2) {
+  //   return titleSection;
+  // }
+
+  const sectionsToRender = useMemo(
+    () =>
+      [titleSection, timeSection]
+        .filter(Boolean)
+        .slice(0, getReservationDurationInSlots(reservation) / 2),
+    [titleSection, timeSection, reservation],
+  );
 
   return (
-    <div className="flex flex-col font-semibold text-gray-700">
-      {titleSection}
-
-      {timeSection}
+    <div className="flex flex-row gap-2">
+      <div className="pt-1">
+        <LuUserCircle className="size-3" />
+      </div>
+      <div className="flex flex-col text-gray-700">
+        {sectionsToRender.map((section, index) => (
+          <div key={index}>{section}</div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -202,10 +214,11 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
   );
 };
 
+import { LuUserCircle } from "react-icons/lu";
 import { usePopper } from "react-popper";
+import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
 import { useVenueContext } from "../providers/venue-provider";
 import { getColorStyles } from "./colors";
-import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
 
 const ReservationMenu = ({
   canEdit,

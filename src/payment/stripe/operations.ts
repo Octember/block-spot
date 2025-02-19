@@ -1,8 +1,8 @@
 import { HttpError } from "wasp/server";
-
 import { config } from "wasp/server";
 import {
   CreateStripeAccount,
+  CreateConnectCheckoutSession,
   CreateStripeAccountLink,
 } from "wasp/server/operations";
 import {
@@ -78,4 +78,56 @@ export const createStripeAccountLink: CreateStripeAccountLink<
   });
 
   return accountLink.url;
+};
+
+type CreateConnectCheckoutSessionResult = {
+  checkoutSessionId: string;
+  clientSecret: string;
+};
+
+export const createConnectCheckoutSession: CreateConnectCheckoutSession<
+  void,
+  CreateConnectCheckoutSessionResult
+> = async (args, context) => {
+  if (!context.user) {
+    throw new HttpError(401, "Unauthorized");
+  }
+
+  const { organization } = await getUserOrganization(
+    context.user.id,
+    context.entities.User,
+  );
+
+  if (!organization.stripeAccountId) {
+    throw new HttpError(400, "Organization does not have a Stripe account");
+  }
+
+  // Create a PaymentIntent instead of a Checkout Session for embedded checkout
+  const paymentIntent = await stripe.checkout.sessions.create({
+    ui_mode: "embedded",
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: { name: "Custom Service" },
+          unit_amount: 5000, // $50.00
+        },
+        quantity: 1,
+      },
+    ],
+    redirect_on_completion: "never",
+    customer_email: context.user.email || undefined,
+    mode: "payment",
+  });
+
+  console.log("paymentIntent", paymentIntent);
+
+  if (!paymentIntent.client_secret) {
+    throw new Error("Failed to create payment intent");
+  }
+
+  return {
+    checkoutSessionId: paymentIntent.id,
+    clientSecret: paymentIntent.client_secret,
+  };
 };

@@ -1,5 +1,5 @@
 import { addDays, isValid, startOfDay, startOfToday } from "date-fns";
-import { AvailabilityRule, Reservation, Space, Venue } from "wasp/entities";
+import { AvailabilityRule, Reservation, Space, User, Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
   CreateReservation,
@@ -26,7 +26,7 @@ type GetVenueSchedulePayload = {
 
 export const getVenueSchedule: GetVenueSchedule<
   GetVenueSchedulePayload,
-  (Space & { reservations: Reservation[] })[]
+  (Space & { reservations: (Reservation & { user: User })[] })[]
 > = async (args, context) => {
   return context.entities.Space.findMany({
     where: {

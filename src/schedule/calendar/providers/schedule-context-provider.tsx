@@ -1,20 +1,17 @@
-import { isValid, parseISO, startOfToday } from "date-fns";
+import { isValid, parseISO } from "date-fns";
 import { toDate } from "date-fns-tz";
 import React, {
   createContext,
   useCallback,
-  useContext,
-  useEffect,
-  useState,
+  useContext
 } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getVenueSchedule, useQuery } from "wasp/client/operations";
 import { Venue } from "wasp/entities";
-import { useVenueContext } from "./venue-provider";
 import {
-  getTimeFromRowIndex,
-  useGetTimeFromRowIndex,
+  getTimeFromRowIndex
 } from "../reservations/utilities";
+import { useVenueContext } from "./venue-provider";
 
 interface ScheduleContextValue {
   refresh: () => void;
