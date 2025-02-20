@@ -1,11 +1,7 @@
-import { LuPlus, LuSearch } from "react-icons/lu";
-import { Button } from "../../../../../client/components/button";
-import { UserListItem } from "./user-list-item";
-import { User } from "./types";
-import LoadingSpinner, {
-  LoadingSpinnerSmall,
-} from "../../../../../admin/layout/LoadingSpinner";
 import { BiLoaderCircle } from "react-icons/bi";
+import { LuSearch } from "react-icons/lu";
+import { User } from "./types";
+import { UserListItem } from "./user-list-item";
 
 interface UserListProps {
   users: User[];

@@ -32,7 +32,7 @@ export function InvitationPage() {
 
       // Initialize session and redirect to app
       await initSession(sessionId)
-      // navigate('/venues')
+      window.location.href = routes.AccountRoute.to
     } catch (err: any) {
       setError(err.message || 'Failed to accept invitation')
     } finally {
@@ -42,7 +42,7 @@ export function InvitationPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="centered-page-content">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
@@ -53,7 +53,7 @@ export function InvitationPage() {
 
   if (queryError || error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="centered-page-content">
         <div className="text-center max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
           <div className="text-red-600 mb-4">
             <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,7 +76,7 @@ export function InvitationPage() {
   if (!details) return null
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="centered-page-content">
       <div className="max-w-md w-full mx-auto p-8 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-center mb-6">
           Join {details.organizationName}
@@ -107,7 +107,6 @@ export function InvitationPage() {
 
           <p className="text-sm text-gray-500 text-center">
             By accepting this invitation, you&apos;ll be automatically signed in to your account.
-            No password needed!
           </p>
         </div>
       </div>

@@ -7,4 +7,6 @@ export const PUBLIC_ROUTES = [
   '/password-reset',
   '/request-password-reset',
   '/login',
+  '/accept-invitation',
+  '/account',
 ];

@@ -16,6 +16,7 @@ import {
   CancelInvitation,
   CreateInvitation,
   CreateOrganization,
+  GetUserOrganizations,
   UpdateMemberRole,
   UpdateOnboardingState,
   type GetUserOrganization,
@@ -84,6 +85,34 @@ type UpdateOnboardingStateInput = {
       | "hasCompletedOnboarding"
     >
   >;
+};
+
+export const getUserOrganizations: GetUserOrganizations<
+  void,
+  (Organization & {
+    users: (OrganizationUser)[];
+    venues: Venue[];
+  })[]
+> = async (_args, context) => {
+  if (!context.user) {
+    throw new HttpError(401);
+  }
+
+  const organizations = await context.entities.Organization.findMany({
+    where: {
+      users: { some: { userId: context.user.id } },
+    },
+    include: {
+      users: {
+        where: {
+          userId: context.user.id,
+        },
+      },
+      venues: true,
+    },
+  });
+
+  return organizations;
 };
 
 export const getUserOrganization: GetUserOrganization<

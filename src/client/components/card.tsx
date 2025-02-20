@@ -7,6 +7,7 @@ interface CardProps {
   heading?: {
     title: string;
     description?: string;
+    actions?: ReactNode;
   };
   children: ReactNode;
   className?: string;
@@ -37,9 +38,11 @@ export const Card: FC<CardProps> = ({
 export const CardHeading = ({
   title,
   description,
+  actions,
 }: {
   title: string;
   description?: string;
+  actions?: ReactNode;
 }) => {
   return (
     <div
@@ -48,14 +51,23 @@ export const CardHeading = ({
         width,
       )}
     >
-      <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-        {title}
-      </h3>
-      {description && (
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          {description}
-        </p>
-      )}
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-y-1">
+          <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-white">
+            {title}
+          </h3>
+          {description && (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {description}
+            </p>
+          )}
+        </div>
+        {actions && (
+          <div className="flex gap-x-2">
+            {actions}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
