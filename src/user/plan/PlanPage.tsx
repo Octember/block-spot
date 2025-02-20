@@ -14,7 +14,7 @@ import {
 } from "../../payment/plans";
 import { CustomerPortalButton, UpgradeButton } from "./payment/buttons";
 
-export default function AccountPage() {
+export default function PlanPage() {
   const { user } = useAuthUser();
   const { data: organization, isLoading } = useQuery(getUserOrganization);
 
@@ -27,8 +27,8 @@ export default function AccountPage() {
   return (
     <SidebarLayout
       header={{
-        title: "Account Settings",
-        description: "Manage your account settings and subscription.",
+        title: "Plan",
+        description: "Manage your plan and subscription.",
         actions: (
           <>
             <Button

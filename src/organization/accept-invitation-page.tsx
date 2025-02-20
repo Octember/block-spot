@@ -21,7 +21,7 @@ export function AcceptInvitationPage() {
       setIsAccepting(true);
       try {
         await acceptInvitation({ token });
-        window.location.href = routes.AccountRoute.to; // Redirect to account page after accepting
+        window.location.href = routes.PlanRoute.to; // Redirect to account page after accepting
       } catch (err: any) {
         setError(err.message || "Failed to accept invitation");
         setIsAccepting(false);
@@ -46,10 +46,10 @@ export function AcceptInvitationPage() {
             </div>
             <div className="mt-4 text-center">
               <Link
-                to={routes.AccountRoute.to}
+                to={routes.PlanRoute.to}
                 className="text-indigo-600 hover:text-indigo-500"
               >
-                Go to Account
+                Go to Plan
               </Link>
             </div>
           </div>

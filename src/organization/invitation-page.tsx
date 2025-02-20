@@ -11,8 +11,6 @@ export function InvitationPage() {
   const { token } = useParams<{ token: string }>()
   const [isAccepting, setIsAccepting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const navigate = useNavigate()
-
 
   const {
     data: details,
@@ -34,7 +32,7 @@ export function InvitationPage() {
 
       // Initialize session and redirect to app
       await initSession(sessionId)
-      navigate('/venues')
+      // navigate('/venues')
     } catch (err: any) {
       setError(err.message || 'Failed to accept invitation')
     } finally {

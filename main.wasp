@@ -156,10 +156,10 @@ page EmailVerificationPage {
 //#endregion
 
 //#region User
-route AccountRoute { path: "/account", to: AccountPage }
-page AccountPage {
+route PlanRoute { path: "/plan", to: PlanPage }
+page PlanPage {
   authRequired: true,
-  component: import Account from "@src/user/account/AccountPage"
+  component: import Plan from "@src/user/account/PlanPage"
 }
 
 query getPaginatedUsers {
