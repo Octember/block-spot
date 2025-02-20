@@ -12,9 +12,26 @@ export function AccountPage() {
   const { data: organizations } = useQuery(getUserOrganizations);
 
   return <div className="centered-page-content">
-    <h1 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">
-      Welcome to BlockSpot! 🎵
-    </h1>
+    {organizations && organizations.length > 0 && (
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white">
+          Congratulations, you can now schedule with {organizations[0].name}!
+        </h1>
+        <WaspRouterLink
+          to={routes.ScheduleRoute.to}
+          params={{ venueId: organizations[0].venues[0].id }}
+        >
+          <Button
+            variant="primary"
+            size="lg"
+            icon={<ArrowUpRightIcon className="size-5" />}
+            ariaLabel="Navigate to scheduling page"
+          >
+            Start Scheduling Now
+          </Button>
+        </WaspRouterLink>
+      </div>
+    )}
 
     <Card heading={{ title: "Your Organizations" }}>
       {organizations?.map((organization) => (
