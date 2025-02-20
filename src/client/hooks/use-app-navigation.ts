@@ -77,8 +77,8 @@ const sidebarRoutes: SidebarRouteInternal[] = [
     icon: LinkIcon,
   },
   {
-    name: "Account",
-    route: (venueId) => routes.AccountRoute.to,
+    name: "Plan",
+    route: (venueId) => routes.PlanRoute.to,
     icon: Cog8ToothIcon,
   },
   {

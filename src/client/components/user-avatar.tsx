@@ -26,7 +26,7 @@ export const UserAvatar: FC<UserAvatarProps> = ({
       }
       return user.name[0].toUpperCase();
     }
-    return user.email?.[0].toUpperCase() ?? "?";
+    return user.email?.[0]?.toUpperCase() ?? "?";
   };
 
   return (

@@ -1,161 +1,113 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { Link } from "wasp/client/router";
-import { routes } from "wasp/client/router";
-import { acceptInvitation, getInvitationDetails } from "wasp/client/operations";
-import { SignupForm, FormInput } from "wasp/client/auth";
-import { useQuery } from "wasp/client/operations";
-import { customizationOptions } from "../auth/SignupPage";
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { getInvitationDetails, acceptInvitation } from 'wasp/client/operations'
+import { useQuery } from 'wasp/client/operations'
+import { Link } from "wasp/client/router"
+import { routes } from "wasp/client/router"
+import { initSession } from 'wasp/auth/helpers/user'
 import "../auth/overrides.css";
-import { AuthUser } from "wasp/auth";
 
-export function InvitationPage({ user }: { user?: AuthUser }) {
-  const { token } = useParams();
+export function InvitationPage() {
+  const { token } = useParams<{ token: string }>()
+  const [isAccepting, setIsAccepting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
   const {
-    data: invitation,
+    data: details,
     isLoading,
-    error: queryError,
-  } = useQuery(getInvitationDetails, { token: token || "" });
-  const [error, setError] = useState<string | null>(
-    queryError?.message || null,
-  );
+    error: queryError
+  } = useQuery(getInvitationDetails, {
+    token: token || ''
+  })
 
-  // Handle logged-in user accepting invitation
   const handleAcceptInvitation = async () => {
-    if (!token) return;
+    if (!token) return
+
     try {
-      await acceptInvitation({ token });
-      window.location.href = routes.ScheduleRoute.to;
+      setIsAccepting(true)
+      setError(null)
+      const { sessionId } = await acceptInvitation({ token })
+
+      // Initialize session and redirect to app
+      await initSession(sessionId)
+      window.location.href = routes.AccountRoute.to
     } catch (err: any) {
-      setError(err.message || "Failed to accept invitation");
+      setError(err.message || 'Failed to accept invitation')
+    } finally {
+      setIsAccepting(false)
     }
-  };
+  }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-        <p className="mt-4 text-gray-600">Loading...</p>
-      </div>
-    );
-  }
-
-  if (error || !token) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow p-8">
-          <h2 className="text-2xl font-bold text-center text-red-600 mb-4">
-            Error
-          </h2>
-          <p className="text-gray-600 text-center mb-6">
-            {error || "Invalid invitation link"}
-          </p>
-          <div className="text-center">
-            <Link
-              to={routes.LandingPageRoute.to}
-              className="text-indigo-600 hover:text-indigo-500"
-            >
-              Return to Home
-            </Link>
-          </div>
+      <div className="centered-page-content">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
-    );
+    )
   }
 
-  if (!invitation) return null;
-
-  // If user is logged in
-  if (user) {
+  if (queryError || error) {
     return (
-      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white rounded-lg shadow p-8">
-          <h2 className="text-2xl font-bold text-center mb-6">
-            Join {invitation.organizationName}
-          </h2>
-          <p className="text-gray-600 mb-6 text-center">
-            {invitation.inviterName} has invited you to join as a{" "}
-            {invitation.role.toLowerCase()}.
+      <div className="centered-page-content">
+        <div className="text-center max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+          <div className="text-red-600 mb-4">
+            <svg className="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold mb-2">Invitation Error</h2>
+          <p className="text-gray-600 mb-4">{queryError?.message || error}</p>
+          <Link
+            to={routes.LoginRoute.to}
+            className="text-blue-600 hover:text-blue-800"
+          >
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (!details) return null
+
+  return (
+    <div className="centered-page-content">
+      <div className="max-w-md w-full mx-auto p-8 bg-white rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Join {details.organizationName}
+        </h1>
+
+        <div className="mb-6">
+          <p className="text-gray-600 mb-2">
+            <span className="font-medium">{details.inviterName}</span> has invited you to join{' '}
+            <span className="font-medium">{details.organizationName}</span> as a{' '}
+            <span className="font-medium">{details.role.toLowerCase()}</span>.
           </p>
-          {user.email === invitation.email ? (
-            <button
-              onClick={handleAcceptInvitation}
-              className="w-full bg-indigo-600 text-white rounded-md py-2 px-4 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              Accept Invitation
-            </button>
-          ) : (
-            <div className="text-center text-red-600">
-              <p>This invitation was sent to {invitation.email}.</p>
-              <p className="mt-2">
-                Please log in with that email address to accept the invitation.
-              </p>
-              <Link
-                to={routes.LoginRoute.to}
-                className="text-indigo-600 hover:text-indigo-500 block mt-4"
-              >
-                Switch Account
-              </Link>
-            </div>
+
+          {details.email && (
+            <p className="text-sm text-gray-500">
+              This invitation was sent to {details.email}
+            </p>
           )}
         </div>
-      </div>
-    );
-  }
 
-  // If user is not logged in
-  return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow p-8">
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Join {invitation.organizationName}
-        </h2>
-        <p className="text-gray-600 mb-6 text-center">
-          {invitation.inviterName} has invited you to join as a{" "}
-          {invitation.role.toLowerCase()}.
-        </p>
-        <div className="space-y-6">
-          <div className="text-center">
-            <p className="text-sm text-gray-600 mb-4">
-              Already have an account?{" "}
-              <Link
-                to={routes.LoginRoute.to}
-                className="text-indigo-600 hover:text-indigo-500"
-              >
-                Log in
-              </Link>
-            </p>
-          </div>
-          <div className="bg-gray-50 p-4 rounded-lg signupForm">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Create an Account
-            </h3>
-            <SignupForm
-              appearance={customizationOptions.appearance}
-              additionalFields={[
-                {
-                  // @ts-expect-error idk
-                  key: "name",
-                  name: "name",
-                  label: "Name",
-                  type: "input",
-                  validations: {
-                    required: "Name is required",
-                  },
-                },
-                (form) => (
-                  <FormInput
-                    key="invitationToken"
-                    type="hidden"
-                    {...form.register("invitationToken")}
-                    value={token}
-                  />
-                ),
-              ]}
-            />
-          </div>
+        <div className="space-y-4">
+          <button
+            onClick={handleAcceptInvitation}
+            disabled={isAccepting}
+            className="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isAccepting ? 'Joining...' : 'Accept & Join'}
+          </button>
+
+          <p className="text-sm text-gray-500 text-center">
+            By accepting this invitation, you&apos;ll be automatically signed in to your account.
+          </p>
         </div>
       </div>
     </div>
-  );
+  )
 }

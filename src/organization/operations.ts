@@ -12,14 +12,19 @@ import {
 } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
+  AcceptInvitation,
   CancelInvitation,
+  CreateInvitation,
   CreateOrganization,
+  GetUserOrganizations,
   UpdateMemberRole,
   UpdateOnboardingState,
   type GetUserOrganization,
 } from "wasp/server/operations";
+import { createSession } from "wasp/auth/session";
 import { sendInvitationEmail } from "./email";
 import { sendSlackMessage } from "../utils/slack-webhook";
+import { createProviderId, createUser } from "wasp/auth/utils";
 
 type CreateInvitationInput = {
   email: string;
@@ -82,6 +87,34 @@ type UpdateOnboardingStateInput = {
   >;
 };
 
+export const getUserOrganizations: GetUserOrganizations<
+  void,
+  (Organization & {
+    users: (OrganizationUser)[];
+    venues: Venue[];
+  })[]
+> = async (_args, context) => {
+  if (!context.user) {
+    throw new HttpError(401);
+  }
+
+  const organizations = await context.entities.Organization.findMany({
+    where: {
+      users: { some: { userId: context.user.id } },
+    },
+    include: {
+      users: {
+        where: {
+          userId: context.user.id,
+        },
+      },
+      venues: true,
+    },
+  });
+
+  return organizations;
+};
+
 export const getUserOrganization: GetUserOrganization<
   void,
   GetUserOrganizationResponse
@@ -121,10 +154,10 @@ export const getUserOrganization: GetUserOrganization<
   return organization;
 };
 
-export const createInvitation = async (
-  args: CreateInvitationInput,
-  context: any,
-) => {
+export const createInvitation: CreateInvitation<
+  CreateInvitationInput,
+  Invitation
+> = async (args, context) => {
   if (!context.user) {
     throw new HttpError(401, "Not authorized");
   }
@@ -160,7 +193,7 @@ export const createInvitation = async (
       },
     });
 
-    if (existingUser?.organizations.length > 0) {
+    if (existingUser?.organizations?.length && existingUser.organizations.length > 0) {
       throw new HttpError(400, "User is already a member of this organization");
     }
 
@@ -178,22 +211,40 @@ export const createInvitation = async (
     }
   }
 
-  const expiresAt = addDays(new Date(), 7); // Invitation expires in 7 days
+  const existingUser = await context.entities.User.findUnique({ where: { email: args.email } })
+
+  if (existingUser) {
+    throw new HttpError(400, 'User already exists')
+  }
+
+  const providerId = createProviderId('email', args.email)
+
+  // Create shadow user with temp password
+  const user = await createUser(
+    providerId,
+    JSON.stringify({ email: args.email }),
+    {
+      email: args.email,
+    }
+  )
+
   const token = uuidv4();
+  const expiresAt = addDays(new Date(), 7); // Token expires in 7 days
 
   const invitation = await context.entities.Invitation.create({
     data: {
-      email: args.email || "", // Store empty string for open invitations
+      email: args.email || "",
       role: args.role,
       organizationId: args.organizationId,
       invitedById: context.user.id,
-      token,
+      userId: user.id,
+      token, 
       expiresAt,
       status: "PENDING",
     },
   });
 
-  // Only send email if an email address was provided
+
   if (args.email) {
     await sendInvitationEmail({
       email: args.email,
@@ -208,17 +259,17 @@ export const createInvitation = async (
   return invitation;
 };
 
-export const acceptInvitation = async (
-  args: AcceptInvitationInput,
-  context: any,
-) => {
-  if (!context.user) {
-    throw new HttpError(401, "Not authorized");
-  }
-
+export const acceptInvitation: AcceptInvitation<
+  AcceptInvitationInput,
+  { invitation: Invitation; sessionId: string }
+> = async (args, context) => {
   const invitation = await context.entities.Invitation.findUnique({
     where: { token: args.token },
-    include: { organization: true },
+    include: { organization: true, user: {
+      include: {
+        auth: true
+      }
+    } },
   });
 
   if (!invitation) {
@@ -237,31 +288,18 @@ export const acceptInvitation = async (
     throw new HttpError(400, "Invitation has expired");
   }
 
-  // For open invitations (no email), any logged-in user can accept
-  // For email-specific invitations, verify the email matches
-  if (invitation.email && invitation.email !== context.user.email) {
-    throw new HttpError(
-      403,
-      "This invitation was sent to a different email address",
-    );
-  }
 
-  // Check if user is already a member
-  const existingMembership = await context.entities.OrganizationUser.findFirst({
-    where: {
-      userId: context.user.id,
-      organizationId: invitation.organizationId,
-    },
-  });
+  console.log("invitation user", invitation.user)
 
-  if (existingMembership) {
-    throw new HttpError(400, "You are already a member of this organization");
+  const invitationAuthId = invitation.user?.auth?.id
+  if (!invitation.userId || !invitationAuthId) {
+    throw new HttpError(400, "Something went wrong, missing userID: " + JSON.stringify(invitation.user));
   }
 
   // Create organization membership
   await context.entities.OrganizationUser.create({
     data: {
-      userId: context.user.id,
+      userId: invitation.userId,
       organizationId: invitation.organizationId,
       role: invitation.role,
     },
@@ -273,7 +311,13 @@ export const acceptInvitation = async (
     data: { status: "ACCEPTED" },
   });
 
-  return invitation.organization;
+  // Create session
+  const session = await createSession(invitationAuthId);
+
+  return {
+    invitation,
+    sessionId: session.id
+  };
 };
 
 export const listInvitations = async (

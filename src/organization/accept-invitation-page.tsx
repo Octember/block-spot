@@ -46,10 +46,10 @@ export function AcceptInvitationPage() {
             </div>
             <div className="mt-4 text-center">
               <Link
-                to={routes.AccountRoute.to}
+                to={routes.PlanRoute.to}
                 className="text-indigo-600 hover:text-indigo-500"
               >
-                Go to Account
+                Go to Plan
               </Link>
             </div>
           </div>

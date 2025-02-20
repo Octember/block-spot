@@ -141,7 +141,7 @@ const SidebarHeader = ({
       </div>
 
       <WaspRouterLink
-        to="/account"
+        to="/plan"
         className="flex items-center gap-x-4 text-sm/6 font-semibold text-gray-900 hover:bg-gray-50"
       >
         <UserCircleIcon className="size-6" />

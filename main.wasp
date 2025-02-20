@@ -80,6 +80,7 @@ app BlockSpot {
     onAuthSucceededRedirectTo: "/venues",
   },
 
+
   db: {
     // Run `wasp db seed` to seed the database with the seed functions below:
     seeds: [
@@ -158,7 +159,14 @@ page EmailVerificationPage {
 route AccountRoute { path: "/account", to: AccountPage }
 page AccountPage {
   authRequired: true,
-  component: import Account from "@src/user/account/AccountPage"
+  component: import {AccountPage} from "@src/user/account/account-page"
+}
+
+
+route PlanRoute { path: "/plan", to: PlanPage }
+page PlanPage {
+  authRequired: true,
+  component: import Plan from "@src/user/plan/PlanPage"
 }
 
 query getPaginatedUsers {
@@ -392,6 +400,11 @@ page CheckoutPage {
 
 query getUserOrganization {
   fn: import { getUserOrganization } from "@src/organization/operations",
+  entities: [User, Organization, OrganizationUser]
+}
+
+query getUserOrganizations {
+  fn: import { getUserOrganizations } from "@src/organization/operations",
   entities: [User, Organization, OrganizationUser]
 }
 

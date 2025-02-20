@@ -102,7 +102,10 @@ model User {
 
   reservations Reservation[]
   createdReservations Reservation[] @relation("CreatedReservations")
+
+  receivedInvitation Invitation[] @relation("ReceivedInvitations")
 }
+
 
 model GptResponse {
   id        String   @id @default(uuid())
@@ -327,12 +330,17 @@ model Invitation {
   organizationId String
   invitedBy     User    @relation("SentInvitations", fields: [invitedById], references: [id])
   invitedById   String
+  userId        String?
+  user          User?   @relation("ReceivedInvitations", fields: [userId], references: [id])
   
   status        InvitationStatus @default(PENDING)
   token         String   @unique
   expiresAt     DateTime
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  used          Boolean @default(false)
+
 }
 
 enum InvitationStatus {
