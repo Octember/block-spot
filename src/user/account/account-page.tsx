@@ -10,7 +10,6 @@ import { Button } from '../../client/components/button';
 export function AccountPage() {
   const { user } = useAuthUser();
   const { data: organizations } = useQuery(getUserOrganizations);
-  console.log(organizations);
 
   return <div className="centered-page-content">
     <h1 className="text-3xl font-bold text-center mb-6 text-gray-900 dark:text-white">

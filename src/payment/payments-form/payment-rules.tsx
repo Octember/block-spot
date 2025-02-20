@@ -62,7 +62,6 @@ export const PaymentRules = () => {
 
   useEffect(() => {
     if (paymentRules) {
-      console.log("paymentRules", paymentRules);
       form.reset({
         paymentRules: paymentRules.map(toFormInput),
       });
@@ -76,7 +75,6 @@ export const PaymentRules = () => {
 
   async function onSubmit(data: PaymentRuleForm) {
     try {
-      console.log("data", data);
       await updatePaymentRules({
         venueId: venueId!,
         rules: data.paymentRules.map(toApiInput),

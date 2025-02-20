@@ -57,6 +57,8 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
   const { pendingChange } = usePendingChanges();
 
   const handleMouseDown = (row: number, col: number) => {
+
+    console.log(isTimeAvailable(row, col), pendingChange)
     if (!isTimeAvailable(row, col) || pendingChange) {
       return;
     }

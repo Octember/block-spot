@@ -20,8 +20,6 @@ export function InvitationPage() {
     token: token || ''
   })
 
-  console.log(details, isLoading)
-
   const handleAcceptInvitation = async () => {
     if (!token) return
 

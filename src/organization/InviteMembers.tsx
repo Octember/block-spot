@@ -44,7 +44,10 @@ export function InviteMembers({ organizationId }: InviteMembersProps) {
 
   return (
     <div className="">
-      <Button
+      {/* Nice feature but disabled until I have a way to figure out
+          How to require an email in signup.
+      */}
+      {/* <Button
         onClick={handleGenerateLink}
         disabled={isLoading || !isOwner}
         ariaLabel="Generate Invite Link"
@@ -52,7 +55,7 @@ export function InviteMembers({ organizationId }: InviteMembersProps) {
         variant="secondary"
       >
         Generate Invite Link
-      </Button>
+      </Button> */}
 
       {error && (
         <div className="rounded-md bg-red-50 p-4">

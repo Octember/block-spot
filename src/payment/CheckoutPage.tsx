@@ -21,7 +21,6 @@ export default function CheckoutPage() {
       const route = completedOnboarding ? "/account" : "/onboarding";
 
       if (!completedOnboarding && organization) {
-        console.log("updating onboarding state");
         updateOnboardingState({
           organizationId: organization.id,
           updates: {

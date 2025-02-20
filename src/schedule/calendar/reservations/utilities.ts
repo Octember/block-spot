@@ -61,7 +61,6 @@ export function getTimeFromRowIndex(
   const minutes = totalMinutes % 60;
 
   const venueAdjustedBase = getVenueStartOfDay(venue, selectedDate);
-
   const date = new Date(
     venueAdjustedBase.getTime() + hours * 60 * 60 * 1000 + minutes * 60 * 1000,
   );

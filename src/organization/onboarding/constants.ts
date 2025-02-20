@@ -119,7 +119,6 @@ export const determineOnboardingStep = (
   }
 
   const targetStep = getTargetStep(onboardingState);
-  console.log("targetStep", targetStep);
   return {
     shouldRedirect: true,
     targetStep: `/onboarding/${targetStep}`,
