@@ -1,15 +1,15 @@
-# fly.toml app configuration file generated for block-spot-server on 2025-01-17T23:24:04-05:00
+# fly.toml app configuration file generated for blockspot-server-server on 2025-02-20T13:07:23-08:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'block-spot-server'
+app = 'blockspot-server-server'
 primary_region = 'mia'
 
 [build]
 
 [http_service]
-  internal_port = 3000
+  internal_port = 8080
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
