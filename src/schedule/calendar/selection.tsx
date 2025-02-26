@@ -58,7 +58,6 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
 
   const handleMouseDown = (row: number, col: number) => {
 
-    console.log(isTimeAvailable(row, col), pendingChange)
     if (!isTimeAvailable(row, col) || pendingChange) {
       return;
     }
@@ -164,15 +163,17 @@ export const GridSelection: React.FC = () => {
     if (selection.gridArea && selection.isSelecting) {
       const { rowStart, rowEnd, colStart } = selection.gridArea;
 
+      const actualEnd = rowEnd - rowStart >= 2 ? rowEnd : rowStart + 2;
+
       // Check if any row in the selection is unavailable
       const isSelectionValid = Array.from(
-        { length: rowEnd - rowStart },
-        (_, i) => rowStart + i,
+        { length: actualEnd - rowStart },
+        (_, i) => actualEnd + i,
       ).every((row) => isTimeAvailable(row, colStart - 1));
 
       if (isSelectionValid) {
         const start = getTimeFromRowIndex(venue, rowStart, selectedDate);
-        const end = getTimeFromRowIndex(venue, rowEnd, selectedDate);
+        const end = getTimeFromRowIndex(venue, actualEnd, selectedDate);
 
         setPendingChange({
           type: "CREATE",

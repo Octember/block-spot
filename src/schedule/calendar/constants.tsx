@@ -34,18 +34,22 @@ export const useIsTimeZoneDifferent = () => {
 };
 
 function isTimeZoneDifferent(referenceTZ: string | undefined) {
-  if (!referenceTZ) {
-    return false;
-  }
+  // TODO: Big bug here, we need to check if the timezones are different
+  // but we are not doing that right now
+  return false;
 
-  const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  // if (!referenceTZ) {
+  //   return false;
+  // }
 
-  // Get UTC offsets at the current moment
-  const now = new Date();
-  const referenceOffset = getTimezoneOffset(referenceTZ, now);
-  const userOffset = getTimezoneOffset(userTZ, now);
+  // const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  return userOffset !== referenceOffset;
+  // // Get UTC offsets at the current moment
+  // const now = new Date();
+  // const referenceOffset = getTimezoneOffset(referenceTZ, now);
+  // const userOffset = getTimezoneOffset(userTZ, now);
+
+  // return userOffset !== referenceOffset;
 }
 
 function generateTimeLabels(
