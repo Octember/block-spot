@@ -109,7 +109,9 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     return props.reservation.userId === user?.id;
   }, [isOwner, isDraft, props.reservation.userId, user?.id]);
 
-  const { selection: { isSelecting } } = useReservationSelection();
+  const {
+    selection: { isSelecting },
+  } = useReservationSelection();
   const { pendingChange, setPendingChange } = usePendingChanges();
 
   const disabled =

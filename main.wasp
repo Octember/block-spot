@@ -249,9 +249,14 @@ action updateVenue {
   entities: [Venue]
 }
 
+action confirmPaidBooking {
+  fn: import { confirmPaidBooking } from "@src/payment/operations",
+  entities: [Reservation, Organization, Payment]
+}
+
 action createReservation {
   fn: import { createReservation } from "@src/schedule/operations",
-  entities: [Reservation, Space, Venue]
+  entities: [Reservation, Space, Venue, Payment]
 }
 
 action deleteReservation {
@@ -432,7 +437,7 @@ action createStripeAccountLink {
 
 action createConnectCheckoutSession {
   fn: import { createConnectCheckoutSession } from "@src/payment/stripe/operations",
-  entities: [User, Organization]
+  entities: [User, Organization, Reservation, Space, Payment]
 }
 
 action createStripeAccount {

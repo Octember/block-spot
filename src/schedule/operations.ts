@@ -1,5 +1,11 @@
-import { addDays, isValid, startOfDay, startOfToday } from "date-fns";
-import { AvailabilityRule, Reservation, Space, User, Venue } from "wasp/entities";
+import { addDays, isValid } from "date-fns";
+import {
+  AvailabilityRule,
+  Reservation,
+  Space,
+  User,
+  Venue
+} from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
   CreateReservation,
@@ -18,6 +24,7 @@ import {
   UpdateVenueAvailability,
 } from "wasp/server/operations";
 import { getStartOfDay, localToUTC } from "./calendar/date-utils";
+import { getStartEndTime, runPaymentRules } from "./operations/new-reservations";
 
 type GetVenueSchedulePayload = {
   venueId: string;
@@ -144,8 +151,9 @@ export const getVenueInfo: GetVenueInfo<
 
 type CreateReservationPayload = Pick<
   Reservation,
-  "spaceId" | "startTime" | "endTime" | "description"
->;
+  "spaceId" | "startTime" | "endTime"
+> &
+  Partial<Pick<Reservation, "userId" | "description">>;
 
 export const createReservation: CreateReservation<
   CreateReservationPayload,
@@ -155,41 +163,61 @@ export const createReservation: CreateReservation<
     throw new HttpError(401);
   }
 
-  const venue = await context.entities.Venue.findFirst({
-    where: {
-      spaces: {
-        some: {
-          id: args.spaceId,
+  const space = await context.entities.Space.findUnique({
+    where: { id: args.spaceId },
+    include: {
+      reservations: true,
+      venue: {
+        include: {
+          paymentRules: true,
         },
       },
     },
   });
 
-  if (!venue) {
-    throw new HttpError(404, "Venue not found");
-  }
+  if (!space) throw new HttpError(404, "Space not found");
 
-  // Convert times to UTC for storage
-  const endTime = localToUTC(new Date(args.endTime), venue);
-  endTime.setSeconds(0, 0);
-  const startTime = localToUTC(new Date(args.startTime), venue);
-  startTime.setSeconds(0, 0);
+  const { startTime, endTime } = getStartEndTime(
+    args.startTime,
+    args.endTime,
+    space?.venue,
+  );
 
-  // Validate times are in the correct order
-  if (startTime >= endTime) {
-    throw new HttpError(400, "Start time must be before end time");
-  }
+  // // Check if time slot is available
+  const isSlotTaken = space.reservations.some(
+    (r) => r.startTime < endTime && r.endTime > startTime,
+  );
+  if (isSlotTaken) throw new HttpError(400, "Time slot is already booked");
 
-  return context.entities.Reservation.create({
+  // // Check if payment is required
+  const { requiresPayment, totalCost } = runPaymentRules(
+    space.venue.paymentRules,
+    startTime,
+    endTime,
+    space.id,
+  );
+
+  const reservation = await context.entities.Reservation.create({
     data: {
+      userId: args.userId || context.user.id,
       spaceId: args.spaceId,
-      startTime: startTime,
-      endTime: endTime,
-      userId: context.user.id,
-      status: "CONFIRMED",
+      startTime,
+      endTime,
+      status: requiresPayment ? "PENDING" : "CONFIRMED",
       description: args.description,
     },
   });
+
+  if (requiresPayment) {
+    await context.entities.Payment.create({
+      data: {
+        reservationId: reservation.id,
+        stripeCheckoutSessionId: null, // Will be filled in after Stripe session is created
+      },
+    });
+  }
+
+  return reservation;
 };
 
 type DeleteReservationPayload = Pick<Reservation, "id">;

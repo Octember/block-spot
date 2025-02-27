@@ -1,4 +1,12 @@
-import { DndContext, DragEndEvent, DragMoveEvent, DragStartEvent, MouseSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  DragMoveEvent,
+  DragStartEvent,
+  MouseSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import { isSameDay } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { Reservation } from "wasp/entities";
@@ -8,13 +16,9 @@ import { usePendingChanges } from "../providers/pending-changes-provider";
 import { useScheduleContext } from "../providers/schedule-context-provider";
 import { useVenueContext } from "../providers/venue-provider";
 import { getSharedGridStyle } from "./constants";
-import { DraggingGrid } from './drag-drop-grid';
+import { DraggingGrid } from "./drag-drop-grid";
 import { ReservationSlot } from "./reservation-slot";
-import {
-  setTimesOnDate,
-  useGetTimeFromRowIndex,
-} from "./utilities";
-
+import { setTimesOnDate, useGetTimeFromRowIndex } from "./utilities";
 
 export const ReservationsSection = () => {
   const { venue } = useVenueContext();
@@ -26,9 +30,9 @@ export const ReservationsSection = () => {
     string | null
   >(null);
 
-  const [reservations, setReservations] = useState<
-    (Reservation)[]
-  >(spaces.flatMap((space) => space.reservations));
+  const [reservations, setReservations] = useState<Reservation[]>(
+    spaces.flatMap((space) => space.reservations),
+  );
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -131,7 +135,9 @@ export const ReservationsSection = () => {
     setTransform(event.delta);
   };
 
-  const [transform, setTransform] = useState<{ x: number; y: number } | null>(null);
+  const [transform, setTransform] = useState<{ x: number; y: number } | null>(
+    null,
+  );
 
   // Reset transform when drag ends
   useEffect(() => {

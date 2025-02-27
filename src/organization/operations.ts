@@ -90,7 +90,7 @@ type UpdateOnboardingStateInput = {
 export const getUserOrganizations: GetUserOrganizations<
   void,
   (Organization & {
-    users: (OrganizationUser)[];
+    users: OrganizationUser[];
     venues: Venue[];
   })[]
 > = async (_args, context) => {
@@ -193,7 +193,10 @@ export const createInvitation: CreateInvitation<
       },
     });
 
-    if (existingUser?.organizations?.length && existingUser.organizations.length > 0) {
+    if (
+      existingUser?.organizations?.length &&
+      existingUser.organizations.length > 0
+    ) {
       throw new HttpError(400, "User is already a member of this organization");
     }
 
@@ -211,13 +214,15 @@ export const createInvitation: CreateInvitation<
     }
   }
 
-  const existingUser = await context.entities.User.findUnique({ where: { email: args.email } })
+  const existingUser = await context.entities.User.findUnique({
+    where: { email: args.email },
+  });
 
   if (existingUser) {
-    throw new HttpError(400, 'User already exists')
+    throw new HttpError(400, "User already exists");
   }
 
-  const providerId = createProviderId('email', args.email)
+  const providerId = createProviderId("email", args.email);
 
   // Create shadow user with temp password
   const user = await createUser(
@@ -225,8 +230,8 @@ export const createInvitation: CreateInvitation<
     JSON.stringify({ email: args.email }),
     {
       email: args.email,
-    }
-  )
+    },
+  );
 
   const token = uuidv4();
   const expiresAt = addDays(new Date(), 7); // Token expires in 7 days
@@ -238,12 +243,11 @@ export const createInvitation: CreateInvitation<
       organizationId: args.organizationId,
       invitedById: context.user.id,
       userId: user.id,
-      token, 
+      token,
       expiresAt,
       status: "PENDING",
     },
   });
-
 
   if (args.email) {
     await sendInvitationEmail({
@@ -265,11 +269,14 @@ export const acceptInvitation: AcceptInvitation<
 > = async (args, context) => {
   const invitation = await context.entities.Invitation.findUnique({
     where: { token: args.token },
-    include: { organization: true, user: {
-      include: {
-        auth: true
-      }
-    } },
+    include: {
+      organization: true,
+      user: {
+        include: {
+          auth: true,
+        },
+      },
+    },
   });
 
   if (!invitation) {
@@ -288,12 +295,15 @@ export const acceptInvitation: AcceptInvitation<
     throw new HttpError(400, "Invitation has expired");
   }
 
+  console.log("invitation user", invitation.user);
 
-  console.log("invitation user", invitation.user)
-
-  const invitationAuthId = invitation.user?.auth?.id
+  const invitationAuthId = invitation.user?.auth?.id;
   if (!invitation.userId || !invitationAuthId) {
-    throw new HttpError(400, "Something went wrong, missing userID: " + JSON.stringify(invitation.user));
+    throw new HttpError(
+      400,
+      "Something went wrong, missing userID: " +
+        JSON.stringify(invitation.user),
+    );
   }
 
   // Create organization membership
@@ -316,7 +326,7 @@ export const acceptInvitation: AcceptInvitation<
 
   return {
     invitation,
-    sessionId: session.id
+    sessionId: session.id,
   };
 };
 

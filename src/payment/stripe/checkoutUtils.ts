@@ -84,6 +84,7 @@ export async function createStripeCheckoutSession({
       },
       allow_promotion_codes: true,
       customer: customerId,
+      submit_type: "book",
       subscription_data: {
         trial_period_days: 30,
         metadata: { organizationId },

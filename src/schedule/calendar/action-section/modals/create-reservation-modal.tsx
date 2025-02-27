@@ -47,11 +47,12 @@ export const CreateReservationWizard: FC<{
   } = form;
 
   async function onSubmit(data: CreateReservationFormInputs) {
-    await createReservation({
+    const reservation = await createReservation({
       startTime: minutesToTime(data.date, data.startTimeMinutes),
       endTime: minutesToTime(data.date, data.endTimeMinutes),
       description: data.title,
       spaceId: data.spaceId,
+      userId: data.user?.id,
     });
 
     refresh();
@@ -72,20 +73,21 @@ export const CreateReservationWizard: FC<{
       title: "Create Reservation",
       description: "Create a new reservation",
       content: (
-        <ReservationForm reservation={reservation} onSubmit={() => { }} />
+        <ReservationForm reservation={reservation} onSubmit={() => {}} />
       ),
     },
     ...(enablePayments
       ? [
-        {
-          title: "Payment",
-          description: "Pay for the reservation",
-          content:
-            <StripeWrapper organization={organization}>
-              <StripeCheckoutForm />
-            </StripeWrapper>
-        },
-      ]
+          {
+            title: "Payment",
+            description: "Pay for the reservation",
+            content: (
+              <StripeWrapper organization={organization}>
+                <StripeCheckoutForm />
+              </StripeWrapper>
+            ),
+          },
+        ]
       : []),
   ];
 
@@ -102,4 +104,3 @@ export const CreateReservationWizard: FC<{
     </FormProvider>
   );
 };
-

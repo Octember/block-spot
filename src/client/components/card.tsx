@@ -62,11 +62,7 @@ export const CardHeading = ({
             </p>
           )}
         </div>
-        {actions && (
-          <div className="flex gap-x-2">
-            {actions}
-          </div>
-        )}
+        {actions && <div className="flex gap-x-2">{actions}</div>}
       </div>
     </div>
   );

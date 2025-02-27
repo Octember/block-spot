@@ -222,6 +222,7 @@ model Payment {
 enum ReservationStatus {
   PENDING
   CONFIRMED
+  PAID
   CANCELLED
 }
 

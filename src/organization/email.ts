@@ -1,14 +1,14 @@
-import { emailSender } from 'wasp/server/email'
-import { getFrontendUrl } from 'wasp/src/payment/stripe/operations'
+import { emailSender } from "wasp/server/email";
+import { getFrontendUrl } from "wasp/src/payment/stripe/operations";
 
 type SendInvitationEmailArgs = {
-  email: string
-  inviterName: string
-  organizationName: string
-  role: string
-  token: string
-  expiresAt: Date
-}
+  email: string;
+  inviterName: string;
+  organizationName: string;
+  role: string;
+  token: string;
+  expiresAt: Date;
+};
 
 export const sendInvitationEmail = async ({
   email,
@@ -18,9 +18,9 @@ export const sendInvitationEmail = async ({
   token,
   expiresAt,
 }: SendInvitationEmailArgs) => {
-  const inviteUrl = `${getFrontendUrl()}/invitation/${token}`
-  
-  console.log("Sending invite URL", inviteUrl)
+  const inviteUrl = `${getFrontendUrl()}/invitation/${token}`;
+
+  console.log("Sending invite URL", inviteUrl);
 
   await emailSender.send({
     to: email,
@@ -58,6 +58,6 @@ export const sendInvitationEmail = async ({
           </p>
         </div>
       </div>
-    `
-  })
-}
+    `,
+  });
+};

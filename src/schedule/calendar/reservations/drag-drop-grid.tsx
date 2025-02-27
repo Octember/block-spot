@@ -1,8 +1,8 @@
-import { getSharedGridStyle, MinutesPerSlot, PixelsPerSlot } from './constants';
-import { DroppableSpace } from './droppable';
-import { getRowSpan, isWithinReservation, getRowIndex } from './utilities';
-import { Reservation, Venue } from 'wasp/entities';
-import { addMinutes } from 'date-fns';
+import { getSharedGridStyle, MinutesPerSlot, PixelsPerSlot } from "./constants";
+import { DroppableSpace } from "./droppable";
+import { getRowSpan, isWithinReservation, getRowIndex } from "./utilities";
+import { Reservation, Venue } from "wasp/entities";
+import { addMinutes } from "date-fns";
 
 interface DraggingGridProps {
   draggingReservation: Reservation;
@@ -26,9 +26,11 @@ export const DraggingGrid: React.FC<DraggingGridProps> = ({
   // Calculate the adjusted start time based on drag position
   const adjustedStartTime = transform
     ? addMinutes(
-      draggingReservation.startTime,
-      Math.round((transform.y / PixelsPerSlot) * MinutesPerSlot) / MinutesPerSlot * MinutesPerSlot
-    )
+        draggingReservation.startTime,
+        (Math.round((transform.y / PixelsPerSlot) * MinutesPerSlot) /
+          MinutesPerSlot) *
+          MinutesPerSlot,
+      )
     : draggingReservation.startTime;
 
   const rowIndex = getRowIndex(venue, adjustedStartTime);
@@ -42,7 +44,7 @@ export const DraggingGrid: React.FC<DraggingGridProps> = ({
             reservation.id !== draggingReservation.id &&
             reservation.spaceId === spaceId &&
             // TODO: Not sure why -1 is needed here
-            isWithinReservation(venue, rowIndex - 1, rowSpan, reservation)
+            isWithinReservation(venue, rowIndex - 1, rowSpan, reservation),
         );
 
         // Only render one droppable space per column

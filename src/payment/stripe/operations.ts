@@ -10,6 +10,7 @@ import {
   getUserOrganization,
 } from "./connect/utils";
 import { stripe } from "./stripeClient";
+import { runPaymentRules } from "../../schedule/operations/new-reservations";
 
 export const createStripeAccount: CreateStripeAccount = async (
   _args,
@@ -86,9 +87,36 @@ type CreateConnectCheckoutSessionResult = {
 };
 
 export const createConnectCheckoutSession: CreateConnectCheckoutSession<
-  void,
-  CreateConnectCheckoutSessionResult
-> = async (args, context) => {
+{ userId: string; spaceId: string; startTime: Date; endTime: Date },
+CreateConnectCheckoutSessionResult
+> = async ({ userId, spaceId, startTime, endTime }, context) => {
+  if (!context.user) throw new HttpError(401);
+
+  const space = await context.entities.Space.findUnique({
+    where: { id: spaceId },
+    include: { venue: { include: { paymentRules: true } } },
+  });
+  if (!space) throw new HttpError(404, "Space not found");
+
+  // Check if the slot is already taken
+  const isSlotTaken = await context.entities.Reservation.findFirst({
+    where: {
+      spaceId,
+      startTime: { lt: endTime },
+      endTime: { gt: startTime },
+      status: { not: "CANCELLED" }, // Ignore cancelled reservations
+    },
+  });
+
+  if (isSlotTaken) throw new HttpError(400, "Time slot is already booked");
+  
+  const { requiresPayment, totalCost } = runPaymentRules(
+    space.venue.paymentRules,
+    startTime,
+    endTime,
+    space.id,
+  );
+
   if (!context.user) {
     throw new HttpError(401, "Unauthorized");
   }
@@ -102,27 +130,48 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
     throw new HttpError(400, "Organization does not have a Stripe account");
   }
 
-  const session = await stripe.checkout.sessions.create({
-    ui_mode: "embedded",
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-          product_data: { name: "Custom Service" },
-          unit_amount: 5000, // $50.00
+  if (!requiresPayment) {
+    throw new HttpError(400, "This reservation does not require payment");
+  }
+
+  const session = await stripe.checkout.sessions.create(
+    {
+      ui_mode: "embedded",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: { name: `Booking for ${space.name}` },
+            unit_amount: parseInt(totalCost.toString()) * 100, // Convert to cents
+          },
+          quantity: 1,
         },
-        quantity: 1,
+      ],
+      redirect_on_completion: "never",
+      customer_email: context.user.email || undefined,
+      mode: "payment",
+      metadata: {
+        userId,
+        spaceId,
+        startTime: startTime.toISOString(),
+        endTime: endTime.toISOString(),
+        totalCost: totalCost.toString(),
       },
-    ],
-    redirect_on_completion: "never",
-    customer_email: context.user.email || undefined,
-    mode: "payment",
-  },
-  {
-    stripeAccount: organization.stripeAccountId
+    },
+    {
+      stripeAccount: organization.stripeAccountId,
+    },
+  );
+
+  context.entities.Payment.update({
+    where: {
+      reservationId: reservation.id,
+    },
+    data: {
+      stripeCheckoutSessionId: session.id,
+    },
   });
-
-
+  
   if (!session.client_secret) {
     throw new Error("Failed to create payment intent");
   }

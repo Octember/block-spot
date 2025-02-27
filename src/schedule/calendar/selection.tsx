@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { useAuthUser } from "../../auth/providers/AuthUserProvider";
-import { useTimeLabels, useIsTimeZoneDifferent } from './constants';
+import { useTimeLabels, useIsTimeZoneDifferent } from "./constants";
 import { usePendingChanges } from "./providers/pending-changes-provider";
 import { useScheduleContext } from "./providers/schedule-context-provider";
 import { useVenueContext } from "./providers/venue-provider";
@@ -27,11 +27,13 @@ interface SelectionContextType {
   handleMouseUp: () => void;
 }
 
-const SelectionContext = createContext<SelectionContextType | undefined>(undefined);
+const SelectionContext = createContext<SelectionContextType | undefined>(
+  undefined,
+);
 
 function calculateGridArea(
   start: { row: number; col: number },
-  current: { row: number; col: number }
+  current: { row: number; col: number },
 ): GridArea {
   return {
     rowStart: Math.min(start.row, current.row),
@@ -53,11 +55,13 @@ export const SelectionProvider: React.FC<SelectionProviderProps> = ({
     gridArea: null,
     isSelecting: false,
   });
-  const [startPosition, setStartPosition] = useState<{ row: number; col: number } | null>(null);
+  const [startPosition, setStartPosition] = useState<{
+    row: number;
+    col: number;
+  } | null>(null);
   const { pendingChange } = usePendingChanges();
 
   const handleMouseDown = (row: number, col: number) => {
-
     if (!isTimeAvailable(row, col) || pendingChange) {
       return;
     }
@@ -123,7 +127,9 @@ function getGridCoordinates(
   // TODO: This is a hack to account for the timezone label width
   // I think it's wrong
   const labelOffset = isTimeZoneDifferent ? 24 : 14;
-  const col = Math.floor((x + labelOffset) / (containerRect.width / spacesLength));
+  const col = Math.floor(
+    (x + labelOffset) / (containerRect.width / spacesLength),
+  );
   const row = Math.floor(y / 16);
 
   return { row, col };
@@ -138,12 +144,8 @@ export const GridSelection: React.FC = () => {
   const { user } = useAuthUser();
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
 
-  const {
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
-    selection,
-  } = useReservationSelection();
+  const { handleMouseDown, handleMouseMove, handleMouseUp, selection } =
+    useReservationSelection();
 
   const handleContainerMouseMove = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -153,7 +155,12 @@ export const GridSelection: React.FC = () => {
 
   const handleContainerMouseDown = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const { row, col } = getGridCoordinates(e, rect, venue.spaces.length, isTimeZoneDifferent);
+    const { row, col } = getGridCoordinates(
+      e,
+      rect,
+      venue.spaces.length,
+      isTimeZoneDifferent,
+    );
 
     if (row < 0) return; // Don't select header
     handleMouseDown(row, col);
@@ -212,7 +219,10 @@ export const GridSelection: React.FC = () => {
     );
   }
 
-  const { style, className } = getSharedGridStyle(timeLabels.length, venue.spaces.length)
+  const { style, className } = getSharedGridStyle(
+    timeLabels.length,
+    venue.spaces.length,
+  );
 
   return (
     <div

@@ -3,6 +3,8 @@ import type { MiddlewareConfigFn } from "wasp/server";
 import type { PaymentsWebhook } from "wasp/server/api";
 import type { PaymentPlan } from "./plans";
 import { stripePaymentProcessor } from "./stripe/paymentProcessor";
+import { StripeCheckoutSession } from "@stripe/stripe-js";
+import Stripe from "stripe";
 
 export interface CreateCheckoutSessionArgs {
   organizationId: string;
@@ -15,6 +17,10 @@ export interface CreateCheckoutSessionArgs {
 export interface FetchCustomerPortalUrlArgs {
   organizationId: string;
   prismaOrganizationDelegate: PrismaClient["organization"];
+}
+
+export interface FetchCheckoutSessionArgs {
+  checkoutSessionId: string;
 }
 
 export interface PaymentProcessor {
