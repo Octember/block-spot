@@ -26,24 +26,21 @@ app BlockSpot {
     "<meta name='twitter:image:width' content='800' />",
     "<meta name='twitter:image:height' content='400' />",
     "<meta name='twitter:card' content='summary_large_image' />",
-    // TODO: You can put your Plausible analytics scripts below (https://docs.opensaas.sh/guides/analytics/):
-    // NOTE: Plausible does not use Cookies, so you can simply add the scripts here.
-    // Google, on the other hand, does, so you must instead add the script dynamically
-    // via the Cookie Consent component after the user clicks the "Accept" cookies button.
-    // "<script defer data-domain='<your-site-id>' src='https://plausible.io/js/script.js'></script>",  // for production
-    // "<script defer data-domain='<your-site-id>' src='https://plausible.io/js/script.local.js'></script>",  // for development
+
+    // Amplitude
+    "<script src='https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz'></script>",
+    "<script src='https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz'></script>",
+    "<script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('2ec6caddd15ce3037d507462065b91e8', {'autocapture':{'elementInteractions':true}});</script>",
+    // Google Analytics
     "<script async src='https://www.googletagmanager.com/gtag/js?id=AW-11557893994'></script>",
     "<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'AW-11557893994');</script>",
 
     "<script>gtag('event', 'conversion', {'send_to': 'AW-11557893994/beHdCPDH9p4aEOrunYcr', 'value': 1.0, 'currency': 'USD'});</script>",
   ],
 
-  // 🔐 Auth out of the box! https://wasp-lang.dev/docs/auth/overview
   auth: {
     userEntity: User,
     methods: {
-      // NOTE: If you decide to not use email auth, make sure to also delete the related routes and pages below.
-      //   (RequestPasswordReset(Route|Page), PasswordReset(Route|Page), EmailVerification(Route|Page))
       email: {
         fromField: {
           name: "BlockSpot",
@@ -58,28 +55,17 @@ app BlockSpot {
           getEmailContentFn: import { getPasswordResetEmailContent } from "@src/auth/email-and-pass/emails",
         },
         userSignupFields: import { getEmailUserFields } from "@src/auth/userSignupFields",
-      },
-      // Uncomment to enable Google Auth (check https://wasp-lang.dev/docs/auth/social-auth/google for setup instructions):
-      google: { // Guide for setting up Auth via Google
+        },
+      google: {
         userSignupFields: import { getGoogleUserFields } from "@src/auth/userSignupFields",
         configFn: import { getGoogleAuthConfig } from "@src/auth/userSignupFields",
       },
-      // Uncomment to enable GitHub Auth (check https://wasp-lang.dev/docs/auth/social-auth/github for setup instructions):
-      // gitHub: {
-      //   userSignupFields: import { getGitHubUserFields } from "@src/auth/userSignupFields",
-      //   configFn: import { getGitHubAuthConfig } from "@src/auth/userSignupFields",
-      // },
-      // Uncomment to enable Discord Auth (check https://wasp-lang.dev/docs/auth/social-auth/discord for setup instructions):
-      // discord: {
-      //   userSignupFields: import { getDiscordUserFields } from "@src/auth/userSignupFields",
-      //   configFn: import { getDiscordAuthConfig } from "@src/auth/userSignupFields"
-      // }
+  
     },
     onAfterSignup: import { onAfterSignup } from "@src/auth/hooks",
     onAuthFailedRedirectTo: "/login",
     onAuthSucceededRedirectTo: "/venues",
   },
-
 
   db: {
     // Run `wasp db seed` to seed the database with the seed functions below:
