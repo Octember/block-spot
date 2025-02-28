@@ -59,7 +59,7 @@ export const VerticalDividers: FC = () => {
 
   return (
     <div
-      className="col-start-1 col-end-2 row-start-1 grid-rows-1 divide-x divide-gray-300 grid sm:pr-8"
+      className="col-start-1 col-end-2 row-start-1 grid-rows-1 divide-x divide-gray-300 grid"
       style={{
         gridTemplateColumns: getGridTemplateColumns(venue.spaces.length),
       }}

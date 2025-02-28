@@ -20,7 +20,7 @@ export const DateSelectButton: FC = () => {
     <Popover className="relative group">
       <PopoverButton
         ref={setReferenceElement}
-        className="px-2 font-bold flex flex-row items-center gap-2"
+        className="font-bold flex flex-row items-center gap-2"
         as="button"
       >
         {formatInTimeZone(selectedDate, venue.timeZoneId, "MMMM d, yyyy")}{" "}

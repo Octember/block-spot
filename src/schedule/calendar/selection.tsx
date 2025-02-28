@@ -199,7 +199,6 @@ export const GridSelection: React.FC = () => {
         },
       });
     }
-    // }
     handleMouseUp();
   };
 
@@ -208,9 +207,12 @@ export const GridSelection: React.FC = () => {
       <>
         <div
           {...getSharedGridStyle(timeLabels.length, venue.spaces.length)}
-          className="cursor-pointer"
-          onClick={() => setAnonUserWarningOpen(true)}
-        />
+        >
+          <div
+            className="col-span-full row-span-full cursor-pointer"
+            onClick={() => setAnonUserWarningOpen(true)}
+          />
+        </div >
         <AnonymousUserWarning
           isOpen={anonUserWarningOpen}
           onClose={() => setAnonUserWarningOpen(false)}
