@@ -22,7 +22,10 @@ function isElementInViewport(element: HTMLElement) {
 
 function scrollToSpace(index: number) {
   const spaceElement = document.getElementById(`space-${index}`);
-  if (spaceElement) {
+  if (!spaceElement) {
+    console.warn("Space element not found", index);
+    return;
+  } else {
     spaceElement.scrollIntoView({ behavior: "smooth", block: "nearest" });
     setTimeout(() => {
       spaceElement.focus({ preventScroll: true });
@@ -67,16 +70,12 @@ const getMinVisibleSpaceIndex = () => {
 
 function scrollToNextSpace() {
   const maxVisibleSpaceIndex = getMaxVisibleSpaceIndex();
-  if (maxVisibleSpaceIndex) {
-    scrollToSpace(maxVisibleSpaceIndex + 1);
-  }
+  scrollToSpace(maxVisibleSpaceIndex + 1);
 }
 
 function scrollToPreviousSpace() {
   const minVisibleSpaceIndex = getMinVisibleSpaceIndex();
-  if (minVisibleSpaceIndex > 0) {
-    scrollToSpace(minVisibleSpaceIndex - 1);
-  }
+  scrollToSpace(minVisibleSpaceIndex - 1);
 }
 
 export const ScrollToSpaceButtons: FC = () => {
