@@ -13,13 +13,16 @@ export const updateUserById: UpdateUserById<
   User
 > = async ({ id, data }, context) => {
   if (!context.user) {
+    console.log(`[USERS] Unauthorized attempt to update user ${id}`);
     throw new HttpError(401);
   }
 
   if (!context.user.isAdmin) {
+    console.log(`[USERS] Non-admin user ${context.user.id} attempted to update user ${id}`);
     throw new HttpError(403);
   }
 
+  console.log(`[USERS] Admin ${context.user.id} updating user ${id}`);
   const updatedUser = await context.entities.User.update({
     where: {
       id,
@@ -73,8 +76,11 @@ export const getPaginatedUsers: GetPaginatedUsers<
   GetPaginatedUsersOutput
 > = async (args, context) => {
   if (!context.user?.isAdmin) {
+    console.log(`[USERS] Unauthorized attempt to access paginated users list`);
     throw new HttpError(401);
   }
+
+  console.log(`[USERS] Fetching paginated users (skip: ${args.skip}, email contains: ${args.emailContains || 'none'})`);
 
   const allSubscriptionStatusOptions = args.subscriptionStatus as
     | Array<string | null>
@@ -179,6 +185,7 @@ export const searchUsers: SearchUsers<
   SearchUsersOutput
 > = async ({ query, sortBy }, context) => {
   if (!context.user) {
+    console.log(`[USERS] Unauthorized attempt to search users`);
     throw new HttpError(401, "Not authenticated");
   }
 
@@ -193,13 +200,17 @@ export const searchUsers: SearchUsers<
   });
 
   if (!organizationUser) {
+    console.log(`[USERS] User ${context.user.id} attempted to search without organization membership`);
     throw new HttpError(403, "User is not part of an organization");
   }
 
   // Only allow organization owners to search users
   if (organizationUser.role !== "OWNER") {
+    console.log(`[USERS] Non-owner user ${context.user.id} attempted to search users in org ${organizationUser.organizationId}`);
     throw new HttpError(403, "Only organization owners can search users");
   }
+
+  console.log(`[USERS] Searching users in org ${organizationUser.organizationId} with query "${query}" sorted by ${sortBy}`);
 
   // Search for users in the same organization
   const users = await context.entities.User.findMany({

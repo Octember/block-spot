@@ -20,6 +20,9 @@ import {
   UpdateMemberRole,
   UpdateOnboardingState,
   type GetUserOrganization,
+  ListInvitations,
+  GetInvitationDetails,
+  GetUserOrganizationRole,
 } from "wasp/server/operations";
 import { createSession } from "wasp/auth/session";
 import { sendInvitationEmail } from "./email";
@@ -95,8 +98,11 @@ export const getUserOrganizations: GetUserOrganizations<
   })[]
 > = async (_args, context) => {
   if (!context.user) {
+    console.log(`[ORGS] Unauthorized attempt to get user organizations`);
     throw new HttpError(401);
   }
+
+  console.log(`[ORGS] Fetching organizations for user ${context.user.id}`);
 
   const organizations = await context.entities.Organization.findMany({
     where: {
@@ -159,6 +165,7 @@ export const createInvitation: CreateInvitation<
   Invitation
 > = async (args, context) => {
   if (!context.user) {
+    console.log(`[ORGS] Unauthorized attempt to create invitation for org ${args.organizationId}`);
     throw new HttpError(401, "Not authorized");
   }
 
@@ -175,6 +182,7 @@ export const createInvitation: CreateInvitation<
   });
 
   if (!organization || organization.users.length === 0) {
+    console.log(`[ORGS] Non-owner user ${context.user.id} attempted to create invitation for org ${args.organizationId}`);
     throw new HttpError(
       403,
       "Not authorized to invite users to this organization",
@@ -197,6 +205,7 @@ export const createInvitation: CreateInvitation<
       existingUser?.organizations?.length &&
       existingUser.organizations.length > 0
     ) {
+      console.log(`[ORGS] Attempted to invite existing member ${args.email} to org ${args.organizationId}`);
       throw new HttpError(400, "User is already a member of this organization");
     }
 
@@ -210,9 +219,12 @@ export const createInvitation: CreateInvitation<
     });
 
     if (existingInvitation) {
+      console.log(`[ORGS] Attempted to create duplicate invitation for ${args.email} in org ${args.organizationId}`);
       throw new HttpError(400, "Invitation already exists for this email");
     }
   }
+
+  console.log(`[ORGS] Creating invitation for ${args.email} with role ${args.role} in org ${args.organizationId}`);
 
   const existingUser = await context.entities.User.findUnique({
     where: { email: args.email },
@@ -280,14 +292,17 @@ export const acceptInvitation: AcceptInvitation<
   });
 
   if (!invitation) {
+    console.log(`[ORGS] Attempted to accept invalid invitation token: ${args.token}`);
     throw new HttpError(404, "Invitation not found");
   }
 
   if (invitation.status !== "PENDING") {
+    console.log(`[ORGS] Attempted to accept ${invitation.status} invitation: ${args.token}`);
     throw new HttpError(400, "Invitation is no longer valid");
   }
 
   if (invitation.expiresAt < new Date()) {
+    console.log(`[ORGS] Attempted to accept expired invitation: ${args.token}`);
     await context.entities.Invitation.update({
       where: { id: invitation.id },
       data: { status: "EXPIRED" },
@@ -295,7 +310,7 @@ export const acceptInvitation: AcceptInvitation<
     throw new HttpError(400, "Invitation has expired");
   }
 
-  console.log("invitation user", invitation.user);
+  console.log(`[ORGS] Accepting invitation ${invitation.id} for org ${invitation.organizationId}`);
 
   const invitationAuthId = invitation.user?.auth?.id;
   if (!invitation.userId || !invitationAuthId) {
@@ -330,11 +345,12 @@ export const acceptInvitation: AcceptInvitation<
   };
 };
 
-export const listInvitations = async (
-  args: ListInvitationsInput,
-  context,
-): Promise<Invitation[]> => {
+export const listInvitations: ListInvitations<
+  ListInvitationsInput,
+  Invitation[]
+> = async (args, context) => {
   if (!context.user) {
+    console.log(`[ORGS] Unauthorized attempt to list invitations for org ${args.organizationId}`);
     throw new HttpError(401, "Not authorized");
   }
 
@@ -348,6 +364,7 @@ export const listInvitations = async (
   });
 
   if (!organization || organization.users.length === 0) {
+    console.log(`[ORGS] User ${context.user.id} attempted to view invitations for unauthorized org ${args.organizationId}`);
     throw new HttpError(
       403,
       "Not authorized to view invitations for this organization",
@@ -368,6 +385,7 @@ export const cancelInvitation: CancelInvitation<
   Invitation
 > = async (args, context) => {
   if (!context.user) {
+    console.log(`[ORGS] Unauthorized attempt to cancel invitation ${args.invitationId}`);
     throw new HttpError(401, "Not authorized");
   }
 
@@ -381,6 +399,7 @@ export const cancelInvitation: CancelInvitation<
   });
 
   if (!organization || organization.users.length === 0) {
+    console.log(`[ORGS] Non-owner user ${context.user.id} attempted to cancel invitation ${args.invitationId}`);
     throw new HttpError(
       403,
       "Not authorized to cancel invitations for this organization",
@@ -392,36 +411,43 @@ export const cancelInvitation: CancelInvitation<
   });
 
   if (!invitation || invitation.organizationId !== args.organizationId) {
+    console.log(`[ORGS] Invalid invitation cancellation attempt: ${args.invitationId} for org ${args.organizationId}`);
     throw new HttpError(404, "Invitation not found");
   }
 
+  console.log(`[ORGS] Cancelling invitation ${args.invitationId} in org ${args.organizationId}`);
   return context.entities.Invitation.update({
     where: { id: args.invitationId },
     data: { status: "CANCELLED" },
   });
 };
 
-export const updateMemberRole: UpdateMemberRole = async (
-  args: UpdateMemberRoleInput,
-  context,
-) => {
+export const updateMemberRole: UpdateMemberRole<
+  UpdateMemberRoleInput,
+  OrganizationUser
+> = async (args, context) => {
   if (!context.user) {
+    console.log(`[ORGS] Unauthorized attempt to update member role in org ${args.organizationId}`);
     throw new HttpError(401, "Not authorized");
   }
 
-  // Check if current user is an owner
-  const organization = await context.entities.Organization.findUnique({
-    where: { id: args.organizationId },
-    include: {
-      users: {
-        where: { userId: context.user.id, role: "OWNER" },
+  // Verify the current user is an owner
+  const currentUserOrganization = await context.entities.OrganizationUser.findFirst(
+    {
+      where: {
+        userId: context.user.id,
+        organizationId: args.organizationId,
+        role: "OWNER",
       },
     },
-  });
+  );
 
-  if (!organization || organization.users.length === 0) {
-    throw new HttpError(403, "Not authorized to update member roles");
+  if (!currentUserOrganization) {
+    console.log(`[ORGS] Non-owner user ${context.user.id} attempted to update roles in org ${args.organizationId}`);
+    throw new HttpError(403, "Only owners can update member roles");
   }
+
+  console.log(`[ORGS] Updating role for user ${args.userId} to ${args.role} in org ${args.organizationId}`);
 
   // Check if target user exists in organization
   const targetMembership = await context.entities.OrganizationUser.findFirst({
@@ -459,10 +485,15 @@ export const updateMemberRole: UpdateMemberRole = async (
   });
 };
 
-export const getInvitationDetails = async (
-  args: GetInvitationDetailsInput,
-  context: any,
-) => {
+export const getInvitationDetails: GetInvitationDetails<
+  GetInvitationDetailsInput,
+  {
+    organizationName: string;
+    inviterName: string | null;
+    role: string;
+    email: string;
+  }
+> = async (args, context) => {
   const invitation = await context.entities.Invitation.findUnique({
     where: { token: args.token },
     include: {
@@ -500,8 +531,11 @@ export const createOrganization: CreateOrganization<
   Organization
 > = async (args, context) => {
   if (!context.user) {
+    console.log(`[ORGS] Unauthorized attempt to create organization`);
     throw new HttpError(401, "Not authorized");
   }
+
+  console.log(`[ORGS] Creating new organization "${args.name}" of type ${args.type} for user ${context.user.id}`);
 
   // Create the organization
   const organization = await context.entities.Organization.create({
@@ -533,6 +567,7 @@ export const updateOnboardingState: UpdateOnboardingState<
   OnboardingState
 > = async (args, context) => {
   if (!context.user) {
+    console.log(`[ORGS] Unauthorized attempt to update onboarding state for org ${args.organizationId}`);
     throw new HttpError(401, "Not authorized");
   }
 
@@ -545,6 +580,7 @@ export const updateOnboardingState: UpdateOnboardingState<
   });
 
   if (!membership) {
+    console.log(`[ORGS] User ${context.user.id} attempted to update onboarding state for unauthorized org ${args.organizationId}`);
     throw new HttpError(
       403,
       "Not authorized to update this organization's onboarding state",
@@ -557,6 +593,7 @@ export const updateOnboardingState: UpdateOnboardingState<
   });
 
   if (!onboardingState) {
+    console.log(`[ORGS] Creating initial onboarding state for org ${args.organizationId}`);
     onboardingState = await context.entities.OnboardingState.create({
       data: {
         organizationId: args.organizationId,
@@ -564,6 +601,7 @@ export const updateOnboardingState: UpdateOnboardingState<
     });
   }
 
+  console.log(`[ORGS] Updating onboarding state for org ${args.organizationId}: ${JSON.stringify(args.updates)}`);
   // Update onboarding state
   return context.entities.OnboardingState.update({
     where: { organizationId: args.organizationId },
@@ -571,7 +609,13 @@ export const updateOnboardingState: UpdateOnboardingState<
   });
 };
 
-export const getUserOrganizationRole = async (_args: void, context: any) => {
+export const getUserOrganizationRole: GetUserOrganizationRole<
+  void,
+  {
+    role: string;
+    organizationId: string;
+  } | null
+> = async (_args, context) => {
   if (!context.user) {
     throw new HttpError(403);
   }

@@ -38,8 +38,16 @@ export const exportCalendar: ExportCalendar<
   });
 
   if (!venue) {
+    console.log(`[CALENDAR] Venue not found for calendar export: ${venueId}`);
     throw new HttpError(404, "Venue not found");
   }
+
+  // Count total events to be exported
+  const totalEvents = venue.spaces.reduce(
+    (sum, space) => sum + space.reservations.length,
+    0
+  );
+  console.log(`[CALENDAR] Exporting ${totalEvents} events for venue ${venueId}`);
 
   // Convert reservations to ICS events
   const events: EventAttributes[] = venue.spaces.flatMap(
@@ -71,8 +79,11 @@ export const exportCalendar: ExportCalendar<
   const { error, value } = createEvents(events);
 
   if (error || !value) {
+    console.log(`[CALENDAR] Failed to generate calendar for venue ${venueId}:`, error);
     throw new HttpError(500, "Failed to generate calendar");
   }
+
+  console.log(`[CALENDAR] Successfully generated calendar for venue ${venueId} with ${events.length} events`);
 
   // Set response headers for file download
   res.setHeader("Content-Type", "text/calendar");

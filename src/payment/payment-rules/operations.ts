@@ -105,6 +105,7 @@ export const updatePaymentRules: UpdatePaymentRules<
   void
 > = async ({ venueId, rules }, context) => {
   if (!context.user) {
+    console.log(`[PAYMENT_RULES] Unauthorized attempt to update rules for venue ${venueId}`);
     throw new HttpError(401, "Not authenticated");
   }
 
@@ -124,6 +125,7 @@ export const updatePaymentRules: UpdatePaymentRules<
   });
 
   if (!venue) {
+    console.log(`[PAYMENT_RULES] Non-owner user ${context.user.id} attempted to update rules for venue ${venueId}`);
     throw new HttpError(
       403,
       "Not authorized to update payment rules for this venue",
@@ -131,6 +133,7 @@ export const updatePaymentRules: UpdatePaymentRules<
   }
 
   try {
+    console.log(`[PAYMENT_RULES] Validating ${rules.length} rules for venue ${venueId}`);
     // Validate rules before making any changes
     validatePaymentRules(rules);
 
@@ -147,12 +150,12 @@ export const updatePaymentRules: UpdatePaymentRules<
     const rulesToDelete = existingRules.filter(
       (rule) => !newRuleIds.has(rule.id),
     );
-
-    // Separate rules into updates and creates
     const rulesToUpdate = rules.filter(
       (rule) => rule.id && existingRuleIds.has(rule.id),
     );
     const rulesToCreate = rules.filter((rule) => !rule.id);
+
+    console.log(`[PAYMENT_RULES] Venue ${venueId}: Deleting ${rulesToDelete.length}, Updating ${rulesToUpdate.length}, Creating ${rulesToCreate.length} rules`);
 
     // Start a transaction to ensure all operations succeed or fail together
     // Delete rules that are no longer needed
@@ -168,6 +171,7 @@ export const updatePaymentRules: UpdatePaymentRules<
 
     // Update existing rules
     for (const rule of rulesToUpdate) {
+      console.log(`[PAYMENT_RULES] Updating rule ${rule.id} (type: ${rule.ruleType}, priority: ${rule.priority})`);
       await context.entities.PaymentRule.update({
         where: { id: rule.id },
         data: {
@@ -193,6 +197,7 @@ export const updatePaymentRules: UpdatePaymentRules<
 
     // Create new rules
     for (const rule of rulesToCreate) {
+      console.log(`[PAYMENT_RULES] Creating new rule (type: ${rule.ruleType}, priority: ${rule.priority})`);
       await context.entities.PaymentRule.create({
         data: {
           venueId,
@@ -215,7 +220,7 @@ export const updatePaymentRules: UpdatePaymentRules<
       });
     }
   } catch (error) {
-    console.error("Error updating payment rules:", error);
+    console.log(`[PAYMENT_RULES] Error updating rules for venue ${venueId}:`, error);
     throw new HttpError(
       400,
       error instanceof Error ? error.message : "Failed to update payment rules",
@@ -228,6 +233,7 @@ export const getVenuePaymentRules: GetVenuePaymentRules<
   WireSafePaymentRule[]
 > = async ({ venueId }, context) => {
   if (!context.user) {
+    console.log(`[PAYMENT_RULES] Unauthorized attempt to view rules for venue ${venueId}`);
     throw new HttpError(401, "Not authenticated");
   }
 
@@ -245,11 +251,14 @@ export const getVenuePaymentRules: GetVenuePaymentRules<
   });
 
   if (!venue) {
+    console.log(`[PAYMENT_RULES] User ${context.user.id} attempted to view rules for unauthorized venue ${venueId}`);
     throw new HttpError(
       403,
       "Not authorized to view payment rules for this venue",
     );
   }
+
+  console.log(`[PAYMENT_RULES] Fetching rules for venue ${venueId}`);
 
   const paymentRules = await context.entities.PaymentRule.findMany({
     where: { venueId },

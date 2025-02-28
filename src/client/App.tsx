@@ -13,6 +13,12 @@ import { AuthUser } from "wasp/auth";
 import { useCalendarRedirect } from "./hooks/use-calendar-redirect";
 import { AuthUserProvider } from "../auth/providers/AuthUserProvider";
 
+// At the top of your main entry file (e.g., index.tsx)
+if (typeof window !== 'undefined' && !window.process) {
+  // @ts-expect-error - This is a workaround to fix the error
+  window.process = { env: {} };
+}
+
 LogRocket.init("myj73s/blockspot");
 
 function useLogRocket(user?: AuthUser) {
