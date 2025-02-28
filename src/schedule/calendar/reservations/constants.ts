@@ -36,8 +36,6 @@ function getEffectiveColumnCount(numSpaces: number, containerWidth: number): num
 export function getGridTemplateColumns(numSpaces: number): string {
   const containerWidth = window.innerWidth - TIMEZONE_SLOT_OFFSET;
   const effectiveColumns = getEffectiveColumnCount(numSpaces, containerWidth);
-  // When a single column is used, we want it to fill the container.
-  if (effectiveColumns === 1) return "1fr";
 
   // Each column gets an equal fraction of the container width.
   const slotWidth = containerWidth / effectiveColumns;
