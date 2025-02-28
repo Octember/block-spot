@@ -22,7 +22,7 @@ export const CalendarHeader: FC = () => {
   return (
     <header
       className={cn(
-        "inset-x-0 top-0 left-0 right-0 z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max w-full ",
+        "inset-x-0 top-0 left-0  z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max",
       )}
     >
       <div className="flex flex-row justify-between items-center bg-cyan-800/40">
@@ -49,7 +49,7 @@ export const CalendarHeader: FC = () => {
           <DateSelectButton />
         </div>
 
-        <div className="flex flex-row items-center">
+        <div className="hidden md:flex flex-row items-center ">
           <ScrollToSpaceButtons />
         </div>
       </div>

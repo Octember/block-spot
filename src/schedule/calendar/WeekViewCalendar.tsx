@@ -9,43 +9,47 @@ import { PendingChangesProvider } from "./providers/pending-changes-provider";
 import { ScheduleProvider } from "./providers/schedule-context-provider";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
+import { FloatingButtons } from './header/scroll/scroll-to-space-buttons';
 
 export const WeekViewCalendar: FC = () => {
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
   const widthClass = isTimeZoneDifferent ? "w-24" : "w-14";
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* 1) The header is sticky at the top */}
-      <CalendarHeader />
+    <ScheduleProvider>
+      <PendingChangesProvider>
+        <SelectionProvider>
+          <div className="flex flex-col min-h-screen bg-white">
+            {/* 1) The header is sticky at the top */}
+            <CalendarHeader />
 
-      <div className={`relative overflow-x-auto flex-1`}>
-        <SpacesNamesSection />
+            <div className={`relative overflow-x-auto flex-1`}>
+              <SpacesNamesSection />
 
-        <div className="relative flex flex-auto flex-col bg-white">
-          <div className="flex min-w-max w-full flex-none flex-col">
-            <div className="flex flex-auto">
-              <div
-                className={`sticky left-0 z-40 ${widthClass} flex-none ring-1 ring-gray-100 bg-white`}
-              />
-              <div className="grid flex-auto grid-cols-1 grid-rows-1">
-                <ScheduleProvider>
-                  <PendingChangesProvider>
-                    <SelectionProvider>
+              <div className="relative flex flex-auto flex-col bg-white">
+                <div className="flex min-w-max w-full flex-none flex-col">
+                  <div className="flex flex-auto">
+                    <div
+                      className={`sticky left-0 z-40 ${widthClass} flex-none ring-1 ring-gray-100 bg-white`}
+                    />
+                    <div className="grid flex-auto grid-cols-1 grid-rows-1">
                       <VerticalDividers />
                       <HorizontalDividers />
                       <AvailabilitySection />
                       <ReservationsSection />
                       <GridSelection />
                       <PendingChangesSection />
-                    </SelectionProvider>
-                  </PendingChangesProvider>
-                </ScheduleProvider>
+                      <FloatingButtons />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </SelectionProvider>
+      </PendingChangesProvider>
+    </ScheduleProvider>
   );
 };
+
+
