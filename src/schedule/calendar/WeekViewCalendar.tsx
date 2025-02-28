@@ -23,7 +23,7 @@ export const WeekViewCalendar: FC = () => {
             {/* 1) The header is sticky at the top */}
             <CalendarHeader />
 
-            <div className={`relative overflow-x-auto flex-1`}>
+            <div className={`relative overflow-x-auto snap-x flex-1`}>
               <SpacesNamesSection />
 
               <div className="relative flex flex-auto flex-col bg-white">
