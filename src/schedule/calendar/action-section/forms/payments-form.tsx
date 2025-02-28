@@ -11,7 +11,6 @@ import { Organization } from "wasp/entities";
 import { LoadingSpinnerSmall } from "../../../../admin/layout/LoadingSpinner";
 import { getConnectedStripePromise } from "../../../../payment/stripe/stripe-react";
 import { useParams } from "react-router-dom";
-import { HttpError } from "wasp/server";
 
 export const useCheckoutSession = () => {
   const [checkoutSession, setCheckoutSession] = useState<{
@@ -46,7 +45,6 @@ export const StripeWrapper: FC<{
   organization?: Organization;
 }> = ({ children, organization }) => {
   const { venueId } = useParams<{ venueId: string }>();
-  const [refundMessage, setRefundMessage] = useState<string | null>();
   const { clientSecret, checkoutSessionId } = useCheckoutSession();
 
   const stripePromise = useMemo(() => {
@@ -74,20 +72,21 @@ export const StripeWrapper: FC<{
           }
 
           try {
-            await confirmPaidBooking({ checkoutSessionId, venueId: venueId ?? "" });
-            console.log("Payment confirmed!");
+            const updatedReservation = await confirmPaidBooking({
+              checkoutSessionId,
+              venueId: venueId ?? "",
+            });
+            console.log("Payment confirmed:", updatedReservation);
+            // You can add UI feedback here, like showing a success message
+            // or redirecting to a confirmation page
           } catch (error) {
-            if (error instanceof HttpError && error.message.includes("Refund issued")) {
-              setRefundMessage("Sorry, the slot was taken before your payment completed. You have been refunded.");
-            } else {
-              console.error("Failed to confirm payment:", error);
-            }
+            console.error("Failed to confirm payment:", error);
+            // Handle the error appropriately in the UI
           }
-        }
+        },
       }}
     >
       {children}
-      {refundMessage && <p className="text-red-500 text-xl font-bold mt-4">{refundMessage}</p>}
-    </EmbeddedCheckoutProvider >
+    </EmbeddedCheckoutProvider>
   );
 };

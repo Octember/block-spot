@@ -98,10 +98,15 @@ export function runPaymentRules(
   return { requiresPayment, totalCost };
 }
 
-// export async function checkIfPaymentRequired(
-//   space: Space & { venue: Venue & { paymentRules: PaymentRule[] } },
-//   startTime: Date,
-//   endTime: Date,
-// ): Promise<{ requiresPayment: boolean; totalCost: number }> {
-
-// }
+export async function checkIfPaymentRequired(
+  space: Space & { venue: Venue & { paymentRules: PaymentRule[] } },
+  startTime: Date,
+  endTime: Date,
+): Promise<{ requiresPayment: boolean; totalCost: number }> {
+  return runPaymentRules(
+    space.venue.paymentRules,
+    startTime,
+    endTime,
+    space.id,
+  );
+}

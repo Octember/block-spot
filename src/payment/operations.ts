@@ -199,21 +199,9 @@ export const confirmPaidBooking: ConfirmPaidBooking<
     },
   });
 
-  if (isSlotTaken) {
-    try {
-      const refund = await stripe.refunds.create({
-        charge: session.payment_intent as string, // Stripe charge ID
-      });
+  if (isSlotTaken) throw new HttpError(400, "Time slot was booked by someone else");
 
-      console.log(`[PAYMENTS] Refund successful: ${refund.id} for session ${checkoutSessionId}`);
-
-      throw new HttpError(409, "Slot was taken before payment completed. Refund issued.");
-    } catch (refundError) {
-      console.error("Refund failed:", refundError);
-      throw new HttpError(500, "Payment failed and refund could not be processed.");
-    }
-  }
-
+  // Create reservation (atomic)
   const reservation = await context.entities.Reservation.create({
     data: {
       userId,
@@ -224,13 +212,33 @@ export const confirmPaidBooking: ConfirmPaidBooking<
     },
   });
 
-  await context.entities.Payment.create({
-    data: {
+
+  console.log("Updating payment:", reservation.id, checkoutSessionId);
+
+  // Create payment record for tracking
+  await context.entities.Payment.update({
+    where: {
       reservationId: reservation.id,
+    },
+    data: {
       stripeCheckoutSessionId: checkoutSessionId,
     },
   });
-  console.log(`[PAYMENTS] Confirmed paid booking: ${reservation.id}`);
+
+  // Get the reservation associated with this checkout session
+  // const reservation = await context.entities.Reservation.findFirst({
+  //   where: {
+  //     payment: {
+  //       stripeCheckoutSessionId: checkoutSessionId,
+  //     },
+  //   },
+  //   include: {
+  //     payment: true,
+  //   },
+  // });
+
+  console.log(`Found stripe session: } Status=${session.status}`);
+  // based on this... create the res
 
   return undefined;
 };
