@@ -31,7 +31,7 @@ export const CalendarHeader: FC = () => {
             <BackToDashboardButton />
           </div>
 
-          <div className="hidden md:block">
+          <div className="hidden sm:block">
             <ButtonGroup
               items={[
                 {

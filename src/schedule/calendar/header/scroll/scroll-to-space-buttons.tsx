@@ -10,7 +10,7 @@ function isElementInViewport(element: HTMLElement) {
     rect.top >= 0 &&
     rect.left >= 0 &&
     rect.bottom <=
-      (window.innerHeight || document.documentElement.clientHeight) &&
+    (window.innerHeight || document.documentElement.clientHeight) &&
     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
 }
@@ -64,7 +64,7 @@ export const ScrollToSpaceButtons: FC = () => {
   const { venue } = useVenueContext();
 
   return (
-    <div className="flex px-4 py-2 gap-2 items-center">
+    <div className="flex pr-4 py-2 gap-2 items-center">
       <div className="px-2 font-bold hidden md:block">Spaces</div>
 
       <Select
@@ -79,7 +79,7 @@ export const ScrollToSpaceButtons: FC = () => {
           scrollToSpace(index);
         }}
         value={undefined}
-        placeholder="Jump to space..."
+        placeholder="View space..."
       />
 
       <ButtonGroup
