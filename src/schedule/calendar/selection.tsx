@@ -170,36 +170,36 @@ export const GridSelection: React.FC = () => {
     if (selection.gridArea && selection.isSelecting) {
       const { rowStart, rowEnd, colStart } = selection.gridArea;
 
-      const actualEnd = rowEnd - rowStart >= 2 ? rowEnd : rowStart + 2;
+      const actualEnd = rowEnd - rowStart >= 1 ? rowEnd : rowStart + 1;
 
       // Check if any row in the selection is unavailable
-      const isSelectionValid = Array.from(
-        { length: actualEnd - rowStart },
-        (_, i) => actualEnd + i,
-      ).every((row) => isTimeAvailable(row, colStart - 1));
+      // const isSelectionValid = Array.from(
+      //   { length: actualEnd - rowStart },
+      //   (_, i) => actualEnd + i,
+      // ).every((row) => isTimeAvailable(row, colStart - 1));
 
-      if (isSelectionValid) {
-        const start = getTimeFromRowIndex(venue, rowStart, selectedDate);
-        const end = getTimeFromRowIndex(venue, actualEnd, selectedDate);
+      // if (isSelectionValid) {
+      const start = getTimeFromRowIndex(venue, rowStart, selectedDate);
+      const end = getTimeFromRowIndex(venue, actualEnd, selectedDate);
 
-        setPendingChange({
-          type: "CREATE",
-          newState: {
-            id: "draft",
-            spaceId: venue.spaces[colStart - 1].id,
-            startTime: start,
-            endTime: end,
-            status: "PENDING",
-            userId: "",
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            description: null,
-            createdById: user?.id || "",
-            user,
-          },
-        });
-      }
+      setPendingChange({
+        type: "CREATE",
+        newState: {
+          id: "draft",
+          spaceId: venue.spaces[colStart - 1].id,
+          startTime: start,
+          endTime: end,
+          status: "PENDING",
+          userId: "",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          description: null,
+          createdById: user?.id || "",
+          user,
+        },
+      });
     }
+    // }
     handleMouseUp();
   };
 

@@ -446,6 +446,11 @@ query getReservationPrice {
   fn: import { getReservationPrice } from "@src/payment/payment-rules/calculate-price.js",
   entities: [PaymentRule, Venue, Reservation, Space]
 }
+
+query runPaymentRules {
+  fn: import { runPaymentRules } from "@src/payment/payment-rules/calculate-price.js",
+  entities: [PaymentRule, Venue, Space]
+}
 //#endregion
 
 //#region File Upload

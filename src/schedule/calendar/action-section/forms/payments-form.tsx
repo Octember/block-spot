@@ -11,9 +11,11 @@ import { Organization } from "wasp/entities";
 import { LoadingSpinnerSmall } from "../../../../admin/layout/LoadingSpinner";
 import { getConnectedStripePromise } from "../../../../payment/stripe/stripe-react";
 import { useParams } from "react-router-dom";
-import { HttpError } from "wasp/server";
+import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 
-export const useCheckoutSession = () => {
+export const useCheckoutSession = (spaceId: string) => {
+  const { user } = useAuthUser();
+
   const [checkoutSession, setCheckoutSession] = useState<{
     clientSecret: string;
     checkoutSessionId: string;
@@ -21,8 +23,8 @@ export const useCheckoutSession = () => {
 
   useEffect(() => {
     createConnectCheckoutSession({
-      userId: "1",
-      spaceId: "1",
+      userId: user?.id ?? "",
+      spaceId: spaceId,
       startTime: new Date(),
       endTime: new Date(),
     }).then(
@@ -44,10 +46,11 @@ export const StripeCheckoutForm = () => {
 export const StripeWrapper: FC<{
   children: React.ReactNode;
   organization?: Organization;
-}> = ({ children, organization }) => {
+  spaceId: string;
+}> = ({ children, organization, spaceId }) => {
   const { venueId } = useParams<{ venueId: string }>();
   const [refundMessage, setRefundMessage] = useState<string | null>();
-  const { clientSecret, checkoutSessionId } = useCheckoutSession();
+  const { clientSecret, checkoutSessionId } = useCheckoutSession(spaceId);
 
   const stripePromise = useMemo(() => {
     if (!organization?.stripeAccountId) {

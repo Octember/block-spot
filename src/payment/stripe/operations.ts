@@ -96,7 +96,7 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
 CreateConnectCheckoutSessionResult
 > = async ({ userId, spaceId, startTime, endTime }, context) => {
   if (!context.user) {
-    console.log(`[STRIPE] Unauthorized attempt to create checkout session for space ${spaceId}`);
+    console.warn(`[STRIPE] Unauthorized attempt to create checkout session for space ${spaceId}`);
     throw new HttpError(401);
   }
 
@@ -104,8 +104,9 @@ CreateConnectCheckoutSessionResult
     where: { id: spaceId },
     include: { venue: { include: { paymentRules: true } } },
   });
+
   if (!space) {
-    console.log(`[STRIPE] Space not found: ${spaceId}`);
+    console.warn(`[STRIPE] Space not found: ${spaceId}`);
     throw new HttpError(404, "Space not found");
   }
 
@@ -142,12 +143,12 @@ CreateConnectCheckoutSessionResult
   );
 
   if (!organization.stripeAccountId) {
-    console.log(`[STRIPE] Organization ${organization.id} attempted checkout without Stripe account`);
+    console.warn(`[STRIPE] Organization ${organization.id} attempted checkout without Stripe account`);
     throw new HttpError(400, "Organization does not have a Stripe account");
   }
 
   if (!requiresPayment) {
-    console.log(`[STRIPE] Attempted to create checkout for non-paid reservation: space ${spaceId}`);
+    console.warn(`[STRIPE] Attempted to create checkout for non-paid reservation`);
     throw new HttpError(400, "This reservation does not require payment");
   }
 

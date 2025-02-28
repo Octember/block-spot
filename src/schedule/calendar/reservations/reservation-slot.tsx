@@ -37,9 +37,11 @@ const ReservationDescription = ({
   endTime: Date;
 }) => {
   const { venue } = useVenueContext();
+  const numSlots = useMemo(() => getReservationDurationInSlots(reservation), [reservation]);
+
 
   const timeSection = useMemo(() => {
-    if (getReservationDurationInSlots(reservation) < 2) {
+    if (numSlots < 2) {
       return null;
     }
 
@@ -65,26 +67,20 @@ const ReservationDescription = ({
     );
   }, [reservation.description]);
 
-  // if (!reservation.description) {
-  //   return timeSection;
-  // }
-
-  // if (getReservationDurationInSlots(reservation) <= 2) {
-  //   return titleSection;
-  // }
 
   const sectionsToRender = useMemo(
     () =>
       [titleSection, timeSection]
         .filter(Boolean)
-        .slice(0, getReservationDurationInSlots(reservation) / 2),
-    [titleSection, timeSection, reservation],
+        .slice(0, numSlots / 2),
+    [titleSection, timeSection, reservation, numSlots],
   );
 
   return (
     <div className="flex flex-row gap-2">
+
       <div className="pt-1">
-        <LuUserCircle className="size-3" />
+        {numSlots > 1 && <LuUserCircle className="size-3" />}
       </div>
       <div className="flex flex-col text-gray-700">
         {sectionsToRender.map((section, index) => (
@@ -108,6 +104,8 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     }
     return props.reservation.userId === user?.id;
   }, [isOwner, isDraft, props.reservation.userId, user?.id]);
+
+  const numSlots = useMemo(() => getReservationDurationInSlots(reservation), [reservation]);
 
   const {
     selection: { isSelecting },
@@ -171,11 +169,20 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     };
   }, [reservation, isDragging, transform]);
 
-  // const firstDisplay = reservation.description ? getReservationDurationInSlots(reservation) >= 2 : true;
+
+  const marginStyles = useMemo(() => {
+    if (numSlots < 2) {
+      return "mx-2 my-0";
+    }
+    if (numSlots < 3) {
+      return "mx-2 my-0.5";
+    }
+    return "mx-2 my-1";
+  }, [numSlots]);
 
   return (
     <li
-      className={`relative flex ${isDragging ? "z-50" : "z-20"} select-none bg-white rounded-lg my-1 mx-2`}
+      className={`relative flex ${isDragging ? "z-50" : "z-20"} select-none bg-white rounded-lg ${marginStyles}`}
       style={{
         gridRow: `${startRow} / span ${rowSpan}`,
         gridColumnStart: gridIndex + 1,
@@ -184,6 +191,13 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
           : undefined,
       }}
       ref={setNodeRef}
+      onClick={canEdit ? () => {
+        setPendingChange({
+          type: "UPDATE",
+          newState: reservation,
+          oldState: reservation,
+        });
+      } : undefined}
       {...attributes}
       {...listeners}
     >
@@ -198,17 +212,19 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
               endTime={newTimes.endTime}
             />
 
-            <ReservationMenu
-              onEdit={() =>
-                setPendingChange({
-                  type: "UPDATE",
-                  newState: reservation,
-                  oldState: reservation,
-                })
-              }
-              onDelete={props.onDelete}
-              canEdit={canEdit}
-            />
+            {numSlots >= 2 && (
+              <ReservationMenu
+                onEdit={() =>
+                  setPendingChange({
+                    type: "UPDATE",
+                    newState: reservation,
+                    oldState: reservation,
+                  })
+                }
+                onDelete={props.onDelete}
+                canEdit={canEdit}
+              />
+            )}
           </div>
         </div>
       </a>

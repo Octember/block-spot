@@ -9,6 +9,7 @@ export type WizardProps = {
   onSubmit: () => void;
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
   steps: WizardStepType[];
+  showStepsCount?: boolean;
   isSubmitting: boolean;
 };
 
@@ -25,6 +26,7 @@ export const Wizard: FC<WizardProps> = ({
   onSubmit,
   isSubmitting,
   steps,
+  showStepsCount,
 }) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
 
@@ -91,11 +93,11 @@ export const Wizard: FC<WizardProps> = ({
       heading={{
         title: steps[currentStep].title,
         description: steps[currentStep].description,
-        right: (
+        right: showStepsCount ? (
           <div className="flex flex-col justify-start space-x-2">
             <ProgressBar currentStep={currentStep} numSteps={steps.length} />
           </div>
-        ),
+        ) : null,
       }}
       footer={<ActionSection />}
     >

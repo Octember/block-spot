@@ -1,12 +1,19 @@
 "use client";
 
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
-import { ReactNode } from "react";
+import { FC, ReactNode } from "react";
+
+type ModalAlert = {
+  title: string;
+  description: string;
+  type: "info" | "warning" | "error";
+};
 
 type ModalHeading = {
   title: string;
   description?: string;
   right?: ReactNode;
+  alerts?: ModalAlert[];
 };
 
 export function Modal({
@@ -59,17 +66,7 @@ export function Modal({
               data-[state=leave]:duration-200`}
           >
             {heading && (
-              <div className="border-b border-gray-200 py-4 px-6 flex flex-row justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold">{heading.title}</h2>
-                  {heading?.description && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      {heading.description}
-                    </p>
-                  )}
-                </div>
-                {heading.right}
-              </div>
+              <ModalHeader heading={heading} />
             )}
             <div className="py-4 px-6">{children}</div>
             {footer}
@@ -79,3 +76,30 @@ export function Modal({
     </Dialog>
   );
 }
+
+
+const ModalHeader: FC<{ heading: ModalHeading }> = ({ heading }) => {
+  return (
+    <div className="flex flex-col gap-y-2">
+      <div className="border-b border-gray-200 py-4 px-6 flex flex-row justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">{heading.title}</h2>
+          {heading?.description && (
+            <p className="text-sm text-gray-600 mt-1">
+              {heading.description}
+            </p>
+          )}
+        </div>
+        {heading.right}
+      </div>
+
+      {heading.alerts?.map((alert) => (
+        <div key={alert.title} className="py-4 px-6">
+          <div className="bg-blue-500 text-white p-4 rounded-lg">
+            <h3 className="text-lg font-semibold">{alert.title}</h3>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
