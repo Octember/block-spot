@@ -27,7 +27,9 @@ export const CalendarHeader: FC = () => {
     >
       <div className="flex flex-row justify-between items-center bg-cyan-800/40">
         <div className="flex px-4 py-2 gap-2 items-center">
-          <BackToDashboardButton />
+          <div className="hidden md:block">
+            <BackToDashboardButton />
+          </div>
 
           <div className="hidden md:block">
             <ButtonGroup

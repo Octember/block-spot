@@ -20,9 +20,10 @@ export const SpacesNamesSection: FC = () => {
     >
       <div className="z-30 flex-none bg-white shadow-4 sm:pr-8">
         <div
-          className="-mr-px grid divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500"
+          className="grid grid-flow-col divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500"
           style={{
             gridTemplateColumns: getGridTemplateColumns(venue.spaces.length),
+            gridTemplateRows: "1fr",
           }}
         >
           <TimeZoneLabel />
