@@ -197,6 +197,8 @@ export const createReservation: CreateReservation<
     space.id,
   );
 
+  console.log(`[SCHEDULE] Creating reservation with payment required: ${requiresPayment}`);
+
   const reservation = await context.entities.Reservation.create({
     data: {
       userId: args.userId || context.user.id,
@@ -207,15 +209,7 @@ export const createReservation: CreateReservation<
       description: args.description,
     },
   });
-
-  if (requiresPayment) {
-    await context.entities.Payment.create({
-      data: {
-        reservationId: reservation.id,
-        stripeCheckoutSessionId: null, // Will be filled in after Stripe session is created
-      },
-    });
-  }
+  console.log(`[SCHEDULE] Total cost: ${totalCost}, reservation: ${reservation.id}`);
 
   return reservation;
 };

@@ -163,15 +163,15 @@ CreateConnectCheckoutSessionResult
     },
   );
 
-  context.entities.Payment.update({
-    where: {
-      reservationId: reservation.id,
-    },
-    data: {
-      stripeCheckoutSessionId: session.id,
-    },
-  });
-  
+  // context.entities.Payment.update({
+  //   where: {
+  //     reservationId: reservation.id,
+  //   },
+  //   data: {
+  //     stripeCheckoutSessionId: session.id,
+  //   },
+  // });
+
   if (!session.client_secret) {
     throw new Error("Failed to create payment intent");
   }
