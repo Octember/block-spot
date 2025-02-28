@@ -68,18 +68,10 @@ const getMinVisibleSpaceIndex = () => {
   return minIndex;
 };
 
-function scrollToNextSpace() {
-  const maxVisibleSpaceIndex = getMaxVisibleSpaceIndex();
-  scrollToSpace(maxVisibleSpaceIndex + 1);
-}
-
-function scrollToPreviousSpace() {
-  const minVisibleSpaceIndex = getMinVisibleSpaceIndex();
-  scrollToSpace(minVisibleSpaceIndex - 1);
-}
 
 export const ScrollToSpaceButtons: FC = () => {
   const { venue } = useVenueContext();
+  const { scrollToNextSpace, scrollToPreviousSpace } = useScrollToSpaceButtons(venue.spaces.length);
 
   return (
     <div className="flex pr-4 py-2 gap-2 items-center">
@@ -114,12 +106,38 @@ export const ScrollToSpaceButtons: FC = () => {
   );
 };
 
+function useScrollToSpaceButtons(numSpaces: number) {
+  function scrollToNextSpace() {
+    const maxVisibleSpaceIndex = getMaxVisibleSpaceIndex();
+    if (maxVisibleSpaceIndex + 1 < numSpaces) {
+      scrollToSpace(maxVisibleSpaceIndex + 1);
+    } else {
+      scrollToSpace(0);
+    }
+  }
+
+  function scrollToPreviousSpace() {
+    const minVisibleSpaceIndex = getMinVisibleSpaceIndex();
+    if (minVisibleSpaceIndex - 1 < 0) {
+      scrollToSpace(numSpaces - 1);
+    } else {
+      scrollToSpace(minVisibleSpaceIndex - 1);
+    }
+  }
+
+  return {
+    scrollToNextSpace,
+    scrollToPreviousSpace,
+  };
+}
+
 
 export const FloatingButtons: FC = () => {
   const { setPendingChange } = usePendingChanges();
   const { user } = useAuthUser();
   const { venue } = useVenueContext();
 
+  const { scrollToNextSpace, scrollToPreviousSpace } = useScrollToSpaceButtons(venue.spaces.length);
   return (
     <div className="block md:hidden relative">
       <div className="fixed bottom-8 right-8 z-99 flex items-center gap-2">
