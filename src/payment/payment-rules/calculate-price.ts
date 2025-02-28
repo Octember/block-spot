@@ -4,7 +4,7 @@ import { HttpError } from "wasp/server";
 import type { GetReservationPrice, RunPaymentRules } from "wasp/server/operations";
 import { stripe } from "../stripe/stripeClient";
 import { WireSafePaymentRule } from "./operations";
-import { runPaymentRules as calculatePaymentRules } from "../../schedule/operations/new-reservations";
+import { runPaymentRules as calculatePaymentRules } from "../../schedule/operations/payment-rules";
 
 type PriceBreakdownItem = {
   reason: string;

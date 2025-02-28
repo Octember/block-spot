@@ -10,7 +10,7 @@ import {
   getUserOrganization,
 } from "./connect/utils";
 import { stripe } from "./stripeClient";
-import { runPaymentRules } from "../../schedule/operations/new-reservations";
+import { runPaymentRules } from "../../schedule/operations/payment-rules";
 
 export const createStripeAccount: CreateStripeAccount = async (
   _args,
