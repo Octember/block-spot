@@ -24,7 +24,8 @@ import {
   UpdateVenueAvailability,
 } from "wasp/server/operations";
 import { getStartOfDay, localToUTC } from "./calendar/date-utils";
-import { getStartEndTime, runPaymentRules } from "./operations/new-reservations";
+import { runPaymentRules } from "./operations/payment-rules";
+import { getStartEndTime } from "./operations/new-reservations";
 
 type GetVenueSchedulePayload = {
   venueId: string;

@@ -3,7 +3,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { createReservation, runPaymentRules, useQuery } from "wasp/client/operations";
 import { Reservation, User } from "wasp/entities";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
-import { Wizard } from "../../../../client/components/wizard";
+import { DefaultWizardActions, Wizard } from "../../../../client/components/wizard";
 import { useToast } from "../../../../client/toast";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
@@ -11,6 +11,7 @@ import { StripeCheckoutForm, StripeWrapper } from "../forms/payments-form";
 import { ReservationForm } from "../forms/reservation-form";
 import { CreateReservationFormInputs } from "./types";
 import { useParams } from "react-router-dom";
+import { Button } from '../../../../client/components/button';
 
 function timeToMinutes(time: Date) {
   return time.getHours() * 60 + time.getMinutes();
@@ -86,12 +87,34 @@ export const CreateReservationWizard: FC<{
 
   const enablePayments = isAdmin && organization?.stripeAccountId && paymentInfo?.requiresPayment;
 
-  const steps = [
+  const steps = (next: () => void, prev: () => void) => [
     {
       title: "Create Reservation",
       description: "Create a new reservation",
       content: (
         <ReservationForm reservation={reservation} onSubmit={() => { }} />
+      ),
+      actions: (
+        <>
+
+          <Button
+            ariaLabel="Cancel"
+            variant="secondary"
+            size="lg"
+            onClick={cancelChange}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            ariaLabel="Next"
+            variant="primary"
+            size="lg"
+            onClick={next}
+          >
+            Next
+          </Button>
+        </>
       ),
     },
     ...(enablePayments
@@ -112,12 +135,10 @@ export const CreateReservationWizard: FC<{
   return (
     <FormProvider {...form}>
       <Wizard
-        steps={steps}
+        wizardSteps={steps}
         size="2xl"
         open={true}
-        isSubmitting={isSubmitting || submitCount > 0}
         onClose={cancelChange}
-        onSubmit={handleSubmit(onSubmit)}
       />
     </FormProvider>
   );

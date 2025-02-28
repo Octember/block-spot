@@ -1,89 +1,44 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useMemo, useState } from "react";
 import { Modal } from "./modal";
 import { Button } from "./button";
-import { ArrowRightCircleIcon } from "@heroicons/react/24/outline";
 
 export type WizardProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
-  steps: WizardStepType[];
+  wizardSteps: (next: () => void, prev: () => void) => WizardStepType[];
   showStepsCount?: boolean;
-  isSubmitting: boolean;
 };
 
 type WizardStepType = {
   title: string;
   description?: string;
   content: ReactNode;
+  actions?: ReactNode;
 };
 
 export const Wizard: FC<WizardProps> = ({
   open,
   onClose,
   size,
-  onSubmit,
-  isSubmitting,
-  steps,
+  wizardSteps,
   showStepsCount,
 }) => {
   const [currentStep, setCurrentStep] = useState<number>(0);
 
   const handleNext = () => {
-    setCurrentStep(currentStep + 1);
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const handlePrevious = () => {
-    setCurrentStep(currentStep - 1);
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
   };
 
-  const ActionSection = () => {
-    return (
-      <div className="flex items-center justify-end space-x-3 m-2">
-        {currentStep === 0 ? (
-          <Button
-            ariaLabel="Cancel"
-            variant="secondary"
-            size="lg"
-            onClick={onClose}
-          >
-            Cancel
-          </Button>
-        ) : (
-          <Button
-            ariaLabel="Previous"
-            variant="secondary"
-            size="lg"
-            onClick={handlePrevious}
-          >
-            Previous
-          </Button>
-        )}
-        {currentStep < steps.length - 1 ? (
-          <Button
-            ariaLabel="Next"
-            variant="primary"
-            size="lg"
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        ) : (
-          <Button
-            ariaLabel="Submit"
-            variant="primary"
-            size="lg"
-            icon={<ArrowRightCircleIcon className="w-6 h-6" />}
-            isLoading={isSubmitting}
-            onClick={onSubmit}
-          >
-            Submit
-          </Button>
-        )}
-      </div>
-    );
-  };
+  const steps = useMemo(() => wizardSteps(handleNext, handlePrevious), [wizardSteps, handleNext, handlePrevious]);
 
   return (
     <Modal
@@ -99,7 +54,11 @@ export const Wizard: FC<WizardProps> = ({
           </div>
         ) : null,
       }}
-      footer={<ActionSection />}
+      footer={
+        <div className="flex items-center justify-end space-x-3 m-2">
+          {steps[currentStep].actions}
+        </div>
+      }
     >
       {steps[currentStep].content}
     </Modal>
@@ -122,6 +81,45 @@ const ProgressBar: FC<{
           style={{ width: `${((currentStep + 1) / numSteps) * 100}%` }}
         ></div>
       </div>
+    </div>
+  );
+};
+
+export const DefaultWizardActions: FC<{
+  next: () => void;
+  prev: () => void;
+  currentStep: number;
+  onClose: () => void;
+}> = ({ next, prev, currentStep, onClose }) => {
+  return (
+    <div className="flex items-center justify-end space-x-3 m-2">
+      {currentStep === 0 ? (
+        <Button
+          ariaLabel="Cancel"
+          variant="secondary"
+          size="lg"
+          onClick={onClose}
+        >
+          Cancel
+        </Button>
+      ) : (
+        <Button
+          ariaLabel="Previous"
+          variant="secondary"
+          size="lg"
+          onClick={prev}
+        >
+          Previous
+        </Button>
+      )}
+      <Button
+        ariaLabel="Next"
+        variant="primary"
+        size="lg"
+        onClick={next}
+      >
+        Next
+      </Button>
     </div>
   );
 };
