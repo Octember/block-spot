@@ -68,6 +68,7 @@ export const getAllVenues: GetAllVenues<
   (Venue & { spaces: Space[] })[]
 > = async (args, context) => {
   if (!context.user) {
+    console.log(`[VENUES] Unauthorized access attempt to getAllVenues`);
     throw new HttpError(401);
   }
 
@@ -84,8 +85,11 @@ export const getAllVenues: GetAllVenues<
   const organizationId = userOrgs?.organizations.pop()?.organizationId;
 
   if (!organizationId) {
+    console.log(`[VENUES] User ${context.user.id} does not belong to any organization`);
     throw new HttpError(500, "User does not belong to an organization");
   }
+
+  console.log(`[VENUES] Fetching venues for organization ${organizationId}`);
 
   return context.entities.Venue.findMany({
     where: {
@@ -114,8 +118,11 @@ export const getVenueInfo: GetVenueInfo<
   });
 
   if (!venue) {
+    console.log(`[VENUES] Venue not found: ${args.venueId}`);
     throw new HttpError(404, "Venue not found");
   }
+
+  console.log(`[VENUES] Fetching info for venue ${args.venueId}`);
 
   const date = isValid(args.selectedDate)
     ? getStartOfDay(args.selectedDate, venue)
@@ -160,6 +167,7 @@ export const createReservation: CreateReservation<
   Reservation
 > = async (args, context) => {
   if (!context.user) {
+    console.log(`[SCHEDULE] Unauthorized attempt to create reservation for space ${args.spaceId}`);
     throw new HttpError(401);
   }
 
@@ -175,7 +183,10 @@ export const createReservation: CreateReservation<
     },
   });
 
-  if (!space) throw new HttpError(404, "Space not found");
+  if (!space) {
+    console.log(`[SCHEDULE] Space not found: ${args.spaceId}`);
+    throw new HttpError(404, "Space not found");
+  }
 
   const { startTime, endTime } = getStartEndTime(
     args.startTime,
@@ -183,13 +194,16 @@ export const createReservation: CreateReservation<
     space?.venue,
   );
 
-  // // Check if time slot is available
+  // Check if time slot is available
   const isSlotTaken = space.reservations.some(
     (r) => r.startTime < endTime && r.endTime > startTime,
   );
-  if (isSlotTaken) throw new HttpError(400, "Time slot is already booked");
+  if (isSlotTaken) {
+    console.log(`[SCHEDULE] Time slot conflict for space ${args.spaceId}: ${startTime} - ${endTime}`);
+    throw new HttpError(400, "Time slot is already booked");
+  }
 
-  // // Check if payment is required
+  // Check if payment is required
   const { requiresPayment, totalCost } = runPaymentRules(
     space.venue.paymentRules,
     startTime,
@@ -237,6 +251,8 @@ export const updateReservation: UpdateReservation<
   UpdateReservationPayload,
   Reservation
 > = async (args, context) => {
+  console.log(`[SCHEDULE] Updating reservation ${args.id}`);
+  
   const venue = await context.entities.Venue.findFirst({
     where: {
       spaces: {
@@ -248,6 +264,7 @@ export const updateReservation: UpdateReservation<
   });
 
   if (!venue) {
+    console.log(`[SCHEDULE] Venue not found for space ${args.spaceId}`);
     throw new HttpError(404, "Venue not found");
   }
 
@@ -296,6 +313,7 @@ export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (
   context,
 ) => {
   if (!context.user) {
+    console.log(`[VENUES] Unauthorized attempt to create venue`);
     throw new HttpError(401);
   }
 
@@ -311,8 +329,11 @@ export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (
   const organizationId = userOrgs?.organizations.pop()?.organizationId;
 
   if (!organizationId) {
+    console.log(`[VENUES] User ${context.user.id} does not belong to an organization`);
     throw new HttpError(401, "User does not belong to an organization");
   }
+
+  console.log(`[VENUES] Creating new venue "${args.name}" for organization ${organizationId}`);
 
   return context.entities.Venue.create({
     data: {
@@ -370,6 +391,8 @@ export const updateVenue: UpdateVenue<UpdateVenuePayload, Venue> = async (
   args,
   context,
 ) => {
+  console.log(`[VENUES] Updating venue ${args.id}`);
+
   return context.entities.Venue.update({
     where: { id: args.id },
     data: {
@@ -436,6 +459,7 @@ export const createSpace: CreateSpace<CreateSpacePayload, Space> = async (
   context,
 ) => {
   if (!context.user) {
+    console.log(`[SPACES] Unauthorized attempt to create space in venue ${args.venueId}`);
     throw new HttpError(401);
   }
 
@@ -445,8 +469,11 @@ export const createSpace: CreateSpace<CreateSpacePayload, Space> = async (
   });
 
   if (!venue) {
+    console.log(`[SPACES] Venue not found: ${args.venueId}`);
     throw new HttpError(404, "Venue not found");
   }
+
+  console.log(`[SPACES] Creating new space "${args.name}" in venue ${args.venueId}`);
 
   return context.entities.Space.create({
     data: {
@@ -518,8 +545,11 @@ export const deleteSpace: DeleteSpace<DeleteSpacePayload, Space> = async (
   context,
 ) => {
   if (!context.user) {
+    console.log(`[SPACES] Unauthorized attempt to delete space ${args.spaceId}`);
     throw new HttpError(401);
   }
+
+  console.log(`[SPACES] Deleting space ${args.spaceId}`);
 
   return context.entities.Space.delete({
     where: { id: args.spaceId },
