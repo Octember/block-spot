@@ -76,8 +76,8 @@ export const StripeWrapper: FC<{
           try {
             await confirmPaidBooking({ checkoutSessionId, venueId: venueId ?? "" });
             console.log("Payment confirmed!");
-          } catch (error) {
-            if (error instanceof HttpError && error.message.includes("Refund issued")) {
+          } catch (error: any) {
+            if (error?.message?.includes("Refund issued")) {
               setRefundMessage("Sorry, the slot was taken before your payment completed. You have been refunded.");
             } else {
               console.error("Failed to confirm payment:", error);
