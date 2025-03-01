@@ -3,10 +3,7 @@ export const PixelsPerSlot = 16;
 export const MinutesPerSlot = 15;
 
 // Constant for the minimum slot width in pixels.
-export const MIN_SLOT_WIDTH = 200;
-// Parse the minimum slot width into a number.
-const MIN_SLOT_WIDTH_NUM = parseInt(MIN_SLOT_WIDTH.toString(), 10);
-
+export const MIN_SLOT_WIDTH = 140;
 const TIMEZONE_SLOT_OFFSET = 56;
 
 /**
@@ -21,9 +18,9 @@ function getEffectiveColumnCount(numSpaces: number, containerWidth: number): num
 
   // Calculate what the slot width would be if we used the desired number of columns.
   const computedSlotWidth = containerWidth / numSpaces;
-  if (computedSlotWidth < MIN_SLOT_WIDTH_NUM) {
+  if (computedSlotWidth < MIN_SLOT_WIDTH) {
     // Not enough width for all numSpaces; show as many full slots as possible.
-    return Math.max(Math.floor(containerWidth / MIN_SLOT_WIDTH_NUM), 1);
+    return Math.max(Math.floor(containerWidth / MIN_SLOT_WIDTH), 1);
   }
   return numSpaces;
 }
@@ -38,7 +35,8 @@ export function getGridTemplateColumns(numSpaces: number): string {
   const effectiveColumns = getEffectiveColumnCount(numSpaces, containerWidth);
 
   // Each column gets an equal fraction of the container width.
-  const slotWidth = containerWidth / effectiveColumns;
+  // Each column gets an equal fraction of the container width.
+  const slotWidth = (containerWidth - (MIN_SLOT_WIDTH  / 2)) / (effectiveColumns);
   return `repeat(${numSpaces}, ${slotWidth}px)`;
 }
 

@@ -18,7 +18,7 @@ import { useScheduleContext } from "./schedule-context-provider";
 import { useVenueContext } from "./venue-provider";
 
 export interface PendingChange {
-  type: "CREATE" | "UPDATE" | "DELETE";
+  type: "DELETE" | "CREATE" | "UPDATE";
   oldState?: Reservation & { user?: User };
   newState: Reservation & { user?: User };
 }
@@ -66,18 +66,15 @@ export const PendingChangesProvider: React.FC<PendingChangesProviderProps> = ({
     if (!pendingChange) return;
 
     try {
+      if (pendingChange.type !== "DELETE") {
+        throw new Error("Invalid pending change type");
+      }
+
       switch (pendingChange.type) {
         case "DELETE":
           if (pendingChange.oldState) {
             await deleteReservation({ id: pendingChange.oldState.id });
           }
-          break;
-        case "UPDATE":
-          await updateReservation(pendingChange.newState);
-          break;
-        case "CREATE":
-          // Note: This would need a createReservation operation
-          await createReservation(pendingChange.newState);
           break;
       }
 

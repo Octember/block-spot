@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { createReservation, runPaymentRules, useQuery } from "wasp/client/operations";
 import { Reservation, User } from "wasp/entities";
@@ -12,6 +12,7 @@ import { ReservationForm } from "../forms/reservation-form";
 import { CreateReservationFormInputs } from "./types";
 import { useParams } from "react-router-dom";
 import { Button } from '../../../../client/components/button';
+import { Modal } from '../../../../client/components/modal';
 
 function timeToMinutes(time: Date) {
   return time.getHours() * 60 + time.getMinutes();
@@ -23,6 +24,8 @@ function minutesToTime(date: Date, minutes: number) {
   return newDate;
 }
 
+type CreateReservationSteps = 'select_details' | 'payment' | 'confirm' | 'success' | 'error';
+
 export const CreateReservationWizard: FC<{
   reservation: Reservation & { user?: User };
 }> = ({ reservation }) => {
@@ -32,6 +35,7 @@ export const CreateReservationWizard: FC<{
   const toast = useToast();
   const { isAdmin } = useAuthUser();
   const { organization } = useAuthUser();
+  const [currentStep, setCurrentStep] = useState<CreateReservationSteps>('select_details');
 
   const { data: paymentInfo } = useQuery(runPaymentRules, {
     spaceId: reservation.spaceId,
@@ -127,6 +131,7 @@ export const CreateReservationWizard: FC<{
               <StripeCheckoutForm />
             </StripeWrapper>
           ),
+          actions: undefined,
         },
       ]
       : []),
@@ -134,12 +139,28 @@ export const CreateReservationWizard: FC<{
 
   return (
     <FormProvider {...form}>
-      <Wizard
-        wizardSteps={steps}
-        size="2xl"
+      <Modal
         open={true}
         onClose={cancelChange}
-      />
+        size="2xl"
+        heading={{
+          title: "Create Reservation",
+        }}
+        footer={
+          <div className="flex items-center justify-end space-x-3 m-2">
+
+          </div>
+        }
+      >
+        {currentStep === 'select_details' && (
+          <ReservationForm reservation={reservation} onSubmit={() => { }} />
+        )}
+        {currentStep === 'payment' && (
+          <StripeWrapper organization={organization} spaceId={reservation.spaceId}>
+            <StripeCheckoutForm />
+          </StripeWrapper>
+        )}
+      </Modal>
     </FormProvider>
   );
 };
