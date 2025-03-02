@@ -673,6 +673,7 @@ enum RefundStatus {
 ## Components
 
 ### HorizontalScrollProvider
+
 - Located in: `src/schedule/calendar/providers/horizontal-scroll-provider.tsx`
 - Purpose: Provides context for tracking horizontal scroll position in the calendar view
 - Features:

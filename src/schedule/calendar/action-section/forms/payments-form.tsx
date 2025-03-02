@@ -27,11 +27,9 @@ export const useCheckoutSession = (spaceId: string) => {
       spaceId: spaceId,
       startTime: new Date(),
       endTime: new Date(),
-    }).then(
-      ({ clientSecret, checkoutSessionId }) => {
-        setCheckoutSession({ clientSecret, checkoutSessionId });
-      },
-    );
+    }).then(({ clientSecret, checkoutSessionId }) => {
+      setCheckoutSession({ clientSecret, checkoutSessionId });
+    });
   }, []);
 
   return {
@@ -77,20 +75,27 @@ export const StripeWrapper: FC<{
           }
 
           try {
-            await confirmPaidBooking({ checkoutSessionId, venueId: venueId ?? "" });
+            await confirmPaidBooking({
+              checkoutSessionId,
+              venueId: venueId ?? "",
+            });
             console.log("Payment confirmed!");
           } catch (error: any) {
             if (error?.message?.includes("Refund issued")) {
-              setRefundMessage("Sorry, the slot was taken before your payment completed. You have been refunded.");
+              setRefundMessage(
+                "Sorry, the slot was taken before your payment completed. You have been refunded.",
+              );
             } else {
               console.error("Failed to confirm payment:", error);
             }
           }
-        }
+        },
       }}
     >
       {children}
-      {refundMessage && <p className="text-red-500 text-xl font-bold mt-4">{refundMessage}</p>}
-    </EmbeddedCheckoutProvider >
+      {refundMessage && (
+        <p className="text-red-500 text-xl font-bold mt-4">{refundMessage}</p>
+      )}
+    </EmbeddedCheckoutProvider>
   );
 };

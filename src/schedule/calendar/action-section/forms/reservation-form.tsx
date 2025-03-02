@@ -10,9 +10,9 @@ export const ReservationForm: FC<{
   reservation: Reservation;
   onSubmit: (data: CreateReservationFormInputs) => void;
 }> = ({ reservation, onSubmit }) => {
-  const { isOwner } = useAuthUser();
+  const { isOwner, isAdmin } = useAuthUser();
 
-  const enableUserSection = isOwner;
+  const enableUserSection = isOwner && isAdmin;
   const { handleSubmit } = useFormContext<CreateReservationFormInputs>();
 
   return (

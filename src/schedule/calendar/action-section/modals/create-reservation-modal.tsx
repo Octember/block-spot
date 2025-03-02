@@ -1,18 +1,22 @@
 import { FC, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { createReservation, runPaymentRules, useQuery } from "wasp/client/operations";
+import { LuX } from "react-icons/lu";
+import { useParams } from "react-router-dom";
+import {
+  createReservation,
+  runPaymentRules,
+  useQuery,
+} from "wasp/client/operations";
 import { Reservation, User } from "wasp/entities";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
-import { DefaultWizardActions, Wizard } from "../../../../client/components/wizard";
+import { Button } from "../../../../client/components/button";
+import { Modal } from "../../../../client/components/modal";
 import { useToast } from "../../../../client/toast";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import { StripeCheckoutForm, StripeWrapper } from "../forms/payments-form";
 import { ReservationForm } from "../forms/reservation-form";
-import { CreateReservationFormInputs } from "./types";
-import { useParams } from "react-router-dom";
-import { Button } from '../../../../client/components/button';
-import { Modal } from '../../../../client/components/modal';
+import { CreateReservationFormInputs, CreateReservationSteps } from "./types";
 
 function timeToMinutes(time: Date) {
   return time.getHours() * 60 + time.getMinutes();
@@ -24,8 +28,6 @@ function minutesToTime(date: Date, minutes: number) {
   return newDate;
 }
 
-type CreateReservationSteps = 'select_details' | 'payment' | 'confirm' | 'success' | 'error';
-
 export const CreateReservationWizard: FC<{
   reservation: Reservation & { user?: User };
 }> = ({ reservation }) => {
@@ -35,17 +37,19 @@ export const CreateReservationWizard: FC<{
   const toast = useToast();
   const { isAdmin } = useAuthUser();
   const { organization } = useAuthUser();
-  const [currentStep, setCurrentStep] = useState<CreateReservationSteps>('select_details');
+  const [currentStep, setCurrentStep] =
+    useState<CreateReservationSteps>("select_details");
 
   const { data: paymentInfo } = useQuery(runPaymentRules, {
     spaceId: reservation.spaceId,
     venueId: venueId ?? "",
     startTime: reservation.startTime,
-    endTime: reservation.endTime
+    endTime: reservation.endTime,
   });
 
   const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
+      step: "select_details",
       date: reservation.startTime,
       startTimeMinutes: timeToMinutes(reservation.startTime),
       endTimeMinutes: timeToMinutes(reservation.endTime),
@@ -80,6 +84,7 @@ export const CreateReservationWizard: FC<{
         cancelChange();
       }, 300);
     } catch (error) {
+      setCurrentStep("error");
       console.error(error);
       toast({
         title: "Error creating reservation",
@@ -89,7 +94,8 @@ export const CreateReservationWizard: FC<{
     }
   }
 
-  const enablePayments = isAdmin && organization?.stripeAccountId && paymentInfo?.requiresPayment;
+  const enablePayments =
+    isAdmin && organization?.stripeAccountId && paymentInfo?.requiresPayment;
 
   return (
     <FormProvider {...form}>
@@ -99,10 +105,19 @@ export const CreateReservationWizard: FC<{
         size="2xl"
         heading={{
           title: "Create Reservation",
+          right: (
+            <Button
+              ariaLabel="Close"
+              variant="tertiary"
+              size="lg"
+              icon={<LuX />}
+              onClick={cancelChange}
+            ></Button>
+          ),
         }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
-            {currentStep === 'select_details' && (
+            {currentStep === "select_details" && (
               <>
                 <Button
                   ariaLabel="Cancel"
@@ -112,34 +127,54 @@ export const CreateReservationWizard: FC<{
                 >
                   Cancel
                 </Button>
-                <Button
-                  ariaLabel="Next"
-                  variant="primary"
-                  size="lg"
-                  onClick={() => {
-                    if (enablePayments) {
-                      setCurrentStep('payment')
-                    } else {
-                      handleSubmit(onSubmit)()
-                    }
-                  }}
-                >
-                  Next
-                </Button>
+
+                {enablePayments ? (
+                  <Button
+                    ariaLabel="Next"
+                    variant="primary"
+                    size="lg"
+                    onClick={() => setCurrentStep("payment")}
+                  >
+                    Next
+                  </Button>
+                ) : (
+                  <Button
+                    ariaLabel="Next"
+                    variant="primary"
+                    size="lg"
+                    isLoading={isSubmitting || submitCount > 0}
+                    onClick={handleSubmit(onSubmit)}
+                  >
+                    Submit
+                  </Button>
+                )}
               </>
             )}
           </div>
         }
       >
-        {currentStep === 'select_details' && (
-          <ReservationForm reservation={reservation} onSubmit={() => { }} />
+        {currentStep === "select_details" && (
+          <ReservationForm reservation={reservation} onSubmit={() => {}} />
         )}
-        {currentStep === 'payment' && (
-          <StripeWrapper organization={organization} spaceId={reservation.spaceId}>
+        {currentStep === "payment" && (
+          <StripeWrapper
+            organization={organization}
+            spaceId={reservation.spaceId}
+          >
             <StripeCheckoutForm />
           </StripeWrapper>
         )}
+        {currentStep === "error" && <ErrorScreen />}
       </Modal>
     </FormProvider>
   );
 };
+
+function ErrorScreen() {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold pb-4">Something went wrong</h1>
+      <p>An error occurred while creating the reservation. Please try again.</p>
+    </div>
+  );
+}

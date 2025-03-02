@@ -38,7 +38,10 @@ export const Wizard: FC<WizardProps> = ({
     }
   };
 
-  const steps = useMemo(() => wizardSteps(handleNext, handlePrevious), [wizardSteps, handleNext, handlePrevious]);
+  const steps = useMemo(
+    () => wizardSteps(handleNext, handlePrevious),
+    [wizardSteps, handleNext, handlePrevious],
+  );
 
   return (
     <Modal
@@ -112,12 +115,7 @@ export const DefaultWizardActions: FC<{
           Previous
         </Button>
       )}
-      <Button
-        ariaLabel="Next"
-        variant="primary"
-        size="lg"
-        onClick={next}
-      >
+      <Button ariaLabel="Next" variant="primary" size="lg" onClick={next}>
         Next
       </Button>
     </div>

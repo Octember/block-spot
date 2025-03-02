@@ -4,7 +4,7 @@ import {
   Reservation,
   Space,
   User,
-  Venue
+  Venue,
 } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import {
@@ -86,7 +86,9 @@ export const getAllVenues: GetAllVenues<
   const organizationId = userOrgs?.organizations.pop()?.organizationId;
 
   if (!organizationId) {
-    console.log(`[VENUES] User ${context.user.id} does not belong to any organization`);
+    console.log(
+      `[VENUES] User ${context.user.id} does not belong to any organization`,
+    );
     throw new HttpError(500, "User does not belong to an organization");
   }
 
@@ -168,7 +170,9 @@ export const createReservation: CreateReservation<
   Reservation
 > = async (args, context) => {
   if (!context.user) {
-    console.log(`[SCHEDULE] Unauthorized attempt to create reservation for space ${args.spaceId}`);
+    console.log(
+      `[SCHEDULE] Unauthorized attempt to create reservation for space ${args.spaceId}`,
+    );
     throw new HttpError(401);
   }
 
@@ -200,7 +204,9 @@ export const createReservation: CreateReservation<
     (r) => r.startTime < endTime && r.endTime > startTime,
   );
   if (isSlotTaken) {
-    console.log(`[SCHEDULE] Time slot conflict for space ${args.spaceId}: ${startTime} - ${endTime}`);
+    console.log(
+      `[SCHEDULE] Time slot conflict for space ${args.spaceId}: ${startTime} - ${endTime}`,
+    );
     throw new HttpError(400, "Time slot is already booked");
   }
 
@@ -212,7 +218,9 @@ export const createReservation: CreateReservation<
     space.id,
   );
 
-  console.log(`[SCHEDULE] Creating reservation with payment required: ${requiresPayment}`);
+  console.log(
+    `[SCHEDULE] Creating reservation with payment required: ${requiresPayment}`,
+  );
 
   const reservation = await context.entities.Reservation.create({
     data: {
@@ -224,7 +232,9 @@ export const createReservation: CreateReservation<
       description: args.description,
     },
   });
-  console.log(`[SCHEDULE] Total cost: ${totalCost}, reservation: ${reservation.id}`);
+  console.log(
+    `[SCHEDULE] Total cost: ${totalCost}, reservation: ${reservation.id}`,
+  );
 
   return reservation;
 };
@@ -253,7 +263,7 @@ export const updateReservation: UpdateReservation<
   Reservation
 > = async (args, context) => {
   console.log(`[SCHEDULE] Updating reservation ${args.id}`);
-  
+
   const venue = await context.entities.Venue.findFirst({
     where: {
       spaces: {
@@ -330,11 +340,15 @@ export const createVenue: CreateVenue<CreateVenuePayload, Venue> = async (
   const organizationId = userOrgs?.organizations.pop()?.organizationId;
 
   if (!organizationId) {
-    console.log(`[VENUES] User ${context.user.id} does not belong to an organization`);
+    console.log(
+      `[VENUES] User ${context.user.id} does not belong to an organization`,
+    );
     throw new HttpError(401, "User does not belong to an organization");
   }
 
-  console.log(`[VENUES] Creating new venue "${args.name}" for organization ${organizationId}`);
+  console.log(
+    `[VENUES] Creating new venue "${args.name}" for organization ${organizationId}`,
+  );
 
   return context.entities.Venue.create({
     data: {
@@ -460,7 +474,9 @@ export const createSpace: CreateSpace<CreateSpacePayload, Space> = async (
   context,
 ) => {
   if (!context.user) {
-    console.log(`[SPACES] Unauthorized attempt to create space in venue ${args.venueId}`);
+    console.log(
+      `[SPACES] Unauthorized attempt to create space in venue ${args.venueId}`,
+    );
     throw new HttpError(401);
   }
 
@@ -474,7 +490,9 @@ export const createSpace: CreateSpace<CreateSpacePayload, Space> = async (
     throw new HttpError(404, "Venue not found");
   }
 
-  console.log(`[SPACES] Creating new space "${args.name}" in venue ${args.venueId}`);
+  console.log(
+    `[SPACES] Creating new space "${args.name}" in venue ${args.venueId}`,
+  );
 
   return context.entities.Space.create({
     data: {
@@ -546,7 +564,9 @@ export const deleteSpace: DeleteSpace<DeleteSpacePayload, Space> = async (
   context,
 ) => {
   if (!context.user) {
-    console.log(`[SPACES] Unauthorized attempt to delete space ${args.spaceId}`);
+    console.log(
+      `[SPACES] Unauthorized attempt to delete space ${args.spaceId}`,
+    );
     throw new HttpError(401);
   }
 

@@ -1,9 +1,9 @@
-import { startOfWeek, addDays, getDate, isToday, isSameDay } from 'date-fns';
-import { FC, useMemo } from 'react';
-import { cn } from '../../../client/cn';
-import { useVenueContext } from '../providers/venue-provider';
-import { Button } from '@headlessui/react';
-import { DateSelectButtonMobile } from './date-select-button';
+import { startOfWeek, addDays, getDate, isToday, isSameDay } from "date-fns";
+import { FC, useMemo } from "react";
+import { cn } from "../../../client/cn";
+import { useVenueContext } from "../providers/venue-provider";
+import { Button } from "@headlessui/react";
+import { DateSelectButtonMobile } from "./date-select-button";
 
 export function getWeekDays(date: Date): { day: number; date: Date }[] {
   // Find the Saturday of the current week (weekStartsOn: 6 means Saturday)
@@ -46,9 +46,11 @@ export const DayButtons: FC = () => {
         <Button
           as="span"
           key={day.day}
-          className={cn("size-10 leading-none justify-center flex flex-col rounded-full  text-center border border-transparent",
-            isSameDay(day.date, selectedDate) && "bg-teal-700 text-white font-semibold",
-            isToday(day.date) && "border border-cyan-700"
+          className={cn(
+            "size-10 leading-none justify-center flex flex-col rounded-full  text-center border border-transparent",
+            isSameDay(day.date, selectedDate) &&
+              "bg-teal-700 text-white font-semibold",
+            isToday(day.date) && "border border-cyan-700",
           )}
           onClick={() => setSelectedDate(day.date)}
         >
@@ -56,7 +58,6 @@ export const DayButtons: FC = () => {
         </Button>
       ))}
       <DateSelectButtonMobile />
-
     </div>
   );
 };

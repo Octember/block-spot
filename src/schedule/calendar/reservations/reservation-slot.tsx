@@ -1,17 +1,15 @@
 import { useDraggable } from "@dnd-kit/core";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
-import {
-  EllipsisHorizontalIcon,
-  PencilSquareIcon,
-  TrashIcon,
-} from "@heroicons/react/20/solid";
 import { addMinutes } from "date-fns";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Reservation } from "wasp/entities";
-import { formatTimeWithZone } from "../date-utils";
+import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
 import { usePendingChanges } from "../providers/pending-changes-provider";
+import { useVenueContext } from "../providers/venue-provider";
 import { useReservationSelection } from "../selection";
+import { getColorStyles } from "./colors";
 import { MinutesPerSlot, PixelsPerSlot } from "./constants";
+import { ReservationDescription } from "./reservation-description";
+import { ReservationMenu } from "./reservation-menu";
 import {
   getReservationDurationInSlots,
   getRowIndex,
@@ -25,70 +23,6 @@ type ReservationSlotProps = {
   onCreate?: () => void;
   onDiscardDraft?: () => void;
   onDelete?: () => void;
-};
-
-const ReservationDescription = ({
-  reservation,
-  startTime,
-  endTime,
-}: {
-  reservation: Reservation;
-  startTime: Date;
-  endTime: Date;
-}) => {
-  const { venue } = useVenueContext();
-  const numSlots = useMemo(() => getReservationDurationInSlots(reservation), [reservation]);
-
-
-  const timeSection = useMemo(() => {
-    if (numSlots < 2) {
-      return null;
-    }
-
-    return (
-      <p>
-        <time dateTime={reservation.startTime.toISOString()}>
-          {formatTimeWithZone(startTime, "h:mm", venue)} -{" "}
-          {formatTimeWithZone(endTime, "h:mm a", venue)}
-        </time>
-      </p>
-    );
-  }, [reservation, startTime, endTime]);
-
-  const titleSection = useMemo(() => {
-    if (!reservation.description) {
-      return null;
-    }
-    return (
-      // Needs to be max-w-30 so the name doesn't stretch the slot
-      <p className="font-bold text-gray-900 max-w-30 text-ellipsis whitespace-nowrap overflow-hidden">
-        {reservation.description}
-      </p>
-    );
-  }, [reservation.description]);
-
-
-  const sectionsToRender = useMemo(
-    () =>
-      [titleSection, timeSection]
-        .filter(Boolean)
-        .slice(0, numSlots / 2),
-    [titleSection, timeSection, reservation, numSlots],
-  );
-
-  return (
-    <div className="flex flex-row gap-2">
-
-      <div className="pt-1">
-        {numSlots > 1 && <LuUserCircle className="size-3" />}
-      </div>
-      <div className="flex flex-col text-gray-700">
-        {sectionsToRender.map((section, index) => (
-          <div key={index}>{section}</div>
-        ))}
-      </div>
-    </div>
-  );
 };
 
 export const ReservationSlot = (props: ReservationSlotProps) => {
@@ -105,7 +39,10 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     return props.reservation.userId === user?.id;
   }, [isOwner, isDraft, props.reservation.userId, user?.id]);
 
-  const numSlots = useMemo(() => getReservationDurationInSlots(reservation), [reservation]);
+  const numSlots = useMemo(
+    () => getReservationDurationInSlots(reservation),
+    [reservation],
+  );
 
   const {
     selection: { isSelecting },
@@ -169,7 +106,6 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
     };
   }, [reservation, isDragging, transform]);
 
-
   const marginStyles = useMemo(() => {
     if (numSlots < 2) {
       return "mx-2 my-0";
@@ -191,28 +127,39 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
           : undefined,
       }}
       ref={setNodeRef}
-      onClick={canEdit ? () => {
-        setPendingChange({
-          type: "UPDATE",
-          newState: reservation,
-          oldState: reservation,
-        });
-      } : undefined}
+      onClick={
+        canEdit
+          ? () => {
+              setPendingChange({
+                type: "UPDATE",
+                newState: reservation,
+                oldState: reservation,
+              });
+            }
+          : undefined
+      }
       {...attributes}
       {...listeners}
     >
       <a
-        className={`group w-full flex flex-col justify-between rounded-lg px-2 py-0 text-xs/5 border-l-8 border ${colorStyles} shadow-xl hover:shadow-2xl`}
+        className={`
+          group w-full max-h-full flex flex-col justify-between
+          px-2 py-0
+          rounded-lg border-l-8 border ${colorStyles}
+          text-xs/5
+          shadow-xl hover:shadow-2xl
+          truncate text-ellipsis
+        `}
       >
-        <div className="flex flex-col flex-1">
-          <div className="flex flex-row justify-between">
+        <div className="flex flex-col flex-1 h-full">
+          <div className="flex flex-row justify-between h-full">
             <ReservationDescription
               reservation={reservation}
               startTime={newTimes.startTime}
               endTime={newTimes.endTime}
             />
 
-            {numSlots >= 2 && (
+            {/* {numSlots >= 2 && (
               <ReservationMenu
                 onEdit={() =>
                   setPendingChange({
@@ -224,74 +171,10 @@ export const ReservationSlot = (props: ReservationSlotProps) => {
                 onDelete={props.onDelete}
                 canEdit={canEdit}
               />
-            )}
+            )} */}
           </div>
         </div>
       </a>
     </li>
-  );
-};
-
-import { LuUserCircle } from "react-icons/lu";
-import { usePopper } from "react-popper";
-import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
-import { useVenueContext } from "../providers/venue-provider";
-import { getColorStyles } from "./colors";
-
-const ReservationMenu = ({
-  canEdit,
-  onEdit,
-  onDelete,
-}: {
-  canEdit: boolean;
-  onEdit: () => void;
-  onDelete?: () => void;
-}) => {
-  const [referenceElement, setReferenceElement] =
-    useState<HTMLButtonElement | null>(null);
-  const [popperElement, setPopperElement] = useState<HTMLElement | null>(null);
-  const { styles, attributes } = usePopper(referenceElement, popperElement, {
-    placement: "bottom-end",
-  });
-
-  return (
-    <Popover className={`relative group ${canEdit ? "" : "hidden"}`}>
-      <PopoverButton ref={setReferenceElement}>
-        <EllipsisHorizontalIcon
-          aria-hidden="true"
-          className="size-5 text-gray-400 group-hover:text-gray-700"
-        />
-      </PopoverButton>
-
-      <PopoverPanel
-        ref={setPopperElement}
-        style={styles.popper}
-        {...attributes.popper}
-        className="bg-white z-999 w-30 rounded-md shadow-lg ring-1 ring-black/5"
-      >
-        <div className="py-1 flex flex-col items-stretch">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit();
-            }}
-            className="group flex gap-2 items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            <PencilSquareIcon className="size-4 text-gray-400 group-hover:text-gray-700" />
-            Edit
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete?.();
-            }}
-            className="group flex gap-2 items-center px-4 py-2 text-sm text-red-700 hover:bg-red-50"
-          >
-            <TrashIcon className="size-4 text-red-400 group-hover:text-red-700" />
-            Delete
-          </button>
-        </div>
-      </PopoverPanel>
-    </Popover>
   );
 };

@@ -1,7 +1,10 @@
 import { RuleType } from "@prisma/client";
 import { differenceInMinutes } from "date-fns";
 import { HttpError } from "wasp/server";
-import type { GetReservationPrice, RunPaymentRules } from "wasp/server/operations";
+import type {
+  GetReservationPrice,
+  RunPaymentRules,
+} from "wasp/server/operations";
 import { stripe } from "../stripe/stripeClient";
 import { WireSafePaymentRule } from "./operations";
 import { runPaymentRules as calculatePaymentRules } from "../../schedule/operations/payment-rules";
@@ -278,10 +281,10 @@ export const runPaymentRules: RunPaymentRules<
     include: {
       venue: {
         include: {
-          paymentRules: true
-        }
-      }
-    }
+          paymentRules: true,
+        },
+      },
+    },
   });
 
   if (!space) {
@@ -290,7 +293,9 @@ export const runPaymentRules: RunPaymentRules<
   }
 
   if (space.venue.id !== venueId) {
-    console.warn(`[PAYMENT] Space does not belong to specified venue: ${spaceId} ${venueId}`);
+    console.warn(
+      `[PAYMENT] Space does not belong to specified venue: ${spaceId} ${venueId}`,
+    );
     throw new HttpError(400, "Space does not belong to specified venue");
   }
 
@@ -298,6 +303,6 @@ export const runPaymentRules: RunPaymentRules<
     space.venue.paymentRules,
     new Date(startTime),
     new Date(endTime),
-    spaceId
+    spaceId,
   );
 };

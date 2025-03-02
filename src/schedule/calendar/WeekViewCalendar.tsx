@@ -1,17 +1,17 @@
-import { FC, Fragment } from 'react';
+import { FC, Fragment } from "react";
 import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
-import { useIsTimeZoneDifferent, useTimeLabelsAndZones } from './constants';
+import { useIsTimeZoneDifferent, useTimeLabelsAndZones } from "./constants";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { CalendarHeader } from "./header/calendar-header";
-import { FloatingButtons } from './header/scroll/scroll-to-space-buttons';
-import { HorizontalScrollProvider } from './providers/horizontal-scroll/horizontal-scroll-provider';
+import { FloatingButtons } from "./header/scroll/scroll-to-space-buttons";
+import { HorizontalScrollProvider } from "./providers/horizontal-scroll/horizontal-scroll-provider";
 import { PendingChangesProvider } from "./providers/pending-changes-provider";
 import { ScheduleProvider } from "./providers/schedule-context-provider";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
 import { ScrollableContainer } from "./providers/horizontal-scroll/horizontal-scroll-container";
-import { MinutesPerSlot, PixelsPerSlot } from './reservations/constants';
+import { MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
 
 const TimeLabels: FC = () => {
   const timeLabels = useTimeLabelsAndZones();
@@ -41,7 +41,7 @@ const TimeLabels: FC = () => {
       ))}
     </div>
   );
-}
+};
 export const WeekViewCalendar: FC = () => {
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
   const widthClass = isTimeZoneDifferent ? "w-24" : "w-14";
@@ -86,5 +86,3 @@ export const WeekViewCalendar: FC = () => {
     </ScheduleProvider>
   );
 };
-
-

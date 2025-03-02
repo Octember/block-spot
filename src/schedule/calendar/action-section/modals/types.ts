@@ -1,6 +1,14 @@
 import { User } from "wasp/entities";
 
+export type CreateReservationSteps =
+  | "select_details"
+  | "payment"
+  | "confirm"
+  | "success"
+  | "error";
+
 export type CreateReservationFormInputs = {
+  step: CreateReservationSteps;
   date: Date;
   startTimeMinutes: number;
   endTimeMinutes: number;

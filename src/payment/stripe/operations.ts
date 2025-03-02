@@ -27,15 +27,21 @@ export const createStripeAccount: CreateStripeAccount = async (
   );
 
   if (organization.stripeAccountId) {
-    console.log(`[STRIPE] Organization ${organization.id} already has Stripe account ${organization.stripeAccountId}`);
+    console.log(
+      `[STRIPE] Organization ${organization.id} already has Stripe account ${organization.stripeAccountId}`,
+    );
     throw new HttpError(400, "Organization already has a Stripe account");
   }
 
-  console.log(`[STRIPE] Creating Stripe account for organization ${organization.id}`);
+  console.log(
+    `[STRIPE] Creating Stripe account for organization ${organization.id}`,
+  );
   const accountId = await createStripeAccountApiCall(user, organization);
 
   // update the organization with the new account id
-  console.log(`[STRIPE] Linking Stripe account ${accountId} to organization ${organization.id}`);
+  console.log(
+    `[STRIPE] Linking Stripe account ${accountId} to organization ${organization.id}`,
+  );
   await context.entities.Organization.update({
     where: { id: organization.id },
     data: { stripeAccountId: accountId },
@@ -69,7 +75,9 @@ export const createStripeAccountLink: CreateStripeAccountLink<
   const account = organization.stripeAccountId;
 
   if (!account) {
-    console.log(`[STRIPE] Organization ${organization.id} attempted to create account link without Stripe account`);
+    console.log(
+      `[STRIPE] Organization ${organization.id} attempted to create account link without Stripe account`,
+    );
     throw new HttpError(400, "Organization does not have a Stripe account");
   }
 
@@ -92,11 +100,13 @@ type CreateConnectCheckoutSessionResult = {
 };
 
 export const createConnectCheckoutSession: CreateConnectCheckoutSession<
-{ userId: string; spaceId: string; startTime: Date; endTime: Date },
-CreateConnectCheckoutSessionResult
+  { userId: string; spaceId: string; startTime: Date; endTime: Date },
+  CreateConnectCheckoutSessionResult
 > = async ({ userId, spaceId, startTime, endTime }, context) => {
   if (!context.user) {
-    console.warn(`[STRIPE] Unauthorized attempt to create checkout session for space ${spaceId}`);
+    console.warn(
+      `[STRIPE] Unauthorized attempt to create checkout session for space ${spaceId}`,
+    );
     throw new HttpError(401);
   }
 
@@ -121,10 +131,12 @@ CreateConnectCheckoutSessionResult
   });
 
   if (isSlotTaken) {
-    console.log(`[STRIPE] Time slot conflict for space ${spaceId}: ${startTime} - ${endTime}`);
+    console.log(
+      `[STRIPE] Time slot conflict for space ${spaceId}: ${startTime} - ${endTime}`,
+    );
     throw new HttpError(400, "Time slot is already booked");
   }
-  
+
   const { requiresPayment, totalCost } = runPaymentRules(
     space.venue.paymentRules,
     startTime,
@@ -133,7 +145,9 @@ CreateConnectCheckoutSessionResult
   );
 
   if (!context.user) {
-    console.log(`[STRIPE] User authentication lost during checkout session creation`);
+    console.log(
+      `[STRIPE] User authentication lost during checkout session creation`,
+    );
     throw new HttpError(401, "Unauthorized");
   }
 
@@ -143,16 +157,22 @@ CreateConnectCheckoutSessionResult
   );
 
   if (!organization.stripeAccountId) {
-    console.warn(`[STRIPE] Organization ${organization.id} attempted checkout without Stripe account`);
+    console.warn(
+      `[STRIPE] Organization ${organization.id} attempted checkout without Stripe account`,
+    );
     throw new HttpError(400, "Organization does not have a Stripe account");
   }
 
   if (!requiresPayment) {
-    console.warn(`[STRIPE] Attempted to create checkout for non-paid reservation`);
+    console.warn(
+      `[STRIPE] Attempted to create checkout for non-paid reservation`,
+    );
     throw new HttpError(400, "This reservation does not require payment");
   }
 
-  console.log(`[STRIPE] Creating checkout session for space ${spaceId}, amount: ${totalCost}`);
+  console.log(
+    `[STRIPE] Creating checkout session for space ${spaceId}, amount: ${totalCost}`,
+  );
   const session = await stripe.checkout.sessions.create(
     {
       ui_mode: "embedded",
@@ -183,11 +203,15 @@ CreateConnectCheckoutSessionResult
   );
 
   if (!session.client_secret) {
-    console.log(`[STRIPE] Failed to create payment intent for space ${spaceId}`);
+    console.log(
+      `[STRIPE] Failed to create payment intent for space ${spaceId}`,
+    );
     throw new Error("Failed to create payment intent");
   }
 
-  console.log(`[STRIPE] Created checkout session ${session.id} for space ${spaceId}`);
+  console.log(
+    `[STRIPE] Created checkout session ${session.id} for space ${spaceId}`,
+  );
   return {
     checkoutSessionId: session.id,
     clientSecret: session.client_secret,

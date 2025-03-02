@@ -27,7 +27,9 @@ export const generateCheckoutSession: GenerateCheckoutSession<
   CheckoutSession
 > = async ({ organizationId, planId, returnToOnboarding }, context) => {
   if (!context.user) {
-    console.log(`[PAYMENTS] Unauthorized attempt to generate checkout session for org ${organizationId}`);
+    console.log(
+      `[PAYMENTS] Unauthorized attempt to generate checkout session for org ${organizationId}`,
+    );
     throw new HttpError(401);
   }
 
@@ -44,7 +46,9 @@ export const generateCheckoutSession: GenerateCheckoutSession<
   });
 
   if (!organization) {
-    console.log(`[PAYMENTS] Non-owner user ${context.user.id} attempted to create checkout for org ${organizationId}`);
+    console.log(
+      `[PAYMENTS] Non-owner user ${context.user.id} attempted to create checkout for org ${organizationId}`,
+    );
     throw new HttpError(
       403,
       "You must be an organization owner to make payments",
@@ -52,7 +56,9 @@ export const generateCheckoutSession: GenerateCheckoutSession<
   }
 
   if (!context.user.email) {
-    console.log(`[PAYMENTS] User ${context.user.id} attempted payment without email`);
+    console.log(
+      `[PAYMENTS] User ${context.user.id} attempted payment without email`,
+    );
     throw new HttpError(403, "User needs an email to make a payment");
   }
 
@@ -64,7 +70,9 @@ export const generateCheckoutSession: GenerateCheckoutSession<
 
   // Handle free community plan
   if (planId === PaymentPlanId.Community) {
-    console.log(`[PAYMENTS] Setting up free community plan for org ${organizationId}`);
+    console.log(
+      `[PAYMENTS] Setting up free community plan for org ${organizationId}`,
+    );
     await context.entities.Organization.update({
       where: { id: organizationId },
       data: {
@@ -105,7 +113,9 @@ export const getCustomerPortalUrl: GetCustomerPortalUrl<
   string | null
 > = async ({ organizationId }, context) => {
   if (!context.user) {
-    console.log(`[PAYMENTS] Unauthorized attempt to access customer portal for org ${organizationId}`);
+    console.log(
+      `[PAYMENTS] Unauthorized attempt to access customer portal for org ${organizationId}`,
+    );
     throw new HttpError(401);
   }
 
@@ -122,14 +132,18 @@ export const getCustomerPortalUrl: GetCustomerPortalUrl<
   });
 
   if (!organization) {
-    console.log(`[PAYMENTS] Non-owner user ${context.user.id} attempted to access billing portal for org ${organizationId}`);
+    console.log(
+      `[PAYMENTS] Non-owner user ${context.user.id} attempted to access billing portal for org ${organizationId}`,
+    );
     throw new HttpError(
       403,
       "You must be an organization owner to access billing portal",
     );
   }
 
-  console.log(`[PAYMENTS] Generating customer portal URL for org ${organizationId}`);
+  console.log(
+    `[PAYMENTS] Generating customer portal URL for org ${organizationId}`,
+  );
   return paymentProcessor.fetchCustomerPortalUrl({
     organizationId,
     prismaOrganizationDelegate: context.entities.Organization,
@@ -146,7 +160,9 @@ export const confirmPaidBooking: ConfirmPaidBooking<
   void
 > = async ({ checkoutSessionId, venueId }, context) => {
   if (!context.user) {
-    console.log(`[PAYMENTS] Unauthorized attempt to confirm booking for venue ${venueId}`);
+    console.log(
+      `[PAYMENTS] Unauthorized attempt to confirm booking for venue ${venueId}`,
+    );
     throw new HttpError(401, "User not authenticated");
   }
 
@@ -159,21 +175,27 @@ export const confirmPaidBooking: ConfirmPaidBooking<
   });
 
   if (!organization || !organization.stripeAccountId) {
-    console.log(`[PAYMENTS] Organization not found or missing Stripe account for venue ${venueId}`);
+    console.log(
+      `[PAYMENTS] Organization not found or missing Stripe account for venue ${venueId}`,
+    );
     throw new HttpError(
       404,
       "Organization not found or missing stripe account",
     );
   }
 
-  console.log(`[PAYMENTS] Retrieving Stripe session ${checkoutSessionId} for org ${organization.id}`);
+  console.log(
+    `[PAYMENTS] Retrieving Stripe session ${checkoutSessionId} for org ${organization.id}`,
+  );
   // Retrieve payment session from Stripe
   const session = await stripe.checkout.sessions.retrieve(checkoutSessionId, {
     stripeAccount: organization.stripeAccountId,
   });
-  
+
   if (session.payment_status !== "paid") {
-    console.log(`[PAYMENTS] Incomplete payment status for session ${checkoutSessionId}: ${session.payment_status}`);
+    console.log(
+      `[PAYMENTS] Incomplete payment status for session ${checkoutSessionId}: ${session.payment_status}`,
+    );
     throw new HttpError(400, "Payment not completed");
   }
 
@@ -184,11 +206,15 @@ export const confirmPaidBooking: ConfirmPaidBooking<
   const endTime = new Date(session.metadata?.endTime || "");
 
   if (!userId || !spaceId || !startTime || !endTime) {
-    console.log(`[PAYMENTS] Invalid metadata in session ${checkoutSessionId}: userId=${userId}, spaceId=${spaceId}`);
+    console.log(
+      `[PAYMENTS] Invalid metadata in session ${checkoutSessionId}: userId=${userId}, spaceId=${spaceId}`,
+    );
     throw new HttpError(400, "Invalid session metadata");
   }
 
-  console.log(`[PAYMENTS] Validating availability for space ${spaceId} from ${startTime} to ${endTime}`);
+  console.log(
+    `[PAYMENTS] Validating availability for space ${spaceId} from ${startTime} to ${endTime}`,
+  );
   // Double-check availability before creating reservation
   const isSlotTaken = await context.entities.Reservation.findFirst({
     where: {
@@ -205,12 +231,20 @@ export const confirmPaidBooking: ConfirmPaidBooking<
         charge: session.payment_intent as string, // Stripe charge ID
       });
 
-      console.log(`[PAYMENTS] Refund successful: ${refund.id} for session ${checkoutSessionId}`);
+      console.log(
+        `[PAYMENTS] Refund successful: ${refund.id} for session ${checkoutSessionId}`,
+      );
 
-      throw new HttpError(409, "Slot was taken before payment completed. Refund issued.");
+      throw new HttpError(
+        409,
+        "Slot was taken before payment completed. Refund issued.",
+      );
     } catch (refundError) {
       console.error("Refund failed:", refundError);
-      throw new HttpError(500, "Payment failed and refund could not be processed.");
+      throw new HttpError(
+        500,
+        "Payment failed and refund could not be processed.",
+      );
     }
   }
 

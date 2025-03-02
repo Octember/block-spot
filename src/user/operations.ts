@@ -18,7 +18,9 @@ export const updateUserById: UpdateUserById<
   }
 
   if (!context.user.isAdmin) {
-    console.log(`[USERS] Non-admin user ${context.user.id} attempted to update user ${id}`);
+    console.log(
+      `[USERS] Non-admin user ${context.user.id} attempted to update user ${id}`,
+    );
     throw new HttpError(403);
   }
 
@@ -80,7 +82,9 @@ export const getPaginatedUsers: GetPaginatedUsers<
     throw new HttpError(401);
   }
 
-  console.log(`[USERS] Fetching paginated users (skip: ${args.skip}, email contains: ${args.emailContains || 'none'})`);
+  console.log(
+    `[USERS] Fetching paginated users (skip: ${args.skip}, email contains: ${args.emailContains || "none"})`,
+  );
 
   const allSubscriptionStatusOptions = args.subscriptionStatus as
     | Array<string | null>
@@ -200,17 +204,23 @@ export const searchUsers: SearchUsers<
   });
 
   if (!organizationUser) {
-    console.log(`[USERS] User ${context.user.id} attempted to search without organization membership`);
+    console.log(
+      `[USERS] User ${context.user.id} attempted to search without organization membership`,
+    );
     throw new HttpError(403, "User is not part of an organization");
   }
 
   // Only allow organization owners to search users
   if (organizationUser.role !== "OWNER") {
-    console.log(`[USERS] Non-owner user ${context.user.id} attempted to search users in org ${organizationUser.organizationId}`);
+    console.log(
+      `[USERS] Non-owner user ${context.user.id} attempted to search users in org ${organizationUser.organizationId}`,
+    );
     throw new HttpError(403, "Only organization owners can search users");
   }
 
-  console.log(`[USERS] Searching users in org ${organizationUser.organizationId} with query "${query}" sorted by ${sortBy}`);
+  console.log(
+    `[USERS] Searching users in org ${organizationUser.organizationId} with query "${query}" sorted by ${sortBy}`,
+  );
 
   // Search for users in the same organization
   const users = await context.entities.User.findMany({

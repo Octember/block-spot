@@ -1,5 +1,5 @@
-import { PaymentRule } from 'wasp/entities';
-import { Decimal } from 'decimal.js';
+import { PaymentRule } from "wasp/entities";
+import { Decimal } from "decimal.js";
 
 function calculateBaseRate(
   rule: PaymentRule,
@@ -39,7 +39,10 @@ function isRuleApplicable(
     (!rule.endTime || endMinutes <= rule.endTime);
 
   // Check if rule applies to this day of the week
-  const appliesToDay = !rule.daysOfWeek || rule.daysOfWeek.length === 0 || rule.daysOfWeek.includes(dayOfWeek);
+  const appliesToDay =
+    !rule.daysOfWeek ||
+    rule.daysOfWeek.length === 0 ||
+    rule.daysOfWeek.includes(dayOfWeek);
 
   return withinTimeRange && appliesToDay;
 }
@@ -63,7 +66,9 @@ export function runPaymentRules(
 
   // Filter rules for the specific space and sort by priority (lower first)
   const rules = paymentRules
-    .filter(rule => rule.spaceIds.length === 0 || rule.spaceIds.includes(spaceId))
+    .filter(
+      (rule) => rule.spaceIds.length === 0 || rule.spaceIds.includes(spaceId),
+    )
     .sort((a, b) => a.priority - b.priority);
 
   let totalCost = new Decimal(0);
@@ -72,7 +77,9 @@ export function runPaymentRules(
 
   for (const rule of rules) {
     if (!isRuleApplicable(rule, startTime, endTime)) {
-      console.log(`Skipping rule ${rule.id} (type: ${rule.ruleType}) as it is not applicable.`);
+      console.log(
+        `Skipping rule ${rule.id} (type: ${rule.ruleType}) as it is not applicable.`,
+      );
       continue;
     }
     console.log(`Processing rule ${rule.id} (type: ${rule.ruleType}).`);
@@ -87,22 +94,30 @@ export function runPaymentRules(
             requiresPayment = true;
           }
           baseRateApplied = true;
-          console.log(`Applied BASE_RATE rule ${rule.id}: base cost = ${baseCost}, totalCost = ${totalCost}`);
+          console.log(
+            `Applied BASE_RATE rule ${rule.id}: base cost = ${baseCost}, totalCost = ${totalCost}`,
+          );
         } else {
-          console.log(`Skipping BASE_RATE rule ${rule.id} because a base rate has already been applied.`);
+          console.log(
+            `Skipping BASE_RATE rule ${rule.id} because a base rate has already been applied.`,
+          );
         }
         break;
       case "MULTIPLIER": {
         const multiplier = rule.multiplier?.toNumber() ?? 1;
         totalCost = totalCost.times(multiplier);
-        console.log(`Applied MULTIPLIER rule ${rule.id}: multiplier = ${multiplier}, totalCost = ${totalCost}`);
+        console.log(
+          `Applied MULTIPLIER rule ${rule.id}: multiplier = ${multiplier}, totalCost = ${totalCost}`,
+        );
         break;
       }
       case "DISCOUNT": {
         const discount = rule.discountRate?.toNumber() ?? 0;
         const discountAmount = totalCost.times(discount);
         totalCost = totalCost.minus(discountAmount);
-        console.log(`Applied DISCOUNT rule ${rule.id}: discount = ${discount}, discountAmount = ${discountAmount}, totalCost = ${totalCost}`);
+        console.log(
+          `Applied DISCOUNT rule ${rule.id}: discount = ${discount}, discountAmount = ${discountAmount}, totalCost = ${totalCost}`,
+        );
         break;
       }
       case "FLAT_FEE": {
@@ -110,9 +125,13 @@ export function runPaymentRules(
         if (fee !== 0) {
           totalCost = totalCost.plus(fee);
           requiresPayment = true;
-          console.log(`Applied FLAT_FEE rule ${rule.id}: fee = ${fee}, totalCost = ${totalCost}`);
+          console.log(
+            `Applied FLAT_FEE rule ${rule.id}: fee = ${fee}, totalCost = ${totalCost}`,
+          );
         } else {
-          console.log(`FLAT_FEE rule ${rule.id} has fee 0. Not marking payment as required.`);
+          console.log(
+            `FLAT_FEE rule ${rule.id} has fee 0. Not marking payment as required.`,
+          );
         }
         break;
       }
@@ -130,6 +149,8 @@ export function runPaymentRules(
 
   // Round to 2 decimal places for currency
   const finalCost = totalCost.toDecimalPlaces(2).toNumber();
-  console.log(`Final calculation: requiresPayment = ${requiresPayment}, totalCost = ${finalCost}`);
+  console.log(
+    `Final calculation: requiresPayment = ${requiresPayment}, totalCost = ${finalCost}`,
+  );
   return { requiresPayment, totalCost: finalCost };
 }

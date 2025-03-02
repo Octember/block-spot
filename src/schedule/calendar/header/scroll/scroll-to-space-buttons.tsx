@@ -3,8 +3,8 @@ import { FC } from "react";
 import { ButtonGroup } from "../../../../client/components/button-group";
 import { Select } from "../../../../client/components/form/select";
 import { useVenueContext } from "../../providers/venue-provider";
-import { LuChevronLeft, LuChevronRight, LuPlus } from 'react-icons/lu';
-import { Button } from '@headlessui/react';
+import { LuChevronLeft, LuChevronRight, LuPlus } from "react-icons/lu";
+import { Button } from "@headlessui/react";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { addDays, addMinutes, roundToNearestMinutes } from "date-fns";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
@@ -39,7 +39,6 @@ const getMaxVisibleSpaceIndex = () => {
     if (!spaceElement) break;
 
     if (isElementInViewport(spaceElement)) {
-
       maxIndex = spaceIndex;
     }
     spaceIndex++;
@@ -66,10 +65,11 @@ const getMinVisibleSpaceIndex = () => {
   return minIndex;
 };
 
-
 export const ScrollToSpaceButtons: FC = () => {
   const { venue } = useVenueContext();
-  const { scrollToNextSpace, scrollToPreviousSpace } = useScrollToSpaceButtons(venue.spaces.length);
+  const { scrollToNextSpace, scrollToPreviousSpace } = useScrollToSpaceButtons(
+    venue.spaces.length,
+  );
 
   return (
     <div className="flex pr-4 py-2 gap-2 items-center">
@@ -130,13 +130,14 @@ function useScrollToSpaceButtons(numSpaces: number) {
   };
 }
 
-
 export const FloatingButtons: FC = () => {
   const { setPendingChange } = usePendingChanges();
   const { user } = useAuthUser();
   const { venue } = useVenueContext();
 
-  const { scrollToNextSpace, scrollToPreviousSpace } = useScrollToSpaceButtons(venue.spaces.length);
+  const { scrollToNextSpace, scrollToPreviousSpace } = useScrollToSpaceButtons(
+    venue.spaces.length,
+  );
   return (
     <div className="block md:hidden relative">
       <div className="fixed bottom-8 right-8 z-99 flex items-center gap-2">
@@ -161,25 +162,34 @@ export const FloatingButtons: FC = () => {
 
         {/* Add/Create button (separate with highlight) */}
         <Button
-          onClick={() => setPendingChange({
-            type: "CREATE",
-            newState: {
-              id: "draft",
-              spaceId: venue.spaces[0].id,
-              startTime: roundToNearestMinutes(new Date(), { nearestTo: 15, roundingMethod: "ceil" }),
-              endTime: roundToNearestMinutes(addMinutes(new Date(), 60), { nearestTo: 15, roundingMethod: "ceil" }),
-              status: "PENDING",
-              userId: "",
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              createdById: user?.id || "",
-              description: "",
-            }
-          })}
-          className="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors">
+          onClick={() =>
+            setPendingChange({
+              type: "CREATE",
+              newState: {
+                id: "draft",
+                spaceId: venue.spaces[0].id,
+                startTime: roundToNearestMinutes(new Date(), {
+                  nearestTo: 15,
+                  roundingMethod: "ceil",
+                }),
+                endTime: roundToNearestMinutes(addMinutes(new Date(), 60), {
+                  nearestTo: 15,
+                  roundingMethod: "ceil",
+                }),
+                status: "PENDING",
+                userId: "",
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                createdById: user?.id || "",
+                description: "",
+              },
+            })
+          }
+          className="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-600 text-white shadow-lg hover:bg-indigo-700 transition-colors"
+        >
           <LuPlus size={24} />
         </Button>
       </div>
-    </div >
+    </div>
   );
 };

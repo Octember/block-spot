@@ -92,7 +92,9 @@ export function ScheduleProvider({ children }: ScheduleProviderProps) {
 
       const hasOverlappingReservation = space.reservations.some(
         (reservation) => {
-          return timeDate >= reservation.startTime && timeDate < reservation.endTime;
+          return (
+            timeDate >= reservation.startTime && timeDate < reservation.endTime
+          );
         },
       );
 

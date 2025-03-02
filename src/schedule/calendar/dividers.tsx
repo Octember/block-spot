@@ -29,18 +29,15 @@ export const HorizontalDividers: FC = () => {
         <Fragment key={index}>
           {/* 15min line and label */}
           {/* 30, 45, 60min line */}
-          {
-            Array.from({ length: 60 / MinutesPerSlot }).map((_, index) => (
-              <div
-                key={index}
-                className={`row-span-1 border-b ${getBorderStyle(index)}`}
-              ></div>
-            ))
-          }
+          {Array.from({ length: 60 / MinutesPerSlot }).map((_, index) => (
+            <div
+              key={index}
+              className={`row-span-1 border-b ${getBorderStyle(index)}`}
+            ></div>
+          ))}
         </Fragment>
-      ))
-      }
-    </div >
+      ))}
+    </div>
   );
 };
 

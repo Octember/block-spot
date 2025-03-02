@@ -205,14 +205,12 @@ export const GridSelection: React.FC = () => {
   if (!user) {
     return (
       <>
-        <div
-          {...getSharedGridStyle(timeLabels.length, venue.spaces.length)}
-        >
+        <div {...getSharedGridStyle(timeLabels.length, venue.spaces.length)}>
           <div
             className="col-span-full row-span-full cursor-pointer"
             onClick={() => setAnonUserWarningOpen(true)}
           />
-        </div >
+        </div>
         <AnonymousUserWarning
           isOpen={anonUserWarningOpen}
           onClose={() => setAnonUserWarningOpen(false)}

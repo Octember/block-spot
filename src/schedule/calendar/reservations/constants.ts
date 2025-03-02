@@ -1,4 +1,4 @@
-// Constants for the time grid 
+// Constants for the time grid
 export const PixelsPerSlot = 16;
 export const MinutesPerSlot = 15;
 
@@ -12,7 +12,10 @@ const TIMEZONE_SLOT_OFFSET = 56;
  * If the computed width per slot would be less than the minimum,
  * we reduce the number of columns to fill the container evenly.
  */
-function getEffectiveColumnCount(numSpaces: number, containerWidth: number): number {
+function getEffectiveColumnCount(
+  numSpaces: number,
+  containerWidth: number,
+): number {
   // For a single column, use 1 (which will fill 100% of the container).
   if (numSpaces === 1) return 1;
 
@@ -43,7 +46,7 @@ export function getGridTemplateColumns(numSpaces: number): string {
   // Each column gets an equal fraction of the container width.
   const offset = getWidthOffsetMobile();
 
-  const slotWidth = (containerWidth - offset) / (effectiveColumns);
+  const slotWidth = (containerWidth - offset) / effectiveColumns;
   return `repeat(${numSpaces}, ${slotWidth}px)`;
 }
 

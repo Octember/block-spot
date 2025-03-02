@@ -2,6 +2,8 @@
 
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { FC, ReactNode } from "react";
+import { LuX } from "react-icons/lu";
+import { Button } from "./button";
 
 type ModalAlert = {
   title: string;
@@ -65,9 +67,7 @@ export function Modal({
               data-[state=closed]:opacity-0 data-[state=closed]:translate-y-4 data-[state=closed]:sm:scale-95
               data-[state=leave]:duration-200`}
           >
-            {heading && (
-              <ModalHeader heading={heading} />
-            )}
+            {heading && <ModalHeader heading={heading} onClose={onClose} />}
             <div className="py-4 px-6">{children}</div>
             {footer}
           </DialogPanel>
@@ -77,20 +77,30 @@ export function Modal({
   );
 }
 
-
-const ModalHeader: FC<{ heading: ModalHeading }> = ({ heading }) => {
+const ModalHeader: FC<{ heading: ModalHeading; onClose: () => void }> = ({
+  heading,
+  onClose,
+}) => {
   return (
     <div className="flex flex-col gap-y-2">
       <div className="border-b border-gray-200 py-4 px-6 flex flex-row justify-between">
         <div>
           <h2 className="text-xl font-semibold">{heading.title}</h2>
           {heading?.description && (
-            <p className="text-sm text-gray-600 mt-1">
-              {heading.description}
-            </p>
+            <p className="text-sm text-gray-600 mt-1">{heading.description}</p>
           )}
         </div>
-        {heading.right}
+        {heading.right ? (
+          heading.right
+        ) : (
+          <Button
+            ariaLabel="Close"
+            variant="tertiary"
+            size="lg"
+            icon={<LuX />}
+            onClick={onClose}
+          />
+        )}
       </div>
 
       {heading.alerts?.map((alert) => (

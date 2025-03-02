@@ -110,7 +110,9 @@ export const updateUserTags: UpdateUserTags<UpdateUserTagsInput, void> = async (
   context,
 ) => {
   if (!context.user) {
-    console.log(`[TAGS] Unauthorized attempt to update tags for user ${userId}`);
+    console.log(
+      `[TAGS] Unauthorized attempt to update tags for user ${userId}`,
+    );
     throw new HttpError(401);
   }
 
@@ -121,12 +123,16 @@ export const updateUserTags: UpdateUserTags<UpdateUserTagsInput, void> = async (
   });
 
   if (!organizationUser) {
-    console.log(`[TAGS] User ${context.user.id} attempted to update tags without organization membership`);
+    console.log(
+      `[TAGS] User ${context.user.id} attempted to update tags without organization membership`,
+    );
     throw new HttpError(403, "User is not part of an organization");
   }
 
   if (organizationUser.role !== "OWNER") {
-    console.log(`[TAGS] Non-owner user ${context.user.id} attempted to update tags for user ${userId}`);
+    console.log(
+      `[TAGS] Non-owner user ${context.user.id} attempted to update tags for user ${userId}`,
+    );
     throw new HttpError(403, "Only owners can update tags");
   }
 
@@ -138,7 +144,9 @@ export const updateUserTags: UpdateUserTags<UpdateUserTagsInput, void> = async (
   });
 
   if (!targetOrgUser) {
-    console.log(`[TAGS] Target user ${userId} not found in organization ${organizationUser.organizationId}`);
+    console.log(
+      `[TAGS] Target user ${userId} not found in organization ${organizationUser.organizationId}`,
+    );
     throw new HttpError(404, "User not found in organization");
   }
 
@@ -153,11 +161,15 @@ export const updateUserTags: UpdateUserTags<UpdateUserTagsInput, void> = async (
   });
 
   if (tags.length !== tagIds.length) {
-    console.log(`[TAGS] Invalid tag IDs provided for user ${userId}: expected ${tagIds.length}, found ${tags.length}`);
+    console.log(
+      `[TAGS] Invalid tag IDs provided for user ${userId}: expected ${tagIds.length}, found ${tags.length}`,
+    );
     throw new HttpError(400, "Invalid tag IDs provided");
   }
 
-  console.log(`[TAGS] Updating tags for user ${userId} in org ${organizationUser.organizationId}: ${tagIds.join(', ')}`);
+  console.log(
+    `[TAGS] Updating tags for user ${userId} in org ${organizationUser.organizationId}: ${tagIds.join(", ")}`,
+  );
 
   // Delete existing tags
   await context.entities.OrganizationUserTag.deleteMany({
@@ -195,16 +207,22 @@ export const createTag: CreateTag<CreateTagInput, OrganizationTag> = async (
   });
 
   if (!organizationUser) {
-    console.log(`[TAGS] User ${context.user.id} attempted to create tag without organization membership`);
+    console.log(
+      `[TAGS] User ${context.user.id} attempted to create tag without organization membership`,
+    );
     throw new HttpError(403, "User is not part of an organization");
   }
 
   if (organizationUser.role !== "OWNER") {
-    console.log(`[TAGS] Non-owner user ${context.user.id} attempted to create tag`);
+    console.log(
+      `[TAGS] Non-owner user ${context.user.id} attempted to create tag`,
+    );
     throw new HttpError(403, "Only owners can create tags");
   }
 
-  console.log(`[TAGS] Creating tag "${name}" in org ${organizationUser.organizationId}`);
+  console.log(
+    `[TAGS] Creating tag "${name}" in org ${organizationUser.organizationId}`,
+  );
   return context.entities.OrganizationTag.create({
     data: {
       name,
@@ -233,12 +251,16 @@ export const deleteTag: DeleteTag<DeleteTagInput, void> = async (
   });
 
   if (!organizationUser) {
-    console.log(`[TAGS] User ${context.user.id} attempted to delete tag without organization membership`);
+    console.log(
+      `[TAGS] User ${context.user.id} attempted to delete tag without organization membership`,
+    );
     throw new HttpError(403, "User is not part of an organization");
   }
 
   if (organizationUser.role !== "OWNER") {
-    console.log(`[TAGS] Non-owner user ${context.user.id} attempted to delete tag ${id}`);
+    console.log(
+      `[TAGS] Non-owner user ${context.user.id} attempted to delete tag ${id}`,
+    );
     throw new HttpError(403, "Only owners can delete tags");
   }
 
@@ -250,11 +272,15 @@ export const deleteTag: DeleteTag<DeleteTagInput, void> = async (
   });
 
   if (!tag) {
-    console.log(`[TAGS] Tag ${id} not found in org ${organizationUser.organizationId}`);
+    console.log(
+      `[TAGS] Tag ${id} not found in org ${organizationUser.organizationId}`,
+    );
     throw new HttpError(404, "Tag not found");
   }
 
-  console.log(`[TAGS] Deleting tag ${id} (${tag.name}) from org ${organizationUser.organizationId}`);
+  console.log(
+    `[TAGS] Deleting tag ${id} (${tag.name}) from org ${organizationUser.organizationId}`,
+  );
 
   // Delete all user associations first
   await context.entities.OrganizationUserTag.deleteMany({
