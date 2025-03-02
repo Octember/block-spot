@@ -17,7 +17,7 @@ export const SpacesNamesSection: FC = () => {
   const scrollClass = isTimeZoneDifferent ? "scroll-ml-24" : "scroll-ml-14";
 
   return (
-    <div className="z-40 bg-white w-screen shadow-4 flex flex-row overflow-hidden">
+    <div className="z-30 bg-white w-screen shadow-4 flex flex-row overflow-hidden">
       <div className="w-14">
         <Button as="div" className="flex h-full items-center justify-center">
           <LuSearch className="size-6" />
@@ -37,7 +37,7 @@ export const SpacesNamesSection: FC = () => {
             <div
               key={space.id}
               tabIndex={0}
-              className={`flex items-center justify-center py-2 ${scrollClass} focus:bg-gray-300`}
+              className={`flex items-center justify-center py-2 ${scrollClass}`}
             >
               <span className="flex items-baseline text-md font-semibold py-1 text-gray-900">
                 {space.name}

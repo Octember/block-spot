@@ -12,17 +12,18 @@ import { ButtonGroup } from "../../../client/components/button-group";
 import { isUserOwner } from "../../../client/hooks/permissions";
 import { useVenueContext } from "../providers/venue-provider";
 import { DateSelectButton } from "./date-select-button";
-import { DayButtons, DayOfWeekIndicators } from "./days-of-week";
+import { DayOfWeekIndicators } from "./days-of-week";
+import { MobileHeader, MobileMenu } from "./mobile";
 import { ScrollToSpaceButtons } from "./scroll/scroll-to-space-buttons";
-import { SpacesNamesSection } from "./space-names-header";
+
 
 export const CalendarHeader: FC = () => {
   const { selectedDate, setSelectedDate } = useVenueContext();
 
   return (
     <header className="inset-x-0 top-0 z-50 bg-white dark:bg-boxdark-2 relative md:sticky flex flex-col min-w-full max-w-full">
-      <div className="flex flex-row justify-between items-center bg-cyan-800/40">
-        <div className="flex px-4 py-2 gap-2 items-center">
+      <div className="flex flex-row justify-between items-center bg-cyan-800/60">
+        <div className="flex flex-1 px-4 py-2 gap-2 items-center">
           <div className="hidden md:block">
             <BackToDashboardButton />
           </div>
@@ -42,7 +43,13 @@ export const CalendarHeader: FC = () => {
             />
           </div>
 
-          <DateSelectButton />
+          <div className="hidden md:block">
+            <DateSelectButton />
+          </div>
+          <div className="flex flex-1 flex-row items-center gap-2 justify-between md:hidden">
+            <MobileHeader />
+            <MobileMenu />
+          </div>
         </div>
 
         <div className="hidden md:flex flex-row items-center ">
