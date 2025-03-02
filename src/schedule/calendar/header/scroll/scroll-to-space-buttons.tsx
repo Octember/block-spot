@@ -6,7 +6,7 @@ import { useVenueContext } from "../../providers/venue-provider";
 import { LuChevronLeft, LuChevronRight, LuPlus } from 'react-icons/lu';
 import { Button } from '@headlessui/react';
 import { usePendingChanges } from "../../providers/pending-changes-provider";
-import { addDays } from "date-fns";
+import { addDays, addMinutes, roundToNearestMinutes } from "date-fns";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 
 function isElementInViewport(element: HTMLElement) {
@@ -166,8 +166,8 @@ export const FloatingButtons: FC = () => {
             newState: {
               id: "draft",
               spaceId: venue.spaces[0].id,
-              startTime: new Date(),
-              endTime: addDays(new Date(), 1),
+              startTime: roundToNearestMinutes(new Date(), { nearestTo: 15, roundingMethod: "ceil" }),
+              endTime: roundToNearestMinutes(addMinutes(new Date(), 60), { nearestTo: 15, roundingMethod: "ceil" }),
               status: "PENDING",
               userId: "",
               createdAt: new Date(),

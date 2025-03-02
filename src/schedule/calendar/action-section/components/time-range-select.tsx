@@ -28,7 +28,7 @@ export const TimeRangeSelect = () => {
                     }))}
                   onChange={(value) => onChange(Number(value.value))}
                   value={{
-                    label: `Starting at ${timeLabelsLong15Minutes[value / 15]}`,
+                    label: `Starts ${timeLabelsLong15Minutes[value / 15]}`,
                     value: String(value),
                   }}
                 />
@@ -51,7 +51,7 @@ export const TimeRangeSelect = () => {
                   }))}
                 onChange={(value) => onChange(Number(value.value))}
                 value={{
-                  label: `Ending at ${timeLabelsLong15Minutes[value / 15]}`,
+                  label: `Ends ${timeLabelsLong15Minutes[value / 15]}`,
                   value: String(value),
                 }}
               />
