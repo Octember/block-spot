@@ -20,7 +20,7 @@ export const CalendarHeader: FC = () => {
   const { selectedDate, setSelectedDate } = useVenueContext();
 
   return (
-    <header className="inset-x-0 top-0 left-0 z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-full max-w-full">
+    <header className="inset-x-0 top-0 z-50 bg-white dark:bg-boxdark-2 relative md:sticky flex flex-col min-w-full max-w-full">
       <div className="flex flex-row justify-between items-center bg-cyan-800/40">
         <div className="flex px-4 py-2 gap-2 items-center">
           <div className="hidden md:block">
@@ -51,8 +51,6 @@ export const CalendarHeader: FC = () => {
       </div>
 
       <DayOfWeekIndicators />
-      <DayButtons />
-      <SpacesNamesSection />
     </header>
   );
 };

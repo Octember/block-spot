@@ -12,6 +12,8 @@ import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
 import { ScrollableContainer } from "./providers/horizontal-scroll/horizontal-scroll-container";
 import { MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
+import { DayButtons } from './header/days-of-week';
+import { SpacesNamesSection } from './header/space-names-header';
 
 const TimeLabels: FC = () => {
   const timeLabels = useTimeLabelsAndZones();
@@ -53,7 +55,13 @@ export const WeekViewCalendar: FC = () => {
           <HorizontalScrollProvider>
             <div className="flex flex-col min-h-screen bg-white">
               {/* 1) The header is sticky at the top */}
-              <CalendarHeader />
+              <div className="md:sticky top-0 inset-x-0 z-50">
+                <CalendarHeader />
+              </div>
+              <div className="sticky top-0 md:top-12 inset-x-0 z-50">
+                <DayButtons />
+                <SpacesNamesSection />
+              </div>
 
               <div className="flex flex-row">
                 <div className="flex flex-col w-14 bg-white">
