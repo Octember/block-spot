@@ -25,6 +25,12 @@ function getEffectiveColumnCount(numSpaces: number, containerWidth: number): num
   return numSpaces;
 }
 
+const IsMobile = window.innerWidth < 768;
+
+function getWidthOffsetMobile(): number {
+  return IsMobile ? MIN_SLOT_WIDTH / 2 : 0;
+}
+
 /**
  * Returns the grid-template-columns string.
  *
@@ -35,8 +41,9 @@ export function getGridTemplateColumns(numSpaces: number): string {
   const effectiveColumns = getEffectiveColumnCount(numSpaces, containerWidth);
 
   // Each column gets an equal fraction of the container width.
-  // Each column gets an equal fraction of the container width.
-  const slotWidth = (containerWidth + (MIN_SLOT_WIDTH  / 2)) / (effectiveColumns);
+  const offset = getWidthOffsetMobile();
+
+  const slotWidth = (containerWidth - offset) / (effectiveColumns);
   return `repeat(${numSpaces}, ${slotWidth}px)`;
 }
 

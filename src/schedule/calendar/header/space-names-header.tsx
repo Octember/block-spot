@@ -6,27 +6,35 @@ import {
   useVenueTimeZoneAbbreviation,
 } from "../constants";
 import { getGridTemplateColumns } from "../reservations/constants";
+import { LuSearch } from "react-icons/lu";
+import { useHorizontalScroll } from '../providers/horizontal-scroll-provider';
+import { Button } from "@headlessui/react";
 
 export const SpacesNamesSection: FC = () => {
+  const { scrolledPixels } = useHorizontalScroll();
   const { venue } = useVenueContext();
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
-  const heightOfHeader = 56; // or whatever your CalendarHeader height is
-
   const scrollClass = isTimeZoneDifferent ? "scroll-ml-24" : "scroll-ml-14";
 
   return (
     <div
-      className={`sticky top-[${heightOfHeader}px] z-40 bg-white min-w-max w-full`}
+      className="z-40 bg-white w-screen shadow-4 flex flex-row overflow-hidden"
     >
-      <div className="z-30 flex-none bg-white shadow-4 sm:pr-8">
+      <div className="w-14">
+        <Button as="div" className="flex h-full items-center justify-center">
+          <LuSearch className="size-6" />
+        </Button>
+      </div>
+
+      <div className="z-30 flex-1 bg-white sm:pr-8 overflow-hidden" >
         <div
-          className="grid grid-flow-col divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500"
+          className="relative grid grid-flow-col divide-x divide-gray-100 border-r border-gray-100 text-sm/6 text-gray-500"
           style={{
             gridTemplateColumns: getGridTemplateColumns(venue.spaces.length),
             gridTemplateRows: "1fr",
+            left: `-${scrolledPixels}px`
           }}
         >
-          <TimeZoneLabel />
           {venue.spaces.map((space, index) => (
             <div
               id={`space-${index}`}

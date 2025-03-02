@@ -667,3 +667,16 @@ enum RefundStatus {
    - Index frequently queried fields
    - Cache common rule combinations
    - Optimize rule collection queries
+
+# Project Memory
+
+## Components
+
+### HorizontalScrollProvider
+- Located in: `src/schedule/calendar/providers/horizontal-scroll-provider.tsx`
+- Purpose: Provides context for tracking horizontal scroll position in the calendar view
+- Features:
+  - Tracks scrolledPixels through context
+  - Automatically attaches to `.overflow-x-auto` container
+  - Provides `useHorizontalScroll` hook for consuming components
+- Usage: Wraps calendar components that need access to horizontal scroll position

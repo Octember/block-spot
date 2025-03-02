@@ -42,7 +42,7 @@ export function getRowIndexFromMinutes(venue: Venue, minutes: number) {
     Math.ceil((minutes - venue.displayStart) / MinutesPerSlot) +
     HEADER_ROW_COUNT;
 
-  if (result <= 0) {
+  if (result <= HEADER_ROW_COUNT) {
     return 1;
   }
 
