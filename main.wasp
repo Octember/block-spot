@@ -28,9 +28,9 @@ app BlockSpot {
     "<meta name='twitter:card' content='summary_large_image' />",
 
     // Amplitude
-    // "<script src='https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz'></script>",
-    // "<script src='https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz'></script>",
-    // "<script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('2ec6caddd15ce3037d507462065b91e8', {'autocapture':{'elementInteractions':true}});</script>",
+    "<script src='https://cdn.amplitude.com/libs/analytics-browser-2.11.1-min.js.gz'></script>",
+    "<script src='https://cdn.amplitude.com/libs/plugin-session-replay-browser-1.8.0-min.js.gz'></script>",
+    "<script>window.amplitude.add(window.sessionReplay.plugin({sampleRate: 1}));window.amplitude.init('2ec6caddd15ce3037d507462065b91e8', {'autocapture':{'elementInteractions':true}});</script>",
     // Google Analytics
     "<script async src='https://www.googletagmanager.com/gtag/js?id=AW-11557893994'></script>",
     "<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'AW-11557893994');</script>",
