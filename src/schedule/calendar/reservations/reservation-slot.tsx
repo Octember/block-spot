@@ -271,14 +271,20 @@ const ReservationMenu = ({
       >
         <div className="py-1 flex flex-col items-stretch">
           <button
-            onClick={onEdit}
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit();
+            }}
             className="group flex gap-2 items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
           >
             <PencilSquareIcon className="size-4 text-gray-400 group-hover:text-gray-700" />
             Edit
           </button>
           <button
-            onClick={onDelete}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.();
+            }}
             className="group flex gap-2 items-center px-4 py-2 text-sm text-red-700 hover:bg-red-50"
           >
             <TrashIcon className="size-4 text-red-400 group-hover:text-red-700" />

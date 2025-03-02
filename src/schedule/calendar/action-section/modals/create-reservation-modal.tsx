@@ -91,52 +91,6 @@ export const CreateReservationWizard: FC<{
 
   const enablePayments = isAdmin && organization?.stripeAccountId && paymentInfo?.requiresPayment;
 
-  const steps = (next: () => void, prev: () => void) => [
-    {
-      title: "Create Reservation",
-      description: "Create a new reservation",
-      content: (
-        <ReservationForm reservation={reservation} onSubmit={() => { }} />
-      ),
-      actions: (
-        <>
-
-          <Button
-            ariaLabel="Cancel"
-            variant="secondary"
-            size="lg"
-            onClick={cancelChange}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            ariaLabel="Next"
-            variant="primary"
-            size="lg"
-            onClick={next}
-          >
-            Next
-          </Button>
-        </>
-      ),
-    },
-    ...(enablePayments
-      ? [
-        {
-          title: "Payment",
-          description: "Pay for the reservation",
-          content: (
-            <StripeWrapper organization={organization} spaceId={reservation.spaceId}>
-              <StripeCheckoutForm />
-            </StripeWrapper>
-          ),
-          actions: undefined,
-        },
-      ]
-      : []),
-  ];
-
   return (
     <FormProvider {...form}>
       <Modal
@@ -148,7 +102,32 @@ export const CreateReservationWizard: FC<{
         }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
-
+            {currentStep === 'select_details' && (
+              <>
+                <Button
+                  ariaLabel="Cancel"
+                  variant="secondary"
+                  size="lg"
+                  onClick={cancelChange}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  ariaLabel="Next"
+                  variant="primary"
+                  size="lg"
+                  onClick={() => {
+                    if (enablePayments) {
+                      setCurrentStep('payment')
+                    } else {
+                      handleSubmit(onSubmit)()
+                    }
+                  }}
+                >
+                  Next
+                </Button>
+              </>
+            )}
           </div>
         }
       >
