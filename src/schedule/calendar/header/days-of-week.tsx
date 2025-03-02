@@ -49,7 +49,7 @@ export const DayButtons: FC = () => {
           className={cn(
             "size-10 leading-none justify-center flex flex-col rounded-full  text-center border border-transparent",
             isSameDay(day.date, selectedDate) &&
-            "bg-teal-700 text-white font-semibold",
+              "bg-teal-700 text-white font-semibold",
             isToday(day.date) && "border border-cyan-700",
           )}
           onClick={() => setSelectedDate(day.date)}

@@ -1,8 +1,13 @@
-import { Button, Popover, PopoverButton, PopoverPanel } from '@headlessui/react';
-import { FC, useState } from 'react';
-import { LuCalendar, LuMenu, LuUser2, LuUserCircle } from 'react-icons/lu';
-import { usePopper } from 'react-popper';
-import { routes, Link as WaspRouterLink } from 'wasp/client/router';
+import {
+  Button,
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+} from "@headlessui/react";
+import { FC, useState } from "react";
+import { LuCalendar, LuMenu, LuUserCircle } from "react-icons/lu";
+import { usePopper } from "react-popper";
+import { routes, Link as WaspRouterLink } from "wasp/client/router";
 
 export const MobileMenu: FC = () => {
   const [referenceElement, setReferenceElement] =
@@ -14,10 +19,7 @@ export const MobileMenu: FC = () => {
 
   return (
     <Popover className="relative group h-full flex justify-center items-center">
-      <PopoverButton
-        ref={setReferenceElement}
-        as="button"
-      >
+      <PopoverButton ref={setReferenceElement} as="button">
         <LuMenu className="size-5 text-white" />
       </PopoverButton>
 
@@ -39,8 +41,6 @@ export const MobileMenu: FC = () => {
     </Popover>
   );
 };
-
-
 
 export const MobileHeader = () => {
   return (

@@ -12,8 +12,8 @@ import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
 import { ScrollableContainer } from "./providers/horizontal-scroll/horizontal-scroll-container";
 import { MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
-import { DayButtons } from './header/days-of-week';
-import { SpacesNamesSection } from './header/space-names-header';
+import { DayButtons } from "./header/days-of-week";
+import { SpacesNamesSection } from "./header/space-names-header";
 
 const TimeLabels: FC = () => {
   const timeLabels = useTimeLabelsAndZones();

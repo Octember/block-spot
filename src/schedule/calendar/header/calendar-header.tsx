@@ -16,7 +16,6 @@ import { DayOfWeekIndicators } from "./days-of-week";
 import { MobileHeader, MobileMenu } from "./mobile";
 import { ScrollToSpaceButtons } from "./scroll/scroll-to-space-buttons";
 
-
 export const CalendarHeader: FC = () => {
   const { selectedDate, setSelectedDate } = useVenueContext();
 
