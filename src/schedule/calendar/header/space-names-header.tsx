@@ -7,7 +7,7 @@ import {
 } from "../constants";
 import { getGridTemplateColumns } from "../reservations/constants";
 import { LuSearch } from "react-icons/lu";
-import { useHorizontalScroll } from '../providers/horizontal-scroll-provider';
+import { useHorizontalScroll } from '../providers/horizontal-scroll/horizontal-scroll-provider';
 import { Button } from "@headlessui/react";
 
 export const SpacesNamesSection: FC = () => {
@@ -37,10 +37,9 @@ export const SpacesNamesSection: FC = () => {
         >
           {venue.spaces.map((space, index) => (
             <div
-              id={`space-${index}`}
               key={space.id}
               tabIndex={0}
-              className={`flex items-center justify-center py-2 snap-start ${scrollClass} focus:bg-gray-300`}
+              className={`flex items-center justify-center py-2 ${scrollClass} focus:bg-gray-300`}
             >
               <span className="flex items-baseline text-md font-semibold py-1 text-gray-900">
                 {space.name}

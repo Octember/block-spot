@@ -1,30 +1,47 @@
-import { FC, PropsWithChildren } from "react";
+import { FC, Fragment } from 'react';
 import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
-import { CalendarHeader } from "./header/calendar-header";
-import { useIsTimeZoneDifferent } from "./constants";
+import { useIsTimeZoneDifferent, useTimeLabelsAndZones } from './constants';
 import { HorizontalDividers, VerticalDividers } from "./dividers";
+import { CalendarHeader } from "./header/calendar-header";
+import { FloatingButtons } from './header/scroll/scroll-to-space-buttons';
+import { HorizontalScrollProvider } from './providers/horizontal-scroll/horizontal-scroll-provider';
 import { PendingChangesProvider } from "./providers/pending-changes-provider";
 import { ScheduleProvider } from "./providers/schedule-context-provider";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
-import { FloatingButtons } from './header/scroll/scroll-to-space-buttons';
-import { HorizontalScrollProvider, useHorizontalScroll } from './providers/horizontal-scroll-provider';
+import { ScrollableContainer } from "./providers/horizontal-scroll/horizontal-scroll-container";
+import { MinutesPerSlot, PixelsPerSlot } from './reservations/constants';
 
-const ScrollableContainer: FC<PropsWithChildren> = ({ children }) => {
-  const { setScrolledPixels } = useHorizontalScroll();
+const TimeLabels: FC = () => {
+  const timeLabels = useTimeLabelsAndZones();
+  const isTimeZoneDifferent = useIsTimeZoneDifferent();
+  const labelWidthClass = isTimeZoneDifferent ? "-ml-24 w-24" : "-ml-14 w-14";
 
   return (
-    <div className={`relative overflow-x-auto snap-x flex-1`}
-      onScroll={(e) => {
-        setScrolledPixels(e.currentTarget.scrollLeft);
+    <div
+      className="col-start-1 col-end-2 row-start-1 grid"
+      style={{
+        gridTemplateRows: `2rem repeat(${timeLabels.length * (60 / MinutesPerSlot)}, ${PixelsPerSlot}px)`,
       }}
     >
-      {children}
-    </div>
-  )
-}
+      <div className="" />
 
+      {timeLabels.map((label, index) => (
+        <Fragment key={index}>
+          {/* 15min line and label */}
+          <div className={`row-span-4`}>
+            <div
+              className={`sticky left-0 z-40 ${labelWidthClass} pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none`}
+            >
+              {label}
+            </div>
+          </div>
+        </Fragment>
+      ))}
+    </div>
+  );
+}
 export const WeekViewCalendar: FC = () => {
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
   const widthClass = isTimeZoneDifferent ? "w-24" : "w-14";
@@ -38,27 +55,30 @@ export const WeekViewCalendar: FC = () => {
               {/* 1) The header is sticky at the top */}
               <CalendarHeader />
 
-              <ScrollableContainer>
-                <div className="relative flex flex-auto flex-col bg-white">
-                  <div className="flex min-w-max w-full flex-none flex-col">
-                    <div className="flex flex-auto">
-                      <div
-                        className={`sticky left-0 z-40 ${widthClass} flex-none ring-1 ring-gray-100 bg-white`}
-                      />
-                      <div className="grid flex-auto grid-cols-1 grid-rows-1 bg-cyan-50/40">
-                        <VerticalDividers />
-                        <HorizontalDividers />
-                        <AvailabilitySection />
-                        <ReservationsSection />
-                        <GridSelection />
-                        <PendingChangesSection />
+              <div className="flex flex-row">
+                <div className="flex flex-col w-14 bg-white">
+                  <TimeLabels />
+                </div>
 
-                        <FloatingButtons />
+                <ScrollableContainer>
+                  <div className="relative flex flex-auto flex-col bg-white">
+                    <div className="flex min-w-max w-full flex-none flex-col">
+                      <div className="flex flex-auto">
+                        <div className="grid flex-auto grid-cols-1 grid-rows-1 bg-cyan-50/40">
+                          <VerticalDividers />
+                          <HorizontalDividers />
+                          <AvailabilitySection />
+                          <ReservationsSection />
+                          <GridSelection />
+                          <PendingChangesSection />
+
+                          <FloatingButtons />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </ScrollableContainer>
+                </ScrollableContainer>
+              </div>
             </div>
           </HorizontalScrollProvider>
         </SelectionProvider>

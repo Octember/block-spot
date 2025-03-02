@@ -1,4 +1,4 @@
-import { createContext, FC, PropsWithChildren, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, FC, PropsWithChildren, useContext, useState } from 'react';
 
 interface HorizontalScrollContextType {
   scrolledPixels: number;
@@ -23,4 +23,4 @@ export const HorizontalScrollProvider: FC<PropsWithChildren> = ({ children }) =>
       {children}
     </HorizontalScrollContext.Provider>
   );
-}; 
+};

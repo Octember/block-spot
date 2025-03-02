@@ -46,7 +46,7 @@ export const DayButtons: FC = () => {
         <Button
           as="span"
           key={day.day}
-          className={cn("size-9.5 mx-0.5 p-2 rounded-full text-center border border-transparent",
+          className={cn("size-10 leading-none justify-center flex flex-col rounded-full  text-center border border-transparent",
             isSameDay(day.date, selectedDate) && "bg-teal-700 text-white font-semibold",
             isToday(day.date) && "border border-cyan-700"
           )}

@@ -28,23 +28,19 @@ export const HorizontalDividers: FC = () => {
       {timeLabels.map((label, index) => (
         <Fragment key={index}>
           {/* 15min line and label */}
-          <div className={`row-span-1 border-b ${getBorderStyle(0)}`}>
-            <div
-              className={`sticky left-0 z-40 ${labelWidthClass} pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none`}
-            >
-              {label}
-            </div>
-          </div>
           {/* 30, 45, 60min line */}
-          {Array.from({ length: 60 / MinutesPerSlot - 1 }).map((_, index) => (
-            <div
-              key={index}
-              className={`row-span-1 border-b ${getBorderStyle(index + 1)}`}
-            ></div>
-          ))}
+          {
+            Array.from({ length: 60 / MinutesPerSlot }).map((_, index) => (
+              <div
+                key={index}
+                className={`row-span-1 border-b ${getBorderStyle(index)}`}
+              ></div>
+            ))
+          }
         </Fragment>
-      ))}
-    </div>
+      ))
+      }
+    </div >
   );
 };
 
@@ -65,7 +61,12 @@ export const VerticalDividers: FC = () => {
       }}
     >
       {Array.from({ length: venue.spaces.length + 1 }).map((_, index) => (
-        <div key={index} className={`col-start-${index + 1} row-span-full}`} />
+        // snap-start drives the scroll snap to space column
+        <div
+          id={`space-${index}`}
+          key={index}
+          className={`snap-start col-start-${index + 1} row-span-full`}
+        />
       ))}
     </div>
   );

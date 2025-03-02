@@ -48,7 +48,7 @@ const ReservationDescription = ({
     return (
       <p>
         <time dateTime={reservation.startTime.toISOString()}>
-          {formatTimeWithZone(startTime, "h:mm a", venue)} -{" "}
+          {formatTimeWithZone(startTime, "h:mm", venue)} -{" "}
           {formatTimeWithZone(endTime, "h:mm a", venue)}
         </time>
       </p>
