@@ -3,7 +3,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@heroicons/react/20/solid";
-import { addDays } from "date-fns";
+import { startOfWeek, addDays, getDate, isToday } from 'date-fns';
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "wasp/client/router";
@@ -15,6 +15,7 @@ import { isUserOwner } from "../../../client/hooks/permissions";
 import { useVenueContext } from "../providers/venue-provider";
 import { DateSelectButton } from "./date-select-button";
 import { ScrollToSpaceButtons } from "./scroll/scroll-to-space-buttons";
+import { DayButtons, DayOfWeekIndicators } from './days-of-week';
 
 export const CalendarHeader: FC = () => {
   const { selectedDate, setSelectedDate } = useVenueContext();
@@ -22,7 +23,7 @@ export const CalendarHeader: FC = () => {
   return (
     <header
       className={cn(
-        "inset-x-0 top-0 left-0  z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max",
+        "inset-x-0 top-0 left-0 z-50 bg-white dark:bg-boxdark-2 sticky flex flex-col min-w-max",
       )}
     >
       <div className="flex flex-row justify-between items-center bg-cyan-800/40">
@@ -53,7 +54,10 @@ export const CalendarHeader: FC = () => {
           <ScrollToSpaceButtons />
         </div>
       </div>
-    </header>
+
+      <DayOfWeekIndicators />
+      <DayButtons />
+    </header >
   );
 };
 
@@ -85,3 +89,5 @@ const BackToDashboardButton: FC = () => {
     );
   }
 };
+
+

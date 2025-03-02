@@ -12,11 +12,8 @@ import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 function isElementInViewport(element: HTMLElement) {
   const rect = element.getBoundingClientRect();
   return (
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    rect.bottom <=
-    (window.innerHeight || document.documentElement.clientHeight) &&
-    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    rect.left < (window.innerWidth || document.documentElement.clientWidth) &&
+    rect.right > 0
   );
 }
 
@@ -42,6 +39,7 @@ const getMaxVisibleSpaceIndex = () => {
     if (!spaceElement) break;
 
     if (isElementInViewport(spaceElement)) {
+
       maxIndex = spaceIndex;
     }
     spaceIndex++;
@@ -109,6 +107,7 @@ export const ScrollToSpaceButtons: FC = () => {
 function useScrollToSpaceButtons(numSpaces: number) {
   function scrollToNextSpace() {
     const maxVisibleSpaceIndex = getMaxVisibleSpaceIndex();
+    console.log("maxVisibleSpaceIndex", maxVisibleSpaceIndex, numSpaces);
     if (maxVisibleSpaceIndex + 1 < numSpaces) {
       scrollToSpace(maxVisibleSpaceIndex + 1);
     } else {

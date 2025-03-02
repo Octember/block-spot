@@ -32,13 +32,14 @@ export const WeekViewCalendar: FC = () => {
                     <div
                       className={`sticky left-0 z-40 ${widthClass} flex-none ring-1 ring-gray-100 bg-white`}
                     />
-                    <div className="grid flex-auto grid-cols-1 grid-rows-1">
+                    <div className="grid flex-auto grid-cols-1 grid-rows-1 bg-cyan-50/40">
                       <VerticalDividers />
                       <HorizontalDividers />
                       <AvailabilitySection />
                       <ReservationsSection />
                       <GridSelection />
                       <PendingChangesSection />
+
                       <FloatingButtons />
                     </div>
                   </div>

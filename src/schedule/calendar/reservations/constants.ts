@@ -36,7 +36,7 @@ export function getGridTemplateColumns(numSpaces: number): string {
 
   // Each column gets an equal fraction of the container width.
   // Each column gets an equal fraction of the container width.
-  const slotWidth = (containerWidth - (MIN_SLOT_WIDTH  / 2)) / (effectiveColumns);
+  const slotWidth = (containerWidth + (MIN_SLOT_WIDTH  / 2)) / (effectiveColumns);
   return `repeat(${numSpaces}, ${slotWidth}px)`;
 }
 
