@@ -141,15 +141,23 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
 
   const { requiresPayment, totalCost, priceBreakdown } = await calculatePaymentRulesV2({
     rules: space.venue.paymentRules,
-    startTime,
-    endTime,
+    startTime: new Date(startTime),
+    endTime: new Date(endTime),
     spaceId: space.id,
-    userId: context.user.id,
+    userId,
     db: {
       organizationUser: context.entities.OrganizationUser,
       space: context.entities.Space,
     },
   });
+  console.log(`[STRIPE] Price breakdown: ${JSON.stringify(priceBreakdown)}`);
+
+  if (!requiresPayment) {
+    console.warn(
+      `[STRIPE] Attempted to create checkout for non-paid reservation`,
+    );
+    throw new HttpError(400, `This reservation does not require payment`);
+  }
 
   if (!context.user) {
     console.log(
@@ -168,13 +176,6 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
       `[STRIPE] Organization ${organization.id} attempted checkout without Stripe account`,
     );
     throw new HttpError(400, "Organization does not have a Stripe account");
-  }
-
-  if (!requiresPayment) {
-    console.warn(
-      `[STRIPE] Attempted to create checkout for non-paid reservation`,
-    );
-    throw new HttpError(400, "This reservation does not require payment");
   }
 
   console.log(

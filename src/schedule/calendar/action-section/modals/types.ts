@@ -1,4 +1,4 @@
-import { User } from "wasp/entities";
+import { User, Reservation } from "wasp/entities";
 
 export type CreateReservationSteps =
   | "select_details"
@@ -17,4 +17,6 @@ export type CreateReservationFormInputs = {
   title: string;
 
   user?: User;
+
+  createdReservation?: Reservation;
 };

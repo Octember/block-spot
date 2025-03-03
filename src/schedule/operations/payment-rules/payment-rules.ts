@@ -215,9 +215,12 @@ export async function calculatePaymentRulesV2({
 }): Promise<PaymentRulesResult> {
   const userTags = await getUserTags(userId, spaceId, db);
 
-  console.log(`[V2] Calculating payment rules for space ${spaceId} with user tags [${userTags.map((tag) => tag.name).join(", ")}]`);
+  const result = calculatePaymentRules(rules, startTime, endTime, spaceId, userTags.map((tag) => tag.id));
 
-  return calculatePaymentRules(rules, startTime, endTime, spaceId, userTags.map((tag) => tag.id));
+  // console.log(`[V2] Calculated payment rules: ${JSON.stringify(result)}`);
+
+  return result;
+
 }
 
 export function calculatePaymentRules(
@@ -286,6 +289,7 @@ export function calculatePaymentRules(
       case "BASE_RATE":
         if (!baseRateApplied) {
           const baseCost = calculateBaseRate(rule, startTime, endTime);
+          console.log("BASE COST", { baseCost, startTime, endTime });
           totalCost = totalCost.plus(baseCost);
 
           // Add to breakdown
@@ -420,7 +424,7 @@ export function calculatePaymentRules(
   const result: PaymentRulesResult = {
     requiresPayment,
     totalCost: finalCost,
-    ...(hasApplicableRules ? { priceBreakdown: breakdown } : {}),
+    priceBreakdown: breakdown,
   };
 
   if (!requiresPayment) {

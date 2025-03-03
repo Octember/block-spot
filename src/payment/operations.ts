@@ -157,7 +157,7 @@ type ConfirmPaidBookingArgs = {
 
 export const confirmPaidBooking: ConfirmPaidBooking<
   ConfirmPaidBookingArgs,
-  void
+  Reservation
 > = async ({ checkoutSessionId, venueId }, context) => {
   if (!context.user) {
     console.log(
@@ -266,5 +266,5 @@ export const confirmPaidBooking: ConfirmPaidBooking<
   });
   console.log(`[PAYMENTS] Confirmed paid booking: ${reservation.id}`);
 
-  return undefined;
+  return reservation;
 };

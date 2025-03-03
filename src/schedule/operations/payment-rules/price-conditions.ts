@@ -29,20 +29,10 @@ export function isPriceConditionApplicable(
 
   // Check user tags if any are specified
   if (condition.userTags.length > 0) {
-    console.log(
-      "Condition user tags",
-      condition.userTags,
-      "User tags",
-      userTags,
-    );
+
     // If no user tags are provided or user has none of the required tags, condition doesn't apply
     if (!condition.userTags.some((tag) => userTags.includes(tag))) {
-      console.log(
-        "Condition user tags",
-        condition.userTags,
-        "User tags",
-        userTags,
-      );
+      
       return {
         applicable: false,
         reason: `User tags [${userTags.join(", ")}] don't match any required tags [${condition.userTags.join(", ")}]`,

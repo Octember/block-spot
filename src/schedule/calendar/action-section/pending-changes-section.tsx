@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { usePendingChanges } from "../providers/pending-changes-provider";
-import { CreateReservationWizard } from "./modals/create-reservation-modal";
+import { CreateReservationWizard } from "./modals/create-reservation-wizard";
 import { DeleteReservationModal } from "./modals/delete-reservation-modal";
 import { UpdateReservationModal } from "./modals/update-reservation-modal";
 
@@ -12,7 +12,6 @@ export const PendingChangesSection: FC = () => {
   }
 
   if (pendingChange.type === "CREATE") {
-    // return <CreateReservationModal reservation={pendingChange.newState} />;
     return <CreateReservationWizard reservation={pendingChange.newState} />;
   } else if (pendingChange.type === "UPDATE") {
     return <UpdateReservationModal reservation={pendingChange.newState} />;

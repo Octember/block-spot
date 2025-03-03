@@ -963,3 +963,46 @@ The application uses PostgreSQL with Prisma as the ORM:
 
 - Complex relationships between organizations, users, venues, spaces, and reservations
 - Tag-based system for organization membership and permissions
+
+# Block Spot App - Codebase Memory
+
+## Reservation System
+
+The app includes a reservation system with the following components:
+
+- **CreateReservationWizard**: A multi-step form for creating reservations
+- **Reservation Form Steps**: select_details, pricing, payment, confirm, success, error
+- **Form Data Structure**: Includes fields like date, startTimeMinutes, endTimeMinutes, spaceId, title, user, and createdReservation
+
+## Calendar Integration
+
+The app supports calendar integration with:
+- iCal export functionality via `/calendar/export?venueId={venueId}` endpoint
+- Support for syncing with Google Calendar, Outlook, Apple Calendar
+- The `exportCalendar` API that generates ICS files for venue reservations
+
+## UI Components
+
+- **Modal**: Used for forms and wizards
+- **Button**: Supports variants (primary, secondary) and sizes (sm, lg)
+- **Toast**: For notifications and alerts
+
+## File Structure
+
+- `src/schedule/calendar/action-section/modals/`: Contains reservation-related modals
+  - `create-reservation-modal.tsx`: Re-exports the CreateReservationWizard
+  - `create-reservation-wizard.tsx`: Main wizard component
+  - `screens/`: Contains screen components for different steps
+    - `error-screen.tsx`: Error screen component
+    - `success-screen.tsx`: Success screen component
+    - `pricing-screen.tsx`: Pricing screen component
+  - `index.ts`: Exports all components
+- `src/schedule/calendar/operations.ts`: Contains calendar export functionality
+- `src/schedule/venue/venue-page/integrations-page.tsx`: Provides calendar integration UI
+
+## Technologies
+
+- React with TypeScript
+- React Hook Form for form management
+- Wasp framework for backend operations
+- Stripe for payment processing

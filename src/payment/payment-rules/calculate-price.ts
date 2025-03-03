@@ -48,8 +48,6 @@ export const runPaymentRules: RunPaymentRules<
     throw new HttpError(400, "Space does not belong to specified venue");
   }
 
-
-
   const result = await calculatePaymentRulesV2({
     rules: space.venue.paymentRules,
     startTime: new Date(startTime),

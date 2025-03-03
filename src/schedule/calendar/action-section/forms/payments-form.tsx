@@ -16,6 +16,7 @@ import { LoadingSpinnerSmall } from "../../../../admin/layout/LoadingSpinner";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 import { getConnectedStripePromise } from "../../../../payment/stripe/stripe-react";
 import { CreateReservationFormInputs } from "../modals/types";
+import { minutesToTime } from "../timing";
 
 export const useCheckoutSession = (spaceId: string) => {
   const { user } = useAuthUser();
@@ -24,14 +25,18 @@ export const useCheckoutSession = (spaceId: string) => {
     clientSecret: string;
     checkoutSessionId: string;
   } | null>(null);
-  const { setValue } = useFormContext<CreateReservationFormInputs>();
+  const { setValue, watch } = useFormContext<CreateReservationFormInputs>();
+
+  const date = watch("date");
+  const startTimeMinutes = watch("startTimeMinutes");
+  const endTimeMinutes = watch("endTimeMinutes");
 
   useEffect(() => {
     createConnectCheckoutSession({
       userId: user?.id ?? "",
       spaceId: spaceId,
-      startTime: new Date(),
-      endTime: new Date(),
+      startTime: minutesToTime(date, startTimeMinutes),
+      endTime: minutesToTime(date, endTimeMinutes),
     })
       .then(({ clientSecret, checkoutSessionId }) => {
         setCheckoutSession({ clientSecret, checkoutSessionId });
@@ -169,7 +174,7 @@ export const StripeWrapper: FC<{
   const { venueId } = useParams<{ venueId: string }>();
   const [refundMessage, setRefundMessage] = useState<string | null>();
   const { clientSecret, checkoutSessionId } = useCheckoutSession(spaceId);
-
+  const { setValue } = useFormContext<CreateReservationFormInputs>();
   const stripePromise = useMemo(() => {
     if (!organization?.stripeAccountId) {
       return undefined;
@@ -195,11 +200,16 @@ export const StripeWrapper: FC<{
           }
 
           try {
-            await confirmPaidBooking({
+            const reservation = await confirmPaidBooking({
               checkoutSessionId,
               venueId: venueId ?? "",
             });
             console.log("Payment confirmed!");
+            setValue("createdReservation", reservation);
+
+            setTimeout(() => {
+              setValue("step", "success");
+            }, 2000);
           } catch (error: any) {
             if (error?.message?.includes("Refund issued")) {
               setRefundMessage(

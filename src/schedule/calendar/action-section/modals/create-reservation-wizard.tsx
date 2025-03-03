@@ -1,6 +1,5 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { LuX } from "react-icons/lu";
 import { useParams } from "react-router-dom";
 import {
   createReservation,
@@ -15,22 +14,15 @@ import { useToast } from "../../../../client/toast";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
 import {
-  PriceBreakdownDisplay,
   StripeCheckoutForm,
   StripeWrapper,
 } from "../forms/payments-form";
 import { ReservationForm } from "../forms/reservation-form";
-import { CreateReservationFormInputs, CreateReservationSteps } from "./types";
-
-function timeToMinutes(time: Date) {
-  return time.getHours() * 60 + time.getMinutes();
-}
-
-function minutesToTime(date: Date, minutes: number) {
-  const newDate = new Date(date);
-  newDate.setHours(Math.floor(minutes / 60), minutes % 60, 0, 0);
-  return newDate;
-}
+import { CreateReservationFormInputs } from "./types";
+import { timeToMinutes, minutesToTime } from "../timing";
+import { ErrorScreen } from "./screens/error-screen";
+import { SuccessScreen } from "./screens/success-screen";
+import { PricingScreen } from "./screens/pricing-screen";
 
 export const CreateReservationWizard: FC<{
   reservation: Reservation & { user?: User };
@@ -48,8 +40,6 @@ export const CreateReservationWizard: FC<{
     startTime: reservation.startTime,
     endTime: reservation.endTime,
   });
-
-  console.log("paymentInfo", paymentInfo);
 
   const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
@@ -80,16 +70,14 @@ export const CreateReservationWizard: FC<{
         spaceId: data.spaceId,
         userId: data.user?.id,
       });
+      setValue("createdReservation", reservation);
+      setValue("step", "success");
 
       refresh();
       toast({
         title: "Reservation created",
         description: "The reservation has been created",
       });
-
-      setTimeout(() => {
-        cancelChange();
-      }, 300);
     } catch (error) {
       setValue("step", "error");
       console.error(error);
@@ -111,21 +99,7 @@ export const CreateReservationWizard: FC<{
         onClose={cancelChange}
         size="2xl"
         heading={{
-          title:
-            currentStep === "payment"
-              ? "Complete Payment"
-              : currentStep === "pricing"
-                ? "Reservation Pricing"
-                : "Create Reservation",
-          right: (
-            <Button
-              ariaLabel="Close"
-              variant="tertiary"
-              size="lg"
-              icon={<LuX />}
-              onClick={cancelChange}
-            ></Button>
-          ),
+          title: "Create Reservation",
         }}
         footer={
           <div className="flex items-center justify-end space-x-3 m-2">
@@ -183,45 +157,23 @@ export const CreateReservationWizard: FC<{
                 </Button>
               </>
             )}
+
+            {currentStep === "success" && (
+              <Button
+                ariaLabel="Close"
+                variant="primary"
+                size="lg"
+                onClick={cancelChange}
+              >Done</Button>
+            )}
           </div>
         }
       >
         {currentStep === "select_details" && (
-          <ReservationForm reservation={reservation} onSubmit={() => {}} />
+          <ReservationForm reservation={reservation} onSubmit={() => { }} />
         )}
         {currentStep === "pricing" && venueId && (
-          <div className="p-4">
-            <h2 className="text-lg font-semibold mb-4">Reservation Summary</h2>
-            <div className="mb-4">
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                <div className="text-gray-600">Space:</div>
-                <div className="font-medium">Selected Space</div>
-                <div className="text-gray-600">Date:</div>
-                <div className="font-medium">
-                  {new Date(reservation.startTime).toLocaleDateString()}
-                </div>
-                <div className="text-gray-600">Time:</div>
-                <div className="font-medium">
-                  {new Date(reservation.startTime).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}{" "}
-                  -
-                  {new Date(reservation.endTime).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </div>
-              </div>
-
-              <PriceBreakdownDisplay
-                spaceId={reservation.spaceId}
-                venueId={venueId}
-                startTime={reservation.startTime}
-                endTime={reservation.endTime}
-              />
-            </div>
-          </div>
+          <PricingScreen reservation={reservation} venueId={venueId} />
         )}
         {currentStep === "payment" && (
           <StripeWrapper
@@ -232,16 +184,8 @@ export const CreateReservationWizard: FC<{
           </StripeWrapper>
         )}
         {currentStep === "error" && <ErrorScreen />}
+        {currentStep === "success" && <SuccessScreen />}
       </Modal>
     </FormProvider>
   );
-};
-
-function ErrorScreen() {
-  return (
-    <div>
-      <h1 className="text-2xl font-bold pb-4">Something went wrong</h1>
-      <p>An error occurred while creating the reservation. Please try again.</p>
-    </div>
-  );
-}
+}; 
