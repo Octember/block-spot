@@ -1,49 +1,24 @@
-import { FC, Fragment } from "react";
+import { FC } from "react";
+import { cn } from "../../client/cn";
 import { PendingChangesSection } from "./action-section/pending-changes-section";
 import { AvailabilitySection } from "./availability";
-import { useIsTimeZoneDifferent, useTimeLabelsAndZones } from "./constants";
+import { useIsTimeZoneDifferent } from "./constants";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { CalendarHeader } from "./header/calendar-header";
-import { FloatingButtons } from "./header/scroll/scroll-to-space-buttons";
-import { HorizontalScrollProvider } from "./providers/scroll/horizontal-scroll-provider";
-import { PendingChangesProvider } from "./providers/pending-changes-provider";
-import { ScheduleProvider } from "./providers/schedule-context-provider";
-import { ReservationsSection } from "./reservations/reservation-section";
-import { GridSelection, SelectionProvider } from "./selection";
-import { HorizontalScrollableContainer } from "./providers/scroll/scroll-container";
-import { MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
 import { DayButtons } from "./header/days-of-week";
+import { FloatingButtons } from "./header/scroll/scroll-to-space-buttons";
 import { SpacesNamesSection } from "./header/space-names-header";
+import { TimeLabels } from "./layout/time-labels";
+import { PendingChangesProvider } from "./providers/pending-changes-provider";
+import { ScheduleProvider, useScheduleContext } from "./providers/schedule-context-provider";
+import { HorizontalScrollProvider } from "./providers/scroll/horizontal-scroll-provider";
+import { HorizontalScrollableContainer } from "./providers/scroll/scroll-container";
+import { ReservationsSection } from "./reservations/reservation-section";
+import { SkeletonReservationsSection } from './reservations/skeleton';
+import { GridSelection, SelectionProvider } from "./selection";
 
-const TimeLabels: FC = () => {
-  const timeLabels = useTimeLabelsAndZones();
-  const isTimeZoneDifferent = useIsTimeZoneDifferent();
-  const labelWidthClass = isTimeZoneDifferent ? "-ml-24 w-24" : "-ml-14 w-14";
 
-  return (
-    <div
-      className="col-start-1 col-end-2 row-start-1 grid"
-      style={{
-        gridTemplateRows: `2rem repeat(${timeLabels.length * (60 / MinutesPerSlot)}, ${PixelsPerSlot}px)`,
-      }}
-    >
-      <div className="" />
 
-      {timeLabels.map((label, index) => (
-        <Fragment key={index}>
-          {/* 15min line and label */}
-          <div className={`row-span-4`}>
-            <div
-              className={`sticky left-0 z-40 ${labelWidthClass} pr-2 -my-2.5 text-right text-xs/5 text-gray-500 select-none`}
-            >
-              {label}
-            </div>
-          </div>
-        </Fragment>
-      ))}
-    </div>
-  );
-};
 export const WeekViewCalendar: FC = () => {
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
   const widthClass = isTimeZoneDifferent ? "w-24" : "w-14";
@@ -74,16 +49,7 @@ export const WeekViewCalendar: FC = () => {
 
                     <div className="flex min-w-max w-full flex-none flex-col">
                       <div className="flex flex-auto">
-                        <div className="grid flex-auto grid-cols-1 grid-rows-1 bg-cyan-50/40">
-                          <VerticalDividers />
-                          <HorizontalDividers />
-                          <AvailabilitySection />
-                          <ReservationsSection />
-                          <GridSelection />
-                          <PendingChangesSection />
-
-                          <FloatingButtons />
-                        </div>
+                        <AllContent />
                       </div>
                     </div>
                   </div>
@@ -94,5 +60,36 @@ export const WeekViewCalendar: FC = () => {
         </SelectionProvider>
       </PendingChangesProvider>
     </ScheduleProvider>
+  );
+};
+
+const AllContent: FC = () => {
+  const { isLoading } = useScheduleContext();
+
+  return (
+    <GridContainer>
+      <VerticalDividers />
+      <HorizontalDividers />
+      <AvailabilitySection />
+
+      {isLoading ? (
+        <SkeletonReservationsSection />
+      ) : (
+        <ReservationsSection />
+      )}
+
+      {!isLoading && <GridSelection />}
+      {!isLoading && <PendingChangesSection />}
+
+      <FloatingButtons />
+    </GridContainer>
+  );
+};
+
+const GridContainer: FC<React.PropsWithChildren> = ({ children }) => {
+  return (
+    <div className={cn("grid flex-auto grid-cols-1 grid-rows-1 bg-cyan-50/50")}>
+      {children}
+    </div>
   );
 };

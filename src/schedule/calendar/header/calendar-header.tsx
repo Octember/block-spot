@@ -76,16 +76,7 @@ const BackToDashboardButton: FC = () => {
         Back to Dashboard
       </Button>
     );
-  } else {
-    return (
-      <Button
-        icon={<ArrowLeftIcon className="size-5 my-[3px]" />}
-        ariaLabel="Back to Home"
-        variant="secondary"
-        onClick={() => navigate(routes.LandingPageRoute.to)}
-      >
-        Back to Home
-      </Button>
-    );
   }
+
+  return null;
 };
