@@ -24,7 +24,7 @@ import {
   UpdateVenueAvailability,
 } from "wasp/server/operations";
 import { getStartOfDay, localToUTC } from "./calendar/date-utils";
-import { runPaymentRules } from "./operations/payment-rules";
+import { calculatePaymentRules } from "./operations/payment-rules";
 import { getStartEndTime } from "./operations/new-reservations";
 
 type GetVenueSchedulePayload = {
@@ -183,7 +183,11 @@ export const createReservation: CreateReservation<
       reservations: true,
       venue: {
         include: {
-          paymentRules: true,
+          paymentRules: {
+            include: {
+              conditions: true
+            }
+          },
         },
       },
     },
@@ -211,8 +215,21 @@ export const createReservation: CreateReservation<
     throw new HttpError(400, "Time slot is already booked");
   }
 
+  const userWithTags = await context.entities.User.findFirst({
+    where: {
+      id: args.userId || context.user.id,
+    },
+    include: {
+      organizations: {
+        include: {
+          tags: true,
+        },
+      },
+    },
+  });
+  const userTags = userWithTags?.organizations?.[0]?.tags;
   // Check if payment is required
-  const { requiresPayment, totalCost, priceBreakdown } = runPaymentRules(
+  const { requiresPayment, totalCost, priceBreakdown } = calculatePaymentRules(
     space.venue.paymentRules,
     startTime,
     endTime,

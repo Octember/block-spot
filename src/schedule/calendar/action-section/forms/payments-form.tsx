@@ -10,6 +10,8 @@ import { useParams } from "react-router-dom";
 import {
   confirmPaidBooking,
   createConnectCheckoutSession,
+  runPaymentRules,
+  useQuery,
 } from "wasp/client/operations";
 import { Organization } from "wasp/entities";
 import { LoadingSpinnerSmall } from "../../../../admin/layout/LoadingSpinner";
@@ -44,6 +46,98 @@ export const useCheckoutSession = (spaceId: string) => {
   return {
     ...checkoutSession,
   };
+};
+
+export const PriceBreakdownDisplay: FC<{
+  spaceId: string;
+  venueId: string;
+  startTime: Date;
+  endTime: Date;
+}> = ({ spaceId, venueId, startTime, endTime }) => {
+  const { data: paymentInfo, isLoading } = useQuery(runPaymentRules, {
+    spaceId,
+    venueId,
+    startTime,
+    endTime,
+  });
+
+  if (isLoading) {
+    return <LoadingSpinnerSmall />;
+  }
+
+  if (!paymentInfo?.requiresPayment || !paymentInfo?.priceBreakdown) {
+    return (
+      <div className="text-center py-4">
+        <p className="text-gray-700">No payment required for this reservation.</p>
+      </div>
+    );
+  }
+
+  const { priceBreakdown } = paymentInfo;
+
+  return (
+    <div className="border rounded-lg p-4 mb-6">
+      <h3 className="text-lg font-medium mb-3">Price Breakdown</h3>
+
+      <div className="space-y-2 mb-4">
+        {priceBreakdown.baseRate && (
+          <div className="flex justify-between items-center">
+            <div className="text-gray-600">
+              <span className="font-medium">{priceBreakdown.baseRate.description}</span>
+            </div>
+            <div className="font-medium">${priceBreakdown.baseRate.amount.toFixed(2)}</div>
+          </div>
+        )}
+
+        {priceBreakdown.multipliers.length > 0 && (
+          <>
+            <div className="text-sm text-gray-500 mt-2">Multipliers</div>
+            {priceBreakdown.multipliers.map((multiplier, index) => (
+              <div key={index} className="flex justify-between items-center pl-4">
+                <div className="text-gray-600">{multiplier.description}</div>
+                <div>${multiplier.amount.toFixed(2)}</div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {priceBreakdown.fees.length > 0 && (
+          <>
+            <div className="text-sm text-gray-500 mt-2">Fees</div>
+            {priceBreakdown.fees.map((fee, index) => (
+              <div key={index} className="flex justify-between items-center pl-4">
+                <div className="text-gray-600">{fee.description}</div>
+                <div>${fee.amount.toFixed(2)}</div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {priceBreakdown.discounts.length > 0 && (
+          <>
+            <div className="text-sm text-gray-500 mt-2">Discounts</div>
+            {priceBreakdown.discounts.map((discount, index) => (
+              <div key={index} className="flex justify-between items-center pl-4">
+                <div className="text-gray-600">{discount.description}</div>
+                <div className="text-green-600">${Math.abs(discount.amount).toFixed(2)}</div>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+
+      <div className="border-t pt-3 mt-3">
+        <div className="flex justify-between items-center font-medium">
+          <div>Subtotal</div>
+          <div>${priceBreakdown.subtotal.toFixed(2)}</div>
+        </div>
+        <div className="flex justify-between items-center font-bold text-lg mt-1">
+          <div>Total</div>
+          <div>${priceBreakdown.total.toFixed(2)}</div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export const StripeCheckoutForm = () => {

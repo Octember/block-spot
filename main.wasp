@@ -237,12 +237,12 @@ action updateVenue {
 
 action confirmPaidBooking {
   fn: import { confirmPaidBooking } from "@src/payment/operations",
-  entities: [Reservation, Organization, Payment]
+  entities: [Reservation, Organization, Payment, OrganizationUserTag]
 }
 
 action createReservation {
   fn: import { createReservation } from "@src/schedule/operations",
-  entities: [Reservation, Space, Venue, Payment]
+  entities: [Reservation, Space, Venue, Payment, User]
 }
 
 action deleteReservation {

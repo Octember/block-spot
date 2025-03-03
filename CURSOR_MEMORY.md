@@ -807,3 +807,97 @@ The `PaymentRule` entity in the system:
 - Is prioritized via a `priority` field (lower = applied first)
 
 The payment calculation handles different rule types in sequence, with BASE_RATE establishing the initial price, then applying multipliers, discounts, and fees in order of priority.
+
+### 2024-02-10: Added Price Breakdown UI Components
+
+Implemented a visual price breakdown in the reservation booking flow to provide users with transparent pricing information. This enhances the user experience by clearly showing how the final price is calculated based on various rules and conditions.
+
+Key changes:
+- Created a new `PriceBreakdownDisplay` component in `src/schedule/calendar/action-section/forms/payments-form.tsx`
+- Added a dedicated "pricing" step in the reservation creation flow
+- Enhanced the reservation modal to show a comprehensive breakdown of:
+  - Base rates
+  - Time-based multipliers
+  - Applicable discounts (student discounts, etc.)
+  - Additional fees
+  - Subtotal and final total calculation
+
+The price breakdown UI has the following features:
+- Clean, organized presentation with appropriate spacing and typography
+- Logical grouping of pricing components (base rates, multipliers, discounts, fees)
+- Proper formatting of currency values
+- Responsive design that works across device sizes
+- Integration with the existing reservation flow
+
+This implementation takes advantage of the existing `priceBreakdown` data structure returned by the `runPaymentRules` function, providing a complete user-facing visualization of the complex pricing logic.
+
+### 2024-02-12: Enhanced Rule Applicability Diagnostics
+
+Updated the payment rules system to provide detailed diagnostics about why rules are or aren't applied to a booking. This enhancement makes the system more transparent and easier to debug.
+
+Key changes:
+- Modified `isPriceConditionApplicable` and `isRuleApplicable` functions to return a `RuleApplicabilityResult` type with:
+  - `applicable`: Boolean indicating if the rule applies
+  - `reason`: String explanation of why the rule does/doesn't apply
+- Enhanced logging in the `runPaymentRules` function to include the reason a rule was skipped
+- Added human-readable time formatting in condition reasons (e.g., "09:30" instead of "570 minutes")
+- Included detailed diagnostics for:
+  - Time range mismatches
+  - Day of week restrictions
+  - User tag requirements
+  - Condition matching results
+
+Benefits of this enhancement:
+- Easier debugging of complex pricing scenarios
+- Better transparency for administrators configuring rules
+- More informative logging
+- Ability to display rule application reasons in UI if needed
+- Clearer understanding of why certain rules apply or don't apply to specific bookings
+
+The diagnostics include specific formatting for dates, times, and user tags, making the reasons human-readable and actionable for both developers and system administrators.
+
+# Block-Spot Codebase Memory
+
+## User Tag System
+
+The application uses a hierarchical tag system:
+- Organizations define tags using the `OrganizationTag` model
+- Users are associated with organizations through the `OrganizationUser` join table
+- Users are assigned tags through the `OrganizationUserTag` join table
+- Tags are used in payment rules to determine pricing conditions
+
+### User Tag Retrieval
+
+The `getUserTags` function has been enhanced to:
+- Take a `spaceId` parameter to identify the relevant organization
+- Filter tags to only include those from the organization that owns the space
+- Follow the relationship chain: space → venue → organization → user tags
+- Return only the tags applicable to the current reservation context
+
+## Payment Rules System
+
+The application includes a payment rules system that:
+- Calculates costs for reservations based on various conditions
+- Uses a rule-based system with different types (BASE_RATE, MULTIPLIER, DISCOUNT, FLAT_FEE)
+- Can include conditions that apply based on user tags
+- Returns detailed price breakdowns
+
+### Payment Rule Application
+
+- The `runPaymentRules` function now supports async user tag retrieval
+- User tags can be automatically loaded based on user ID and space ID
+- Tags are filtered by the organization that owns the space being reserved
+- This ensures that only relevant organization-specific tags affect pricing
+
+## Reservation System
+
+The application manages reservations:
+- Spaces can be reserved within venues
+- Reservations have statuses (PENDING, CONFIRMED, PAID, CANCELLED)
+- Payments are linked to reservations
+
+## Database Structure
+
+The application uses PostgreSQL with Prisma as the ORM:
+- Complex relationships between organizations, users, venues, spaces, and reservations
+- Tag-based system for organization membership and permissions

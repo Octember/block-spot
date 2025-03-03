@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { PaymentRule, PriceCondition } from "wasp/entities";
-import { runPaymentRules } from "./payment-rules";
+import { calculatePaymentRules } from "./payment-rules";
 import { Decimal } from "decimal.js";
 
 // Type definitions for mocking with conditions
 type MockPaymentRule = PaymentRule & {
-  conditions?: MockPriceCondition[];
+  conditions: MockPriceCondition[];
 };
 
 type MockPriceCondition = {
@@ -62,20 +62,20 @@ describe("Payment Rules", () => {
 
   describe("Base Rate Rules", () => {
     it("should calculate correct base rate for one-hour period", () => {
-      const rules: PaymentRule[] = [
+      const rules = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(true);
       expect(result.totalCost).toBe(10);
     });
 
     it("should round up partial periods", () => {
-      const rules: PaymentRule[] = [
+      const rules = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
@@ -83,7 +83,7 @@ describe("Payment Rules", () => {
       ];
 
       const ninetyMinutesLater = new Date("2024-01-01T11:30:00");
-      const result = runPaymentRules(
+      const result = calculatePaymentRules(
         rules,
         baseDate,
         ninetyMinutesLater,
@@ -96,7 +96,7 @@ describe("Payment Rules", () => {
 
   describe("Time and Day Restrictions", () => {
     it("should only apply rules within specified time range", () => {
-      const rules: PaymentRule[] = [
+      const rules = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
@@ -106,7 +106,7 @@ describe("Payment Rules", () => {
       ];
 
       const outsideTimeRange = new Date("2024-01-01T12:00:00");
-      const result = runPaymentRules(
+      const result = calculatePaymentRules(
         rules,
         outsideTimeRange,
         twoHoursLater,
@@ -117,7 +117,7 @@ describe("Payment Rules", () => {
     });
 
     it("should only apply rules on specified days", () => {
-      const rules: PaymentRule[] = [
+      const rules = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
@@ -125,7 +125,7 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId); // Tuesday
+        const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId); // Tuesday
       expect(result.requiresPayment).toBe(false);
       expect(result.totalCost).toBe(0);
     });
@@ -133,7 +133,7 @@ describe("Payment Rules", () => {
 
   describe("Multiplier Rules", () => {
     it("should apply multiplier after base rate", () => {
-      const rules: PaymentRule[] = [
+      const rules = [
         createBaseRule({
           id: "1",
           pricePerPeriod: new Decimal(10),
@@ -147,7 +147,7 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(true);
       expect(result.totalCost).toBe(20); // 10 * 2
     });
@@ -155,7 +155,7 @@ describe("Payment Rules", () => {
 
   describe("Discount Rules", () => {
     it("should apply discount after base rate", () => {
-      const rules: PaymentRule[] = [
+        const rules = [
         createBaseRule({
           id: "1",
           pricePerPeriod: new Decimal(10),
@@ -169,7 +169,7 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(true);
       expect(result.totalCost).toBe(5); // 10 * (1 - 0.5)
     });
@@ -177,7 +177,7 @@ describe("Payment Rules", () => {
 
   describe("Flat Fee Rules", () => {
     it("should add flat fee to total", () => {
-      const rules: PaymentRule[] = [
+      const rules = [
         createBaseRule({
           id: "1",
           pricePerPeriod: new Decimal(10),
@@ -191,7 +191,7 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(true);
       expect(result.totalCost).toBe(15); // 10 + 5
     });
@@ -199,7 +199,7 @@ describe("Payment Rules", () => {
 
   describe("Rule Priority", () => {
     it("should apply rules in priority order", () => {
-      const rules: PaymentRule[] = [
+      const rules = [
         createBaseRule({
           id: "1",
           pricePerPeriod: new Decimal(10),
@@ -208,7 +208,7 @@ describe("Payment Rules", () => {
         createBaseRule({
           id: "2",
           ruleType: "MULTIPLIER",
-          priority: 2,
+          priority:  2,
           multiplier: new Decimal(2),
         }),
         createBaseRule({
@@ -219,7 +219,7 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(true);
       expect(result.totalCost).toBe(10); // (10 * 2) * (1 - 0.5)
     });
@@ -227,23 +227,23 @@ describe("Payment Rules", () => {
 
   describe("Edge Cases", () => {
     it("should handle empty rules array", () => {
-      const result = runPaymentRules([], baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules([], baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(false);
       expect(result.totalCost).toBe(0);
       expect(result.priceBreakdown).toBeUndefined();
     });
 
     it("should handle rules with no pricing information", () => {
-      const rules: PaymentRule[] = [createBaseRule()];
+      const rules  = [createBaseRule()];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(false);
       expect(result.totalCost).toBe(0);
       expect(result.priceBreakdown).toBeUndefined();
     });
 
     it("should handle rules for different spaces", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
@@ -251,13 +251,13 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(false);
       expect(result.totalCost).toBe(0);
     });
 
     it("should handle zero-duration bookings", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
@@ -265,13 +265,13 @@ describe("Payment Rules", () => {
       ];
 
       const sameTime = new Date("2024-01-01T10:00:00");
-      const result = runPaymentRules(rules, sameTime, sameTime, spaceId);
+      const result = calculatePaymentRules(rules, sameTime, sameTime, spaceId);
       expect(result.requiresPayment).toBe(false);
       expect(result.totalCost).toBe(0);
     });
 
     it("should handle negative duration bookings", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
@@ -280,13 +280,13 @@ describe("Payment Rules", () => {
 
       const laterTime = new Date("2024-01-01T11:00:00");
       const earlierTime = new Date("2024-01-01T10:00:00");
-      const result = runPaymentRules(rules, laterTime, earlierTime, spaceId);
+      const result = calculatePaymentRules(rules, laterTime, earlierTime, spaceId);
       expect(result.requiresPayment).toBe(false);
       expect(result.totalCost).toBe(0);
     });
 
     it("should handle extremely long durations without overflow", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
@@ -294,13 +294,13 @@ describe("Payment Rules", () => {
       ];
 
       const farFuture = new Date("2025-01-01T10:00:00"); // One year later
-      const result = runPaymentRules(rules, baseDate, farFuture, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, farFuture, spaceId);
       expect(result.requiresPayment).toBe(true);
       expect(result.totalCost).toBe(87840); // 8784 hours in a year (including leap year) * 10
     });
 
     it("should handle multiple overlapping time restrictions", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           id: "1",
           pricePerPeriod: new Decimal(10),
@@ -317,13 +317,13 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId); // 10:00 - 11:00
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId); // 10:00 - 11:00
       expect(result.requiresPayment).toBe(true);
       expect(result.totalCost).toBe(10); // Should use first rule only
     });
 
     it("should handle decimal precision in complex calculations", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           id: "1",
           pricePerPeriod: new Decimal("9.99"),
@@ -344,7 +344,7 @@ describe("Payment Rules", () => {
       ];
 
       const thirtyMinutesLater = new Date("2024-01-01T10:30:00");
-      const result = runPaymentRules(
+      const result = calculatePaymentRules(
         rules,
         baseDate,
         thirtyMinutesLater,
@@ -355,7 +355,7 @@ describe("Payment Rules", () => {
     });
 
     it("should handle rules with all fields set to edge values", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           pricePerPeriod: new Decimal("0.01"), // Minimum price
           periodMinutes: 1, // Minimum period
@@ -367,13 +367,13 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(true);
       expect(result.totalCost).toBe(0.6); // 60 periods * 0.01
     });
 
     it("should handle rules with global space applicability", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
@@ -381,7 +381,7 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(
+      const result = calculatePaymentRules(
         rules,
         baseDate,
         oneHourLater,
@@ -394,7 +394,7 @@ describe("Payment Rules", () => {
 
   describe("Price Breakdown", () => {
     it("should return priceBreakdown when there are applicable rules", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           id: "1",
           pricePerPeriod: new Decimal(10),
@@ -408,7 +408,7 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.requiresPayment).toBe(true);
       expect(result.totalCost).toBe(15);
       expect(result.priceBreakdown).toBeDefined();
@@ -423,7 +423,7 @@ describe("Payment Rules", () => {
     });
 
     it("should not return priceBreakdown when there are no applicable rules", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           pricePerPeriod: new Decimal(10),
           periodMinutes: 60,
@@ -431,14 +431,14 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId); // Tuesday
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId); // Tuesday
       expect(result.requiresPayment).toBe(false);
       expect(result.totalCost).toBe(0);
       expect(result.priceBreakdown).toBeUndefined();
     });
 
     it("should include multipliers in priceBreakdown", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           id: "1",
           pricePerPeriod: new Decimal(10),
@@ -452,14 +452,14 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.priceBreakdown).toBeDefined();
       expect(result.priceBreakdown?.multipliers.length).toBe(1);
       expect(result.priceBreakdown?.multipliers[0].amount).toBe(10); // Effect of 2x multiplier on base rate of 10
     });
 
     it("should include discounts in priceBreakdown", () => {
-      const rules: PaymentRule[] = [
+      const rules  = [
         createBaseRule({
           id: "1",
           pricePerPeriod: new Decimal(10),
@@ -473,7 +473,7 @@ describe("Payment Rules", () => {
         }),
       ];
 
-      const result = runPaymentRules(rules, baseDate, oneHourLater, spaceId);
+      const result = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId);
       expect(result.priceBreakdown).toBeDefined();
       expect(result.priceBreakdown?.discounts.length).toBe(1);
       expect(result.priceBreakdown?.discounts[0].amount).toBe(-5); // Negative amount for 50% discount on 10
@@ -492,16 +492,16 @@ describe("Payment Rules", () => {
             }),
           ],
         }),
-      ] as PaymentRule[];
+      ]  
 
       // Without the required tag, rule shouldn't apply
-      const resultWithoutTag = runPaymentRules(rules, baseDate, oneHourLater, spaceId, []);
+      const resultWithoutTag = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId, []);
       expect(resultWithoutTag.requiresPayment).toBe(false);
       expect(resultWithoutTag.totalCost).toBe(0);
       expect(resultWithoutTag.priceBreakdown).toBeUndefined();
 
       // With the required tag, rule should apply
-      const resultWithTag = runPaymentRules(rules, baseDate, oneHourLater, spaceId, ["premium"]);
+      const resultWithTag = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId, ["premium"]);
       expect(resultWithTag.requiresPayment).toBe(true);
       expect(resultWithTag.totalCost).toBe(10);
       expect(resultWithTag.priceBreakdown).toBeDefined();
@@ -523,10 +523,10 @@ describe("Payment Rules", () => {
             }),
           ],
         }),
-      ] as PaymentRule[];
+      ];
 
       // In the morning time range, rule should apply
-      const morningResult = runPaymentRules(rules, morningTime, morningTimeEnd, spaceId);
+      const morningResult = calculatePaymentRules(rules, morningTime, morningTimeEnd, spaceId);
       expect(morningResult.requiresPayment).toBe(true);
       expect(morningResult.totalCost).toBe(10);
       expect(morningResult.priceBreakdown).toBeDefined();
@@ -535,7 +535,7 @@ describe("Payment Rules", () => {
       const eveningTime = new Date("2024-01-01T20:00:00"); // 8:00 PM
       const eveningTimeEnd = new Date("2024-01-01T21:00:00"); // 9:00 PM
       
-      const eveningResult = runPaymentRules(rules, eveningTime, eveningTimeEnd, spaceId);
+      const eveningResult = calculatePaymentRules(rules, eveningTime, eveningTimeEnd, spaceId);
       expect(eveningResult.requiresPayment).toBe(false);
       expect(eveningResult.totalCost).toBe(0);
       expect(eveningResult.priceBreakdown).toBeUndefined();
@@ -555,25 +555,25 @@ describe("Payment Rules", () => {
             }),
           ],
         }),
-      ] as PaymentRule[];
+      ]  
 
       // No tags, rule shouldn't apply
-      const noTagResult = runPaymentRules(rules, baseDate, oneHourLater, spaceId, []);
+      const noTagResult = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId, []);
       expect(noTagResult.requiresPayment).toBe(false);
       expect(noTagResult.totalCost).toBe(0);
 
       // With staff tag, rule should apply
-      const staffResult = runPaymentRules(rules, baseDate, oneHourLater, spaceId, ["staff"]);
+      const staffResult = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId, ["staff"]);
       expect(staffResult.requiresPayment).toBe(true);
       expect(staffResult.totalCost).toBe(10);
 
       // With vip tag, rule should apply
-      const vipResult = runPaymentRules(rules, baseDate, oneHourLater, spaceId, ["vip"]);
+      const vipResult = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId, ["vip"]);
       expect(vipResult.requiresPayment).toBe(true);
       expect(vipResult.totalCost).toBe(10);
 
       // With unrelated tag, rule shouldn't apply
-      const otherResult = runPaymentRules(rules, baseDate, oneHourLater, spaceId, ["regular"]);
+      const otherResult = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId, ["regular"]);
       expect(otherResult.requiresPayment).toBe(false);
       expect(otherResult.totalCost).toBe(0);
     });
@@ -591,15 +591,15 @@ describe("Payment Rules", () => {
             }),
           ],
         }),
-      ] as PaymentRule[];
+      ] as (PaymentRule & { conditions: PriceCondition[] })[];
 
       // Right time, right tag - should apply
-      const correctResult = runPaymentRules(rules, baseDate, oneHourLater, spaceId, ["student"]);
+      const correctResult = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId, ["student"]);
       expect(correctResult.requiresPayment).toBe(true);
       expect(correctResult.totalCost).toBe(10);
 
       // Right time, wrong tag - shouldn't apply
-      const wrongTagResult = runPaymentRules(rules, baseDate, oneHourLater, spaceId, ["teacher"]);
+      const wrongTagResult = calculatePaymentRules(rules, baseDate, oneHourLater, spaceId, ["teacher"]);
       expect(wrongTagResult.requiresPayment).toBe(false);
       expect(wrongTagResult.totalCost).toBe(0);
 
@@ -607,7 +607,7 @@ describe("Payment Rules", () => {
       const eveningTime = new Date("2024-01-01T20:00:00"); // 8:00 PM
       const eveningTimeEnd = new Date("2024-01-01T21:00:00"); // 9:00 PM
       
-      const wrongTimeResult = runPaymentRules(rules, eveningTime, eveningTimeEnd, spaceId, ["student"]);
+      const wrongTimeResult = calculatePaymentRules(rules, eveningTime, eveningTimeEnd, spaceId, ["student"]);
       expect(wrongTimeResult.requiresPayment).toBe(false);
       expect(wrongTimeResult.totalCost).toBe(0);
     });
@@ -636,10 +636,10 @@ describe("Payment Rules", () => {
             }),
           ],
         }),
-      ] as PaymentRule[];
+      ]  
 
       // Test for non-student user (should pay full price)
-      const regularUserResult = runPaymentRules(
+      const regularUserResult = calculatePaymentRules(
         rules, 
         baseDate, 
         oneHourLater, 
@@ -653,7 +653,7 @@ describe("Payment Rules", () => {
       expect(regularUserResult.priceBreakdown?.discounts.length).toBe(0); // No discounts applied
 
       // Test for student user (should get discount)
-      const studentUserResult = runPaymentRules(
+      const studentUserResult = calculatePaymentRules(
         rules, 
         baseDate, 
         oneHourLater, 
@@ -692,10 +692,10 @@ describe("Payment Rules", () => {
             }),
           ],
         }),
-      ] as PaymentRule[];
+      ]  
 
       // Test for non-student user (should pay full price)
-      const regularUserResult = runPaymentRules(
+      const regularUserResult = calculatePaymentRules(
         rules, 
         baseDate, 
         threeHourEnd, 
@@ -707,7 +707,7 @@ describe("Payment Rules", () => {
       expect(regularUserResult.priceBreakdown?.baseRate?.amount).toBe(150);
 
       // Test for student user (should get discount)
-      const studentUserResult = runPaymentRules(
+      const studentUserResult = calculatePaymentRules(
         rules, 
         baseDate, 
         threeHourEnd, 
@@ -748,10 +748,10 @@ describe("Payment Rules", () => {
             }),
           ],
         }),
-      ] as PaymentRule[];
+      ]  
 
       // Morning booking - Should get student discount during off-peak hours
-      const morningStudentResult = runPaymentRules(
+      const morningStudentResult = calculatePaymentRules(
         rules, 
         morningStart, 
         morningEnd, 
@@ -763,7 +763,7 @@ describe("Payment Rules", () => {
       expect(morningStudentResult.priceBreakdown?.discounts[0].amount).toBe(-20);
 
       // Evening booking - Should NOT get student discount (outside time range)
-      const eveningStudentResult = runPaymentRules(
+      const eveningStudentResult = calculatePaymentRules(
         rules, 
         eveningStart, 
         eveningEnd, 
@@ -807,10 +807,10 @@ describe("Payment Rules", () => {
             }),
           ],
         }),
-      ] as PaymentRule[];
+      ]  
 
       // Regular user (no discount)
-      const regularResult = runPaymentRules(
+      const regularResult = calculatePaymentRules(
         rules, 
         baseDate, 
         oneHourLater, 
@@ -820,7 +820,7 @@ describe("Payment Rules", () => {
       expect(regularResult.totalCost).toBe(60); // Full price
 
       // Student user (30% discount)
-      const studentResult = runPaymentRules(
+      const studentResult = calculatePaymentRules(
         rules, 
         baseDate, 
         oneHourLater, 
@@ -832,7 +832,7 @@ describe("Payment Rules", () => {
       expect(studentResult.priceBreakdown?.discounts[0].amount).toBe(-18);
 
       // Senior user (20% discount)
-      const seniorResult = runPaymentRules(
+      const seniorResult = calculatePaymentRules(
         rules, 
         baseDate, 
         oneHourLater, 
@@ -846,7 +846,7 @@ describe("Payment Rules", () => {
       // User with both student and senior tags
       // Should apply both discounts sequentially (not compounded)
       // First 30% off, then 20% off the remaining amount
-      const combinedResult = runPaymentRules(
+      const combinedResult = calculatePaymentRules(
         rules, 
         baseDate, 
         oneHourLater, 
@@ -918,14 +918,14 @@ describe("Payment Rules", () => {
           ruleType: "FLAT_FEE",
           pricePerPeriod: new Decimal(10),
         }),
-      ] as PaymentRule[];
+      ]  
 
       // Test 1: Regular user during peak hours
       // Base: $40 * 2 hours = $80
       // Peak multiplier: $80 * 1.5 = $120
       // Flat fee: +$10
       // Total: $130
-      const regularPeakResult = runPaymentRules(
+      const regularPeakResult = calculatePaymentRules(
         rules,
         morningStart,
         morningEnd,
@@ -947,7 +947,7 @@ describe("Payment Rules", () => {
       // After discount: $90
       // Flat fee: +$10
       // Total: $100
-      const studentPeakResult = runPaymentRules(
+      const studentPeakResult = calculatePaymentRules(
         rules,
         morningStart,
         morningEnd,
@@ -969,7 +969,7 @@ describe("Payment Rules", () => {
       // No peak multiplier applies
       // Flat fee: +$10
       // Total: $90
-      const regularOffPeakResult = runPaymentRules(
+      const regularOffPeakResult = calculatePaymentRules(
         rules,
         eveningStart,
         eveningEnd,
@@ -990,7 +990,7 @@ describe("Payment Rules", () => {
       // After discount: $60
       // Flat fee: +$10
       // Total: $70
-      const studentOffPeakResult = runPaymentRules(
+      const studentOffPeakResult = calculatePaymentRules(
         rules,
         eveningStart,
         eveningEnd,

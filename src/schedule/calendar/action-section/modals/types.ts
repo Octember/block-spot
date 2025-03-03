@@ -2,6 +2,7 @@ import { User } from "wasp/entities";
 
 export type CreateReservationSteps =
   | "select_details"
+  | "pricing"
   | "payment"
   | "confirm"
   | "success"

@@ -2,7 +2,7 @@ import { HttpError } from "wasp/server";
 import type {
   RunPaymentRules
 } from "wasp/server/operations";
-import { runPaymentRules as calculatePaymentRules } from "../../schedule/operations/payment-rules";
+import { calculatePaymentRules } from "../../schedule/operations/payment-rules";
 import { PriceBreakdown } from "../../schedule/operations/payment-rules";
 
 export const runPaymentRules: RunPaymentRules<
@@ -24,7 +24,11 @@ export const runPaymentRules: RunPaymentRules<
     include: {
       venue: {
         include: {
-          paymentRules: true,
+          paymentRules: {
+            include: {
+              conditions: true
+            }
+          },
         },
       },
     },
@@ -42,10 +46,16 @@ export const runPaymentRules: RunPaymentRules<
     throw new HttpError(400, "Space does not belong to specified venue");
   }
 
-  return calculatePaymentRules(
+  const result = calculatePaymentRules(
     space.venue.paymentRules,
     new Date(startTime),
     new Date(endTime),
     spaceId,
   );
+
+  return {
+    requiresPayment: result.requiresPayment,
+    totalCost: result.totalCost,
+    priceBreakdown: result.priceBreakdown,
+  };
 };

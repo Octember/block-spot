@@ -1,9 +1,10 @@
 import { PaymentRule as BasePaymentRule, PriceCondition } from "wasp/entities";
 import { Decimal } from "decimal.js";
+import {PrismaClient} from '@prisma/client';
 
 // Define a more complete PaymentRule type that includes the conditions field
 type PaymentRule = BasePaymentRule & {
-  conditions?: PriceCondition[];
+  conditions: PriceCondition[];
 };
 
 function calculateBaseRate(
@@ -24,31 +25,44 @@ function calculateBaseRate(
   return periods * rule.pricePerPeriod.toNumber(); // Use Decimal's toNumber for consistent precision
 }
 
+// Define the return type for rule applicability
+export type RuleApplicabilityResult = {
+  applicable: boolean;
+  reason?: string;
+};
+
 function isPriceConditionApplicable(
   condition: PriceCondition,
   startTime: Date,
   userTags: string[] = []
-): boolean {
+): RuleApplicabilityResult {
   // Check time conditions if specified
   if (condition.startTime !== null && condition.endTime !== null) {
     const startMinutes = startTime.getHours() * 60 + startTime.getMinutes();
     
     // Check if the condition time range applies to the booking start time
     if (startMinutes < condition.startTime || startMinutes > condition.endTime) {
-      return false;
+      return { 
+        applicable: false, 
+        reason: `Booking time (${Math.floor(startMinutes/60)}:${String(startMinutes%60).padStart(2, '0')}) is outside condition time range (${Math.floor(condition.startTime/60)}:${String(condition.startTime%60).padStart(2, '0')}-${Math.floor(condition.endTime/60)}:${String(condition.endTime%60).padStart(2, '0')})` 
+      };
     }
   }
   
   // Check user tags if any are specified
   if (condition.userTags.length > 0) {
+    console.log("Condition user tags", condition.userTags, "User tags", userTags);
     // If no user tags are provided or user has none of the required tags, condition doesn't apply
-    if (!userTags.length || !condition.userTags.some(tag => userTags.includes(tag))) {
-      return false;
+    if (!condition.userTags.some(tag => userTags.includes(tag))) {
+      return { 
+        applicable: false, 
+        reason: `User tags [${userTags.join(', ')}] don't match any required tags [${condition.userTags.join(', ')}]` 
+      };
     }
   }
   
   // All checks passed, condition is applicable
-  return true;
+  return { applicable: true, reason: 'All condition criteria met' };
 }
 
 function isRuleApplicable(
@@ -56,10 +70,13 @@ function isRuleApplicable(
   startTime: Date,
   endTime: Date,
   userTags: string[] = []
-): boolean {
+): RuleApplicabilityResult {
   // Prevent negative durations
   if (endTime < startTime) {
-    return false;
+    return { 
+      applicable: false, 
+      reason: 'Invalid time range: end time is before start time' 
+    };
   }
 
   const startMinutes = startTime.getHours() * 60 + startTime.getMinutes();
@@ -71,24 +88,68 @@ function isRuleApplicable(
     (!rule.startTime || startMinutes >= rule.startTime) &&
     (!rule.endTime || endMinutes <= rule.endTime);
 
+  if (!withinTimeRange) {
+    return {
+      applicable: false,
+      reason: `Booking time range (${startMinutes}-${endMinutes} minutes) is outside rule time constraints (${rule.startTime || 'any'}-${rule.endTime || 'any'} minutes)`
+    };
+  }
+
   // Check if rule applies to this day of the week
   const appliesToDay =
     !rule.daysOfWeek ||
     rule.daysOfWeek.length === 0 ||
     rule.daysOfWeek.includes(dayOfWeek);
 
-  // Basic checks pass
-  const basicChecksPassed = withinTimeRange && appliesToDay;
-  
-  // If we don't pass basic checks or there are no conditions, return basic check result
-  if (!basicChecksPassed || !rule.conditions || rule.conditions.length === 0) {
-    return basicChecksPassed;
+  if (!appliesToDay) {
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return {
+      applicable: false,
+      reason: `Booking day (${dayNames[dayOfWeek]}) not included in rule days [${rule.daysOfWeek?.map(d => dayNames[d]).join(', ')}]`
+    };
+  }
+
+  // If there are no conditions, rule is applicable
+  if (!rule.conditions || rule.conditions.length === 0) {
+    return { 
+      applicable: true, 
+      reason: 'Basic rule criteria met with no additional conditions' 
+    };
   }
   
   // Check if any condition applies (ANY match makes the rule applicable)
-  return rule.conditions.some(condition => 
-    isPriceConditionApplicable(condition, startTime, userTags)
-  );
+  const applicableConditions = rule.conditions
+    .map(condition => isPriceConditionApplicable(condition, startTime, userTags))
+    .filter(result => {
+      if (!result.applicable) {
+        console.log("Condition skipped because", result.reason);
+      }
+      return result.applicable;
+    });
+  
+  if (applicableConditions.length > 0) {
+    return { 
+      applicable: true, 
+      reason: `Matched ${applicableConditions.length} of ${rule.conditions.length} conditions` 
+    };
+  }
+  
+  const conditionStrings = rule.conditions.map(c =>{
+    const timeRange = c.startTime !== null && c.endTime !== null ? `${c.startTime}-${c.endTime}` : 'any';
+    const userTags = c.userTags.length > 0 ? `[${c.userTags.join(', ')}]` : 'any';
+
+    const str = {
+      timeRange,
+      userTags
+    };
+    return JSON.stringify(str);
+  }).join(', ');
+
+  // None of the conditions matched
+  return { 
+    applicable: false, 
+    reason: `None of the rule conditions were met: ${conditionStrings}` 
+  };
 }
 
 // Define a new type for price breakdown items
@@ -98,6 +159,7 @@ export type PriceBreakdownItem = {
   description: string;
   amount: number;
   appliedAt: Date;
+  reason?: string;
 };
 
 export type PriceBreakdown = {
@@ -109,19 +171,32 @@ export type PriceBreakdown = {
   total: number;
 };
 
-export function runPaymentRules(
+export type PaymentRulesResult = {
+  requiresPayment: boolean;
+  totalCost: number;
+  priceBreakdown?: PriceBreakdown;
+  skipReasons?: string[];
+};
+
+// function getUserTags(userId: string, userDb: PrismaClient["user"]): string[] { 
+
+// }
+  
+
+export function calculatePaymentRules(
   paymentRules: PaymentRule[],
   startTime: Date,
   endTime: Date,
   spaceId: string,
-  userTags: string[] = []
-): { requiresPayment: boolean; totalCost: number; priceBreakdown?: PriceBreakdown } {
+  userTags: string[] = [],
+): PaymentRulesResult {
   // Handle invalid time ranges
   if (endTime < startTime) {
     console.log("Invalid time range: end time is before start time");
     return { 
       requiresPayment: false, 
-      totalCost: 0
+      totalCost: 0,
+      skipReasons: ['Invalid time range: end time is before start time']
     };
   }
 
@@ -129,7 +204,8 @@ export function runPaymentRules(
     console.log("No payment rules available. Payment is not required.");
     return { 
       requiresPayment: false, 
-      totalCost: 0
+      totalCost: 0,
+      skipReasons: ['No payment rules available']
     };
   }
 
@@ -154,10 +230,12 @@ export function runPaymentRules(
   };
 
   for (const rule of rules) {
-    if (!isRuleApplicable(rule, startTime, endTime, userTags)) {
+    const applicabilityResult = isRuleApplicable(rule, startTime, endTime, userTags);
+    if (!applicabilityResult.applicable) {
       console.log(
-        `Skipping rule ${rule.id} (type: ${rule.ruleType}) as it is not applicable.`,
+        `Skipping rule ${rule.id} (type: ${rule.ruleType}, rate: ${rule.pricePerPeriod?.toFixed(2)}) as it is not applicable. Reason: ${applicabilityResult.reason}`,
       );
+
       continue;
     }
     console.log(`Processing rule ${rule.id} (type: ${rule.ruleType}).`);
@@ -176,9 +254,10 @@ export function runPaymentRules(
             breakdown.baseRate = {
               ruleId: rule.id,
               ruleType: rule.ruleType,
-              description: `Base rate (${periods} × ${rule.periodMinutes} min @ $${rule.pricePerPeriod?.toNumber().toFixed(2)})`,
+              description: `Base rate (${periods} × ${rule.periodMinutes} min @ $${rule.pricePerPeriod?.toFixed(2)})`,
               amount: baseCost,
-              appliedAt: new Date()
+              appliedAt: new Date(),
+              reason: applicabilityResult.reason
             };
             breakdown.subtotal = baseCost;
             
@@ -207,7 +286,8 @@ export function runPaymentRules(
           ruleType: rule.ruleType,
           description: `Rate multiplier: ${multiplier}x`,
           amount: multiplierEffect,
-          appliedAt: new Date()
+          appliedAt: new Date(),
+          reason: applicabilityResult.reason
         });
         
         console.log(
@@ -227,7 +307,8 @@ export function runPaymentRules(
             ruleType: rule.ruleType,
             description: `Discount: ${(discount * 100).toFixed(0)}% off`,
             amount: discountAmount.negated().toNumber(),
-            appliedAt: new Date()
+            appliedAt: new Date(),
+            reason: applicabilityResult.reason
           });
         }
         
@@ -247,7 +328,8 @@ export function runPaymentRules(
             ruleType: rule.ruleType,
             description: `Fee: $${fee.toFixed(2)}`,
             amount: fee,
-            appliedAt: new Date()
+            appliedAt: new Date(),
+            reason: applicabilityResult.reason
           });
           
           requiresPayment = true;
@@ -290,9 +372,28 @@ export function runPaymentRules(
     breakdown.discounts.length > 0 || 
     breakdown.multipliers.length > 0;
 
-  return { 
+  const result: PaymentRulesResult = { 
     requiresPayment, 
     totalCost: finalCost,
     ...(hasApplicableRules ? { priceBreakdown: breakdown } : {})
   };
+
+  if (!requiresPayment) {
+    const skipReasons: string[] = [];
+    if (!baseRateApplied) {
+      skipReasons.push('No base rate applied');
+    }
+    if (breakdown.fees.length === 0) {
+      skipReasons.push('No fees applied');
+    }
+    if (breakdown.discounts.length === 0) {
+      skipReasons.push('No discounts applied');
+    }
+    if (breakdown.multipliers.length === 0) {
+      skipReasons.push('No multipliers applied');
+    }
+    result.skipReasons = skipReasons;
+  }
+
+  return result;
 }

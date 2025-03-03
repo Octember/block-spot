@@ -14,7 +14,7 @@ import { Modal } from "../../../../client/components/modal";
 import { useToast } from "../../../../client/toast";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
-import { StripeCheckoutForm, StripeWrapper } from "../forms/payments-form";
+import { PriceBreakdownDisplay, StripeCheckoutForm, StripeWrapper } from "../forms/payments-form";
 import { ReservationForm } from "../forms/reservation-form";
 import { CreateReservationFormInputs, CreateReservationSteps } from "./types";
 
@@ -107,7 +107,11 @@ export const CreateReservationWizard: FC<{
         onClose={cancelChange}
         size="2xl"
         heading={{
-          title: "Create Reservation",
+          title: currentStep === "payment"
+            ? "Complete Payment"
+            : currentStep === "pricing"
+              ? "Reservation Pricing"
+              : "Create Reservation",
           right: (
             <Button
               ariaLabel="Close"
@@ -136,7 +140,7 @@ export const CreateReservationWizard: FC<{
                     ariaLabel="Next"
                     variant="primary"
                     size="lg"
-                    onClick={() => setValue("step", "payment")}
+                    onClick={() => setValue("step", "pricing")}
                   >
                     Next
                   </Button>
@@ -153,11 +157,59 @@ export const CreateReservationWizard: FC<{
                 )}
               </>
             )}
+
+            {currentStep === "pricing" && (
+              <>
+                <Button
+                  ariaLabel="Back"
+                  variant="secondary"
+                  size="lg"
+                  onClick={() => setValue("step", "select_details")}
+                >
+                  Back
+                </Button>
+                <Button
+                  ariaLabel="Proceed to Payment"
+                  variant="primary"
+                  size="lg"
+                  onClick={() => setValue("step", "payment")}
+                >
+                  Proceed to Payment
+                </Button>
+              </>
+            )}
           </div>
         }
       >
         {currentStep === "select_details" && (
           <ReservationForm reservation={reservation} onSubmit={() => { }} />
+        )}
+        {currentStep === "pricing" && venueId && (
+          <div className="p-4">
+            <h2 className="text-lg font-semibold mb-4">Reservation Summary</h2>
+            <div className="mb-4">
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="text-gray-600">Space:</div>
+                <div className="font-medium">Selected Space</div>
+                <div className="text-gray-600">Date:</div>
+                <div className="font-medium">
+                  {new Date(reservation.startTime).toLocaleDateString()}
+                </div>
+                <div className="text-gray-600">Time:</div>
+                <div className="font-medium">
+                  {new Date(reservation.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -
+                  {new Date(reservation.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+
+              <PriceBreakdownDisplay
+                spaceId={reservation.spaceId}
+                venueId={venueId}
+                startTime={reservation.startTime}
+                endTime={reservation.endTime}
+              />
+            </div>
+          </div>
         )}
         {currentStep === "payment" && (
           <StripeWrapper
