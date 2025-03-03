@@ -1,16 +1,16 @@
-import { FC } from 'react';
-import { useTimeLabels } from '../constants';
-import { getSharedGridStyle } from './constants';
-import { useVenueContext } from '../providers/venue-provider';
+import { FC } from "react";
+import { useTimeLabels } from "../constants";
+import { getSharedGridStyle } from "./constants";
+import { useVenueContext } from "../providers/venue-provider";
 
 const SkeletonReservation = ({
   startRow,
   rowSpan,
-  columnIndex
+  columnIndex,
 }: {
   startRow: number;
   rowSpan: number;
-  columnIndex: number
+  columnIndex: number;
 }) => {
   return (
     <div
@@ -45,16 +45,16 @@ export const SkeletonReservationsSection: FC = () => {
     // Morning reservation (around 9-10am)
     skeletons.push({
       startRow: 15 + Math.floor(Math.random() * 10), // Approximately 9am (adjust based on your grid)
-      rowSpan: 4,   // 1 hour (4 x 15 min slots)
-      columnIndex: spaceIndex
+      rowSpan: 4, // 1 hour (4 x 15 min slots)
+      columnIndex: spaceIndex,
     });
 
     // Afternoon reservation (around 2-3pm)
     if (Math.random() > 0.5) {
       skeletons.push({
         startRow: 20 + Math.floor(Math.random() * 10), // Approximately 2pm
-        rowSpan: 6,   // 1.5 hours
-        columnIndex: spaceIndex
+        rowSpan: 6, // 1.5 hours
+        columnIndex: spaceIndex,
       });
     }
 
@@ -62,8 +62,8 @@ export const SkeletonReservationsSection: FC = () => {
     if (Math.random() > 0.5) {
       skeletons.push({
         startRow: 44 + Math.floor(Math.random() * 8), // Random midday time
-        rowSpan: 2 + Math.floor(Math.random() * 4),   // Random duration
-        columnIndex: spaceIndex
+        rowSpan: 2 + Math.floor(Math.random() * 4), // Random duration
+        columnIndex: spaceIndex,
       });
     }
   }

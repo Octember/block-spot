@@ -508,6 +508,44 @@ enum RefundStatus {
    - Rules can be stacked and combined
    - Supports venue-wide and space-specific rules
 
+## Payment Rules System
+
+### calculatePaymentRules Function
+
+The `calculatePaymentRules` function requires 5 parameters:
+1. `paymentRules`: An array of PaymentRule objects
+2. `startTime`: A Date object for the start time of the period
+3. `endTime`: A Date object for the end time of the period
+4. `spaceId`: A string representing the space ID
+5. `userTags`: An array of strings representing user tags for condition matching
+
+When calling this function in tests, always include all 5 parameters, even if using an empty array for `userTags`:
+
+```typescript
+const result = calculatePaymentRules(rules, startTime, endTime, spaceId, []);
+```
+
+The function returns a `PaymentRulesResult` object with:
+- `requiresPayment`: Boolean indicating if payment is required
+- `totalCost`: Number representing the total cost
+- `priceBreakdown`: Optional detailed breakdown of the pricing calculation
+- `skipReasons`: Optional array of reasons why payment was not required
+
+#### Payment Rule Types
+
+The system supports different rule types:
+- `BASE_RATE`: The base pricing for a space
+- `MULTIPLIER`: Applies a multiplier to the total cost
+- `DISCOUNT`: Applies a percentage discount
+- `FLAT_FEE`: Adds a flat fee to the total
+
+#### Price Conditions
+
+Payment rules can have conditions that determine when they apply:
+- Time ranges (startTime, endTime)
+- Days of week
+- User tags
+
 ### Payment Rules System
 
 #### Rule Types (`RuleType` enum)
@@ -673,11 +711,13 @@ enum RefundStatus {
 The payment rules system has been extended to support conditional pricing through the `PriceCondition` entity. This allows for creating rules that only apply under specific conditions:
 
 1. Time-based conditions: Rules can be restricted to apply only during specific time ranges
+
    - Defined by `startTime` and `endTime` fields
    - Time is compared against the booking's start time
    - Format is 24-hour time in HH:MM format (e.g., "09:00", "17:30")
 
 2. User tag-based conditions: Rules can be restricted to users with specific tags
+
    - Defined by `userTags` field which is an array of strings
    - A user must have at least one matching tag for the condition to apply
    - Empty tags array means the condition applies to all users
@@ -691,6 +731,7 @@ The payment rules system has been extended to support conditional pricing throug
 - The system uses an extended `PaymentRule` type that includes an optional `conditions` field
 - Conditions are checked in the `isRuleApplicable` function before applying any payment rule
 - The `isPriceConditionApplicable` helper function evaluates if a specific condition applies based on:
+
   - Current booking time
   - User tags
   - Time matching logic checks if booking start time falls within condition's time range
@@ -704,6 +745,7 @@ The payment rules system has been extended to support conditional pricing throug
 ### Test Coverage
 
 The system includes comprehensive tests for the price condition functionality:
+
 - Tests for user tag matching
 - Tests for time range matching
 - Tests for multiple conditions (ANY match logic)
@@ -714,18 +756,22 @@ The system includes comprehensive tests for the price condition functionality:
 Detailed tests demonstrate how to use conditions for common pricing scenarios:
 
 1. **Basic Student Discount**: A 25% discount applied only to users with a "student" tag.
+
    - Regular users pay the full price
    - Students receive the discounted rate automatically
 
 2. **Multiple-Hour Bookings**: Tests verify that discount calculations work correctly for longer bookings.
+
    - 3-hour booking calculations show the discount applies to the total base cost
    - Proper percentage discounts regardless of booking duration
 
 3. **Time-Restricted Student Discounts**: Tests show off-peak pricing with conditions.
+
    - 40% discount for students during off-peak hours (9 AM - 3 PM)
    - No discount outside the specified time range, even for students
 
 4. **Combined Discount Scenarios**: Tests verify the interaction of multiple discount rules.
+
    - Student discount (30%) and senior discount (20%) applying sequentially
    - User with both tags gets both discounts (not compounded)
    - Rules are applied in priority order for predictable behavior
@@ -741,6 +787,7 @@ Detailed tests demonstrate how to use conditions for common pricing scenarios:
      - Students during off-peak hours
 
 These tests demonstrate how the conditional pricing system enables sophisticated pricing strategies, including:
+
 - Time-of-day pricing variations
 - User category discounts
 - Multiple stacked discounts
@@ -750,6 +797,7 @@ These tests demonstrate how the conditional pricing system enables sophisticated
 The testing suite validates the rule application order is preserved, ensuring predictable pricing outcomes in all scenarios.
 
 This conditional pricing system allows for more flexible and targeted payment rules, enabling scenarios like:
+
 - Peak/off-peak pricing
 - Special rates for members vs. non-members
 - Time-of-day pricing variations
@@ -778,12 +826,14 @@ This conditional pricing system allows for more flexible and targeted payment ru
 Added a detailed price breakdown structure to the `runPaymentRules` function to provide user-facing information about how costs are calculated. This allows frontend components to display a detailed breakdown of charges.
 
 Key changes:
+
 - Added `PriceBreakdown` and `PriceBreakdownItem` types to `src/schedule/operations/payment-rules.ts`
 - Updated return type of `runPaymentRules` to include the breakdown
 - Modified the implementation to track each pricing component separately
 - Updated calling functions to handle the new return values
 
 The `priceBreakdown` object includes:
+
 - Base rate information
 - Fees (flat fees, etc.)
 - Discounts applied
@@ -793,13 +843,16 @@ The `priceBreakdown` object includes:
 ### 2023-08-17 Update: Made Price Breakdown Optional
 
 Updated the `runPaymentRules` function to make the price breakdown optional:
+
 - Changed return type to have `priceBreakdown?` as an optional property
 - Only returns price breakdown when there are applicable rules that affected the price
 - Removed default empty breakdown objects
 - This makes the API more efficient by not returning empty structures when they're not needed
 
 #### PaymentRule Entity Structure
+
 The `PaymentRule` entity in the system:
+
 - Has a `ruleType` that can be: BASE_RATE, MULTIPLIER, DISCOUNT, FLAT_FEE
 - Includes pricing information like `pricePerPeriod`, `periodMinutes`, `multiplier`, etc.
 - Can be targeted to specific spaces via `spaceIds`
@@ -813,6 +866,7 @@ The payment calculation handles different rule types in sequence, with BASE_RATE
 Implemented a visual price breakdown in the reservation booking flow to provide users with transparent pricing information. This enhances the user experience by clearly showing how the final price is calculated based on various rules and conditions.
 
 Key changes:
+
 - Created a new `PriceBreakdownDisplay` component in `src/schedule/calendar/action-section/forms/payments-form.tsx`
 - Added a dedicated "pricing" step in the reservation creation flow
 - Enhanced the reservation modal to show a comprehensive breakdown of:
@@ -823,6 +877,7 @@ Key changes:
   - Subtotal and final total calculation
 
 The price breakdown UI has the following features:
+
 - Clean, organized presentation with appropriate spacing and typography
 - Logical grouping of pricing components (base rates, multipliers, discounts, fees)
 - Proper formatting of currency values
@@ -836,6 +891,7 @@ This implementation takes advantage of the existing `priceBreakdown` data struct
 Updated the payment rules system to provide detailed diagnostics about why rules are or aren't applied to a booking. This enhancement makes the system more transparent and easier to debug.
 
 Key changes:
+
 - Modified `isPriceConditionApplicable` and `isRuleApplicable` functions to return a `RuleApplicabilityResult` type with:
   - `applicable`: Boolean indicating if the rule applies
   - `reason`: String explanation of why the rule does/doesn't apply
@@ -848,6 +904,7 @@ Key changes:
   - Condition matching results
 
 Benefits of this enhancement:
+
 - Easier debugging of complex pricing scenarios
 - Better transparency for administrators configuring rules
 - More informative logging
@@ -861,6 +918,7 @@ The diagnostics include specific formatting for dates, times, and user tags, mak
 ## User Tag System
 
 The application uses a hierarchical tag system:
+
 - Organizations define tags using the `OrganizationTag` model
 - Users are associated with organizations through the `OrganizationUser` join table
 - Users are assigned tags through the `OrganizationUserTag` join table
@@ -869,6 +927,7 @@ The application uses a hierarchical tag system:
 ### User Tag Retrieval
 
 The `getUserTags` function has been enhanced to:
+
 - Take a `spaceId` parameter to identify the relevant organization
 - Filter tags to only include those from the organization that owns the space
 - Follow the relationship chain: space → venue → organization → user tags
@@ -877,6 +936,7 @@ The `getUserTags` function has been enhanced to:
 ## Payment Rules System
 
 The application includes a payment rules system that:
+
 - Calculates costs for reservations based on various conditions
 - Uses a rule-based system with different types (BASE_RATE, MULTIPLIER, DISCOUNT, FLAT_FEE)
 - Can include conditions that apply based on user tags
@@ -892,6 +952,7 @@ The application includes a payment rules system that:
 ## Reservation System
 
 The application manages reservations:
+
 - Spaces can be reserved within venues
 - Reservations have statuses (PENDING, CONFIRMED, PAID, CANCELLED)
 - Payments are linked to reservations
@@ -899,5 +960,6 @@ The application manages reservations:
 ## Database Structure
 
 The application uses PostgreSQL with Prisma as the ORM:
+
 - Complex relationships between organizations, users, venues, spaces, and reservations
 - Tag-based system for organization membership and permissions

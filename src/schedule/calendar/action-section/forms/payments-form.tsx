@@ -3,9 +3,7 @@ import {
   EmbeddedCheckoutProvider,
 } from "@stripe/react-stripe-js";
 import React, { FC, useEffect, useMemo, useState } from "react";
-import {
-  useFormContext
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import {
   confirmPaidBooking,
@@ -17,7 +15,7 @@ import { Organization } from "wasp/entities";
 import { LoadingSpinnerSmall } from "../../../../admin/layout/LoadingSpinner";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 import { getConnectedStripePromise } from "../../../../payment/stripe/stripe-react";
-import { CreateReservationFormInputs } from '../modals/types';
+import { CreateReservationFormInputs } from "../modals/types";
 
 export const useCheckoutSession = (spaceId: string) => {
   const { user } = useAuthUser();
@@ -34,13 +32,15 @@ export const useCheckoutSession = (spaceId: string) => {
       spaceId: spaceId,
       startTime: new Date(),
       endTime: new Date(),
-    }).then(({ clientSecret, checkoutSessionId }) => {
-      setCheckoutSession({ clientSecret, checkoutSessionId });
-    }).catch((error) => {
-      console.error("Failed to create checkout session:", error);
+    })
+      .then(({ clientSecret, checkoutSessionId }) => {
+        setCheckoutSession({ clientSecret, checkoutSessionId });
+      })
+      .catch((error) => {
+        console.error("Failed to create checkout session:", error);
 
-      setValue("step", 'error',);
-    });
+        setValue("step", "error");
+      });
   }, []);
 
   return {
@@ -68,7 +68,9 @@ export const PriceBreakdownDisplay: FC<{
   if (!paymentInfo?.requiresPayment || !paymentInfo?.priceBreakdown) {
     return (
       <div className="text-center py-4">
-        <p className="text-gray-700">No payment required for this reservation.</p>
+        <p className="text-gray-700">
+          No payment required for this reservation.
+        </p>
       </div>
     );
   }
@@ -83,9 +85,13 @@ export const PriceBreakdownDisplay: FC<{
         {priceBreakdown.baseRate && (
           <div className="flex justify-between items-center">
             <div className="text-gray-600">
-              <span className="font-medium">{priceBreakdown.baseRate.description}</span>
+              <span className="font-medium">
+                {priceBreakdown.baseRate.description}
+              </span>
             </div>
-            <div className="font-medium">${priceBreakdown.baseRate.amount.toFixed(2)}</div>
+            <div className="font-medium">
+              ${priceBreakdown.baseRate.amount.toFixed(2)}
+            </div>
           </div>
         )}
 
@@ -93,7 +99,10 @@ export const PriceBreakdownDisplay: FC<{
           <>
             <div className="text-sm text-gray-500 mt-2">Multipliers</div>
             {priceBreakdown.multipliers.map((multiplier, index) => (
-              <div key={index} className="flex justify-between items-center pl-4">
+              <div
+                key={index}
+                className="flex justify-between items-center pl-4"
+              >
                 <div className="text-gray-600">{multiplier.description}</div>
                 <div>${multiplier.amount.toFixed(2)}</div>
               </div>
@@ -105,7 +114,10 @@ export const PriceBreakdownDisplay: FC<{
           <>
             <div className="text-sm text-gray-500 mt-2">Fees</div>
             {priceBreakdown.fees.map((fee, index) => (
-              <div key={index} className="flex justify-between items-center pl-4">
+              <div
+                key={index}
+                className="flex justify-between items-center pl-4"
+              >
                 <div className="text-gray-600">{fee.description}</div>
                 <div>${fee.amount.toFixed(2)}</div>
               </div>
@@ -117,9 +129,14 @@ export const PriceBreakdownDisplay: FC<{
           <>
             <div className="text-sm text-gray-500 mt-2">Discounts</div>
             {priceBreakdown.discounts.map((discount, index) => (
-              <div key={index} className="flex justify-between items-center pl-4">
+              <div
+                key={index}
+                className="flex justify-between items-center pl-4"
+              >
                 <div className="text-gray-600">{discount.description}</div>
-                <div className="text-green-600">${Math.abs(discount.amount).toFixed(2)}</div>
+                <div className="text-green-600">
+                  ${Math.abs(discount.amount).toFixed(2)}
+                </div>
               </div>
             ))}
           </>

@@ -14,7 +14,11 @@ import { Modal } from "../../../../client/components/modal";
 import { useToast } from "../../../../client/toast";
 import { usePendingChanges } from "../../providers/pending-changes-provider";
 import { useScheduleContext } from "../../providers/schedule-context-provider";
-import { PriceBreakdownDisplay, StripeCheckoutForm, StripeWrapper } from "../forms/payments-form";
+import {
+  PriceBreakdownDisplay,
+  StripeCheckoutForm,
+  StripeWrapper,
+} from "../forms/payments-form";
 import { ReservationForm } from "../forms/reservation-form";
 import { CreateReservationFormInputs, CreateReservationSteps } from "./types";
 
@@ -107,11 +111,12 @@ export const CreateReservationWizard: FC<{
         onClose={cancelChange}
         size="2xl"
         heading={{
-          title: currentStep === "payment"
-            ? "Complete Payment"
-            : currentStep === "pricing"
-              ? "Reservation Pricing"
-              : "Create Reservation",
+          title:
+            currentStep === "payment"
+              ? "Complete Payment"
+              : currentStep === "pricing"
+                ? "Reservation Pricing"
+                : "Create Reservation",
           right: (
             <Button
               ariaLabel="Close"
@@ -182,7 +187,7 @@ export const CreateReservationWizard: FC<{
         }
       >
         {currentStep === "select_details" && (
-          <ReservationForm reservation={reservation} onSubmit={() => { }} />
+          <ReservationForm reservation={reservation} onSubmit={() => {}} />
         )}
         {currentStep === "pricing" && venueId && (
           <div className="p-4">
@@ -197,8 +202,15 @@ export const CreateReservationWizard: FC<{
                 </div>
                 <div className="text-gray-600">Time:</div>
                 <div className="font-medium">
-                  {new Date(reservation.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} -
-                  {new Date(reservation.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  {new Date(reservation.startTime).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}{" "}
+                  -
+                  {new Date(reservation.endTime).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </div>
               </div>
 

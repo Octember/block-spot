@@ -10,7 +10,7 @@ import {
   getUserOrganization,
 } from "./connect/utils";
 import { stripe } from "./stripeClient";
-import { calculatePaymentRules } from "../../schedule/operations/payment-rules";
+import { calculatePaymentRules, calculatePaymentRulesV2 } from "../../schedule/operations/payment-rules/payment-rules";
 
 export const createStripeAccount: CreateStripeAccount = async (
   _args,
@@ -112,7 +112,9 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
 
   const space = await context.entities.Space.findUnique({
     where: { id: spaceId },
-    include: { venue: { include: { paymentRules: { include: { conditions: true } } } } },
+    include: {
+      venue: { include: { paymentRules: { include: { conditions: true } } } },
+    },
   });
 
   if (!space) {
@@ -137,12 +139,17 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
     throw new HttpError(400, "Time slot is already booked");
   }
 
-  const { requiresPayment, totalCost, priceBreakdown } = calculatePaymentRules(
-    space.venue.paymentRules,
+  const { requiresPayment, totalCost, priceBreakdown } = await calculatePaymentRulesV2({
+    rules: space.venue.paymentRules,
     startTime,
     endTime,
-    space.id,
-  );
+    spaceId: space.id,
+    userId: context.user.id,
+    db: {
+      organizationUser: context.entities.OrganizationUser,
+      space: context.entities.Space,
+    },
+  });
 
   if (!context.user) {
     console.log(

@@ -10,14 +10,15 @@ import { FloatingButtons } from "./header/scroll/scroll-to-space-buttons";
 import { SpacesNamesSection } from "./header/space-names-header";
 import { TimeLabels } from "./layout/time-labels";
 import { PendingChangesProvider } from "./providers/pending-changes-provider";
-import { ScheduleProvider, useScheduleContext } from "./providers/schedule-context-provider";
+import {
+  ScheduleProvider,
+  useScheduleContext,
+} from "./providers/schedule-context-provider";
 import { HorizontalScrollProvider } from "./providers/scroll/horizontal-scroll-provider";
 import { HorizontalScrollableContainer } from "./providers/scroll/scroll-container";
 import { ReservationsSection } from "./reservations/reservation-section";
-import { SkeletonReservationsSection } from './reservations/skeleton';
+import { SkeletonReservationsSection } from "./reservations/skeleton";
 import { GridSelection, SelectionProvider } from "./selection";
-
-
 
 export const WeekViewCalendar: FC = () => {
   const isTimeZoneDifferent = useIsTimeZoneDifferent();
@@ -29,7 +30,6 @@ export const WeekViewCalendar: FC = () => {
         <SelectionProvider>
           <HorizontalScrollProvider>
             <div className="flex flex-col min-h-screen bg-white">
-
               {/* Sticky top*/}
               <div className="md:sticky top-0 inset-x-0 z-50">
                 <CalendarHeader />
@@ -46,7 +46,6 @@ export const WeekViewCalendar: FC = () => {
 
                 <HorizontalScrollableContainer>
                   <div className="relative flex flex-auto flex-col bg-white">
-
                     <div className="flex min-w-max w-full flex-none flex-col">
                       <div className="flex flex-auto">
                         <AllContent />
@@ -72,11 +71,7 @@ const AllContent: FC = () => {
       <HorizontalDividers />
       <AvailabilitySection />
 
-      {isLoading ? (
-        <SkeletonReservationsSection />
-      ) : (
-        <ReservationsSection />
-      )}
+      {isLoading ? <SkeletonReservationsSection /> : <ReservationsSection />}
 
       {!isLoading && <GridSelection />}
       {!isLoading && <PendingChangesSection />}

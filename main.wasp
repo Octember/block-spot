@@ -242,7 +242,7 @@ action confirmPaidBooking {
 
 action createReservation {
   fn: import { createReservation } from "@src/schedule/operations",
-  entities: [Reservation, Space, Venue, Payment, User]
+  entities: [Reservation, Space, Venue, Payment, OrganizationUser]
 }
 
 action deleteReservation {
@@ -423,7 +423,7 @@ action createStripeAccountLink {
 
 action createConnectCheckoutSession {
   fn: import { createConnectCheckoutSession } from "@src/payment/stripe/operations",
-  entities: [User, Organization, Reservation, Space, Payment]
+  entities: [User, Organization, Reservation, Space, Payment, OrganizationUser]
 }
 
 action createStripeAccount {
@@ -444,7 +444,7 @@ query getVenuePaymentRules {
 
 query runPaymentRules {
   fn: import { runPaymentRules } from "@src/payment/payment-rules/calculate-price.js",
-  entities: [PaymentRule, Venue, Space]
+  entities: [PaymentRule, Venue, Space, OrganizationUser]
 }
 //#endregion
 

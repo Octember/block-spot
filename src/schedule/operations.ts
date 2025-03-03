@@ -24,7 +24,7 @@ import {
   UpdateVenueAvailability,
 } from "wasp/server/operations";
 import { getStartOfDay, localToUTC } from "./calendar/date-utils";
-import { calculatePaymentRules } from "./operations/payment-rules";
+import { calculatePaymentRules, calculatePaymentRulesV2 } from "./operations/payment-rules/payment-rules";
 import { getStartEndTime } from "./operations/new-reservations";
 
 type GetVenueSchedulePayload = {
@@ -36,7 +36,6 @@ export const getVenueSchedule: GetVenueSchedule<
   GetVenueSchedulePayload,
   (Space & { reservations: (Reservation & { user: User })[] })[]
 > = async (args, context) => {
-
   return context.entities.Space.findMany({
     where: {
       venueId: args.venueId,
@@ -185,8 +184,8 @@ export const createReservation: CreateReservation<
         include: {
           paymentRules: {
             include: {
-              conditions: true
-            }
+              conditions: true,
+            },
           },
         },
       },
@@ -215,26 +214,18 @@ export const createReservation: CreateReservation<
     throw new HttpError(400, "Time slot is already booked");
   }
 
-  const userWithTags = await context.entities.User.findFirst({
-    where: {
-      id: args.userId || context.user.id,
-    },
-    include: {
-      organizations: {
-        include: {
-          tags: true,
-        },
-      },
-    },
-  });
-  const userTags = userWithTags?.organizations?.[0]?.tags;
   // Check if payment is required
-  const { requiresPayment, totalCost, priceBreakdown } = calculatePaymentRules(
-    space.venue.paymentRules,
+  const { requiresPayment, totalCost, priceBreakdown } = await calculatePaymentRulesV2({
+    rules: space.venue.paymentRules,
     startTime,
     endTime,
-    space.id,
-  );
+    spaceId: space.id,
+    userId: args.userId || context.user.id,
+    db: {
+      organizationUser: context.entities.OrganizationUser,
+      space: context.entities.Space,
+    },
+  });
 
   console.log(
     `[SCHEDULE] Creating reservation with payment required: ${requiresPayment}`,

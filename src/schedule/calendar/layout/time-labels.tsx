@@ -1,6 +1,6 @@
-import { FC, Fragment } from 'react';
-import { useIsTimeZoneDifferent, useTimeLabelsAndZones } from '../constants';
-import { MinutesPerSlot, PixelsPerSlot } from '../reservations/constants';
+import { FC, Fragment } from "react";
+import { useIsTimeZoneDifferent, useTimeLabelsAndZones } from "../constants";
+import { MinutesPerSlot, PixelsPerSlot } from "../reservations/constants";
 
 export const TimeLabels: FC = () => {
   const timeLabels = useTimeLabelsAndZones();

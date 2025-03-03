@@ -1,9 +1,7 @@
 import { HttpError } from "wasp/server";
-import type {
-  RunPaymentRules
-} from "wasp/server/operations";
-import { calculatePaymentRules } from "../../schedule/operations/payment-rules";
-import { PriceBreakdown } from "../../schedule/operations/payment-rules";
+import type { RunPaymentRules } from "wasp/server/operations";
+import { calculatePaymentRules, calculatePaymentRulesV2 } from "../../schedule/operations/payment-rules/payment-rules";
+import { PriceBreakdown } from "../../schedule/operations/payment-rules/payment-rules";
 
 export const runPaymentRules: RunPaymentRules<
   {
@@ -12,7 +10,11 @@ export const runPaymentRules: RunPaymentRules<
     startTime: Date;
     endTime: Date;
   },
-  { requiresPayment: boolean; totalCost: number; priceBreakdown?: PriceBreakdown }
+  {
+    requiresPayment: boolean;
+    totalCost: number;
+    priceBreakdown?: PriceBreakdown;
+  }
 > = async ({ spaceId, venueId, startTime, endTime }, context) => {
   if (!context.user) {
     throw new HttpError(401, "Not authenticated");
@@ -26,8 +28,8 @@ export const runPaymentRules: RunPaymentRules<
         include: {
           paymentRules: {
             include: {
-              conditions: true
-            }
+              conditions: true,
+            },
           },
         },
       },
@@ -46,12 +48,19 @@ export const runPaymentRules: RunPaymentRules<
     throw new HttpError(400, "Space does not belong to specified venue");
   }
 
-  const result = calculatePaymentRules(
-    space.venue.paymentRules,
-    new Date(startTime),
-    new Date(endTime),
+
+
+  const result = await calculatePaymentRulesV2({
+    rules: space.venue.paymentRules,
+    startTime: new Date(startTime),
+    endTime: new Date(endTime),
     spaceId,
-  );
+    userId: context.user.id,
+    db: {
+      organizationUser: context.entities.OrganizationUser,
+      space: context.entities.Space,
+    },
+  });
 
   return {
     requiresPayment: result.requiresPayment,

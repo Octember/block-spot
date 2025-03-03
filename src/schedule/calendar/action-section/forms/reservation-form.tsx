@@ -5,7 +5,7 @@ import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 import { Reservation } from "wasp/entities";
 import { useFormContext } from "react-hook-form";
 import { CreateReservationFormInputs } from "../modals/types";
-import { PriceBreakdownDisplay } from './payments-form';
+import { PriceBreakdownDisplay } from "./payments-form";
 import { useParams } from "react-router-dom";
 
 export const ReservationForm: FC<{
