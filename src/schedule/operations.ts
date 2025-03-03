@@ -37,8 +37,6 @@ export const getVenueSchedule: GetVenueSchedule<
   (Space & { reservations: (Reservation & { user: User })[] })[]
 > = async (args, context) => {
 
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-
   return context.entities.Space.findMany({
     where: {
       venueId: args.venueId,
