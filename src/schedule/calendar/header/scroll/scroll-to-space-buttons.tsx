@@ -107,7 +107,6 @@ export const ScrollToSpaceButtons: FC = () => {
 function useScrollToSpaceButtons(numSpaces: number) {
   function scrollToNextSpace() {
     const maxVisibleSpaceIndex = getMaxVisibleSpaceIndex();
-    console.log("maxVisibleSpaceIndex", maxVisibleSpaceIndex, numSpaces);
     if (maxVisibleSpaceIndex + 1 < numSpaces) {
       scrollToSpace(maxVisibleSpaceIndex);
     } else {

@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren } from "react";
 import { useHorizontalScroll } from "./horizontal-scroll-provider";
 
-export const ScrollableContainer: FC<PropsWithChildren> = ({ children }) => {
+export const HorizontalScrollableContainer: FC<PropsWithChildren> = ({ children }) => {
   const { setScrolledPixels } = useHorizontalScroll();
 
   return (

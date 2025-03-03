@@ -37,8 +37,6 @@ export const CreateReservationWizard: FC<{
   const toast = useToast();
   const { isAdmin } = useAuthUser();
   const { organization } = useAuthUser();
-  const [currentStep, setCurrentStep] =
-    useState<CreateReservationSteps>("select_details");
 
   const { data: paymentInfo } = useQuery(runPaymentRules, {
     spaceId: reservation.spaceId,
@@ -61,8 +59,11 @@ export const CreateReservationWizard: FC<{
 
   const {
     handleSubmit,
+    setValue,
     formState: { isSubmitting, submitCount },
   } = form;
+
+  const currentStep = form.watch("step");
 
   async function onSubmit(data: CreateReservationFormInputs) {
     try {
@@ -84,7 +85,7 @@ export const CreateReservationWizard: FC<{
         cancelChange();
       }, 300);
     } catch (error) {
-      setCurrentStep("error");
+      setValue("step", "error");
       console.error(error);
       toast({
         title: "Error creating reservation",
@@ -133,7 +134,7 @@ export const CreateReservationWizard: FC<{
                     ariaLabel="Next"
                     variant="primary"
                     size="lg"
-                    onClick={() => setCurrentStep("payment")}
+                    onClick={() => setValue("step", "payment")}
                   >
                     Next
                   </Button>
@@ -154,7 +155,7 @@ export const CreateReservationWizard: FC<{
         }
       >
         {currentStep === "select_details" && (
-          <ReservationForm reservation={reservation} onSubmit={() => {}} />
+          <ReservationForm reservation={reservation} onSubmit={() => { }} />
         )}
         {currentStep === "payment" && (
           <StripeWrapper

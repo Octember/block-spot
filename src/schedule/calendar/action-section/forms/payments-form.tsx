@@ -4,14 +4,18 @@ import {
 } from "@stripe/react-stripe-js";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import {
-  createConnectCheckoutSession,
+  useFormContext
+} from "react-hook-form";
+import { useParams } from "react-router-dom";
+import {
   confirmPaidBooking,
+  createConnectCheckoutSession,
 } from "wasp/client/operations";
 import { Organization } from "wasp/entities";
 import { LoadingSpinnerSmall } from "../../../../admin/layout/LoadingSpinner";
-import { getConnectedStripePromise } from "../../../../payment/stripe/stripe-react";
-import { useParams } from "react-router-dom";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
+import { getConnectedStripePromise } from "../../../../payment/stripe/stripe-react";
+import { CreateReservationFormInputs } from '../modals/types';
 
 export const useCheckoutSession = (spaceId: string) => {
   const { user } = useAuthUser();
@@ -20,6 +24,7 @@ export const useCheckoutSession = (spaceId: string) => {
     clientSecret: string;
     checkoutSessionId: string;
   } | null>(null);
+  const { setValue } = useFormContext<CreateReservationFormInputs>();
 
   useEffect(() => {
     createConnectCheckoutSession({
@@ -29,6 +34,10 @@ export const useCheckoutSession = (spaceId: string) => {
       endTime: new Date(),
     }).then(({ clientSecret, checkoutSessionId }) => {
       setCheckoutSession({ clientSecret, checkoutSessionId });
+    }).catch((error) => {
+      console.error("Failed to create checkout session:", error);
+
+      setValue("step", 'error',);
     });
   }, []);
 

@@ -7,7 +7,7 @@ import {
 } from "../constants";
 import { getGridTemplateColumns } from "../reservations/constants";
 import { LuSearch } from "react-icons/lu";
-import { useHorizontalScroll } from "../providers/horizontal-scroll/horizontal-scroll-provider";
+import { useHorizontalScroll } from "../providers/scroll/horizontal-scroll-provider";
 import { Button } from "@headlessui/react";
 
 export const SpacesNamesSection: FC = () => {

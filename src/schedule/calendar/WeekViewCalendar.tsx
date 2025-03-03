@@ -5,12 +5,12 @@ import { useIsTimeZoneDifferent, useTimeLabelsAndZones } from "./constants";
 import { HorizontalDividers, VerticalDividers } from "./dividers";
 import { CalendarHeader } from "./header/calendar-header";
 import { FloatingButtons } from "./header/scroll/scroll-to-space-buttons";
-import { HorizontalScrollProvider } from "./providers/horizontal-scroll/horizontal-scroll-provider";
+import { HorizontalScrollProvider } from "./providers/scroll/horizontal-scroll-provider";
 import { PendingChangesProvider } from "./providers/pending-changes-provider";
 import { ScheduleProvider } from "./providers/schedule-context-provider";
 import { ReservationsSection } from "./reservations/reservation-section";
 import { GridSelection, SelectionProvider } from "./selection";
-import { ScrollableContainer } from "./providers/horizontal-scroll/horizontal-scroll-container";
+import { HorizontalScrollableContainer } from "./providers/scroll/scroll-container";
 import { MinutesPerSlot, PixelsPerSlot } from "./reservations/constants";
 import { DayButtons } from "./header/days-of-week";
 import { SpacesNamesSection } from "./header/space-names-header";
@@ -54,7 +54,8 @@ export const WeekViewCalendar: FC = () => {
         <SelectionProvider>
           <HorizontalScrollProvider>
             <div className="flex flex-col min-h-screen bg-white">
-              {/* 1) The header is sticky at the top */}
+
+              {/* Sticky top*/}
               <div className="md:sticky top-0 inset-x-0 z-50">
                 <CalendarHeader />
               </div>
@@ -68,8 +69,9 @@ export const WeekViewCalendar: FC = () => {
                   <TimeLabels />
                 </div>
 
-                <ScrollableContainer>
+                <HorizontalScrollableContainer>
                   <div className="relative flex flex-auto flex-col bg-white">
+
                     <div className="flex min-w-max w-full flex-none flex-col">
                       <div className="flex flex-auto">
                         <div className="grid flex-auto grid-cols-1 grid-rows-1 bg-cyan-50/40">
@@ -85,7 +87,7 @@ export const WeekViewCalendar: FC = () => {
                       </div>
                     </div>
                   </div>
-                </ScrollableContainer>
+                </HorizontalScrollableContainer>
               </div>
             </div>
           </HorizontalScrollProvider>
