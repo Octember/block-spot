@@ -212,7 +212,7 @@ export const createReservation: CreateReservation<
   }
 
   // Check if payment is required
-  const { requiresPayment, totalCost } = runPaymentRules(
+  const { requiresPayment, totalCost, priceBreakdown } = runPaymentRules(
     space.venue.paymentRules,
     startTime,
     endTime,

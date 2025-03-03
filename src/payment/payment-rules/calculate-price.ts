@@ -3,6 +3,7 @@ import type {
   RunPaymentRules
 } from "wasp/server/operations";
 import { runPaymentRules as calculatePaymentRules } from "../../schedule/operations/payment-rules";
+import { PriceBreakdown } from "../../schedule/operations/payment-rules";
 
 export const runPaymentRules: RunPaymentRules<
   {
@@ -11,7 +12,7 @@ export const runPaymentRules: RunPaymentRules<
     startTime: Date;
     endTime: Date;
   },
-  { requiresPayment: boolean; totalCost: number }
+  { requiresPayment: boolean; totalCost: number; priceBreakdown?: PriceBreakdown }
 > = async ({ spaceId, venueId, startTime, endTime }, context) => {
   if (!context.user) {
     throw new HttpError(401, "Not authenticated");

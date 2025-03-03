@@ -137,7 +137,7 @@ export const createConnectCheckoutSession: CreateConnectCheckoutSession<
     throw new HttpError(400, "Time slot is already booked");
   }
 
-  const { requiresPayment, totalCost } = runPaymentRules(
+  const { requiresPayment, totalCost, priceBreakdown } = runPaymentRules(
     space.venue.paymentRules,
     startTime,
     endTime,

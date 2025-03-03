@@ -668,6 +668,93 @@ enum RefundStatus {
    - Cache common rule combinations
    - Optimize rule collection queries
 
+### PriceCondition
+
+The payment rules system has been extended to support conditional pricing through the `PriceCondition` entity. This allows for creating rules that only apply under specific conditions:
+
+1. Time-based conditions: Rules can be restricted to apply only during specific time ranges
+   - Defined by `startTime` and `endTime` fields
+   - Time is compared against the booking's start time
+   - Format is 24-hour time in HH:MM format (e.g., "09:00", "17:30")
+
+2. User tag-based conditions: Rules can be restricted to users with specific tags
+   - Defined by `userTags` field which is an array of strings
+   - A user must have at least one matching tag for the condition to apply
+   - Empty tags array means the condition applies to all users
+
+3. Multiple conditions support: Payment rules can have multiple conditions
+   - A rule applies if ANY of its conditions match (logical OR)
+   - If no conditions are specified, the rule applies to all bookings
+
+### Implementation Details
+
+- The system uses an extended `PaymentRule` type that includes an optional `conditions` field
+- Conditions are checked in the `isRuleApplicable` function before applying any payment rule
+- The `isPriceConditionApplicable` helper function evaluates if a specific condition applies based on:
+  - Current booking time
+  - User tags
+  - Time matching logic checks if booking start time falls within condition's time range
+  - Tag matching logic checks for at least one common tag between user and condition
+
+- Time comparison is done using the 24-hour format for consistency:
+  - Times are parsed into hours and minutes
+  - Comparison uses numerical values (e.g., "09:30" becomes 9.5 hours)
+  - This handles edge cases like midnight and ensures proper ordering
+
+### Test Coverage
+
+The system includes comprehensive tests for the price condition functionality:
+- Tests for user tag matching
+- Tests for time range matching
+- Tests for multiple conditions (ANY match logic)
+- Tests for combined time and tag conditions
+
+#### Student Discount Calculation Tests
+
+Detailed tests demonstrate how to use conditions for common pricing scenarios:
+
+1. **Basic Student Discount**: A 25% discount applied only to users with a "student" tag.
+   - Regular users pay the full price
+   - Students receive the discounted rate automatically
+
+2. **Multiple-Hour Bookings**: Tests verify that discount calculations work correctly for longer bookings.
+   - 3-hour booking calculations show the discount applies to the total base cost
+   - Proper percentage discounts regardless of booking duration
+
+3. **Time-Restricted Student Discounts**: Tests show off-peak pricing with conditions.
+   - 40% discount for students during off-peak hours (9 AM - 3 PM)
+   - No discount outside the specified time range, even for students
+
+4. **Combined Discount Scenarios**: Tests verify the interaction of multiple discount rules.
+   - Student discount (30%) and senior discount (20%) applying sequentially
+   - User with both tags gets both discounts (not compounded)
+   - Rules are applied in priority order for predictable behavior
+
+5. **Complex Pricing Scenarios**: Comprehensive tests verify real-world pricing models.
+   - Base rates with peak-hour multipliers (1.5x during 8 AM - 5 PM)
+   - Conditional student discounts (25% off)
+   - Equipment fees (flat fee of $10)
+   - Testing all combinations:
+     - Regular users during peak hours
+     - Students during peak hours
+     - Regular users during off-peak hours
+     - Students during off-peak hours
+
+These tests demonstrate how the conditional pricing system enables sophisticated pricing strategies, including:
+- Time-of-day pricing variations
+- User category discounts
+- Multiple stacked discounts
+- Peak vs. off-peak pricing
+- Equipment or service fees
+
+The testing suite validates the rule application order is preserved, ensuring predictable pricing outcomes in all scenarios.
+
+This conditional pricing system allows for more flexible and targeted payment rules, enabling scenarios like:
+- Peak/off-peak pricing
+- Special rates for members vs. non-members
+- Time-of-day pricing variations
+- Special event pricing
+
 # Project Memory
 
 ## Components
@@ -681,3 +768,42 @@ enum RefundStatus {
   - Automatically attaches to `.overflow-x-auto` container
   - Provides `useHorizontalScroll` hook for consuming components
 - Usage: Wraps calendar components that need access to horizontal scroll position
+
+# Block Spot App Development Notes
+
+## Payment System
+
+### 2023-08-17: Added Price Breakdown to Payment Rules
+
+Added a detailed price breakdown structure to the `runPaymentRules` function to provide user-facing information about how costs are calculated. This allows frontend components to display a detailed breakdown of charges.
+
+Key changes:
+- Added `PriceBreakdown` and `PriceBreakdownItem` types to `src/schedule/operations/payment-rules.ts`
+- Updated return type of `runPaymentRules` to include the breakdown
+- Modified the implementation to track each pricing component separately
+- Updated calling functions to handle the new return values
+
+The `priceBreakdown` object includes:
+- Base rate information
+- Fees (flat fees, etc.)
+- Discounts applied
+- Multipliers used
+- Subtotal and final total
+
+### 2023-08-17 Update: Made Price Breakdown Optional
+
+Updated the `runPaymentRules` function to make the price breakdown optional:
+- Changed return type to have `priceBreakdown?` as an optional property
+- Only returns price breakdown when there are applicable rules that affected the price
+- Removed default empty breakdown objects
+- This makes the API more efficient by not returning empty structures when they're not needed
+
+#### PaymentRule Entity Structure
+The `PaymentRule` entity in the system:
+- Has a `ruleType` that can be: BASE_RATE, MULTIPLIER, DISCOUNT, FLAT_FEE
+- Includes pricing information like `pricePerPeriod`, `periodMinutes`, `multiplier`, etc.
+- Can be targeted to specific spaces via `spaceIds`
+- Includes time constraints like `startTime`, `endTime`, and `daysOfWeek`
+- Is prioritized via a `priority` field (lower = applied first)
+
+The payment calculation handles different rule types in sequence, with BASE_RATE establishing the initial price, then applying multipliers, discounts, and fees in order of priority.
