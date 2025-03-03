@@ -45,6 +45,8 @@ export const CreateReservationWizard: FC<{
     endTime: reservation.endTime,
   });
 
+  console.log("paymentInfo", paymentInfo);
+
   const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
       step: "select_details",

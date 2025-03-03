@@ -27,19 +27,24 @@ const SkeletonReservation = ({
     </div>
   );
 };
+
 export const SkeletonReservationsSection: FC = () => {
   const timeLabels = useTimeLabels();
   const { venue } = useVenueContext();
 
   // Generate some random skeleton placements
-  const skeletons = [];
+  const skeletons: {
+    startRow: number;
+    rowSpan: number;
+    columnIndex: number;
+  }[] = [];
   const numSpaces = venue.spaces.length;
 
   // Create 2-3 skeletons per space
   for (let spaceIndex = 0; spaceIndex < numSpaces; spaceIndex++) {
     // Morning reservation (around 9-10am)
     skeletons.push({
-      startRow: 9 + Math.floor(Math.random() * 10), // Approximately 9am (adjust based on your grid)
+      startRow: 15 + Math.floor(Math.random() * 10), // Approximately 9am (adjust based on your grid)
       rowSpan: 4,   // 1 hour (4 x 15 min slots)
       columnIndex: spaceIndex
     });

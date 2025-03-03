@@ -442,11 +442,6 @@ query getVenuePaymentRules {
   entities: [PaymentRule, Venue]
 }
 
-query getReservationPrice {
-  fn: import { getReservationPrice } from "@src/payment/payment-rules/calculate-price.js",
-  entities: [PaymentRule, Venue, Reservation, Space]
-}
-
 query runPaymentRules {
   fn: import { runPaymentRules } from "@src/payment/payment-rules/calculate-price.js",
   entities: [PaymentRule, Venue, Space]
