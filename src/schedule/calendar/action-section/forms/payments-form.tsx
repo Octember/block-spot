@@ -44,7 +44,7 @@ export const useCheckoutSession = (spaceId: string) => {
       .catch((error) => {
         console.error("Failed to create checkout session:", error);
 
-        setValue("step", "error");
+        setValue("context.step", "error");
       });
   }, []);
 
@@ -205,10 +205,9 @@ export const StripeWrapper: FC<{
               venueId: venueId ?? "",
             });
             console.log("Payment confirmed!");
-            setValue("createdReservation", reservation);
-
+            setValue("context.createdReservation", reservation);
             setTimeout(() => {
-              setValue("step", "success");
+              setValue("context.step", "success");
             }, 2000);
           } catch (error: any) {
             if (error?.message?.includes("Refund issued")) {

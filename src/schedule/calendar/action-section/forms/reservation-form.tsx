@@ -1,6 +1,5 @@
 import { FC } from "react";
 import { ReservationFormBase } from "./reservation-basics-form";
-import { UpdateReservationUserSection } from "./update-user-section";
 import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 import { Reservation } from "wasp/entities";
 import { useFormContext } from "react-hook-form";

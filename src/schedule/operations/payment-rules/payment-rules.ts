@@ -414,13 +414,6 @@ export function calculatePaymentRules(
     `Final calculation: requiresPayment = ${requiresPayment}, totalCost = ${finalCost}`,
   );
 
-  // Only return the breakdown if there were applicable rules that affected the price
-  const hasApplicableRules =
-    breakdown.baseRate !== undefined ||
-    breakdown.fees.length > 0 ||
-    breakdown.discounts.length > 0 ||
-    breakdown.multipliers.length > 0;
-
   const result: PaymentRulesResult = {
     requiresPayment,
     totalCost: finalCost,

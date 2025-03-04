@@ -43,13 +43,16 @@ export const CreateReservationWizard: FC<{
 
   const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
-      step: "select_details",
       date: reservation.startTime,
       startTimeMinutes: timeToMinutes(reservation.startTime),
       endTimeMinutes: timeToMinutes(reservation.endTime),
       title: reservation.description ?? "",
       spaceId: reservation.spaceId,
       user: reservation.user,
+
+      context: {
+        step: "select_details",
+      },
     },
   });
 
@@ -59,7 +62,7 @@ export const CreateReservationWizard: FC<{
     formState: { isSubmitting, submitCount },
   } = form;
 
-  const currentStep = form.watch("step");
+  const currentStep = form.watch("context.step");
 
   async function onSubmit(data: CreateReservationFormInputs) {
     try {
@@ -70,8 +73,8 @@ export const CreateReservationWizard: FC<{
         spaceId: data.spaceId,
         userId: data.user?.id,
       });
-      setValue("createdReservation", reservation);
-      setValue("step", "success");
+      setValue("context.createdReservation", reservation);
+      setValue("context.step", "success");
 
       refresh();
       toast({
@@ -79,7 +82,7 @@ export const CreateReservationWizard: FC<{
         description: "The reservation has been created",
       });
     } catch (error) {
-      setValue("step", "error");
+      setValue("context.step", "error");
       console.error(error);
       toast({
         title: "Error creating reservation",
@@ -119,7 +122,7 @@ export const CreateReservationWizard: FC<{
                     ariaLabel="Next"
                     variant="primary"
                     size="lg"
-                    onClick={() => setValue("step", "pricing")}
+                    onClick={() => setValue("context.step", "pricing")}
                   >
                     Next
                   </Button>
@@ -143,7 +146,7 @@ export const CreateReservationWizard: FC<{
                   ariaLabel="Back"
                   variant="secondary"
                   size="lg"
-                  onClick={() => setValue("step", "select_details")}
+                  onClick={() => setValue("context.step", "select_details")}
                 >
                   Back
                 </Button>
@@ -151,7 +154,7 @@ export const CreateReservationWizard: FC<{
                   ariaLabel="Proceed to Payment"
                   variant="primary"
                   size="lg"
-                  onClick={() => setValue("step", "payment")}
+                  onClick={() => setValue("context.step", "payment")}
                 >
                   Proceed to Payment
                 </Button>

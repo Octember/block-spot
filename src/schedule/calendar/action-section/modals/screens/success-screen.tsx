@@ -1,4 +1,3 @@
-import React from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { api } from "wasp/client/api";
@@ -8,7 +7,7 @@ import { CreateReservationFormInputs } from "../types";
 
 export function SuccessScreen() {
   const { watch } = useForm<CreateReservationFormInputs>();
-  const createdReservation = watch("createdReservation");
+  const createdReservation = watch("context.createdReservation");
   const { venueId } = useParams<{ venueId: string }>();
   const toast = useToast();
 

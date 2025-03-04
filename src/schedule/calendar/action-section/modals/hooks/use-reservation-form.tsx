@@ -29,13 +29,16 @@ export function useReservationForm({ reservation }: UseReservationFormProps) {
 
   const form = useForm<CreateReservationFormInputs>({
     defaultValues: {
-      step: "select_details",
       date: reservation.startTime,
       startTimeMinutes: timeToMinutes(reservation.startTime),
       endTimeMinutes: timeToMinutes(reservation.endTime),
       title: reservation.description ?? "",
       spaceId: reservation.spaceId,
       user: reservation.user,
+
+      context: {
+        step: "select_details",
+      },
     },
   });
 
@@ -46,7 +49,7 @@ export function useReservationForm({ reservation }: UseReservationFormProps) {
     watch,
   } = form;
 
-  const currentStep = watch("step");
+  const currentStep = watch("context.step");
 
   async function onSubmit(data: CreateReservationFormInputs) {
     try {
@@ -58,8 +61,8 @@ export function useReservationForm({ reservation }: UseReservationFormProps) {
         userId: data.user?.id,
       });
 
-      setValue("createdReservation", createdReservation);
-      setValue("step", "success");
+      setValue("context.createdReservation", createdReservation);
+      setValue("context.step", "success");
 
       refresh();
       toast({
@@ -67,7 +70,7 @@ export function useReservationForm({ reservation }: UseReservationFormProps) {
         description: "The reservation has been created",
       });
     } catch (error) {
-      setValue("step", "error");
+      setValue("context.step", "error");
       console.error(error);
       toast({
         title: "Error creating reservation",

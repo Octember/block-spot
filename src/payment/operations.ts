@@ -7,7 +7,6 @@ import type {
 import { PaymentPlanId, paymentPlans } from "../payment/plans";
 import { paymentProcessor } from "./paymentProcessor";
 import { Reservation } from "wasp/entities";
-import { type StripeCheckoutSession } from "@stripe/stripe-js";
 import { stripe } from "./stripe/stripeClient";
 
 export type CheckoutSession = {

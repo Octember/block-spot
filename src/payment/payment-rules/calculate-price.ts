@@ -1,6 +1,6 @@
 import { HttpError } from "wasp/server";
 import type { RunPaymentRules } from "wasp/server/operations";
-import { calculatePaymentRules, calculatePaymentRulesV2 } from "../../schedule/operations/payment-rules/payment-rules";
+import { calculatePaymentRulesV2 } from "../../schedule/operations/payment-rules/payment-rules";
 import { PriceBreakdown } from "../../schedule/operations/payment-rules/payment-rules";
 
 export const runPaymentRules: RunPaymentRules<

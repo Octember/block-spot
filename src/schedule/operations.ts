@@ -24,7 +24,7 @@ import {
   UpdateVenueAvailability,
 } from "wasp/server/operations";
 import { getStartOfDay, localToUTC } from "./calendar/date-utils";
-import { calculatePaymentRules, calculatePaymentRulesV2 } from "./operations/payment-rules/payment-rules";
+import {  calculatePaymentRulesV2 } from "./operations/payment-rules/payment-rules";
 import { getStartEndTime } from "./operations/new-reservations";
 
 type GetVenueSchedulePayload = {
@@ -215,7 +215,7 @@ export const createReservation: CreateReservation<
   }
 
   // Check if payment is required
-  const { requiresPayment, totalCost, priceBreakdown } = await calculatePaymentRulesV2({
+  const { requiresPayment, totalCost } = await calculatePaymentRulesV2({
     rules: space.venue.paymentRules,
     startTime,
     endTime,

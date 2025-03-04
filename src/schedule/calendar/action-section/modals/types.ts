@@ -9,7 +9,7 @@ export type CreateReservationSteps =
   | "error";
 
 export type CreateReservationFormInputs = {
-  step: CreateReservationSteps;
+  // reservation fields
   date: Date;
   startTimeMinutes: number;
   endTimeMinutes: number;
@@ -18,5 +18,11 @@ export type CreateReservationFormInputs = {
 
   user?: User;
 
-  createdReservation?: Reservation;
+  // Additional form context
+  context: {  
+    step: CreateReservationSteps;
+    
+    createdReservation?: Reservation;
+    spaceName?: string;
+  };
 };
