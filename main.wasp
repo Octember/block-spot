@@ -148,6 +148,16 @@ page AccountPage {
   component: import {AccountPage} from "@src/user/account/account-page"
 }
 
+route MyBookingsRoute { path: "/bookings", to: MyBookingsPage }
+page MyBookingsPage {
+  authRequired: true,
+  component: import {MyBookingsPage} from "@src/user/my-bookings/my-bookings-page"
+}
+
+query getUserBookings {
+  fn: import { getUserBookings } from "@src/user/my-bookings/operations",
+  entities: [User, Reservation, Space, Venue]
+}
 
 route PlanRoute { path: "/plan", to: PlanPage }
 page PlanPage {

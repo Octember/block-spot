@@ -4,6 +4,7 @@ import { logout } from "wasp/client/auth";
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { TfiDashboard } from "react-icons/tfi";
 import { cn } from "../client/cn";
+import { LuCalendar } from "react-icons/lu";
 
 export const UserMenuItems = ({
   user,
@@ -55,6 +56,16 @@ export const UserMenuItems = ({
               />
             </svg>
             Account Settings
+          </WaspRouterLink>
+        </li>
+        <li>
+          <WaspRouterLink
+            to={routes.MyBookingsRoute.to}
+            onClick={handleMobileMenuClick}
+            className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-yellow-500"
+          >
+            <LuCalendar className="size-4.5" />
+            My Bookings
           </WaspRouterLink>
         </li>
       </ul>
