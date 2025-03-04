@@ -17,8 +17,8 @@ export default function Hero() {
               <span className="italic">Happier</span> Clients.
             </h1>
             <p className="mt-6 mx-auto max-w-2xl text-lg leading-8 text-gray-600 dark:text-white">
-              Save time, reduce chaos, and grow your business with an
-              <br /> intuitive reservation tool designed for small teams.
+              Save time, reduce chaos, and grow <br className="block sm:hidden" /> your business with <br className="hidden sm:block" /> an
+              intuitive   <br className="block sm:hidden" /> reservation tool designed for small teams.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <WaspRouterLink
