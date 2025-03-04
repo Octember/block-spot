@@ -22,14 +22,7 @@ export default function VenuePage() {
       {isVenueLoading ? (
         <LoadingSpinner />
       ) : (
-        <VenueList
-          venues={venues || []}
-          refetch={() => {
-            setTimeout(() => {
-              refetch();
-            }, 1000);
-          }}
-        />
+        <VenueList venues={venues || []} refetch={refetch} />
       )}
     </SidebarLayout>
   );
