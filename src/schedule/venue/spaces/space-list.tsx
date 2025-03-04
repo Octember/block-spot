@@ -14,7 +14,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { updateSpacePriority } from "wasp/client/operations";
 import { useToast } from "../../../client/toast";
 
@@ -26,13 +26,20 @@ export const SpaceList = ({
   refetch: () => void;
 }) => {
   const initialSpaces = useMemo(
-    () => spaces.toSorted((a, b) => a.priority - b.priority),
+    () => {
+      return spaces.toSorted((a, b) => a.priority - b.priority);
+    },
     [spaces],
   );
 
   const toast = useToast();
   const [activeId, setActiveId] = useState<string | null>(null);
   const [sortedSpaces, setSortedSpaces] = useState<Space[]>(initialSpaces);
+
+  useEffect(() => {
+    setSortedSpaces(initialSpaces);
+  }, [initialSpaces]);
+
   const activeSpace = useMemo(
     () => spaces.find((space) => space.id === activeId),
     [activeId, spaces],
@@ -94,7 +101,7 @@ export const SpaceList = ({
       }}
     >
       <ul className="flex flex-col gap-2 px-4 py-2 sm:px-6 lg:px-8">
-        <SortableContext items={spaces} strategy={verticalListSortingStrategy}>
+        <SortableContext items={sortedSpaces} strategy={verticalListSortingStrategy}>
           {sortedSpaces.map((space) => (
             <SortableSpaceCard space={space} key={space.id} refetch={refetch} />
           ))}
