@@ -1,99 +1,37 @@
+// import { DevTool } from "@hookform/devtools";
 import { FC } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
-import {
-  createReservation,
-  runPaymentRules,
-  useQuery,
-} from "wasp/client/operations";
+import { FormProvider } from "react-hook-form";
 import { Reservation, User } from "wasp/entities";
-import { useAuthUser } from "../../../../auth/providers/AuthUserProvider";
 import { Button } from "../../../../client/components/button";
 import { Modal } from "../../../../client/components/modal";
-import { useToast } from "../../../../client/toast";
-import { usePendingChanges } from "../../providers/pending-changes-provider";
-import { useScheduleContext } from "../../providers/schedule-context-provider";
 import {
   StripeCheckoutForm,
   StripeWrapper,
 } from "../forms/payments-form";
 import { ReservationForm } from "../forms/reservation-form";
-import { CreateReservationFormInputs } from "./types";
-import { timeToMinutes, minutesToTime } from "../timing";
+import { useReservationForm } from './hooks/use-reservation-form';
 import { ErrorScreen } from "./screens/error-screen";
-import { SuccessScreen } from "./screens/success-screen";
 import { PricingScreen } from "./screens/pricing-screen";
+import { SuccessScreen } from "./screens/success-screen";
 
 export const CreateReservationWizard: FC<{
   reservation: Reservation & { user?: User };
 }> = ({ reservation }) => {
-  const { cancelChange } = usePendingChanges();
-  const { venueId } = useParams<{ venueId: string }>();
-  const { refresh } = useScheduleContext();
-  const toast = useToast();
-  const { isAdmin } = useAuthUser();
-  const { organization } = useAuthUser();
-
-  const { data: paymentInfo } = useQuery(runPaymentRules, {
-    spaceId: reservation.spaceId,
-    venueId: venueId ?? "",
-    startTime: reservation.startTime,
-    endTime: reservation.endTime,
-  });
-
-  const form = useForm<CreateReservationFormInputs>({
-    defaultValues: {
-      date: reservation.startTime,
-      startTimeMinutes: timeToMinutes(reservation.startTime),
-      endTimeMinutes: timeToMinutes(reservation.endTime),
-      title: reservation.description ?? "",
-      spaceId: reservation.spaceId,
-      user: reservation.user,
-
-      context: {
-        step: "select_details",
-      },
-    },
-  });
 
   const {
-    handleSubmit,
+    form,
+    onSubmit,
+    currentStep,
+    enablePayments,
+    cancelChange,
     setValue,
-    formState: { isSubmitting, submitCount },
-  } = form;
+    handleSubmit,
+    isSubmitting,
+    submitCount,
+    venueId,
+    organization,
+  } = useReservationForm({ reservation })
 
-  const currentStep = form.watch("context.step");
-
-  async function onSubmit(data: CreateReservationFormInputs) {
-    try {
-      const reservation = await createReservation({
-        startTime: minutesToTime(data.date, data.startTimeMinutes),
-        endTime: minutesToTime(data.date, data.endTimeMinutes),
-        description: data.title,
-        spaceId: data.spaceId,
-        userId: data.user?.id,
-      });
-      setValue("context.createdReservation", reservation);
-      setValue("context.step", "success");
-
-      refresh();
-      toast({
-        title: "Reservation created",
-        description: "The reservation has been created",
-      });
-    } catch (error) {
-      setValue("context.step", "error");
-      console.error(error);
-      toast({
-        title: "Error creating reservation",
-        type: "error",
-        description: `${error}`,
-      });
-    }
-  }
-
-  const enablePayments =
-    isAdmin && organization?.stripeAccountId && paymentInfo?.requiresPayment;
 
   return (
     <FormProvider {...form}>
@@ -188,6 +126,8 @@ export const CreateReservationWizard: FC<{
         )}
         {currentStep === "error" && <ErrorScreen />}
         {currentStep === "success" && <SuccessScreen />}
+        {/* <DevTool control={form.control} /> */}
+
       </Modal>
     </FormProvider>
   );
