@@ -2,8 +2,10 @@
 export const PixelsPerSlot = 16;
 export const MinutesPerSlot = 15;
 
+const IsMobile = window.innerWidth < 768;
+
 // Constant for the minimum slot width in pixels.
-export const MIN_SLOT_WIDTH = 140;
+export const MIN_SLOT_WIDTH = IsMobile ? 140 : 200;
 const TIMEZONE_SLOT_OFFSET = 56;
 
 /**
@@ -28,10 +30,9 @@ function getEffectiveColumnCount(
   return numSpaces;
 }
 
-const IsMobile = window.innerWidth < 768;
 
-function getWidthOffsetMobile(): number {
-  return IsMobile ? MIN_SLOT_WIDTH / 2 : 0;
+function getWidthOffset(): number {
+  return MIN_SLOT_WIDTH / 2;
 }
 
 /**
@@ -44,7 +45,7 @@ export function getGridTemplateColumns(numSpaces: number): string {
   const effectiveColumns = getEffectiveColumnCount(numSpaces, containerWidth);
 
   // Each column gets an equal fraction of the container width.
-  const offset = getWidthOffsetMobile();
+  const offset = effectiveColumns < numSpaces ? getWidthOffset() : 0;
 
   const slotWidth = (containerWidth - offset) / effectiveColumns;
   return `repeat(${numSpaces}, ${slotWidth}px)`;
