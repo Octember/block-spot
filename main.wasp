@@ -565,6 +565,12 @@ page AdminUIButtonsPage {
   component: import AdminUI from "@src/admin/elements/ui-elements/ButtonsPage"
 }
 
+route RecurringReservationsRoute { path: "/recurring-reservations", to: RecurringReservationsPage }
+page RecurringReservationsPage {
+  authRequired: true,
+  component: import RecurringReservationsPage from "@src/schedule/pages/recurring-reservations/RecurringReservationsPage"
+}
+
 route NotFoundRoute { path: "*", to: NotFoundPage }
 page NotFoundPage {
   component: import { NotFoundPage } from "@src/client/components/NotFoundPage"
@@ -671,6 +677,11 @@ action updateOnboardingState {
 query getUserOrganizationRole {
   fn: import { getUserOrganizationRole } from "@src/organization/operations.js",
   entities: [OrganizationUser, User]
+}
+
+query getRecurringReservations {
+  fn: import { getRecurringReservations } from "@src/schedule/operations/recurring-reservations/get-recurring-reservation",
+  entities: [User, RecurringReservation, Reservation]
 }
 
 query searchUsers {

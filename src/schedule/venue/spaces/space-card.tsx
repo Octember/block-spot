@@ -1,15 +1,14 @@
-import { ChevronRightIcon, PlusIcon } from "@heroicons/react/20/solid";
-import { FC, forwardRef, useState } from "react";
-import { Space } from "wasp/entities";
-import { Squares2X2Icon, TrashIcon } from "@heroicons/react/24/outline";
-import { LuMenu } from "react-icons/lu";
-import { AddSpaceModal } from "./add-space-modal";
+import { useSortable } from "@dnd-kit/sortable";
+import { PlusIcon } from "@heroicons/react/20/solid";
 import pluralize from "pluralize";
+import { FC, forwardRef, useState } from "react";
+import { LuMenu } from "react-icons/lu";
+import { useParams } from "react-router-dom";
+import { Space } from "wasp/entities";
+import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
+import { AddSpaceModal } from "./add-space-modal";
 import { DeleteSpaceButton } from "./delete-space-button";
 import { UpdateSpaceButton } from "./update-space-button";
-import { useSortable } from "@dnd-kit/sortable";
-import { useAuthUser } from "../../../auth/providers/AuthUserProvider";
-import { useParams } from "react-router-dom";
 
 const ListItemStyle =
   "flex flex-row p-2 rounded-md border border-gray-200 items-center h-16";
