@@ -34,7 +34,7 @@ export const WeekViewCalendar: FC = () => {
               <div className="md:sticky top-0 inset-x-0 z-50">
                 <CalendarHeader />
               </div>
-              <div className="sticky top-0 md:top-12 inset-x-0 z-50">
+              <div className="sticky top-0 md:top-12 inset-x-0 z-40">
                 <DayButtons />
                 <SpacesNamesSection />
               </div>
