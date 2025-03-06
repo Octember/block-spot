@@ -265,6 +265,16 @@ action updateReservation {
   entities: [Reservation, Space, Venue]
 }
 
+action cancelRecurringReservation {
+  fn: import { cancelRecurringReservation } from "@src/schedule/operations/recurring-reservations/cancel-recurring-reservation",
+  entities: [User, RecurringReservation, Reservation]
+}
+
+action cancelSingleOccurrence {
+  fn: import { cancelSingleOccurrence } from "@src/schedule/operations/recurring-reservations/cancel-recurring-reservation",
+  entities: [User, RecurringReservation, Reservation]
+}
+
 action updateVenueAvailability {
   fn: import { updateVenueAvailability } from "@src/schedule/operations",
   entities: [Venue, AvailabilityRule],
@@ -582,6 +592,19 @@ job sendNewsletter {
     cron: "0 7 * * 1" // at 7:00 am every Monday
   },
   entities: [User]
+}
+//#endregion
+
+//#region Recurring Reservations
+job extendRecurringReservationsJob {
+  executor: PgBoss,
+  perform: {
+    fn: import { extendRecurringReservationsJob } from "@src/schedule/jobs/recurring-reservations-job"
+  },
+  schedule: {
+    cron: "0 0 * * *" // at midnight every day
+  },
+  entities: [RecurringReservation, Reservation, Space, Venue]
 }
 //#endregion
 

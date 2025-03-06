@@ -2,7 +2,11 @@
   "name": "opensaas",
   "type": "module",
   "scripts": {
-    "deploy": "wasp build && cd .wasp/build && railway up -d"
+    "deploy": "wasp build && cd .wasp/build && railway up -d",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:recurring": "vitest run src/schedule/operations/recurring-reservations/tests"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.523.0",
@@ -57,6 +61,7 @@
     "@types/pluralize": "^0.0.33",
     "@types/react": "^18.0.37",
     "@types/uuid": "^10.0.0",
+    "@vitest/coverage-v8": "^3.0.7",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.1.0",

@@ -1,4 +1,4 @@
-import { PaymentRule, Space, Venue } from "wasp/entities";
+import { Venue } from "wasp/entities";
 import { HttpError } from "wasp/server";
 import { localToUTC } from "../calendar/date-utils";
 

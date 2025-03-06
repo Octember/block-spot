@@ -181,6 +181,8 @@ export const FloatingButtons: FC = () => {
                 updatedAt: new Date(),
                 createdById: user?.id || "",
                 description: "",
+                recurringReservationId: null,
+                isException: null,
               },
             })
           }
