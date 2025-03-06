@@ -8,6 +8,7 @@ import { HoursAndAvailabilityPage } from "./hours-and-availability";
 import { VenueIntegrationsPage } from "./integrations-page";
 import { PaymentsPage } from "./payments/payments-page";
 import { UpdateVenuePage } from "./update-venue-page";
+import RecurringReservationsPage from "../../pages/recurring-reservations/RecurringReservationsPage";
 
 export default function VenuePage() {
   return (
@@ -17,6 +18,7 @@ export default function VenuePage() {
       <Route path="/availability" element={<HoursAndAvailabilityPage />} />
       <Route path="/integrations" element={<VenueIntegrationsPage />} />
       <Route path="/payments" element={<PaymentsPage />} />
+      <Route path="/recurring-reservations" element={<RecurringReservationsPage />} />
     </Routes>
   );
 }

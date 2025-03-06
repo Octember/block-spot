@@ -14,7 +14,7 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   datePaid        DateTime?
-
+  schedulingConfig OrganizationSchedulingConfig?
 
   // Billing and subscription fields
   stripeCustomerId       String?   @unique
@@ -31,6 +31,15 @@ model Organization {
 
   venues        Venue[]
   tags          OrganizationTag[]
+  recurringReservations RecurringReservation[]
+}
+
+model OrganizationSchedulingConfig {
+  id String @id @default(uuid())
+  organizationId String @unique
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  allowsRecurringReservations Boolean @default(true)
 }
 
 model OrganizationTag {
@@ -104,6 +113,7 @@ model User {
   createdReservations Reservation[] @relation("CreatedReservations")
 
   receivedInvitation Invitation[] @relation("ReceivedInvitations")
+  createdRecurringReservations RecurringReservation[] @relation("CreatedRecurringReservations")
 }
 
 
@@ -187,6 +197,52 @@ model ContactFormMessage {
   repliedAt DateTime?
 }
 
+model RecurringReservation {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // The user who created this recurring series
+  createdById String
+  createdBy   User @relation("CreatedRecurringReservations", fields: [createdById], references: [id])
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  startTime    DateTime  // Start time of the *first* occurrence
+  endTime      DateTime  // End time of the *first* occurrence
+  frequency    RecurrenceFrequency // e.g. DAILY, WEEKLY
+  interval     Int       // e.g. every 1 week, or every 2 weeks, etc.
+  endsOn       DateTime? // If null, could be indefinite or handle it differently
+
+  // Status of the recurring reservation
+  status      RecurringReservationStatus @default(ACTIVE)
+
+  // Keep track of the reservation "template" data:
+  spaceId      String
+  space        Space     @relation(fields: [spaceId], references: [id])
+  description  String?
+
+  // If you need to eventually track special payment logic:
+  // For instance, a user might pay up front for 10 occurrences
+  // or pay instance-by-instance, etc.
+
+  // One-to-many relation to the individual occurrences (Reservations)
+  reservations Reservation[]
+}
+
+enum RecurringReservationStatus {
+  ACTIVE
+  CANCELLED
+}
+
+enum RecurrenceFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  // etc.
+}
+
 // Reservations 
 model Reservation {
   id          String            @id @default(uuid())
@@ -205,6 +261,11 @@ model Reservation {
   
   // Relation to payment
   payment     Payment?
+  recurringReservationId String?
+  recurringReservation RecurringReservation? @relation(fields: [recurringReservationId], references: [id])
+  
+  // Flag to indicate if this occurrence has been modified from the standard pattern
+  isException Boolean? @default(false)
 }
 
 model Payment {
@@ -305,6 +366,8 @@ model Space {
   reservations Reservation[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+
+  recurringReservations RecurringReservation[]
 }
 
 

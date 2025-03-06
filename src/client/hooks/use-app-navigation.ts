@@ -7,6 +7,7 @@ import {
   LinkIcon,
   Squares2X2Icon,
   UsersIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import { useMemo } from "react";
 import { useLocation } from "react-router-dom";
@@ -58,6 +59,12 @@ const sidebarRoutes: SidebarRouteInternal[] = [
         params: { venueId, "*": "availability" },
       }),
     icon: ClockIcon,
+  },
+  {
+    name: "Recurring",
+    route: (venueId) => routes.VenuePageRouteChildren.build({ params: { venueId, "*": "recurring-reservations" } }),
+    icon: ArrowPathIcon,
+    paywall: true,
   },
   {
     name: "Payments",

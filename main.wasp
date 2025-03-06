@@ -654,3 +654,24 @@ query searchUsers {
   fn: import { searchUsers } from "@src/user/operations",
   entities: [User, OrganizationUser]
 }
+
+route RecurringReservationsRoute { path: "/venues/:venueId/integrations", to: RecurringReservationsPage }
+page RecurringReservationsPage {
+  authRequired: true,
+  component: import RecurringReservationsPage from "@src/schedule/pages/recurring-reservations/RecurringReservationsPage"
+}
+
+query getRecurringReservations {
+  fn: import { getRecurringReservations } from "@src/schedule/operations/recurring-reservations/get-recurring-reservation",
+  entities: [User, RecurringReservation, Reservation, Space, Venue]
+}
+
+action cancelRecurringReservation {
+  fn: import { cancelRecurringReservation } from "@src/schedule/operations/recurring-reservations/cancel-recurring-reservation",
+  entities: [User, RecurringReservation, Reservation]
+}
+
+action cancelSingleOccurrence {
+  fn: import { cancelSingleOccurrence } from "@src/schedule/operations/recurring-reservations/cancel-recurring-reservation",
+  entities: [User, RecurringReservation, Reservation]
+}

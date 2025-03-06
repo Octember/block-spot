@@ -196,6 +196,8 @@ export const GridSelection: React.FC = () => {
           description: null,
           createdById: user?.id || "",
           user,
+          recurringReservationId: null,
+          isException: null,
         },
       });
     }
